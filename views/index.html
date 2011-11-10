@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>What's on Mobile!</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0rc2/jquery.mobile-1.0rc2.min.css" />
+
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/mobile/1.0rc2/jquery.mobile-1.0rc2.min.js"></script>
+
+	<script src='js/libs/underscore.js'></script>
+	<script src='js/libs/Backbone.js'></script>
+
+	<script data-main="js/main" src='js/libs/require.js'></script>
+
+</head>
+<body>
+
+<!-- App Stage -->
+<div id="rightnow" data-role="page" data-theme="a">
+	<div data-role="header" data-theme="a">
+		<h1>What's on UPC</h1>
+	</div>
+	<div data-role="navbar">
+		<ul>
+			<li><a href="#rightnow" class="ui-btn-active">Now playing</a></li>
+			<li><a href="#topbookings">Top Bookings</a></li>
+		</ul>
+	</div><!-- /navbar -->
+	<div data-role="content" role="main">
+		<ul data-role="listview" data-inset="true" data-theme="c" data-dividertheme="a">
+			<li>Stuff</li>
+			<li>Stuff</li>
+			<li>Stuff</li>
+			<li>Stuff</li>
+			<li>Stuff</li>
+			<li>Stuff</li>
+			<li>Stuff</li>
+		</ul>
+	</div>
+	<div data-role="footer" role="contentinfo">
+		<h4>© UPC 2011</h4>
+	</div>
+</div> 
+
+<div id="topbookings" data-role="page" data-theme="a">
+	<div data-role="header" data-theme="a">
+		<h1>What's on UPC</h1>
+	</div>
+	<div data-role="navbar">
+		<ul>
+			<li><a href="#rightnow">Now playing</a></li>
+			<li><a href="#topbookings" class="ui-btn-active">Top Bookings</a></li>
+		</ul>
+	</div><!-- /navbar -->
+	<div data-role="content" role="main">
+		<ul id="list" data-role="listview" data-inset="true" data-theme="c" data-dividertheme="a"></ul>
+	</div>
+	<div data-role="footer" role="contentinfo">
+		<h4>© UPC 2011</h4>
+	</div>
+</div> 
+
+
+<!-- Templating -->
+<script type="text/template" id="item-template">
+	<% _.each(models, function( item ){ %>
+	<li>
+		<h2><%= item.get('title') %></h2>
+		<p>on <strong><%= item.get('channel') %></strong>, <date><%= item.get('start') %></date></p>
+	</li>
+	<% }); %>
+</script>
+
+</body>
+</html>
