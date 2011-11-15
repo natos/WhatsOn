@@ -1,6 +1,8 @@
 // ItemModel.js
 
-define([], function() {
+define([
+
+], function() {
 
 	return Backbone.Model.extend({
 

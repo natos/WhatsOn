@@ -2,77 +2,109 @@
 <html>
 <head>
 	<title>What's on Mobile!</title>
-
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
 
-	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0rc2/jquery.mobile-1.0rc2.min.css" />
+	<!-- CSS Libs -->
+	<link rel="stylesheet" href="css/libs/jquery.mobile/jquery.mobile.css" />
 
-	<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
-	<script type="text/javascript" src="http://code.jquery.com/mobile/1.0rc2/jquery.mobile-1.0rc2.min.js"></script>
+	<!-- JS Libs -->
+	<script src="js/libs/jquery/jquery.js"></script>
+	<script src='js/libs/backbone/underscore.js'></script>
+	<script src='js/libs/backbone/backbone.js'></script>
+	<script>
+      $(document).bind("mobileinit", function(){
 
-	<script src='js/libs/underscore.js'></script>
-	<script src='js/libs/Backbone.js'></script>
+        $.mobile.ajaxEnabled = false;
+        $.mobile.hashListeningEnabled = false;
 
-	<script data-main="js/main" src='js/libs/require.js'></script>
-
+      });
+	</script>
+	<script src="js/libs/jquery/jquery.mobile.js"></script>
+	<script data-main="js/main" src='js/libs/require/require.js'></script>
 </head>
 <body>
 
-<!-- App Stage -->
-<div id="rightnow" data-role="page" data-theme="a">
+<div id="home" data-role="page" data-theme="a"></div>
+<div id="allchannels" data-role="page" data-theme="a"></div>
+<div id="topbookings" data-role="page" data-theme="a"></div>
+
+
+<!-- START TEMPLATE: Home -->
+<script type="text/template" id="home-template">
 	<div data-role="header" data-theme="a">
 		<h1>What's on UPC</h1>
 	</div>
 	<div data-role="navbar">
 		<ul>
-			<li><a href="#rightnow" class="ui-btn-active">Now playing</a></li>
+			<li><a href="/rightnow">Now playing</a></li>
+			<li><a href="/topbookings" class="ui-btn-active">Top Bookings</a></li>
+		</ul>
+	</div>
+	<div data-role="content" role="main">
+		<h1>Home!</h1>
+	</div>
+	<div data-role="footer" role="contentinfo">
+		<h4>© UPC 2011</h4>
+	</div>
+</script>
+<!-- ENDS TEMPLATE: Home -->
+
+
+<!-- START TEMPLATE: All Channels -->
+<script type="text/template" id="allchannels-template">
+	<div data-role="header" data-theme="a">
+		<h1>What's on UPC</h1>
+	</div>
+	<div data-role="navbar">
+		<ul>
+			<li><a href="#allchannels" class="ui-btn-active">All Channels</a></li>
 			<li><a href="#topbookings">Top Bookings</a></li>
 		</ul>
-	</div><!-- /navbar -->
+	</div>
 	<div data-role="content" role="main">
-		<ul data-role="listview" data-inset="true" data-theme="c" data-dividertheme="a">
-			<li>Stuff</li>
-			<li>Stuff</li>
-			<li>Stuff</li>
-			<li>Stuff</li>
-			<li>Stuff</li>
-			<li>Stuff</li>
-			<li>Stuff</li>
+		<ul id="list" data-role="listview" data-inset="true" data-theme="c" data-dividertheme="a"> 
+
+			<% _.each(models, function( item ){ %>
+			<li>
+				<h2><%= item.get('name') %></h2>
+				<p>on <strong><%= item.get('position') %></strong>, <%= item.get('description') %></p>
+			</li>
+			<% }); %>
 		</ul>
 	</div>
 	<div data-role="footer" role="contentinfo">
 		<h4>© UPC 2011</h4>
 	</div>
-</div> 
+</script>
+<!-- ENDS TEMPLATE: All Channels -->
 
-<div id="topbookings" data-role="page" data-theme="a">
+<!-- START TEMPLATE: Top bookings -->
+<script type="text/template" id="topbookings-template">
 	<div data-role="header" data-theme="a">
 		<h1>What's on UPC</h1>
 	</div>
 	<div data-role="navbar">
 		<ul>
-			<li><a href="#rightnow">Now playing</a></li>
+			<li><a href="#allchannels">All Channels</a></li>
 			<li><a href="#topbookings" class="ui-btn-active">Top Bookings</a></li>
 		</ul>
-	</div><!-- /navbar -->
+	</div>
 	<div data-role="content" role="main">
-		<ul id="list" data-role="listview" data-inset="true" data-theme="c" data-dividertheme="a"></ul>
+		<ul id="list" data-role="listview" data-inset="true" data-theme="c" data-dividertheme="a"> 
+
+			<% _.each(models, function( item ){ %>
+			<li>
+				<h2><%= item.get('title') %></h2>
+				<p>on <strong><%= item.get('channel') %></strong>, <date><%= item.get('start') %></date></p>
+			</li>
+			<% }); %>
+		</ul>
 	</div>
 	<div data-role="footer" role="contentinfo">
 		<h4>© UPC 2011</h4>
 	</div>
-</div> 
-
-
-<!-- Templating -->
-<script type="text/template" id="item-template">
-	<% _.each(models, function( item ){ %>
-	<li>
-		<h2><%= item.get('title') %></h2>
-		<p>on <strong><%= item.get('channel') %></strong>, <date><%= item.get('start') %></date></p>
-	</li>
-	<% }); %>
 </script>
+<!-- ENDS TEMPLATE: Top bookings -->
 
 </body>
 </html>

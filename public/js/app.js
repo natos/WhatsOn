@@ -2,61 +2,29 @@
 
 define([
 
-		// Dependencies
-		'models/ItemModel',
-		'collections/ListCollection',
-		'views/ListView',
+	// Dependencies
+	'routers/AppRouter'
 
-		'js/utils/prettyDate.js'
+],
 
-], function(ItemModel, ListCollection, ListView) {
+function(AppRouter) {
 
-	Backbone.emulateJSON = true;
-
-	var _app = Backbone.View.extend({
-
-		el: $('#appview'),
-
-		events: {},
+	var app = {
 
 		initialize: function() {
 
-			var self = this;
-			
-				self.list = new ListCollection();
+			Backbone.emulateJSON = true;
+			Backbone.history.start({pushState: true});
 
-			$.when( this.getData() )
-			 .then( $.proxy( function( response ) {
-
-				// iterate
-				$(response).each(function(i, arr) {
-
-					$(arr).each(function(e, item) {
-
-						self.list.add(new ItemModel({
-								'start': prettyDate(item.startDateTime)
-							,	'title': item.programme.title
-							,	'description': item.programme.shortDescription
-							,	'channel': item.channel.name
-							})); // new item
-					});
-				});
-
-				self.list.refresh();
-				
-			}, this ) );
-
-		},
-
-		getData: function() {
-
-			return $.getJSON('./mock.txt');
-			//return $.getJSON('http://tvgids.upc.nl/customerApi/wa/topBookings?callback=?');
+			return this;
 
 		}
 
-	});
+	}
 
-	return _app;
+	app.router = new AppRouter;
+	app.router.navigate('allchannels');
+
+	return app;
 
 }); // define
