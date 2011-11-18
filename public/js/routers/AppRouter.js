@@ -1,44 +1,65 @@
 // AppRouter.js
 
-// TODO: DRY here please.
-
 define([
 
 	'views/TopBookingsView',
-	'views/AllChannelsView'
+	'views/AllChannelsView',
+	'views/NowAndNextView',
+	
+	'js/libs/iscroll.js'
 ],
 
-function(TopBookingsView, AllChannelsView) {
+function(TopBookingsView, AllChannelsView, NowAndNextView) {
 
 	return Backbone.Router.extend({
+		
+		// To know which view is the current
+		current: undefined,
 
+		// Declaring all app routes here
+		// "someview": "somehandler"
 		routes: {
-			"home" : "home",
 			"topbookings": "topbookings",
-			"allchannels": "allchannels"
+			"allchannels": "allchannels",
+			"nowandnext": "nowandnext"
+
+		},
+		
+		// Some handlers...
+		nowandnext: function() {
+			this.load('nowandnext', NowAndNextView)
 		},
 
-		allchannels: function(){
+		allchannels: function() {
+			this.load('allchannels', AllChannelsView)
+		},
 
-			console.log('All Channels');
-			console.log(wo)
-			if (!wo.views['allchannels']) {
-				wo.views.allchannels = new AllChannelsView();
-			} else {
-				wo.views.allchannels.select();
+		topbookings: function() {
+			this.load('topbookings', TopBookingsView)
+		},
+
+		// Generic view loader
+		load: function(namespace, View) {
+
+			// unload current view
+			if (this.current) {
+				wo.views[this.current].unload();
+			}
+			// set the new current
+			this.current = namespace;
+
+			// Try to grab the view from the cache
+			if (wo.views[namespace]) {
+				wo.views[namespace].load();
+				return;
 			}
 
-		},
+			// Otherwise emulate server response
+			setTimeout(function() {
+				// Create the requested view
+				wo.views[namespace] = new View();
+			}, 1500);
 
-		topbookings: function(){
-
-			console.log('Top Bookings');
-
-			if (!wo.views.topbookings) {
-				wo.views.topbookings = new TopBookingsView();
-			} else {
-				wo.views.topbookings.select();
-			}			
 		}
 
 	});

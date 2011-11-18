@@ -1,21 +1,22 @@
-// AllChannelsView.js
+// NowAndNextView.js
 
 define([
 
-	'models/ChannelModel',
-	'collections/AllChannelsCollection',
-	'sources/AllChannelsSource',
-	'templates/AllChannelsTemplate'
+	'models/NowAndNextModel',
+	'collections/NowAndNextCollection',
+	'sources/NowAndNextSource',
+	'templates/NowAndNextTemplate',
 
+	'js/utils/prettyDate.js'
 ],
 
-function(ChannelModel, Collection, Source, template) {
+function(Model, Collection, Source, template) {
 
 	return Backbone.View.extend({
 
 		el: $('#content'),
 
-		btn: $('a[href=#allchannels]'),
+		btn: $('a[href=#nowandnext]'),
 
 		template: _.template( template ),
 
@@ -34,19 +35,23 @@ function(ChannelModel, Collection, Source, template) {
 
 			$(response).each(function(i, arr) {
 				$(arr).each(function(e, item) {
-					self.collection.add(new ChannelModel({
-						id: item.id
-					,	name: item.name
-					,	description: item.description
-					,	logoIMG: item.logoIMG
-					,	position: item.position
-					,	broadcastFormat: item.broadcastFormat
-					,	apiChannelGroupId: item.apiChannelGroupId
-					})); // new channel
+					self.collection.add(new Model({
+							'start': prettyDate(item.startDateTime)
+						,	'programme': {
+								'title': item.programme.title
+							,	'shortDescription': item.programme.shortDescription
+							}
+						,	'channel': {
+								'name': item.channel.name
+							,	'logoIMG': item.channel.logoIMG
+							,	'url': item.channel.url
+							}
+						,	'url': item.url
+						})); // new item
 				});
 			});
 
-			this.load();
+			self.load();
 
 		},
 
@@ -73,7 +78,7 @@ function(ChannelModel, Collection, Source, template) {
 			this.btn.removeClass('selected');
 
 			this.el.html( '' );
-		
+
 		}
 
 	});

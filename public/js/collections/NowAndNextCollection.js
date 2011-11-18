@@ -1,18 +1,18 @@
-// AllChannelsCollection.js
+// NowAndNextCollection.js
 
 define([
 
 	// Dependencies
 
-	'models/ChannelModel'
+	'models/NowAndNextModel'
 
 ],
 
-function(ChannelModel) {
+function(NowAndNextModel) {
 
 	return Backbone.Collection.extend({
 
-		model: ChannelModel,
+		model: NowAndNextModel,
 
 		initialize: function(a) {
 

@@ -4,15 +4,15 @@ define([
 
 	// Dependencies
 
-	'models/ItemModel'
+	'models/ProgrammeModel'
 
 ],
 
-function(ItemModel) {
+function(ProgrammeModel) {
 
 	return Backbone.Collection.extend({
 
-		model: ItemModel,
+		model: ProgrammeModel,
 
 		initialize: function(a) {
 

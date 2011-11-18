@@ -3,108 +3,32 @@
 <head>
 	<title>What's on Mobile!</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
-
-	<!-- CSS Libs -->
-	<link rel="stylesheet" href="css/libs/jquery.mobile/jquery.mobile.css" />
-
-	<!-- JS Libs -->
+	<!-- CSS -->
+	<link rel="stylesheet" href="css/whatson.css" />
+	<!-- JS -->
 	<script src="js/libs/jquery/jquery.js"></script>
 	<script src='js/libs/backbone/underscore.js'></script>
 	<script src='js/libs/backbone/backbone.js'></script>
-	<script>
-      $(document).bind("mobileinit", function(){
-
-        $.mobile.ajaxEnabled = false;
-        $.mobile.hashListeningEnabled = false;
-
-      });
-	</script>
-	<script src="js/libs/jquery/jquery.mobile.js"></script>
 	<script data-main="js/main" src='js/libs/require/require.js'></script>
 </head>
 <body>
 
-<div id="home" data-role="page" data-theme="a"></div>
-<div id="allchannels" data-role="page" data-theme="a"></div>
-<div id="topbookings" data-role="page" data-theme="a"></div>
+<header>
+	<h1>What's on UPC</h1>
+</header>
+<nav>
+	<ul>
+		<li><a href="#nowandnext">Now and Next</a></li>
+		<li><a href="#topbookings">Top Bookings</a></li>
+		<li><a href="#allchannels">All Channels</a></li>
+	</ul>
+</nav>
 
+<section id="content"></section>
 
-<!-- START TEMPLATE: Home -->
-<script type="text/template" id="home-template">
-	<div data-role="header" data-theme="a">
-		<h1>What's on UPC</h1>
-	</div>
-	<div data-role="navbar">
-		<ul>
-			<li><a href="/rightnow">Now playing</a></li>
-			<li><a href="/topbookings" class="ui-btn-active">Top Bookings</a></li>
-		</ul>
-	</div>
-	<div data-role="content" role="main">
-		<h1>Home!</h1>
-	</div>
-	<div data-role="footer" role="contentinfo">
-		<h4>© UPC 2011</h4>
-	</div>
-</script>
-<!-- ENDS TEMPLATE: Home -->
-
-
-<!-- START TEMPLATE: All Channels -->
-<script type="text/template" id="allchannels-template">
-	<div data-role="header" data-theme="a">
-		<h1>What's on UPC</h1>
-	</div>
-	<div data-role="navbar">
-		<ul>
-			<li><a href="#allchannels" class="ui-btn-active">All Channels</a></li>
-			<li><a href="#topbookings">Top Bookings</a></li>
-		</ul>
-	</div>
-	<div data-role="content" role="main">
-		<ul id="list" data-role="listview" data-inset="true" data-theme="c" data-dividertheme="a"> 
-
-			<% _.each(models, function( item ){ %>
-			<li>
-				<h2><%= item.get('name') %></h2>
-				<p>on <strong><%= item.get('position') %></strong>, <%= item.get('description') %></p>
-			</li>
-			<% }); %>
-		</ul>
-	</div>
-	<div data-role="footer" role="contentinfo">
-		<h4>© UPC 2011</h4>
-	</div>
-</script>
-<!-- ENDS TEMPLATE: All Channels -->
-
-<!-- START TEMPLATE: Top bookings -->
-<script type="text/template" id="topbookings-template">
-	<div data-role="header" data-theme="a">
-		<h1>What's on UPC</h1>
-	</div>
-	<div data-role="navbar">
-		<ul>
-			<li><a href="#allchannels">All Channels</a></li>
-			<li><a href="#topbookings" class="ui-btn-active">Top Bookings</a></li>
-		</ul>
-	</div>
-	<div data-role="content" role="main">
-		<ul id="list" data-role="listview" data-inset="true" data-theme="c" data-dividertheme="a"> 
-
-			<% _.each(models, function( item ){ %>
-			<li>
-				<h2><%= item.get('title') %></h2>
-				<p>on <strong><%= item.get('channel') %></strong>, <date><%= item.get('start') %></date></p>
-			</li>
-			<% }); %>
-		</ul>
-	</div>
-	<div data-role="footer" role="contentinfo">
-		<h4>© UPC 2011</h4>
-	</div>
-</script>
-<!-- ENDS TEMPLATE: Top bookings -->
+<footer>
+	<h4>© UPC 2011</h4>
+</footer>
 
 </body>
 </html>
