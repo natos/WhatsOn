@@ -2,15 +2,12 @@
 
 define([
 
-	'models/ProgrammeModel',
-	'collections/TopBookingsCollection',
 	'sources/TopBookingsSource',
-	'templates/TopBookingsTemplate',
+	'templates/TopBookingsTemplate'
 
-	'js/utils/prettyDate.js'
 ],
 
-function(Model, Collection, Source, template) {
+function(Source, template) {
 
 	return Backbone.View.extend({
 
@@ -22,37 +19,21 @@ function(Model, Collection, Source, template) {
 
 		initialize: function() {
 
-			this.collection = new Collection();
+			Source.getTopBookingsCollection();
 
-			$.when( Source.getData() )
-			 .then( $.proxy( this.iterate , this ) );
+			wo.events.bind('get-topbookings-collection', this.load, this);
 
-		},
-
-		iterate: function( response ) {
-
-			var self = this;
-
-			$(response).each(function(i, arr) {
-				$(arr).each(function(e, item) {
-					self.collection.add(new Model({
-							'start': prettyDate(item.startDateTime)
-						,	'title': item.programme.title
-						,	'description': item.programme.shortDescription
-						,	'channel': item.channel.name
-						})); // new item
-				});
-			});
-
-			self.load();
+			this.trigger('view-initialized', this);
 
 		},
 
-		load: function() {
+		load: function( collection ) {
+
+			this.collection = collection || this.collection;
 
 			this.el.html( this.template( this.collection ) );
 
-			this.trigger('view-created');
+			this.trigger('view-created', this);
 
 			this.select();
 			
@@ -62,7 +43,7 @@ function(Model, Collection, Source, template) {
 
 			this.btn.addClass('selected');
 
-			this.el.trigger('view-loaded');
+			this.trigger('view-loaded', this);
 
 		},
 
@@ -71,6 +52,8 @@ function(Model, Collection, Source, template) {
 			this.btn.removeClass('selected');
 
 			this.el.html( '' );
+
+			this.trigger('view-unloaded', this);
 
 		}
 		

@@ -2,9 +2,28 @@
 html.no-js(lang='en')
 head
 	script
-	meta(charset='utf-8')
 	title What's On!
 
-	script(type='text/javascript', src='/js/libs/scr.js')
+	meta(charset='utf-8')
+	meta(name='viewport', content='width=device-width, initial-scale=1')
+
+	link(rel='stylesheet', href='css/whatson.css')
+	
+	script(src='js/libs/jquery/jquery.js')
+	script(src='js/libs/backbone/underscore.js')
+	script(src='js/libs/backbone/backbone.js')
+	script(src='js/libs/require/require.js', data-main='js/main')
+
+header
+	h1 What's on UPC
+
+nav
+	ul
+		li a(href='#nowandnext') Now and Next
+		li a(href='#topbookings') Top Bookings
+		li a(href='#allchannels') All Channels
 
 body!= body
+
+footer
+	h4 © UPC 2011

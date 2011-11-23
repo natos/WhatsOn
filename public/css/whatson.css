@@ -21,17 +21,17 @@ header {
 	background-color: gray;
 	width: 100%;
 	text-align: center;
-	height: 45px;
-	line-height:45px;
+	height: 35px;
+	line-height:35px;
 	background-color:#222;
 	background-image: -webkit-gradient(linear,left top,left bottom,from(#333),to(#555));
 	color: #eee;
 }
 
 h1 {
-	font-size: 1.6em;
+	font-size: 1.4em;
 	color: #eee;
-	text-shadow: 2px 2px 0 #000;
+	text-shadow: 1px 1px 0 #000;
 }
 
 footer {
@@ -63,8 +63,8 @@ nav li {
 	cursor: pointer;
 	display: block;
 	width: 33.333%;
-	height: 34px;
-	line-height: 34px;
+	height: 35px;
+	line-height: 35px;
 	float: left;
 }
 
@@ -85,17 +85,16 @@ nav a:hover {
 	background-image: -webkit-gradient(linear,left top,left bottom,from(#666),to(#444));
 }
 
-nav a:active, nav .selected { 
+nav a:active, nav .selected, nav .selected:hover { 
 	color:#fff;
-	text-shadow:0 -2px -2px rgba(0,0,0);
-	background-image: -webkit-gradient(linear,left top,left bottom,from(#17AFE8),to(#0D7DFF));
+	text-shadow:0 2px 2px rgba(0,0,0, 1);
+	background-image: -webkit-gradient(linear,left top,left bottom,from(#0DFDFF),to(#0D7DFF));
 }
-
 
 #content {
 	position:absolute; 
 	z-index:1;
-	top: 79px; 
+	top: 70px; 
 	bottom:20px;
 	left:0;
 	width:100%;
@@ -130,4 +129,35 @@ nav a:active, nav .selected {
 	z-index: 1;
 	width: 100%;
 }
+
+/*
+*	Channel list render
+*/
+
+.list li {
+	position: relative;
+}
+
+.list .logo {
+	float: left;
+	background: white;
+	border: 1px solid #aaa;
+	margin: -5px;
+	padding: 5px;
+	border-radius: 5px;
+	-moz-box-shadow: 2px 2px 1px #888;
+	-webkit-box-shadow: 2px 2px 1px #888;
+	box-shadow: 2px 2px 1px #888;
+}
+
+.list h2, .list p {
+	margin-left: 60px;
+}
+
+.list date {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+}
+
 /*} --- End iPhone  ---*/

@@ -54,12 +54,14 @@ function(TopBookingsView, AllChannelsView, NowAndNextView) {
 				return;
 			}
 
-			// Otherwise emulate server response
-			setTimeout(function() {
-				// Create the requested view
-				wo.views[namespace] = new View();
-			}, 1500);
-
+			// Create the requested view
+			wo.views[namespace] = new View();
+			wo.views[namespace].bind('view-created', function(){
+				// When a new view is loaded, distroy existing scroll object
+				if (wo.scroll) { wo.scroll.destroy() } 
+				// Then create a new scroll to calculate every detail again
+				wo.scroll = new iScroll('content');
+			});
 		}
 
 	});

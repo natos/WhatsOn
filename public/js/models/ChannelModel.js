@@ -15,7 +15,7 @@ define([
 				id: 'no-id'
 			,	name: 'no-name'
 			,	description: 'no-description'
-			,	logoIMG: 'no-image'
+			,	logoIMG: '/no-image'
 			,	position: 'no-position'
 			,	broadcastFormat: 'no-broadcastformat'
 			,	apiChannelGroupId: 'no-apichannelgroupid'

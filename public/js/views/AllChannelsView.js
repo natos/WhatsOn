@@ -2,14 +2,11 @@
 
 define([
 
-	'models/ChannelModel',
-	'collections/AllChannelsCollection',
 	'sources/AllChannelsSource',
 	'templates/AllChannelsTemplate'
-
 ],
 
-function(ChannelModel, Collection, Source, template) {
+function(Source, template) {
 
 	return Backbone.View.extend({
 
@@ -21,36 +18,16 @@ function(ChannelModel, Collection, Source, template) {
 
 		initialize: function() {
 
-			this.collection = new Collection();
+			Source.getChannelCollection();
 
-			$.when( Source.getData() )
-			 .then( $.proxy( this.iterate , this ) );
+			wo.events.bind('get-channel-collection', this.load, this);
 
+			this.trigger('view-initialized', this);
 		},
 
-		iterate: function( response ) {
+		load: function( collection ) {
 
-			var self = this;
-
-			$(response).each(function(i, arr) {
-				$(arr).each(function(e, item) {
-					self.collection.add(new ChannelModel({
-						id: item.id
-					,	name: item.name
-					,	description: item.description
-					,	logoIMG: item.logoIMG
-					,	position: item.position
-					,	broadcastFormat: item.broadcastFormat
-					,	apiChannelGroupId: item.apiChannelGroupId
-					})); // new channel
-				});
-			});
-
-			this.load();
-
-		},
-
-		load: function() {
+			this.collection = collection || this.collection;
 
 			this.el.html( this.template( this.collection ) );
 
@@ -64,7 +41,7 @@ function(ChannelModel, Collection, Source, template) {
 
 			this.btn.addClass('selected');
 
-			this.el.trigger('view-loaded');
+			this.trigger('view-loaded');
 
 		},
 
@@ -73,7 +50,9 @@ function(ChannelModel, Collection, Source, template) {
 			this.btn.removeClass('selected');
 
 			this.el.html( '' );
-		
+
+			this.trigger('view-unloaded', this);
+
 		}
 
 	});

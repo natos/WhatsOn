@@ -3,7 +3,7 @@
 define([], function(){
 
 var t = '<div id="topbookings" class="view">'
-	+ '<ul class="list">'
+	+ '<ul class="toplist">'
 	+ '<% _.each(models, function( item ){ %>'
 	+ '<li>'
 	+ '<h2><%= item.get("title") %></h2>'

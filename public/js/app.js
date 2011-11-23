@@ -14,18 +14,22 @@ function(AppRouter) {
 	var app = {
 
 		initialize: function() {
-			
+
+			setTimeout( function() { window.scrollTo(0,1) } , 100);
+
+			// Global event dispatcher/handler initialization
+			wo.events = _.extend({}, Backbone.Events);
+			// Test bindings
+			wo.events.bind('view-initialized', function(event){
+				console.log('view-initialized event cached')
+			});
+
 			// Router initialization
 			wo.router = new AppRouter();
-			
-			// All content is displayed on #conten, so any time we load something new
-			// we need to recalculate the scrolling properties
-			$(window).bind('view-loaded', function(event){
-				// When a new view is loaded, distroy existing scroll object
-				if (wo.scroll) { wo.scroll.destroy() } 
-				// Then create a new scroll to calculate every detail again
-				wo.scroll = new iScroll('content');
-			});
+			// Navigate to Now And Next by default
+			if ( !(/#/).test(window.location.toString()) ) {
+				wo.router.navigate('nowandnext');
+			}
 
 			// Initializate history managment
 			Backbone.emulateHTTP = true;

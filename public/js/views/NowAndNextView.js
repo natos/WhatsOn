@@ -2,15 +2,12 @@
 
 define([
 
-	'models/NowAndNextModel',
-	'collections/NowAndNextCollection',
 	'sources/NowAndNextSource',
-	'templates/NowAndNextTemplate',
+	'templates/NowAndNextTemplate'
 
-	'js/utils/prettyDate.js'
 ],
 
-function(Model, Collection, Source, template) {
+function(Source, template) {
 
 	return Backbone.View.extend({
 
@@ -22,44 +19,23 @@ function(Model, Collection, Source, template) {
 
 		initialize: function() {
 
-			this.collection = new Collection();
-
-			$.when( Source.getData() )
-			 .then( $.proxy( this.iterate , this ) );
-
-		},
-
-		iterate: function( response ) {
-
 			var self = this;
 
-			$(response).each(function(i, arr) {
-				$(arr).each(function(e, item) {
-					self.collection.add(new Model({
-							'start': prettyDate(item.startDateTime)
-						,	'programme': {
-								'title': item.programme.title
-							,	'shortDescription': item.programme.shortDescription
-							}
-						,	'channel': {
-								'name': item.channel.name
-							,	'logoIMG': item.channel.logoIMG
-							,	'url': item.channel.url
-							}
-						,	'url': item.url
-						})); // new item
-				});
-			});
+			this.collection = Source.getNowAndNextCollection();
 
-			self.load();
+			wo.events.bind('get-nowandnext-collection', this.load, this);
+
+			this.trigger('view-initialized', this);
 
 		},
 
-		load: function() {
+		load: function( collection ) {
+
+			this.collection = collection || this.collection;
 
 			this.el.html( this.template( this.collection ) );
 
-			this.trigger('view-created');
+			this.trigger('view-created', this);
 
 			this.select();
 
@@ -69,7 +45,7 @@ function(Model, Collection, Source, template) {
 
 			this.btn.addClass('selected');
 
-			this.el.trigger('view-loaded');
+			this.el.trigger('view-loaded', this);
 
 		},
 
@@ -78,6 +54,8 @@ function(Model, Collection, Source, template) {
 			this.btn.removeClass('selected');
 
 			this.el.html( '' );
+
+			this.el.trigger('view-unloaded', this);
 
 		}
 
