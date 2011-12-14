@@ -77,12 +77,6 @@ app.configure('production', function(){
  * Routing.
  */
 
-// index
-app.get('/', function(req, res) {
-	res.render('index.html');
-});
-
-
 /**
  * app start
  */
@@ -179,4 +173,10 @@ app.get('/home', function(request, response) {
     response.redirect('/');
 
   }
+});
+
+
+// index
+app.get('/', function(req, res) {
+	res.render('index.html');
 });
