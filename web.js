@@ -1,12 +1,17 @@
 require.paths.unshift(__dirname + '/lib');
 
-var everyauth = require('everyauth');
-var express   = require('express');
+/**
+ * module dependencies.
+ */
+var fs = require('fs')
+,	util   = require('util')
+,	express = require('express')
+,	everyauth = require('everyauth')
+,	uuid = require('node-uuid')
+,	FacebookClient = require('facebook-client').FacebookClient;
+,	port = process.env.PORT || 3000;
 
-var FacebookClient = require('facebook-client').FacebookClient;
 var facebook = new FacebookClient();
-
-var uuid = require('node-uuid');
 
 // configure facebook authentication
 everyauth.facebook
@@ -19,29 +24,75 @@ everyauth.facebook
     return({});
   })
 
-// create an express webserver
+/**
+ * app configuration.
+ */
 var app = express.createServer(
-  express.logger(),
-  express.static(__dirname + '/public'),
-  express.cookieParser(),
-  // set this to a secret value to encrypt session cookies
-  express.session({ secret: process.env.SESSION_SECRET || 'secret123' }),
-  // insert a middleware to set the facebook redirect hostname to http/https dynamically
-  function(request, response, next) {
-    var method = request.headers['x-forwarded-proto'] || 'http';
-    everyauth.facebook.myHostname(method + '://' + request.headers.host);
-    next();
-  },
-  everyauth.middleware(),
-  require('facebook').Facebook()
+	express.logger(),
+	express.static(__dirname + '/public'),
+	express.cookieParser(),
+	// set this to a secret value to encrypt session cookies
+	express.session({ secret: process.env.SESSION_SECRET || '47a04d4b4c794097717593854b7a4e36' }),
+	// insert a middleware to set the facebook redirect hostname to http/https dynamically
+	function(request, response, next) {
+		var method = request.headers['x-forwarded-proto'] || 'http';
+		everyauth.facebook.myHostname(method + '://' + request.headers.host);
+		next();
+	},
+	everyauth.middleware(),
+	require('facebook').Facebook()
 );
 
-// listen to the PORT given to us in the environment
-var port = process.env.PORT || 3000;
+app.configure(function(){
 
-app.listen(port, function() {
-  console.log("Listening on " + port);
+	app.use(express.bodyParser());
+	app.use(express.methodOverride());
+	app.use(app.router);
+	app.use(express.static(__dirname + '/public'));
+
+	app.set('views', __dirname + '/views');
+
+	// disable layout
+	app.set("view options", { layout: false });
+
+	// make a custom html template
+	app.register('.html', {
+		compile: function(str, options) {
+		return function(locals) {
+			return str;
+		};
+	}
+	});
 });
+
+app.configure('development', function(){
+	app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
+});
+
+app.configure('production', function(){
+	app.use(express.errorHandler()); 
+});
+
+/**
+ * Routing.
+ */
+
+// index
+app.get('/', function(req, res) {
+	res.render('index.html');
+});
+
+
+/**
+ * app start
+ */
+app.listen(port, function() {
+	/**
+	 * log
+	 */
+	console.log("Express server listening on port %d", app.address().port);
+});
+
 
 // create a socket.io backend for sending facebook graph data
 // to the browser as we receive it
