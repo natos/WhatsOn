@@ -19,7 +19,7 @@ everyauth.facebook
   .appSecret(process.env.FACEBOOK_SECRET)
   .scope('user_likes,user_photos,user_photo_video_tags')
   .entryPath('/')
-//  .redirectPath('/home')
+  .redirectPath('/')
   .findOrCreateUser(function() {
     return({});
   })
