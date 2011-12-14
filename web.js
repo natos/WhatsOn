@@ -8,7 +8,7 @@ var fs = require('fs')
 ,	express = require('express')
 ,	everyauth = require('everyauth')
 ,	uuid = require('node-uuid')
-,	FacebookClient = require('facebook-client').FacebookClient;
+,	FacebookClient = require('facebook-client').FacebookClient
 ,	port = process.env.PORT || 3000;
 
 var facebook = new FacebookClient();
