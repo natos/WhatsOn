@@ -177,6 +177,6 @@ app.get('/home', function(request, response) {
 
 
 // index
-app.get('/index', function(req, res) {
+app.get('/', function(req, res) {
 	res.render('index.html');
 });
