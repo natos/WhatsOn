@@ -52,9 +52,7 @@ app.configure(function(){
 
 	app.set('view engine', 'jade');
 	app.set('views', __dirname + '/views');
-
-	// disable layout
-	//app.set("view options", { layout: false });
+	app.set("view options", { layout: true });
 
 	// make a custom html template
 	/*
