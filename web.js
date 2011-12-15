@@ -50,12 +50,14 @@ app.configure(function(){
 	app.use(app.router);
 	app.use(express.static(__dirname + '/public'));
 
+	app.set('view engine', 'jade');
 	app.set('views', __dirname + '/views');
 
 	// disable layout
-	app.set("view options", { layout: false });
+	//app.set("view options", { layout: false });
 
 	// make a custom html template
+	/*
 	app.register('.html', {
 		compile: function(str, options) {
 		return function(locals) {
@@ -63,6 +65,7 @@ app.configure(function(){
 		};
 	}
 	});
+	*/
 });
 
 app.configure('development', function(){
@@ -74,12 +77,9 @@ app.configure('production', function(){
 });
 
 /**
- * Routing.
- */
-
-/**
  * app start
  */
+
 app.listen(port, function() {
 	/**
 	 * log
@@ -88,6 +88,9 @@ app.listen(port, function() {
 });
 
 
+/**
+ * Socket IO.
+ */
 // create a socket.io backend for sending facebook graph data
 // to the browser as we receive it
 var io = require('socket.io').listen(app);
@@ -178,5 +181,40 @@ app.get('/home', function(request, response) {
 
 // index
 app.get('/', function(req, res) {
-	res.render('index.html');
+
+  // detect the http method uses so we can replicate it on redirects
+  var method = req.headers['x-forwarded-proto'] || 'http';
+
+  // if we have facebook auth credentials
+  if (req.session.auth) {
+
+    // initialize facebook-client with the access token to gain access
+    // to helper methods for the REST api
+    var token = req.session.auth.facebook.accessToken;
+
+    facebook.getSessionByAccessToken(token)(function(session) {
+
+		// generate a uuid for socket association
+		var socket_id = uuid();
+
+		// get information about the app itself
+		session.graphCall('/' + process.env.FACEBOOK_APP_ID)(function(app) {
+
+			res.render('index', {
+				layout:   false
+			,	token:    token
+			,	app:      app
+			,	user:     request.session.auth.facebook.user
+			,	home:     method + '://' + request.headers.host + '/'
+			,	redirect: method + '://' + request.headers.host + request.url
+			,	socket_id: socket_id
+			});
+
+		});
+	});
+
+  } else {
+    // not authenticated, redirect to / for everyauth to begin authentication
+    res.redirect('/login');
+  }
 });
