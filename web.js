@@ -180,6 +180,15 @@ app.get('/home', function(request, response) {
 // index
 app.get('/', function(req, res) {
 
+res.render('index', {
+	layout:   false
+,	app:      { title: 'Whats On!' }
+,	user:     'Natan'
+,	socket_id: 11
+});
+
+return;
+
   // detect the http method uses so we can replicate it on redirects
   var method = req.headers['x-forwarded-proto'] || 'http';
 

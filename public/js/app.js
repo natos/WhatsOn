@@ -13,14 +13,8 @@ function(AppRouter) {
 
 		initialize: function() {
 
-			setTimeout( function() { window.scrollTo(0,1) } , 100);
-
 			// Global event dispatcher/handler initialization
 			wo.events = _.extend({}, Backbone.Events);
-			// Test bindings
-			wo.events.bind('view-initialized', function(event){
-				console.log('view-initialized event cached')
-			});
 
 			// Router initialization
 			wo.router = new AppRouter();

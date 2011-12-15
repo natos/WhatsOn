@@ -2,15 +2,10 @@
 
 define([
 
-	'views/TopBookingsView',
-	'views/AllChannelsView',
-	'views/NowAndNextView',
-	'views/SpecificView',
-
-	'js/libs/iscroll.js'
+	'views/NowAndNextView'
 ],
 
-function(TopBookingsView, AllChannelsView, NowAndNextView, specificview) {
+function(NowAndNextView) {
 
 	return Backbone.Router.extend({
 		
@@ -20,28 +15,12 @@ function(TopBookingsView, AllChannelsView, NowAndNextView, specificview) {
 		// Declaring all app routes here
 		// "someview": "somehandler"
 ,		routes: {
-			"topbookings"	: "topbookings"
-		,	"allchannels"	: "allchannels"
-		,	"nowandnext"	: "nowandnext"
-		,	"specificview"	: "specificview"
-		}
-
-,		specificview: function(){
-			//this.load('specificview', specificview);
-			console.log(new specificview)
+			"nowandnext"	: "nowandnext"
 		}
 
 		// Some handlers...
 ,		nowandnext: function() {
 			this.load('nowandnext', NowAndNextView)
-		}
-
-,		allchannels: function() {
-			this.load('allchannels', AllChannelsView)
-		}
-
-,		topbookings: function() {
-			this.load('topbookings', TopBookingsView)
 		}
 
 		// Generic view loader
@@ -63,10 +42,7 @@ function(TopBookingsView, AllChannelsView, NowAndNextView, specificview) {
 			// Create the requested view
 			wo.views[namespace] = new View();
 			wo.views[namespace].bind('view-created', function(){
-				// When a new view is loaded, distroy existing scroll object
-				if (wo.scroll) { wo.scroll.destroy() } 
-				// Then create a new scroll to calculate every detail again
-				wo.scroll = new iScroll('content');
+
 			});
 		}
 
