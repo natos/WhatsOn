@@ -18,7 +18,7 @@ everyauth.facebook
   .appId(process.env.FACEBOOK_APP_ID)
   .appSecret(process.env.FACEBOOK_SECRET)
   .scope('user_likes,user_photos,user_photo_video_tags')
-  .entryPath('/')
+  .entryPath('/login')
   .redirectPath('/#nowandnext')
   .findOrCreateUser(function() {
     return({});
@@ -170,7 +170,7 @@ app.get('/home', function(request, response) {
   } else {
 
     // not authenticated, redirect to / for everyauth to begin authentication
-    response.redirect('/');
+    response.redirect('/login');
 
   }
 });
