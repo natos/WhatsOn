@@ -204,9 +204,9 @@ app.get('/', function(req, res) {
 				layout:   false
 			,	token:    token
 			,	app:      app
-			,	user:     request.session.auth.facebook.user
-			,	home:     method + '://' + request.headers.host + '/'
-			,	redirect: method + '://' + request.headers.host + request.url
+			,	user:     req.session.auth.facebook.user
+			,	home:     method + '://' + req.headers.host + '/'
+			,	redirect: method + '://' + req.headers.host + req.url
 			,	socket_id: socket_id
 			});
 
