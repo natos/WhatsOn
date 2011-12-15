@@ -1,5 +1,5 @@
 {
-	"name":        "UPC Whats On!"
+	"name":        "WhatsOn!"
 ,	"version":     "0.0.1"
 ,	"description": "UPC shows whats on tv now and next"
 ,	"dependencies": {
