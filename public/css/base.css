@@ -77,8 +77,8 @@ footer {
 	right: 10px;
 	border: 1px solid transparent;
 	border-radius: 5px;
-	margin: 5px;
-	padding: 5px;
+	margin: 0;
+	padding: 10px;
 	background: #fff;
 	-webkit-transition: all ease-in .2s;
 	opacity: .2;
