@@ -39,26 +39,6 @@ footer {
 	text-align: center
 }
 
-nav {
-
-}
-
-#content {
-
-}
-
-#content li {
-
-}
-
-#content li:hover {
-
-}
-
-#content li h2 {
-
-}
-
 /*
 *	Channel list render
 */
@@ -100,7 +80,8 @@ nav {
 	font-size: 1.4em;
 }
 
-.list h2, .list p {
+.list h2, 
+.list date {
 	margin-left: 60px;
 }
 
