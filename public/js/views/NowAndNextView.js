@@ -33,7 +33,10 @@ function(Source, template) {
 
 			this.collection = collection || this.collection;
 
-			this.el.html( this.template( this.collection ) );
+			this.el
+				.html( this.template( this.collection ) );
+				.find('.list li')
+					.click(this.listItemClickHandler);
 
 			this.trigger('view-created', this);
 
@@ -47,6 +50,10 @@ function(Source, template) {
 
 			this.el.trigger('view-unloaded', this);
 
+		}
+
+,		listItemClickHandler: function(event) {
+			console.log(this);
 		}
 
 	});
