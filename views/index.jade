@@ -12,14 +12,15 @@ html
 		meta(property='fb:app_id', content='#{app.id}')
 
 		// CSS
-		link(rel="stylesheet", href="css/whatson.css")
+		link(rel="stylesheet", href="css/screen.css")
+
 		// JS
 		script(src='js/libs/jquery/jquery.js')
 		script(src='js/libs/backbone/underscore.js')
 		script(src='js/libs/backbone/backbone.js')
 		script(src='js/libs/require/require.js', data-main='js/main')
 		script
-			var socket_id = #{socket_id};
+			var socket_id = '#{socket_id}';
 
 	body
 
@@ -32,10 +33,7 @@ html
 			ul
 				li
 					a(href='#nowandnext') Now and Next
-				li
-					a(href='#topbookings') Top Bookings
-				li
-					a(href='#allchannels') All Channels
+
 
 		section#content
 

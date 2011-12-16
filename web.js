@@ -52,7 +52,7 @@ app.configure(function(){
 
 	app.set('view engine', 'jade');
 	app.set('views', __dirname + '/views');
-	app.set("view options", { layout: true });
+	app.set("view options", { layout: false });
 
 	// make a custom html template
 	/*
@@ -102,6 +102,11 @@ io.configure(function () {
   io.set("transports", ["xhr-polling"]);
   io.set("polling duration", 10);
 });
+
+
+/**
+ * Routing
+ */
 
 // respond to GET /home
 app.get('/home', function(request, response) {
@@ -177,51 +182,66 @@ app.get('/home', function(request, response) {
 });
 
 
+/*
+
+All your watch actions
+
+curl 'https://graph.facebook.com/me/video.watches?access_token=AAACLcMgBBscBAL1Y4ZBUaiChpKO39SRQBtDaSZAafJLKVgaSZC0M9bAd2vLFN2ZCDD1du0lcUe8I83yTC3V66zxKLlviKtJLEeTyHZC7StQZDZD'
+
+Add a watch
+
+curl -F 'access_token=AAACLcMgBBscBAL1Y4ZBUaiChpKO39SRQBtDaSZAafJLKVgaSZC0M9bAd2vLFN2ZCDD1du0lcUe8I83yTC3V66zxKLlviKtJLEeTyHZC7StQZDZD' \
+     -F 'movie=http://example.com' \
+        'https://graph.facebook.com/me/video.watches'
+*/
+
+
 // index
 app.get('/', function(req, res) {
 
-res.render('index', {
-	layout:   false
-,	app:      { title: 'Whats On!' }
-,	user:     'Natan'
-,	socket_id: 11
-});
+	// generate a uuid for socket association
+	var socket_id = uuid();
 
-return;
+	var meta = {
+		app:      { title: 'Whats On!', id: process.env.FACEBOOK_APP_ID }
+	,	socket_id: socket_id
+	}
 
-  // detect the http method uses so we can replicate it on redirects
-  var method = req.headers['x-forwarded-proto'] || 'http';
+	// detect the http method uses so we can replicate it on redirects
+	var method = req.headers['x-forwarded-proto'] || 'http';
 
-  // if we have facebook auth credentials
-  if (req.session.auth) {
+	// if we have facebook auth credentials
+	if (req.session.auth) {
 
-    // initialize facebook-client with the access token to gain access
-    // to helper methods for the REST api
-    var token = req.session.auth.facebook.accessToken;
+		// initialize facebook-client with the access token to gain access
+		// to helper methods for the REST api
+		var token = req.session.auth.facebook.accessToken;
 
-    facebook.getSessionByAccessToken(token)(function(session) {
+		facebook.getSessionByAccessToken(token)(function(session) {
 
-		// generate a uuid for socket association
-		var socket_id = uuid();
+			// get information about the app itself
+			session.graphCall('/' + process.env.FACEBOOK_APP_ID)(function(app) {
 
-		// get information about the app itself
-		session.graphCall('/' + process.env.FACEBOOK_APP_ID)(function(app) {
+				meta = {
+					layout:   false
+				,	token:    token
+				,	app:      app
+				,	user:     req.session.auth.facebook.user
+				,	home:     method + '://' + req.headers.host + '/'
+				,	redirect: method + '://' + req.headers.host + req.url
+				,	socket_id: socket_id
+				};
 
-			res.render('index', {
-				layout:   false
-			,	token:    token
-			,	app:      app
-			,	user:     req.session.auth.facebook.user
-			,	home:     method + '://' + req.headers.host + '/'
-			,	redirect: method + '://' + req.headers.host + req.url
-			,	socket_id: socket_id
 			});
-
 		});
-	});
 
-  } else {
+	} else {
     // not authenticated, redirect to / for everyauth to begin authentication
-    res.redirect('/login');
-  }
+    //res.redirect('/login');
+	}
+
+
+	res.render('index', meta);
+
+
 });

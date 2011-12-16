@@ -23,6 +23,10 @@ function(Source, template) {
 
 			this.collection = Source.getNowAndNextCollection();
 
+			_.sortBy(this.collection, function(item){
+				return item.start;
+			});
+
 			wo.events.bind('get-nowandnext-collection', this.load, this);
 
 			this.trigger('view-initialized', this);
