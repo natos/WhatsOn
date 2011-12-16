@@ -89,17 +89,19 @@ footer {
 	position: absolute;
 	top: 10px;
 	right: 10px;
-	border: 1px solid #CCC;
+	border: 1px solid transparent;
 	border-radius: 5px;
 	margin: 5px;
 	padding: 5px;
-	background: #EEE;
+	background: #fff;
 	-webkit-transition: all ease-in .2s;
 	opacity: .2;
 }
 
 .list li:hover .controls {
 	opacity: 1;
+	background: #ccc;
+	border: 1px solid #ccc;
 }
 
 /* ------------------------------------------ */
