@@ -222,7 +222,7 @@ app.get('/', function(req, res) {
 			// get information about the app itself
 			session.graphCall('/' + process.env.FACEBOOK_APP_ID)(function(app) {
 
-				meta = {
+				res.render('index', {
 					layout:   false
 				,	token:    token
 				,	app:      app
@@ -230,18 +230,14 @@ app.get('/', function(req, res) {
 				,	home:     method + '://' + req.headers.host + '/'
 				,	redirect: method + '://' + req.headers.host + req.url
 				,	socket_id: socket_id
-				};
+				});
 
 			});
 		});
 
 	} else {
-    // not authenticated, redirect to / for everyauth to begin authentication
-    //res.redirect('/login');
+    	// not authenticated, redirect to / for everyauth to begin authentication
+    	res.redirect('/login');
 	}
-
-
-	res.render('index', meta);
-
 
 });
