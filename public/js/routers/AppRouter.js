@@ -16,7 +16,7 @@ function(NowAndNextView, FriendsUsingView) {
 		}
 
 		// To know which view is the current
-		current: undefined
+,		current: undefined
 
 		// Declaring all app routes here
 		// "someview": "somehandler"
