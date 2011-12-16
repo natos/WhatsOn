@@ -53,17 +53,19 @@ function(Source, template) {
 
 			var action = event.target.className;
 
+			var show = this.getShowData(event);
+
 			switch (action) {
 
 				case 'btn-share':
 
 					FB.ui({
 					    method		: 'feed'
-					,   name		: 'Whats On!'
+					,   name		: show.title
 					,   link		: 'http://upcwhatson.herokuapp.com/'
-					,   picture		: appdata.image
-					,   caption		: 'See whats on tv now and next!'
-					,   description	: 'Want to know whats on tv right now? This is your App, UPC Whats On!.'
+					,   picture		: show.image
+					,   caption		: 'See it on ' + show.channel + ' started ' + show.date
+					,   description	: show.description
 					},
 					function(response) {
 						if (response && response.post_id) {
@@ -81,6 +83,20 @@ function(Source, template) {
 			}
 
 		}
+
+,		getShowData: function(event) {
+
+			var li = $(event.target).parents('li');
+			var show = {
+				date		: li.find('date').html()
+			,	image		: li.find('img').attr('src')
+			,	channel		: li.find('img').attr('alt')
+			,	title		: li.find('h2').html()
+			,	description : li.find('p').html()
+			};
+
+			return show;
+		} 
 
 	});
 
