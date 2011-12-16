@@ -27,9 +27,9 @@ function(template) {
 ,		load: function() {
 
 			this.el.html( this.template() );
-console.log(wo)
+
 			// when a friend is received from the backend, add it to the page
-			wo.socket.on('friend-using-app', function(friend) {
+			wo.events.on('friend-using-app', function(friend) {
 				$('#friends-using-app ul').append('                                                       \
 					<li>                                                                                  \
 						<a href="http://www.facebook.com/' + friend.uid + '" title="' + friend.name + '"> \
@@ -39,7 +39,7 @@ console.log(wo)
           		');
 			});
 
-			wo.socket.emit('friend-using-app');
+			wo.events.emit('friend-using-app');
 
 			this.trigger('view-created', this);
 
