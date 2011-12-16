@@ -34,7 +34,7 @@ function(Source, template) {
 			this.collection = collection || this.collection;
 
 			this.el
-				.html( this.template( this.collection ) );
+				.html( this.template( this.collection ) )
 				.find('.list li')
 					.click(this.listItemClickHandler);
 
