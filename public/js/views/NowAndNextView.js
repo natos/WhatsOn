@@ -61,7 +61,7 @@ function(Source, template) {
 					    method		: 'feed'
 					,   name		: 'Whats On!'
 					,   link		: 'http://upcwhatson.herokuapp.com/'
-					,   picture		: app.data.image
+					,   picture		: appdata.image
 					,   caption		: 'See whats on tv now and next!'
 					,   description	: 'Want to know whats on tv right now? This is your App, UPC Whats On!.'
 					},
