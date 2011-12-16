@@ -11,29 +11,25 @@ function(Source, template) {
 
 	return Backbone.View.extend({
 
-		el: $('#content'),
+		el: $('#content')
 
-		btn: $('a[href=#nowandnext]'),
+,		btn: $('a[href=#nowandnext]')
 
-		template: _.template( template ),
+,		template: _.template( template )
 
-		initialize: function() {
+,		initialize: function() {
 
 			var self = this;
 
 			this.collection = Source.getNowAndNextCollection();
 
-			_.sortBy(this.collection, function(item){
-				return item.start;
-			});
-
 			wo.events.bind('get-nowandnext-collection', this.load, this);
 
 			this.trigger('view-initialized', this);
 
-		},
+		}
 
-		load: function( collection ) {
+,		load: function( collection ) {
 
 			this.collection = collection || this.collection;
 
@@ -41,19 +37,9 @@ function(Source, template) {
 
 			this.trigger('view-created', this);
 
-			this.select();
+		}
 
-		},
-
-		select: function() {
-
-			this.btn.addClass('selected');
-
-			this.el.trigger('view-loaded', this);
-
-		},
-
-		unload: function() {
+,		unload: function() {
 
 			this.btn.removeClass('selected');
 
@@ -64,7 +50,5 @@ function(Source, template) {
 		}
 
 	});
-
-
 
 }); // define
