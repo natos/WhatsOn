@@ -64,12 +64,12 @@ footer {
 	margin-right: 10px;
 	padding: 5px;
 	border: 1px solid transparent;
+	border-radius: 5px;
 }
 
 .list li:hover .logo {
 	border: 1px solid #aaa;
 	background: white;
-	border-radius: 5px;
 	-moz-box-shadow: 2px 2px 1px #888;
 	-webkit-box-shadow: 2px 2px 1px #888;
 	box-shadow: 2px 2px 1px #888;
@@ -82,6 +82,15 @@ footer {
 
 .list date {
 
+}
+
+#controls {
+	border: 1px solid #CCC;
+	border-radius: 5px;
+	margin: 5px;
+	padding: 5px;
+	background: #EEE;
+	display: inline-block;
 }
 
 /* ------------------------------------------ */

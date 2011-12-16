@@ -54,7 +54,7 @@ function(Source, template) {
 
 ,		listItemClickHandler: function(event) {
 
-			$('#control').remove();
+			$('#controls').remove();
 
 			var control = $('<div id="controls"></div>');
 			var btnShare = $('<button>Share</button>');
