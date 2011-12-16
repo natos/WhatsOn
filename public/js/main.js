@@ -11,6 +11,7 @@ require([
 	'app'
 
 ,	'js/libs/backbone/backbone.js'
+,	'js/libs/socket.io/socket.io.js'
 
 ], 
 function(App){
