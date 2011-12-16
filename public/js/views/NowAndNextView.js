@@ -13,8 +13,6 @@ function(Source, template) {
 
 		el: $('#content')
 
-,		btn: $('a[href=#nowandnext]')
-
 ,		template: _.template( template )
 
 ,		initialize: function() {

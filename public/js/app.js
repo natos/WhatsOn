@@ -29,7 +29,6 @@ function(AppRouter) {
 				wo.socket.emit('auth', socket_id);
 			});
 
-
 			// Initializate history managment
 			Backbone.emulateHTTP = true;
 			Backbone.emulateJSON = true;

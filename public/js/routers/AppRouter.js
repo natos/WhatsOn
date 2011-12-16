@@ -3,12 +3,18 @@
 define([
 
 	'views/NowAndNextView'
+,	'views/FriendsUsingView'
+
 ],
 
-function(NowAndNextView) {
+function(NowAndNextView, FriendsUsingView) {
 
 	return Backbone.Router.extend({
-		
+
+		initialize: function() {
+			wo.views['FriendsUsing'] = new FriendsUsingView();
+		}
+
 		// To know which view is the current
 		current: undefined
 
