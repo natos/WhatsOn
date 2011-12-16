@@ -71,31 +71,26 @@ footer {
 	border-radius: 5px;
 }
 
+.list li:hover .logo {
+	border: 1px solid #aaa;
+	background: white;
+	-moz-box-shadow: 2px 2px 1px #888;
+	-webkit-box-shadow: 2px 2px 1px #888;
+	box-shadow: 2px 2px 1px #888;
+}
+
 .list .controls {
 	position: absolute;
 	top: 10px;
 	right: 10px;
-	border: 1px solid transparent;
-	border-radius: 5px;
 	margin: 0;
 	padding: 10px;
-	background: #fff;
 	-webkit-transition: all ease-in .2s;
 	opacity: .2;
 }
 
 .list li:hover .controls {
 	opacity: 1;
-	background: #ccc;
-	border: 1px solid #ccc;
-}
-
-.list li:hover .logo, .list li:hover .controls {
-	border: 1px solid #aaa;
-	background: white;
-	-moz-box-shadow: 2px 2px 1px #888;
-	-webkit-box-shadow: 2px 2px 1px #888;
-	box-shadow: 2px 2px 1px #888;
 }
 
 .list h2 {
