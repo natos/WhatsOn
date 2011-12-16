@@ -33,7 +33,7 @@ function(Source, template) {
 
 			this.el.html( this.template( this.collection ) );
 
-			this.el.click( this.clickHandler );
+			this.el.find('button').click( this.clickHandler );
 
 			this.trigger('view-created', this);
 
