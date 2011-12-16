@@ -16,6 +16,11 @@ html
 		script(src='js/libs/require/require.js', data-main='js/main')
 		script
 			var socket_id = '#{socket_id}';
+			var appdata = {
+			 	id		: #{app.id}
+			,	image	: http://upcwhatson.herokuapp.com/images/upclogo.jpg
+			,	name	: #{app.name}
+			}
 	
 		// OG
 		meta(property='og:title', content='#{app.name}')

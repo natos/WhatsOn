@@ -56,23 +56,23 @@ function(Source, template) {
 			switch (action) {
 
 				case 'btn-share':
-FB.ui(
-  {
-    method: 'feed',
-    name: 'Facebook Dialogs',
-    link: 'https://developers.facebook.com/docs/reference/dialogs/',
-    picture: 'http://fbrell.com/f8.jpg',
-    caption: 'Reference Documentation',
-    description: 'Dialogs provide a simple, consistent interface for applications to interface with users.'
-  },
-  function(response) {
-    if (response && response.post_id) {
-//      alert('Post was published.');
-    } else {
-//      alert('Post was not published.');
-    }
-  }
-);
+
+					FB.ui({
+					    method		: 'feed'
+					,   name		: 'Whats On!'
+					,   link		: 'http://upcwhatson.herokuapp.com/'
+					,   picture		: app.data.image
+					,   caption		: 'See whats on tv now and next!'
+					,   description	: 'Want to know whats on tv right now? This is your App, UPC Whats On!.'
+					},
+					function(response) {
+						if (response && response.post_id) {
+						//      alert('Post was published.');
+						} else {
+						//      alert('Post was not published.');
+						}
+					});
+
 					break;
 
 				case 'btn-checkin':
