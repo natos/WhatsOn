@@ -221,7 +221,7 @@ app.get('/', function(req, res) {
 
 			// get information about the app itself
 			session.graphCall('/' + process.env.FACEBOOK_APP_ID)(function(app) {
-
+console.log(req.session.auth.facebook.user)
 				res.render('index', {
 					layout:   false
 				,	token:    token
