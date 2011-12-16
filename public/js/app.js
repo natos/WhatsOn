@@ -22,31 +22,18 @@ function(AppRouter) {
 			if ( !(/#/).test(window.location.toString()) ) {
 				wo.router.navigate('nowandnext');
 			}
+			// Socket.io connection to the backend
+			wo.socket = io.connect();
+			wo.socket.on('connect', function() {
+				// identify this socket with our auth token
+				wo.socket.emit('auth', socket_id);
+			});
+
 
 			// Initializate history managment
 			Backbone.emulateHTTP = true;
 			Backbone.emulateJSON = true;
 			Backbone.history.start();
-
-			// open a socket.io connection to the backend
-			var socket = io.connect();
-
-			socket.on('connect', function() {
-
-				// identify this socket with our auth token
-				socket.emit('auth', socket_id);
-
-				// when a friend is received from the backend, add it to the page
-				socket.on('friend-using-app', function(friend) {
-					$('#friends-using-app ul').append('                                                   \
-					<li>                                                                                  \
-						<a href="http://www.facebook.com/' + friend.uid + '" title="' + friend.name + '"> \
-							<img src="' + friend.pic_square + '" alt="' + friend.name + '">               \
-						</a>                                                                              \
-					</li>                                                                                 \
-          			');
-		        });
-			});
 
 			return this;
 
