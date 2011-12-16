@@ -38,12 +38,12 @@ function(AppRouter) {
 
 				// when a friend is received from the backend, add it to the page
 				socket.on('friend-using-app', function(friend) {
-					$('#friends-using-app ul').append('                                                    \
-					<li>                                                                                \
-						<a href="" onclick="window.open(\'http://www.facebook.com/' + friend.uid + '\');"> \
-						<img src="' + friend.pic_square + '" alt="' + friend.name + '">                 \
+					$('#friends-using-app ul').append('                                                   \
+					<li>                                                                                  \
+						<a href="http://www.facebook.com/' + friend.uid + '" title="' + friend.name + '"> \
+							<img src="' + friend.pic_square + '" alt="' + friend.name + '">               \
 						</a>                                                                              \
-					</li>                                                                               \
+					</li>                                                                                 \
           			');
 		        });
 			});
