@@ -9,8 +9,6 @@
 --------------------------------------------- */
 
 body {
-	-webkit-user-select:none;
-	-webkit-text-size-adjust:none;
 	font-family:Helvetica, Arial, Verdana, sans-serif;
 	font-size: 15px;
 }
@@ -42,6 +40,11 @@ footer {
 /*
 *	Channel list render
 */
+
+.list {
+	-webkit-user-select:none;
+	-webkit-text-size-adjust:none;
+}
 
 .list li, .logo {
 	-webkit-transition: all ease-in .2s;
