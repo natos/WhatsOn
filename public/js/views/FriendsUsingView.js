@@ -6,7 +6,7 @@ define([
 
 ],
 
-function(Source, template) {
+function(template) {
 
 	return Backbone.View.extend({
 
