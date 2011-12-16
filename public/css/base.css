@@ -63,11 +63,16 @@ nav {
 *	Channel list render
 */
 
+.list li, .logo {
+	-webkit-transition: all ease-in 1s;
+}
+
 .list li {
 	position: relative;
 	padding: 15px;
 	cursor: pointer;
 	border: 1px #ccc solid;
+	-webkit-transition: all ease-in 1s;
 }
 
 .list li:hover {
