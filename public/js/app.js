@@ -34,7 +34,7 @@ function(AppRouter) {
 			socket.on('connect', function() {
 
 				// identify this socket with our auth token
-				socket.emit('auth', '<%= socket_id %>');
+				socket.emit('auth', socket_id);
 
 				// when a friend is received from the backend, add it to the page
 				socket.on('friend_using_app', function(friend) {
