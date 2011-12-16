@@ -47,6 +47,7 @@ function(AppRouter) {
 					</li>                                                                               \
           			');
 		        });
+			});
 
 			return this;
 
