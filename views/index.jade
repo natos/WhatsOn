@@ -3,13 +3,9 @@ html
 	head
 		title #{app.title}
 
-		<!-- OG -->
-		meta(property='og:title', content='#{app.title}')
-		meta(property='og:type', content='app')
-		meta(property='og:url', content='http://upcwhatson.herokuapp.com/')
-		meta(property='og:image', content='http://upcwhatson.herokuapp.com/images/upclogo.jpg')
-		meta(property='og:site_name', content='#{app.title}')
-		meta(property='fb:app_id', content='#{app.id}')
+		// ICO
+		link(rel="icon", type="image/gif", href="#{app.icon_url}")
+
 
 		// CSS
 		link(rel="stylesheet", href="css/screen.css")
@@ -21,17 +17,22 @@ html
 		script(src='js/libs/require/require.js', data-main='js/main')
 		script
 			var socket_id = '#{socket_id}';
+	
+		// OG
+		meta(property='og:title', content='#{app.name}')
+		meta(property='og:type', content='app')
+		meta(property='og:url', content='http://upcwhatson.herokuapp.com/')
+		meta(property='og:image', content='http://upcwhatson.herokuapp.com/images/upclogo.jpg')
+		meta(property='og:site_name', content='#{app.name}')
+		meta(property='fb:app_id', content='#{app.id}')
 
 	body
-
-		- for (var key in app)
-			p= key 
-			p= app[key]
 
 		#fb-root
 
 		header
-			h1 #{app.title}
+			img(src="#{app.logo_img}")
+			h1 #{app.name}
 
 		nav
 			ul
