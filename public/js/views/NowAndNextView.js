@@ -92,7 +92,23 @@ function(Source, template) {
 					break;
 
 				case 'btn-checkin':
-					wo.socket.emit('checkin');
+
+					FB.ui({
+					    method		: 'feed'
+					,   name		: 'Checking in ' + show.title
+					,   link		: 'http://upcwhatson.herokuapp.com/'
+					,   picture		: show.image
+					,   caption		: 'See it on ' + show.channel + ' started ' + show.date
+					,   description	: show.description
+					},
+					function(response) {
+						if (response && response.post_id) {
+						//      alert('Post was published.');
+						} else {
+						//      alert('Post was not published.');
+						}
+					});
+
 					break;					
 			}
 
