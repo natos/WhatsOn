@@ -9,6 +9,7 @@
 --------------------------------------------- */
 
 body {
+	color: #333;
 	font-family:Helvetica, Arial, Verdana, sans-serif;
 	font-size: 15px;
 }
@@ -43,6 +44,10 @@ footer {
 	right: 10px;
 }
 
+#friends-using-app li {
+	float: left;
+}
+
 /*
 *	Channel list render
 */
@@ -67,6 +72,7 @@ footer {
 .list li:hover {
 	border: 1px #aaa solid;
 	background-color: #AEECFF;
+	color: #000;
 }
 
 .list .logo {
