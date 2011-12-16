@@ -33,10 +33,7 @@ function(Source, template) {
 
 			this.collection = collection || this.collection;
 
-			this.el
-				.html( this.template( this.collection ) )
-				.find('.list li')
-					.click(this.listItemClickHandler);
+			this.el.html( this.template( this.collection ) );
 
 			this.trigger('view-created', this);
 

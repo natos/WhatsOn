@@ -84,13 +84,21 @@ footer {
 
 }
 
-#controls {
+.controls {
+	position: absolute;
+	top: 10px;
+	left: 10px;
 	border: 1px solid #CCC;
 	border-radius: 5px;
 	margin: 5px;
 	padding: 5px;
 	background: #EEE;
-	display: inline-block;
+	-webkit-transition: all ease-in .2s;
+	display: none;
+}
+
+.list li:hover .controls {
+	display: block;
 }
 
 /* ------------------------------------------ */
