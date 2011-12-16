@@ -51,7 +51,7 @@ function(Source, template) {
 
 ,		clickHandler: function(event) {
 
-			var getShowData: function(event) {
+			var getShowData = function(event) {
 
 				var li = $(event.target).parents('li');
 
