@@ -67,7 +67,7 @@ function(Source, template) {
 
 			var action = event.target.className;
 
-			var show = this.getShowData(event);
+			var show = getShowData(event);
 
 			switch (action) {
 
