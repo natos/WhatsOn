@@ -224,7 +224,7 @@ app.get('/', function(req, res) {
 				format: 'json'
 			})(function(result) {
 				result.forEach(function(friend) {
-					socket_manager.send(socket_id, 'friend_using_app', friend);
+					socket_manager.send(socket_id, 'friend-using-app', friend);
 				});
 			});
 
