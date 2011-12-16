@@ -44,14 +44,14 @@ footer {
 */
 
 .list li, .logo {
-	-webkit-transition: all ease-in .3s;
+	-webkit-transition: all ease-in .2s;
 }
 
 .list li {
 	padding: 15px;
 	cursor: pointer;
 	border: 1px #ccc solid;
-	-webkit-transition: all ease-in 1s;
+	-webkit-transition: all ease-in .2s;
 }
 
 .list li:hover {
