@@ -35,7 +35,7 @@ function(Model, Collection){
 				});
 			});
 
-			wo.events.trigger('get-nowandnext-collection', collection);
+			wo.event.trigger('get-nowandnext-collection', collection);
 
 		},
 		

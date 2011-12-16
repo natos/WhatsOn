@@ -21,7 +21,7 @@ function(Source, template) {
 
 			this.collection = Source.getNowAndNextCollection();
 
-			wo.events.bind('get-nowandnext-collection', this.load, this);
+			wo.event.bind('get-nowandnext-collection', this.load, this);
 
 			this.trigger('view-initialized', this);
 
