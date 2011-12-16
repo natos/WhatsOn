@@ -52,6 +52,7 @@ footer {
 	cursor: pointer;
 	border: 1px #ccc solid;
 	-webkit-transition: all ease-in .2s;
+	position: relative;
 }
 
 .list li:hover {
