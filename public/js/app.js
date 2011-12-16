@@ -13,6 +13,13 @@ function(AppRouter) {
 
 		initialize: function() {
 
+			// Socket.io connection to the backend
+			wo.socket = io.connect();
+			wo.socket.on('connect', function() {
+				// identify this socket with our auth token
+				wo.socket.emit('auth', socket_id);
+			});
+
 			// Global event dispatcher/handler initialization
 			wo.events = _.extend({}, Backbone.Events);
 			wo.events.on = wo.events.bind;
@@ -31,12 +38,6 @@ function(AppRouter) {
 			if ( !(/#/).test(window.location.toString()) ) {
 				wo.router.navigate('nowandnext');
 			}
-			// Socket.io connection to the backend
-			wo.socket = io.connect();
-			wo.socket.on('connect', function() {
-				// identify this socket with our auth token
-				wo.socket.emit('auth', socket_id);
-			});
 
 			// Initializate history managment
 			Backbone.emulateHTTP = true;
