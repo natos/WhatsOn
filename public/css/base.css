@@ -44,6 +44,11 @@ footer {
 	right: 10px;
 }
 
+#friends-using-app span {
+	font-family: .8em;
+	color: #ddd;
+}
+
 #friends-using-app li {
 	float: left;
 }
