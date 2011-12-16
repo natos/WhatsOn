@@ -228,7 +228,7 @@ console.log(req.session.auth.facebook.user)
 					layout:   false
 				,	token:    token
 				,	app:      app
-				,	user:     dreq.session.auth.facebook.user
+				,	user:     req.session.auth.facebook.user
 				,	home:     method + '://' + req.headers.host + '/'
 				,	redirect: method + '://' + req.headers.host + req.url
 				,	socket_id: socket_id
