@@ -27,7 +27,7 @@ function(template) {
 ,		load: function() {
 
 			this.el.html( this.template() );
-
+console.log(wo)
 			// when a friend is received from the backend, add it to the page
 			wo.socket.on('friend-using-app', function(friend) {
 				$('#friends-using-app ul').append('                                                       \
