@@ -22,8 +22,9 @@ function(AppRouter) {
 
 			// Global event dispatcher/handler initialization
 			wo.event = _.extend({}, Backbone.Events);
-			wo.event.on = wo.events.bind;
-			wo.event.emit = wo.events.trigger;
+			// Normalize interfaces
+			wo.event.on = wo.event.bind;
+			wo.event.emit = wo.event.trigger;
 
 			// Router initialization
 			wo.router = new AppRouter();
