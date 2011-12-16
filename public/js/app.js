@@ -16,6 +16,7 @@ function(AppRouter) {
 			// Global event dispatcher/handler initialization
 			wo.events = _.extend({}, Backbone.Events);
 			wo.events.on = wo.events.bind;
+			wo.events.emit = wo.events.trigger;
 
 			wo.events.on('friend-using-app', function(event) {
 				wo.socket.on('friend-using-app', function(data) {
