@@ -49,9 +49,19 @@ function(Source, template) {
 
 		}
 
-,		listItemClickHandler: function(event) {
+,		clickHandler: function(event) {
 
 			console.log(event.target.className);
+			var action = event.target.className;
+
+			switch (action) {
+				case 'btn-share':
+					console.log('sharing');
+					break;
+				case 'btn-checkin':
+					console.log('checkin');
+					break;					
+			}
 
 		}
 
