@@ -221,12 +221,14 @@ app.get('/', function(req, res) {
 
 			// get information about the app itself
 			session.graphCall('/' + process.env.FACEBOOK_APP_ID)(function(app) {
+
 console.log(req.session.auth.facebook.user)
+
 				res.render('index', {
 					layout:   false
 				,	token:    token
 				,	app:      app
-				,	user:     req.session.auth.facebook.user
+				,	user:     'asdas'//dreq.session.auth.facebook.user
 				,	home:     method + '://' + req.headers.host + '/'
 				,	redirect: method + '://' + req.headers.host + req.url
 				,	socket_id: socket_id
