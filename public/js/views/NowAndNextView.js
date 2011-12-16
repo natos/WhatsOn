@@ -51,6 +51,20 @@ function(Source, template) {
 
 ,		clickHandler: function(event) {
 
+			var getShowData: function(event) {
+
+				var li = $(event.target).parents('li');
+
+				return {
+					date		: li.find('date').html()
+				,	image		: li.find('img').attr('src')
+				,	channel		: li.find('img').attr('alt')
+				,	title		: li.find('h2').html()
+				,	description : li.find('p').html()
+				};
+
+			}
+
 			var action = event.target.className;
 
 			var show = this.getShowData(event);
@@ -83,20 +97,6 @@ function(Source, template) {
 			}
 
 		}
-
-,		getShowData: function(event) {
-
-			var li = $(event.target).parents('li');
-			var show = {
-				date		: li.find('date').html()
-			,	image		: li.find('img').attr('src')
-			,	channel		: li.find('img').attr('alt')
-			,	title		: li.find('h2').html()
-			,	description : li.find('p').html()
-			};
-
-			return show;
-		} 
 
 	});
 
