@@ -64,7 +64,7 @@ nav {
 */
 
 .list li, .logo {
-	-webkit-transition: all ease-in 1s;
+	-webkit-transition: all ease-in .3s;
 }
 
 .list li {
@@ -105,9 +105,7 @@ nav {
 }
 
 .list date {
-	position: absolute;
-	top: 10px;
-	right: 10px;
+
 }
 
 /* ------------------------------------------ */
