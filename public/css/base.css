@@ -20,8 +20,13 @@ header, footer, nav {
 	padding: 5px;
 	margin: 5px;
 }
+header img { float: left }
+header h1,
+header p {
+	margin-left: 80px;
+}
 
-h1 {
+header h1 {
 	font-size: 1.8em;
 	font-weight: bold;
 	color: #333;
