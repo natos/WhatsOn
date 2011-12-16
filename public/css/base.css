@@ -48,7 +48,6 @@ footer {
 }
 
 .list li {
-	position: relative;
 	padding: 15px;
 	cursor: pointer;
 	border: 1px #ccc solid;
@@ -61,7 +60,6 @@ footer {
 }
 
 .list .logo {
-	float: left;
 	margin: -5px;
 	padding: 5px;
 	border: 1px solid transparent;
