@@ -218,6 +218,15 @@ app.get('/', function(req, res) {
 		var token = req.session.auth.facebook.accessToken;
 
 		facebook.getSessionByAccessToken(token)(function(session) {
+			// use fql to get a list of my friends that are using this app
+			session.restCall('fql.query', {
+				query: 'SELECT uid, name, is_app_user, pic_square FROM user WHERE uid in (SELECT uid2 FROM friend WHERE uid1 = me()) AND is_app_user = 1',
+				format: 'json'
+			})(function(result) {
+				result.forEach(function(friend) {
+					socket_manager.send(socket_id, 'friend_using_app', friend);
+				});
+			});
 
 			// get information about the app itself
 			session.graphCall('/' + process.env.FACEBOOK_APP_ID)(function(app) {
