@@ -21,9 +21,11 @@ html
 		script(src='js/libs/require/require.js', data-main='js/main')
 		script
 			var socket_id = '#{socket_id}';
-			console.log(#{app});
 
 	body
+
+		- for (var key in app)
+			p= app[key]
 
 		#fb-root
 
