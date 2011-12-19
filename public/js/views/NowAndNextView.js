@@ -74,7 +74,7 @@ function(Source, template) {
 				case 'btn-tell-a-friend':
 
 					FB.ui({
-						method: 'send',
+						method: 'send'
 					,   name		: show.title
 					,   link		: 'http://upcwhatson.herokuapp.com/'
 					,   picture		: show.image
