@@ -71,22 +71,15 @@ function(Source, template) {
 
 			switch (action) {
 
-				case 'btn-share':
+				case 'btn-tell-a-friend':
 
 					FB.ui({
-					    method		: 'feed'
+						method: 'send',
 					,   name		: show.title
 					,   link		: 'http://upcwhatson.herokuapp.com/'
 					,   picture		: show.image
 					,   caption		: 'See it on ' + show.channel + ' started ' + show.date
 					,   description	: show.description
-					},
-					function(response) {
-						if (response && response.post_id) {
-						//      alert('Post was published.');
-						} else {
-						//      alert('Post was not published.');
-						}
 					});
 
 					break;
@@ -100,13 +93,6 @@ function(Source, template) {
 					,   picture		: show.image
 					,   caption		: 'See it on ' + show.channel + ' started ' + show.date
 					,   description	: show.description
-					},
-					function(response) {
-						if (response && response.post_id) {
-						//      alert('Post was published.');
-						} else {
-						//      alert('Post was not published.');
-						}
 					});
 
 					break;					
