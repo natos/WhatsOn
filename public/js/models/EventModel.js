@@ -1,4 +1,4 @@
-// ProgrammeModel.js
+// EventModel.js
 
 define([
 
@@ -13,16 +13,16 @@ define([
 		defaults: function() {
 			return {
 				id: 'no-id'
-			,	title: 'no-title'
-			,	shortDescription: 'no-short-description'
-			,	channel: 'no-channel'
-			,	subcategory: {
+			,	startDateTime: 'no-start-date'
+			,	endDateTime: 'no-stop-date'
+			,	channel: {
 					id: 'no-id'
 				,	name: 'no-name'
-				,	category: {
-						id: 'no-id'
-					,	name: 'no-name'
-					}
+			}
+			,	programme: {
+					id: 'no-id'
+				,	title: 'no-title'
+				,	shortDescription: 'no-short-description'
 				}
 			}
 		}

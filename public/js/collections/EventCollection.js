@@ -1,18 +1,18 @@
-// AllChannelsCollection.js
+// EventCollection.js
 
 define([
 
 	// Dependencies
 
-	'models/ChannelModel'
+	'models/EventModel'
 
 ],
 
-function(ChannelModel) {
+function(EventModel) {
 
 	return Backbone.Collection.extend({
 
-		model: ChannelModel,
+		model: EventModel,
 
 		initialize: function() {
 

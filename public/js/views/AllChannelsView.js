@@ -10,22 +10,22 @@ function(Source, template) {
 
 	return Backbone.View.extend({
 
-		el: $('#content'),
+		el: $('#content')
 
-		btn: $('a[href=#allchannels]'),
+	,	btn: $('a[href=#allchannels]')
 
-		template: _.template( template ),
+	,	template: _.template( template )
 
-		initialize: function() {
+	,	initialize: function() {
 
 			Source.getChannelCollection();
 
 			wo.events.bind('get-channel-collection', this.load, this);
 
 			this.trigger('view-initialized', this);
-		},
+		}
 
-		load: function( collection ) {
+	,	load: function( collection ) {
 
 			this.collection = collection || this.collection;
 
@@ -35,17 +35,17 @@ function(Source, template) {
 
 			this.select();
 
-		},
+		}
 
-		select: function() {
+	,	select: function() {
 
 			this.btn.addClass('selected');
 
 			this.trigger('view-loaded');
 
-		},
+		}
 
-		unload: function() {
+	,	unload: function() {
 
 			this.btn.removeClass('selected');
 
@@ -56,7 +56,5 @@ function(Source, template) {
 		}
 
 	});
-
-
 
 }); // define

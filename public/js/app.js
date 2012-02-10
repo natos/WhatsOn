@@ -5,8 +5,6 @@ define([
 	// Dependencies
 	'routers/AppRouter',
 
-	'js/libs/backbone/backbone.js',
-	'js/libs/iscroll.js'
 ],
 
 function(AppRouter) {
@@ -28,7 +26,7 @@ function(AppRouter) {
 			wo.router = new AppRouter();
 			// Navigate to Now And Next by default
 			if ( !(/#/).test(window.location.toString()) ) {
-				wo.router.navigate('nowandnext');
+				wo.router.navigate('allchannels');
 			}
 
 			// Initializate history managment

@@ -12,19 +12,39 @@ define([
 
 		events: {},
 
-		template: _.template( $('#item-template').html() ),
+		template: _.template('<div>Template</div>'),
 
 		initialize: function() {
 
 		},
 
-		render: function( model ) {
-	
-			this.el.html( this.template( model ) );
+		load: function( collection ) {
 
-			this.el.listview('refresh');
+			this.collection = collection || this.collection;
 
-			return this;
+			this.el.html( this.template( this.collection ) );
+
+			this.trigger('view-created', this);
+
+			this.select();
+
+		},
+
+		select: function() {
+
+			this.btn.addClass('selected');
+
+			this.el.trigger('view-loaded', this);
+
+		},
+
+		unload: function() {
+
+			this.btn.removeClass('selected');
+
+			this.el.html( '' );
+
+			this.el.trigger('view-unloaded', this);
 
 		}
 

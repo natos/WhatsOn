@@ -7,11 +7,33 @@ define([
 
 function(Model, Collection){
 
+
+/**
+
+[2/9/12 5:28:32 PM] jsobanski: list of channels: tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/?order=position&batch=0
+[2/9/12 5:29:19 PM] jsobanski: http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/7J/events/NowAndNext.json
+[2/9/12 5:29:46 PM] jsobanski: http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/7J/events/NowAndNext/132806669/programme.json
+
+*/
+
 	var source = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel.json';
 
 	return {
-		
-		createCollection: function( response ) {
+
+		getData: function() {
+
+			return $.getJSON(source + '?callback=?' );
+
+		}
+
+	,	getChannelCollection: function() {
+
+			$.when( this.getData() )
+			 .then( this.createCollection );
+
+		}
+
+	,	createCollection: function( response ) {
 
 			var collection = new Collection();
 
@@ -30,19 +52,6 @@ function(Model, Collection){
 			});
 
 			wo.events.trigger('get-channel-collection', collection);
-
-		},
-
-		getData: function() {
-
-			return $.getJSON(source + '?callback=?' );
-
-		},
-
-		getChannelCollection: function() {
-
-			$.when( this.getData() )
-			 .then( this.createCollection );
 
 		}
 
