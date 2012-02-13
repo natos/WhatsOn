@@ -12,10 +12,6 @@ function(template) {
 
 		el: $('#user-control')
 
-	,	events: {
-
-		}
-
 	,	SCOPE: 'email, user_interests, user_likes, user_online_presence, friends_online_presence, publish_actions'
 
 	,	template: _.template( template )
@@ -30,10 +26,6 @@ function(template) {
 			,	cookie     : true	// enable cookies to allow the server to access the session
 			,	xfbml      : true	// parse XFBML
 			});
-			// Check Facebook login status
-			FB.getLoginStatus( this.facebookLoginStatus );
-			// Lisent for changes on Facebook login status
-			FB.Event.subscribe('auth.statusChange', this.facebookLoginStatus);
 
 			this.trigger('view-initialized', this);
 		}
@@ -41,6 +33,13 @@ function(template) {
 	,	load: function() {
 
 			this.el.html( this.template() );
+
+			this.fbbtn = this.el.find('.fb.btn');
+
+			// Check Facebook login status
+			FB.getLoginStatus( this.facebookLoginStatus );
+			// Lisent for changes on Facebook login status
+			FB.Event.subscribe('auth.statusChange', this.facebookLoginStatus);
 
 			this.trigger('view-created');
 
