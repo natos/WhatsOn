@@ -2,6 +2,7 @@
 
 define([
 
+	'templates/UserControlTemplate'
 
 ],
 
