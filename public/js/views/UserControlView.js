@@ -63,8 +63,6 @@ function() {
 
 			FB.login(function(response) {
 
-				self.facebookLoginStatus(response);
-
 			}, {scope: self.SCOPE });
 
 
@@ -75,8 +73,6 @@ function() {
 			var self = this;
 
 			FB.logout(function(response) {
-
-				self.facebookLoginStatus(response);
 
 			});
 
