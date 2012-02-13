@@ -2,19 +2,21 @@
 
 define([
 
-	'templates/UserControlTemplate'
+//	'templates/UserControlTemplate'
 
 ],
 
-function(template) {
+function() {
 
 	return Backbone.View.extend({
 
 		el: $('#user-control')
 
+	,	fbbtn: $('.fb.btn')
+
 	,	SCOPE: 'email, user_interests, user_likes, user_online_presence, friends_online_presence, publish_actions'
 
-	,	template: _.template( template )
+//	,	template: _.template( template )
 
 	,	initialize: function() {
 
@@ -34,10 +36,6 @@ function(template) {
 		}
 
 	,	load: function() {
-
-			this.el.html( this.template() );
-console.log(this.el.html());
-			this.fbbtn = this.el.find('.fb.btn');
 
 			// Check Facebook login status
 			FB.getLoginStatus( this.facebookLoginStatus );
