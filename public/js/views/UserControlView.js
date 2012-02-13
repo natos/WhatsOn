@@ -37,10 +37,17 @@ function() {
 
 	,	load: function() {
 
+			var self = this;
+
 			// Check Facebook login status
-			FB.getLoginStatus( this.facebookLoginStatus );
+			FB.getLoginStatus(function(response) {
+				self.facebookLoginStatus.apply(self, response);
+			});
+
 			// Lisent for changes on Facebook login status
-			FB.Event.subscribe('auth.statusChange', this.facebookLoginStatus);
+			FB.Event.subscribe('auth.statusChange', function(response) {
+				self.facebookLoginStatus.apply(self, response);
+			});
 
 			this.trigger('view-created');
 
