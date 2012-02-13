@@ -41,12 +41,12 @@ function() {
 
 			// Check Facebook login status
 			FB.getLoginStatus(function(response) {
-				self.facebookLoginStatus.apply(self, response);
+				self.facebookLoginStatus.call(self, response);
 			});
 
 			// Lisent for changes on Facebook login status
 			FB.Event.subscribe('auth.statusChange', function(response) {
-				self.facebookLoginStatus.apply(self, response);
+				self.facebookLoginStatus.call(self, response);
 			});
 
 			this.trigger('view-created');
@@ -101,7 +101,7 @@ function() {
 				// and signed request each expire
 				var uid = response.authResponse.userID;
 				var accessToken = response.authResponse.accessToken;
-			console.log(this);
+
 				this.fbbtn
 					.off()
 					.on('click', this.logout)
