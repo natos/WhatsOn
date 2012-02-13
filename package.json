@@ -1,10 +1,11 @@
 {
-  "name": "UPCToday",
-  "version": "0.0.1",
-  "dependencies": {
+	"name":        "WhatsOn!"
+,	"version":     "0.0.2"
+,	"description": "UPC shows whats on tv now and next"
+,	"dependencies": {
 		"express": "2.4.6"
 	,	"node-uuid": "1.2.0"
 	,	"socket.io": "0.8.4"
-	,	"jade": "0.15.4"  
-	}
+	,	"jade": "0.15.4"
+  }
 }
