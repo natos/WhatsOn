@@ -33,7 +33,7 @@ function(template) {
 	,	load: function() {
 
 			this.el.html( this.template() );
-
+console.log(this.el.html());
 			this.fbbtn = this.el.find('.fb.btn');
 
 			// Check Facebook login status
