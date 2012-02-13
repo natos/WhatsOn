@@ -1,6 +1,15 @@
 require.config({
-
+/* ... */
 });
+
+window.fbAsyncInit = function() {
+	FB.init({
+		appId      : '153316508108487',
+		status     : true, 
+		cookie     : true,
+		oauth      : true,
+	});
+};
 
 var wo = {
 	views: {}

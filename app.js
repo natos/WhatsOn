@@ -2,10 +2,10 @@
 /**
  * module dependencies.
  */
-var fs = require('fs'),
-	util   = require('util'),
-	express = require('express'),
-	port = process.argv[2] || 8080;
+var fs = require('fs')
+,	util   = require('util')
+,	express = require('express')
+,	port = process.env.PORT || 3000;
 
 var meta = {
 	title: 'Whats on'
@@ -60,7 +60,7 @@ app.get('/', function(req, res) {
 /**
  * app start
  */
-app.listen(8080);
+app.listen(port);
 
 /**
  * log

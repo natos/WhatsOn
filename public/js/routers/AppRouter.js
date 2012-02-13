@@ -2,7 +2,9 @@
 
 define([
 
-	'views/TopBookingsView'
+	'views/UserControlView'
+
+,	'views/TopBookingsView'
 ,	'views/AllChannelsView'
 ,	'views/ChannelView'
 ,	'views/ProgrammeView'
@@ -14,12 +16,16 @@ define([
 
 ],
 
-function(TopBookingsView, AllChannelsView, ChannelView, ProgrammeView, NowAndNextView, specificview) {
+function(UserControl, TopBookingsView, AllChannelsView, ChannelView, ProgrammeView, NowAndNextView, specificview) {
 
 	return Backbone.Router.extend({
-		
+	
+		initialize: function() {
+			wo.usercontrol = new UserControl();
+		}
+	
 		// To know which view is the current
-		current: undefined
+	,	current: undefined
 
 		// Declaring all app routes here
 		// "someview": "somehandler"
