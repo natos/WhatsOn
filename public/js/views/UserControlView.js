@@ -28,6 +28,9 @@ function(template) {
 			});
 
 			this.trigger('view-initialized', this);
+
+			// self load
+			this.load();
 		}
 
 	,	load: function() {
