@@ -96,21 +96,24 @@ function() {
 				var accessToken = response.authResponse.accessToken;
 			console.log(this);
 				this.fbbtn
-					.one(this.logout)
+					.off()
+					.on('click', this.logout)
 					.html('Logout');
 
 			} else if (response && response.status === 'not_authorized') {
 				// the user is logged in to Facebook, 
 				// but not connected to the app
 				this.fbbtn
-					.one(this.login)
+					.off()
+					.on('click', this.login)
 					.html('Authorize App');
 
 
 			} else {
 				// the user isn't even logged in to Facebook.
 				this.fbbtn
-					.one(this.login)
+					.off()
+					.on('click', this.login)
 					.html('Login');
 			}
 
