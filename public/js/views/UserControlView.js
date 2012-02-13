@@ -1,21 +1,23 @@
 // UserControlView.js
 
 define([
+
+
 ],
 
-function() {
+function(template) {
 
 	return Backbone.View.extend({
 
 		el: $('#user-control')
 
 	,	events: {
-			"click button": "buttonAction"
+
 		}
 
 	,	SCOPE: 'email, user_interests, user_likes, user_online_presence, friends_online_presence, publish_actions'
 
-//	,	template: _.template( template )
+	,	template: _.template( template )
 
 	,	initialize: function() {
 
@@ -37,7 +39,7 @@ function() {
 
 	,	load: function() {
 
-//			this.el.html( this.template() );
+			this.el.html( this.template() );
 
 			this.trigger('view-created');
 
@@ -51,7 +53,10 @@ function() {
 
 		}
 
-	,	buttonAction: function(event) {
+
+// Base login/logout functions
+
+	,	login: function(event) {
 
 			var self = this;
 
@@ -64,9 +69,23 @@ function() {
 
 		}
 
+	,	logout: function(event) {
+
+			var self = this;
+
+			FB.logout(function(response) {
+
+				self.facebookLoginStatus(response);
+
+			});
+
+		}
+
+// Facebook Login Status Handler
+
 	,	facebookLoginStatus: function(response) {
 
-			console.log('facebook login status');
+			console.log('facebook login status hanlder');
 			console.log(response);
 			
 			if (response && response.status === 'connected') {
@@ -78,19 +97,23 @@ function() {
 				var uid = response.authResponse.userID;
 				var accessToken = response.authResponse.accessToken;
 
-				console.log('User logged');
+				this.fbbtn
+					.one(this.logout)
+					.html('Logout');
 
 			} else if (response && response.status === 'not_authorized') {
 				// the user is logged in to Facebook, 
 				// but not connected to the app
+				this.fbbtn
+					.one(this.login)
+					.html('Authorize App');
 
-				console.log('User logged but not authorized');
 
 			} else {
 				// the user isn't even logged in to Facebook.
-
-				console.log('User NOT logged');
-
+				this.fbbtn
+					.one(this.login)
+					.html('Login');
 			}
 
 		}

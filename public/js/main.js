@@ -13,7 +13,6 @@ require([
 ,	'js/libs/backbone/backbone.js'
 ,	'http://connect.facebook.net/en_US/all.js'
 
-
 ], 
 function(App) {
 
