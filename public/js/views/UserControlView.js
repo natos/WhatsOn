@@ -87,6 +87,7 @@ function() {
 	,	facebookLoginStatus: function(response) {
 
 			console.log('facebook login status hanlder');
+			console.log(this);
 			console.log(response);
 			
 			if (response && response.status === 'connected') {
@@ -97,7 +98,7 @@ function() {
 				// and signed request each expire
 				var uid = response.authResponse.userID;
 				var accessToken = response.authResponse.accessToken;
-
+			console.log(this);
 				this.fbbtn
 					.one(this.logout)
 					.html('Logout');
