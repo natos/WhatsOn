@@ -5,6 +5,24 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta names="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+	<!-- Open Graph 
+
+	# og issue:
+
+		We need to publish every object we want to push to the opengraph,
+		and make it public on the web, so facebook can crawl to it.
+
+		The thing is, we don't have data to publish, just a title and a
+		little cover image.
+
+		Other technical thing, we need to port all the routing logic
+		to the server side, so we can publish each page, as a static html
+		so facebook can understand it as a web resource and read its metadata.
+	
+	-->
+	<meta property="og:title" content="UPC What's On!" />
+	<meta property="og:type" content="application" />
+	<meta property="og:url" content="http://upcwhatson.herokuapp.com/" />
 	<!-- CSS
 	<link rel="stylesheet" href="css/whatson.css" /> -->
 	<!-- JS -->

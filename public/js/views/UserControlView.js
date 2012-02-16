@@ -103,7 +103,7 @@ function() {
 				var accessToken = response.authResponse.accessToken;
 
 				this.fbbtn
-					.off()
+					.off() // remove all handlers
 					.on('click', this.logout)
 					.html('Logout');
 
@@ -111,7 +111,7 @@ function() {
 				// the user is logged in to Facebook, 
 				// but not connected to the app
 				this.fbbtn
-					.off()
+					.off() // remove all handlers
 					.on('click', this.login)
 					.html('Authorize App');
 
@@ -119,7 +119,7 @@ function() {
 			} else {
 				// the user isn't even logged in to Facebook.
 				this.fbbtn
-					.off()
+					.off() // remove all handlers
 					.on('click', this.login)
 					.html('Login');
 			}

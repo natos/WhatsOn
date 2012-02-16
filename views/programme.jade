@@ -1,0 +1,26 @@
+include layout
+
+header
+	if (data.subcategory.category.name != data.subcategory.name)
+		p #{data.subcategory.category.name} > #{data.subcategory.name}
+	else
+		p #{data.subcategory.name}
+
+	h1 #{title}
+	p #{data.shortDescription}
+
+
+section#content
+
+	if data.events
+		p Watch it
+		ul#events
+			each event in data.events
+				li
+					span #{event.prettyDate} 
+					span 
+						| on 
+						a(href="/channel/#{event.channel.id}") #{event.channel.name}
+						|  (#{event.channel.id})
+
+			
