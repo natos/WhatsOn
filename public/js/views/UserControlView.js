@@ -88,10 +88,6 @@ function() {
 // Facebook Login Status Handler
 
 	,	facebookLoginStatus: function(response) {
-
-			console.log('facebook login status hanlder');
-			console.log(this);
-			console.log(response);
 			
 			if (response && response.status === 'connected') {
 				// the user is logged in and connected to your
@@ -99,13 +95,16 @@ function() {
 				// the user's ID, a valid access token, a signed
 				// request, and the time the access token 
 				// and signed request each expire
-				var uid = response.authResponse.userID;
-				var accessToken = response.authResponse.accessToken;
+				this.uid = response.authResponse.userID;
+				this.accessToken = response.authResponse.accessToken;
 
 				this.fbbtn
 					.off() // remove all handlers
 					.on('click', this.logout)
 					.html('Logout');
+
+				// trigger an event, so the app knows the user state
+				wo.event.emit('login-status', { message: 'logged', uid: this.uid, accessToken: this.accessToken } );
 
 			} else if (response && response.status === 'not_authorized') {
 				// the user is logged in to Facebook, 
@@ -115,6 +114,8 @@ function() {
 					.on('click', this.login)
 					.html('Authorize App');
 
+				// trigger an event, so the app knows the user state
+				wo.event.emit('login-status', { message: 'not-authorized' } );
 
 			} else {
 				// the user isn't even logged in to Facebook.
@@ -122,6 +123,9 @@ function() {
 					.off() // remove all handlers
 					.on('click', this.login)
 					.html('Login');
+
+				// trigger an event, so the app knows the user state
+				wo.event.emit('login-status', { message: 'not-logged' } );
 			}
 
 		}

@@ -12,7 +12,7 @@ var metadata = [
 	{ property: 'og:title'		, content: 'WhatsOn!' }
 ,	{ property: 'og:type'		, content: 'app' }
 ,	{ property: 'og:url'		, content: 'http://upcwhatson.herokuapp.com/' }
-,	{ property: 'og:image'		, content: 'http://upcwhatson.herokuapp.com/images/upclogo.jpg' }
+,	{ property: 'og:image'		, content: 'http://upcwhatson.herokuapp.com/assets/upclogo.jpg' }
 ,	{ property: 'og:site_name'	, content: 'WhatsOn!' }
 ,	{ property: 'fb:app_id'		, content: '153316508108487' }
 ];
