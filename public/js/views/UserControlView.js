@@ -95,8 +95,13 @@ function() {
 				// the user's ID, a valid access token, a signed
 				// request, and the time the access token 
 				// and signed request each expire
-				this.uid = response.authResponse.userID;
-				this.accessToken = response.authResponse.accessToken;
+				var uid = response.authResponse.userID;
+				var accessToken = response.authResponse.accessToken;
+
+				this.facebook = {
+					uid: uid
+				,	accessToken: accessToken
+				}
 
 				this.fbbtn
 					.off() // remove all handlers
@@ -104,7 +109,7 @@ function() {
 					.html('Logout');
 
 				// trigger an event, so the app knows the user state
-				wo.event.emit('login-status', { message: 'logged', uid: this.uid, accessToken: this.accessToken } );
+				wo.event.emit('login-status', { message: 'logged', facebook: this.facebook } );
 
 			} else if (response && response.status === 'not_authorized') {
 				// the user is logged in to Facebook, 
@@ -115,7 +120,7 @@ function() {
 					.html('Authorize App');
 
 				// trigger an event, so the app knows the user state
-				wo.event.emit('login-status', { message: 'not-authorized' } );
+				wo.event.emit('login-status', { message: 'not-authorized', facebook: this.facebook } );
 
 			} else {
 				// the user isn't even logged in to Facebook.
