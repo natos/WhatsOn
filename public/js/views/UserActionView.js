@@ -12,7 +12,7 @@ function() {
 
 	,	events: {
 
-			'click button.watch': watch
+			'click button.watch': 'watch'
 
 		}
 
