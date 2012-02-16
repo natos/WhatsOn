@@ -15,6 +15,8 @@ function(UserControl, UserAction) {
 
 		initialize: function() {
 
+			// Views namespace
+			wo.views = {};
 /*
 			// Socket.io connection to the backend
 			wo.socket = io.connect();
@@ -44,11 +46,11 @@ function(UserControl, UserAction) {
 			Backbone.history.start();
 */
 
-			wo.usercontrol = new UserControl();
+			wo.views.usercontrol = new UserControl();
 
 			// user action
-			if ( (/programme/).test(window.location.toString() ) {
-				wo.usercontrol = new UserAction();
+			if ( /programme/.test( window.location.toString() ) ) {
+				wo.views.useraction = new UserAction();
 			}
 			
 			return this;
