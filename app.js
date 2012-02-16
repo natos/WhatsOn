@@ -234,7 +234,7 @@ app.get('/channel/:id.:format?', function(req, res) {
 					, { property: "og:url"			, content: "http://upcwhatson.herokuapp.com/channel/" + body.id + ".html" }
 					, { property: "og:title"		, content: body.name }
 					, { property: "og:description"	, content: body.shortDescription } // not working
-					, { property: "og:image"		, content: "http://upcwhatson.herokuapp.com/images/upclogo.jpg" }
+					, { property: "og:image"		, content: "http://upcwhatson.herokuapp.com/assets/upclogo.jpg" }
 					];
 
 					// determine the output rendering
@@ -317,7 +317,7 @@ app.get('/programme/:id.:format?', function(req, res) {
 					, { property: "og:url"			, content: "http://upcwhatson.herokuapp.com/programme/" + body.id + ".html" }
 					, { property: "og:title"		, content: body.title }
 					, { property: "og:description"	, content: body.shortDescription } 
-					, { property: "og:image"		, content: "http://upcwhatson.herokuapp.com/images/upclogo.jpg" }
+					, { property: "og:image"		, content: "http://upcwhatson.herokuapp.com/assets/upclogo.jpg" }
 					];
 
 					// determine the output rendering
