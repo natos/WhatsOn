@@ -44,6 +44,8 @@ function(UserControl) {
 */
 
 			wo.usercontrol = new UserControl();
+
+			// user action
 			
 			return this;
 
