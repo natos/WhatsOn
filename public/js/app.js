@@ -5,10 +5,11 @@ define([
 	// Dependencies
 //	'routers/AppRouter'
 	'views/UserControlView'
+,	'views/UserActionView'
 
 ],
 
-function(UserControl) {
+function(UserControl, UserAction) {
 
 	var app = {
 
@@ -46,6 +47,9 @@ function(UserControl) {
 			wo.usercontrol = new UserControl();
 
 			// user action
+			if ( (/programme/).test(window.location.toString() ) {
+				wo.usercontrol = new UserAction();
+			}
 			
 			return this;
 
