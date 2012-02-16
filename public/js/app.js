@@ -3,22 +3,17 @@
 define([
 
 	// Dependencies
-	'routers/AppRouter',
+//	'routers/AppRouter'
+	'views/UserControlView'
 
 ],
 
-function(AppRouter) {
+function(UserControl) {
 
 	var app = {
 
 		initialize: function() {
 
-			// Global event dispatcher/handler initialization
-			wo.events = _.extend({}, Backbone.Events);
-			// Test bindings
-			wo.events.bind('view-initialized', function(event){
-				console.log('view-initialized event cached')
-			});
 /*
 			// Socket.io connection to the backend
 			wo.socket = io.connect();
@@ -33,6 +28,7 @@ function(AppRouter) {
 			wo.event.on = wo.event.bind;
 			wo.event.emit = wo.event.trigger;
 
+/*
 			// Router initialization
 			wo.router = new AppRouter();
 
@@ -45,7 +41,10 @@ function(AppRouter) {
 			Backbone.emulateHTTP = true;
 			Backbone.emulateJSON = true;
 			Backbone.history.start();
+*/
 
+			wo.usercontrol = new UserControl();
+			
 			return this;
 
 		}

@@ -8,9 +8,20 @@ html
 				each meta in metadata
 					meta(property='#{meta.property}', content='#{meta.content}')
 
+			script(src="/js/libs/jquery/jquery.js")
+			script(src="/js/libs/backbone/underscore.js")
+			script(src="/js/libs/backbone/backbone.js")
+			script(src="/js/libs/require/require.js", data-main="/js/main")
+
+
 	body
+
+		#fb-root
+
 		header
 			h1 What's On!
+			#user-control
+				button.fb.btn Login
 		nav
 			ul
 				li
