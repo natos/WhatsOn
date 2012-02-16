@@ -8,6 +8,10 @@ header
 
 	h1 #{title}
 	p #{data.shortDescription}
+	if (data.subcategory.category.name.toLowerCase() == 'speelfilm')
+		#imdbPoster(data-programmetitle="#{title}")
+		script(src='/js/ahah.js')
+		script(src='/js/loadImdbPoster.js')
 
 	#user-action
 		button.watch Watch
@@ -29,4 +33,3 @@ section#content
 						a(href="/channel/#{event.channel.id}") #{event.channel.name}
 						|  (#{event.channel.id})
 
-			

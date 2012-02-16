@@ -347,6 +347,22 @@ app.get('/programme/:id.:format?', function(req, res) {
 
 });
 
+// Get IMDB poster based on title
+app.get('/imdbPoster/:title', function(req, res) {
+    var title = req.params.title,
+		imdbApiQuery = 'http://www.imdbapi.com/?t=' + escape(title);
+
+	request(imdbApiQuery, function(error, response, body){
+		if(!error && response.statusCode == 200){
+			var imdbInfo = JSON.parse(body);
+			res.send('<img src="' + imdbInfo.Poster + '" />');
+		} else {
+			res.send('');
+		}
+	})
+});
+
+
 /**
  * app start
  */
