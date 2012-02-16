@@ -42,6 +42,8 @@ function() {
 
 	,	watch: function(event) {
 
+			console.log(event)
+			console.log( $('meta[property="og:url"]').attr('content') );
 			FB.api('/me/upcwhatson:watch', 'post', { 'video.tv_show' : $('meta[property="og:url"]').attr('content') });
 
 		}
