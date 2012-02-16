@@ -64,8 +64,8 @@ function() {
 				method: 'feed'
 			,	link: url
 			,	picture: 'http://upcwhatson.herokuapp.com/assets/upclogo.jpg'
-			,	name: 'Share TV Show'
-			,	caption: title
+			,	name: title
+			,	caption: 'What\'s on UPC'
 			,	description: description
 			}, 
 			function(reposne) {
