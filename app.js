@@ -9,8 +9,8 @@ var fs = require('fs')
 ,	port = process.env.PORT || 3000;
 
 var facebook = {
-	app-id:	'153316508108487'
-,	app-secret:	'47a04d4b4c794097717593854b7a4e36'
+	'app-id'		: '153316508108487'
+,	'app-secret'	: '47a04d4b4c794097717593854b7a4e36'
 }
 
 var metadata = [
