@@ -13,7 +13,7 @@ function() {
 	,	events: {
 
 			'click button.watch': 'watch'
-			'click button.share': 'share'
+		,	'click button.share': 'share'
 
 		}
 
