@@ -44,9 +44,10 @@ function() {
 
 			console.log(event)
 			console.log( $('meta[property="og:url"]').attr('content') );
+			var query = prompt('Query','/me/upc-whatson');
 //			FB.api('/me/upc-whatson:Watch', 'post', { 'video.tv_show' : $('meta[property="og:url"]').attr('content') });
 //			FB.api('/me', function(response){ console.log(response); });
-			FB.api('/me/upc-whatson', function(response){
+			FB.api( query, function(response){
 				console.log(response);
 			});
 
