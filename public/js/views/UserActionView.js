@@ -44,7 +44,7 @@ function() {
 
 			console.log(event)
 			console.log( $('meta[property="og:url"]').attr('content') );
-			FB.api('/me/upcwhatson:watch', 'post', { 'video.tv_show' : $('meta[property="og:url"]').attr('content') });
+			FB.api('/me/whatson:watch', 'post', { 'video.tv_show' : $('meta[property="og:url"]').attr('content') });
 
 		}
 
