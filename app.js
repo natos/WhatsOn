@@ -141,6 +141,37 @@ app.get('/', function(req, res) {
 
 });
 
+app.get('/grid', function(req, res) {
+
+	var ALL_CHANNELS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel.json?order=position';
+
+	request(ALL_CHANNELS, function (error, response, body) {
+
+		if (error) {
+			console.log("Error requesting " + ALL_CHANNELS + ": " + error);
+		}
+
+		if (!error && response.statusCode == 200) {
+
+			body = JSON.parse(body);
+//			body = JSON.stringify(body);
+
+			res.render('grid.jade', { 
+				data		: body
+			,	title		: "Grid"
+			,	metadata	: metadata
+			,	prefix		: ''
+			,	timeFrame   : new Array(148) // 148 hrs
+			}); // HTML output
+			
+		}
+	});
+
+	// more requests to stuff
+//	socket_manager.emit('new-set-of-data', data);	
+
+});
+
 // channel
 app.get('/channels.:format?', function(req, res) {
 

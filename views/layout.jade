@@ -4,9 +4,16 @@ html
 		block head
 			title #{title}
 
+			meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no")
+			meta(name="apple-mobile-web-app-capable", content="yes")
+			meta(names="apple-mobile-web-app-status-bar-style", content="black-translucent")
+
+
 			if metadata
 				each meta in metadata
 					meta(property='#{meta.property}', content='#{meta.content}')
+
+			link(href="/css/grid.css", rel="stylesheet")
 
 			script(src="/js/libs/jquery/jquery.js")
 			script(src="/js/libs/backbone/underscore.js")

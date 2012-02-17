@@ -16,7 +16,7 @@ function(Model, Collection){
 
 */
 
-	var source = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel.json';
+	var source = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel.json?order=position';
 
 	return {
 

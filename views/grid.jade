@@ -1,0 +1,22 @@
+include layout
+
+section#content
+
+	#grid-container
+		.back-grid
+
+	#time-bar
+		ol
+			each hour, i in timeFrame
+				li
+					span #{i}
+
+	#channels-bar
+		ul
+			each channel in data
+				li 
+					img(title="#{channel.name}", src="http://www.upc.nl#{channel.logoIMG}")
+		
+
+script
+	var channels = !{JSON.stringify(data)};

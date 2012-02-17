@@ -6,10 +6,11 @@ define([
 //	'routers/AppRouter'
 	'views/UserControlView'
 ,	'views/UserActionView'
+,	'views/GridView'
 
 ],
 
-function(UserControl, UserAction) {
+function(UserControl, UserAction, Grid) {
 
 	var app = {
 
@@ -51,6 +52,11 @@ function(UserControl, UserAction) {
 			// user action
 			if ( /programme/.test( window.location.toString() ) ) {
 				wo.views.useraction = new UserAction();
+			}
+
+			// grid
+			if ( /grid/.test( window.location.toString() ) ) {
+				wo.views.grid = new Grid();
 			}
 			
 			return this;

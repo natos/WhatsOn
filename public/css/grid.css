@@ -1,0 +1,78 @@
+body {
+	margin: 0;
+	padding: 0;
+}
+
+header, nav {
+	display: none;
+}
+
+ul, ol {
+	margin: 0;
+	padding: 0;
+}
+
+ul li, ol li {
+	list-style: none;
+}
+
+#time-bar {
+	position: fixed;
+	top: 50px;
+	left: 63px;
+	right: 0;
+	height: 50px;
+	background: gray;
+	overflow: hidden;
+}
+
+#time-bar ol {
+	position: absolute;
+	width: 29600px; /* 148hrs * 200px */
+}
+
+#time-bar li {
+	display: inline-block;
+	width: 200px;
+	height: 50px;
+	text-align: center;
+}
+
+#channels-bar {
+	position: fixed;
+	top: 100px;
+	left: 0;
+	bottom: 0;
+	width: 63px;
+	background: gray;
+	overflow: hidden;
+}
+
+#channels-bar ul {
+	position: absolute;
+}
+
+#channels-bar li {
+	height: 50px;
+	margin: 0;
+	padding: 5px 10px;
+}
+
+#grid-container {
+	position: absolute;
+	margin-top: 100px;
+	margin-left: 63px;
+	color: #fff;
+}
+
+.back-grid {
+	background: blue url('/assets/channel_row.png') repeat;
+	width: 29600px; /* 148hrs * 200px */
+	height: 6000px; /* 100 channels * 60px */
+}
+
+.event {
+	overflow: hidden;
+	border: 1px solid #666;
+	height: 60px;
+}
