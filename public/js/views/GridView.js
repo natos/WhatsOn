@@ -16,20 +16,27 @@ function() {
 
 	,	'time-bar': $('#time-bar')
 
+	,	'time-bar-list': $('#time-bar').find('ol')
+
 	,	'channels-bar': $('#channels-bar')
 
+	,	'channels-bar-list': $('#channels-bar').find('ul')
+
 //	,	template: _.template( template )
+
+	,	channelsOffsetMap: {}
 
 	,	initialize: function() {
 
 			this.zeroTime = new Date();
 
-			this.channelsOffsetMap = {};
-			
+			this.HOUR_WIDTH = this['time-bar'].find('li').outerWidth();
+
+			this.ROW_HEIGHT = this['channels-bar'].find('li').outerHeight();
+
+			// Map Channel ID / OffsetTop
 			for (var i = 0; i < channels.length; i++) {
-
-				this.channelsOffsetMap[ channels[i].id ] = i * 60;
-
+				this.channelsOffsetMap[ channels[i].id ] = i * this.ROW_HEIGHT;
 			}
 
 			this.trigger('view-initialized', this);
@@ -40,9 +47,9 @@ function() {
 
 	,	load: function() {
 
-			this.drawTimeLine();
-
 			this.scrollHandlers();
+
+			this.clickHandlers();
 
 			this.trigger('view-created');
 
@@ -56,16 +63,35 @@ function() {
 
 		}
 
-	,	drawTimeLine: function() {
+		// just a silly loader
+	,	loader: function() {
 
-			var now = new Date()
-			,	$tb = this['time-bar'];
+			var self = this;
 
-			//$tb.html( now.toString() );
-	
+			if ( $('.loader')[0] ) {
+				$('.loader').fadeOut(function(){ $(this).remove() });
+			} else {
+				$('<div class="loader">')
+					.hide()
+					.appendTo(self.el)
+					.fadeIn();
+			}
 		}
 
-	,	changing: false
+	,	clickHandlers: function() {
+
+			var self = this;
+
+			var handler = function(event) {
+
+				event.preventDefault();
+				event.stopPropagation();
+
+			}
+
+			this.el.bind('click', handler);
+
+		}
 
 	,	scrollHandlers: function() {
 
@@ -73,79 +99,57 @@ function() {
 	
 			var executionTimer;
 
-			var handle = function() {
+			var handleEvents = function() {
 
 				if (executionTimer) {
 					clearTimeout(executionTimer);
 				}
 
-				executionTimer = setTimeout(function(){
+				executionTimer = setTimeout(function() {
 
 					self.getEvents();
 
-				}, 100);
+				}, 200);
 
 				// Update scroll bars
 				self.updateBars();
-
 			}
 
-			this.window.bind('scroll resize touchmove', handle);
+			this.window.bind('scroll resize touchmove', handleEvents);
 
 		}
 
 	,	updateBars: function() {
 
-			var timebar = this['time-bar'].find('ol')
-			,	channelsbar = this['channels-bar'].find('ul')
-			,	left = this.window.scrollLeft()
+			var left = this.window.scrollLeft()
 			,	top = this.window.scrollTop();
 
-			timebar.css( 'left' , left * -1 );
-			channelsbar.css( 'top', top * -1 );
+			this['time-bar-list'].css( 'left', left * -1 );
+			this['channels-bar-list'].css( 'top', top * -1 );
 			
 		}
 
-	,	viewport: (function() {	
-
-			var width = 0
-			, 	height = 0;
-
-			var getSize = function() {
-				height = $(window).height();
-				width = $(window).width();
-			}
-
-			$(window).bind('resize', getSize); // not working
-
-			getSize();
-			
-			return {
-				width: width
-			,	height: height
-			}
-
-		})()
-
 	,	getEvents: function() {
 
-			// hours visible
-			var start_time = this.window.scrollLeft() / 200; // divided by hour width
+			var self = this;
 
+			// loader feedback
+			this.loader();
+
+			// hours visible
+			var start_time = this.window.scrollLeft() / this.HOUR_WIDTH; // divided by hour width
 				start_time = start_time * 3600000; // milisecons
 
-			var t = new Date((this.zeroTime.valueOf() + start_time));
-
-			var time = t.toISOString().slice(0,16) + 'Z'; // We need to improve this thing
+			// We need to improve this thing
+			var time = new Date((this.zeroTime.valueOf() + start_time)).toISOString().slice(0,16) + 'Z'; 
 
 			// channels visible
-			var first_channel = this.window.scrollTop() / 60 ; // divided by channel height
-				first_channel = (first_channel < 0) ? 0 : first_channel;
-				first_channel = Math.floor(first_channel);
+			var first_channel = this.window.scrollTop() / this.ROW_HEIGHT ; // divided by channel height
+				first_channel = (first_channel < 0) ? 0 : Math.floor(first_channel);
 
 			var channels_to_get = channels[first_channel].id;
 
-			for (var i = 1; i < 5; i++) {
+			for (var i = 1; i < 5; i++) { // start from 1 because we already got the first channel
 				channels_to_get += '|' + channels[first_channel+i].id;
 			}
 
@@ -153,26 +157,31 @@ function() {
 			// http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/7K%7C7L%7C7U/events/NowAndNext_2012-02-19T15:32Z.json?batchSize=20
 			var request = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/' + channels_to_get + '/events/NowAndNext_' + time + '.json?batchSize=20&callback=?';
 
-			var self = this;
-
-			console.log(request);
-
-			$.getJSON(request, function(response){
+			$.getJSON(request, function(response) {
 				self.renderEvents(response);
 			});
 		}
 
 	,	renderEvents: function(response) {
 
-			console.log(response);
-
 			var self = this;
 
+			// loader feedback
+			this.loader();
+
 			$(response).each(function(i, eventsCollection) {
+
+				if ( /* Object.prototype.toString.call(eventsCollection) === "[object Array]" && */ !eventsCollection.length ) {
+					console.log("Warning: eventCollection is an empty array");
+					console.log(response);
+					return;
+				}
+
 				// find the channel
 				var channel = eventsCollection[0].channel;
+
 				// find the offsettop position from this channel
-				var offsetTop = self.channelsOffsetMap[ channel.id ]
+				var offsetTop = self.channelsOffsetMap[ channel.id ];
 
 				$(eventsCollection).each(function(a, event){
 
@@ -186,36 +195,37 @@ function() {
 
 					var duration = ( endDateTime.valueOf() - startDateTime.valueOf() ) / 3600000; // hours
 
-					var width = Math.floor( duration * 200 ); // pixels
+					var width = Math.floor( duration * self.HOUR_WIDTH ); // pixels
 
 					var timeOffset = ( startDateTime.valueOf() - self.zeroTime.valueOf() ) / 3600000; // hours
 
-					var leftOffset = Math.floor( timeOffset * 200 ); // pixels
+					var leftOffset = Math.floor( timeOffset * self.HOUR_WIDTH ); // pixels
 
 					if ( !$('#'+event.id)[0] ) {
 
 						if (!event.programme) {
-							console.log(event)
+							console.log("Warning: event.programme is an empty object");
+							console.log(event);
 						}
 
 						$('<div>')
 							.addClass('event')
 							.attr('id', event.id)
-							.html( event.programme.title )
+							.html('<a id="' + event.programme.id + '" class="programme" href="/programme/' + event.programme.id + '.html">' + event.programme.title + '</a>')
+							.css({
+								'position': 'absolute'
+							,	'top': offsetTop + 'px'
+							,	'left': leftOffset + 'px'
+							,	'width': width
+							})
+							.hide()
 							.appendTo('#grid-container')
-							.css({'top': offsetTop, 'position': 'absolute', 'width': width, 'left': leftOffset + 'px' });
+							.fadeIn();
 
 					}
 
 				});
 
-/*				if ( !$('#'+channel.id)[0] ) {
-					$('<div>')
-						.attr('id', channel.id)
-						.html(channel.name)
-						.appendTo('#grid-container')
-						.css({'top': offsetTop, 'position': 'absolute'});
-				}*/
 			});
 			
 		}

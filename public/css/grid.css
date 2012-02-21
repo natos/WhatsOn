@@ -16,6 +16,15 @@ ul li, ol li {
 	list-style: none;
 }
 
+.loader {
+	position: fixed;
+	width: 16px;
+	height: 16px;
+	top: 80px;
+	left: 43px;
+	background: transparent url('/assets/loader.gif') no-repeat;
+}
+
 #time-bar {
 	position: fixed;
 	top: 50px;
@@ -66,7 +75,7 @@ ul li, ol li {
 }
 
 .back-grid {
-	background: blue url('/assets/channel_row.png') repeat;
+	background: aqua url('/assets/channel_row.png') repeat;
 	width: 29600px; /* 148hrs * 200px */
 	height: 6000px; /* 100 channels * 60px */
 }
