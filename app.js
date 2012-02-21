@@ -178,8 +178,7 @@ app.get('/channels.:format?', function(req, res) {
     var id = req.params.id
 	,	format = req.params.format // html, json, etc
 
-
-	var ALL_CHANNELS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel.json';
+	var ALL_CHANNELS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel.json?order=position';
 
 	request(ALL_CHANNELS, function (error, response, body) {
 

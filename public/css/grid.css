@@ -2,10 +2,10 @@ body {
 	margin: 0;
 	padding: 0;
 }
-
+/*
 header, nav {
 	display: none;
-}
+}*/
 
 ul, ol {
 	margin: 0;
@@ -20,9 +20,18 @@ ul li, ol li {
 	position: fixed;
 	width: 16px;
 	height: 16px;
+	background: transparent url('/assets/loader.gif') no-repeat;
+}
+
+#grid-container .loader {
 	top: 80px;
 	left: 43px;
-	background: transparent url('/assets/loader.gif') no-repeat;
+}
+
+.layer {
+	position: absolute;
+	width: 300px;
+	height: 300px;
 }
 
 #time-bar {

@@ -3,10 +3,11 @@
 define([
 
 //	'templates/UserControlTemplate'
+	'views/LayerView'
 
 ],
 
-function() {
+function(Layer) {
 
 	return Backbone.View.extend({
 
@@ -86,6 +87,16 @@ function() {
 
 				event.preventDefault();
 				event.stopPropagation();
+
+				if (!event.target.href) {
+					return;
+				}
+
+				if (!this.layer) {
+					this.layer = new Layer(event);
+				}
+
+				this.layer.show();
 
 			}
 
