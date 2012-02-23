@@ -8,6 +8,10 @@ var fs = require('fs')
 ,	request = require('request')
 ,	port = process.env.PORT || 3000;
 
+var Timer = require('./public/js/libs/timer/timer.js').Timer;
+
+var appTimer = new Timer('App');
+
 var facebook = {
 	'app-id'		: '153316508108487'
 ,	'app-secret'	: '47a04d4b4c794097717593854b7a4e36'
@@ -96,6 +100,8 @@ app.configure('production', function(){
 	app.use(express.errorHandler()); 
 });
 
+appTimer.track('Configuration');
+
 /**
  * Routing.
  */
@@ -103,7 +109,7 @@ app.configure('production', function(){
 // index
 app.get('/', function(req, res) {
 
-//	res.render('index.html');
+	var topBookingsTimer = new Timer('TopBookings View');
 
 	var events = [];
 
@@ -116,6 +122,8 @@ app.get('/', function(req, res) {
 		}
 
 		if (!error && response.statusCode == 200) {
+
+			topBookingsTimer.track('Top Bookings API Response');
 
 			body = JSON.parse(body);
 
@@ -143,6 +151,8 @@ app.get('/', function(req, res) {
 
 app.get('/grid', function(req, res) {
 
+	var gridTimer = new Timer('Grid View');
+
 	var ALL_CHANNELS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel.json?order=position';
 
 	request(ALL_CHANNELS, function (error, response, body) {
@@ -152,6 +162,8 @@ app.get('/grid', function(req, res) {
 		}
 
 		if (!error && response.statusCode == 200) {
+
+			gridTimer.track('All channels API Response');
 
 			body = JSON.parse(body);
 //			body = JSON.stringify(body);
@@ -175,6 +187,8 @@ app.get('/grid', function(req, res) {
 // channel
 app.get('/channels.:format?', function(req, res) {
 
+	var allChannelsTimer = new Timer('All Channels View');
+
     var id = req.params.id
 	,	format = req.params.format // html, json, etc
 
@@ -187,6 +201,8 @@ app.get('/channels.:format?', function(req, res) {
 		}
 
 		if (!error && response.statusCode == 200) {
+
+			allChannelsTimer.track('All Channels API Response')
 
 			body = JSON.parse(body);
 
@@ -217,6 +233,8 @@ app.get('/channels.:format?', function(req, res) {
 // channel
 app.get('/channel/:id.:format?', function(req, res) {
 
+	var channelTimer = new Timer('Channel View');
+
     var id = req.params.id
 	,	format = req.params.format // html, json, etc
 	,	events = []
@@ -233,6 +251,8 @@ app.get('/channel/:id.:format?', function(req, res) {
 
 		if (!error && response.statusCode == 200) {
 
+			channelTimer.track('Channel Detail API Response');
+
 			request(CHANNEL_EVENTS, function (ierror, iresponse, ibody) {
 
 				if (ierror) {
@@ -240,6 +260,8 @@ app.get('/channel/:id.:format?', function(req, res) {
 				}
 
 				if (!ierror && iresponse.statusCode == 200) {
+
+					channelTimer.track('Channel Events API Response');
 
 					body = JSON.parse(body);
 					ibody = JSON.parse(ibody);
@@ -299,13 +321,14 @@ app.get('/channel/:id.:format?', function(req, res) {
 // programme
 app.get('/programme/:id.:format?', function(req, res) {
 
+	var programmeTimer = new Timer('Programme View');
+
     var id = req.params.id
 	,	format = req.params.format // html, json, etc
 	,	events = []
 	,	isAjax = req.headers['x-requested-with'] === 'XMLHttpRequest'
 	,	now = new Date();
 
-//	console.log("isAjaxRequest === " + isAjax);
 
 	var PROGRAMME_DETAILS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Programme/' + id + '.json'
 	,	PROGRAMME_EVENTS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Programme/' + id + '/events.json'
@@ -318,6 +341,8 @@ app.get('/programme/:id.:format?', function(req, res) {
 
 		if (!error && response.statusCode == 200) {
 
+			programmeTimer.track('Programme Details API Response');
+
 			request(PROGRAMME_EVENTS, function (ierror, iresponse, ibody) {
 
 				if (ierror) {
@@ -325,6 +350,8 @@ app.get('/programme/:id.:format?', function(req, res) {
 				}
 
 				if (!ierror && iresponse.statusCode == 200) {
+
+					programmeTimer.track('Programme Events API Response');
 
 					body = JSON.parse(body);
 					ibody = JSON.parse(ibody);
@@ -389,19 +416,29 @@ app.get('/programme/:id.:format?', function(req, res) {
 
 // Get IMDB poster based on title
 app.get('/imdbPoster/:title', function(req, res) {
+
+	var posterTimer = new Timer('Poster Timer');
+
     var title = req.params.title,
 		imdbApiQuery = 'http://www.imdbapi.com/?t=' + escape(title);
 
 	request(imdbApiQuery, function(error, response, body){
 		if(!error && response.statusCode == 200){
+
+			posterTimer.track('Poster Response Success');
+
 			var imdbInfo = JSON.parse(body);
 			res.send('<img src="' + imdbInfo.Poster + '" />');
 		} else {
+
+			posterTimer.track('Poster Response Error');
+
 			res.send('');
 		}
 	})
 });
 
+appTimer.track('Routing');
 
 /**
  * app start
@@ -412,3 +449,5 @@ app.listen(port);
  * log
  */
 console.log("Express server listening on port %d", app.address().port);
+
+appTimer.track('Ready');

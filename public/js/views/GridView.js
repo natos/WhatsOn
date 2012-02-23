@@ -5,11 +5,15 @@ define([
 //	'templates/UserControlTemplate'
 	'views/LayerView'
 
-,	'js/libs/xdate/xdate.js'
+//,	'js/libs/xdate/xdate.js'
+,	'js/libs/timer/timer.js'
 
 ],
 
 function(Layer) {
+
+	var timer = new Timer('Grid View')
+	,	requestTimer;
 
 	return Backbone.View.extend({
 
@@ -42,6 +46,8 @@ function(Layer) {
 
 	,	initialize: function() {
 
+			timer.track('Initialize');
+
 			// Now
 			this.zeroTime = new Date(); // TODO: Try a framework like XDate: http://arshaw.com/xdate/
 
@@ -70,6 +76,8 @@ function(Layer) {
 			this.clickHandlers();
 
 			this.trigger('view-created');
+
+			timer.track('Finish Load');
 
 		}
 
@@ -101,6 +109,8 @@ function(Layer) {
 				$(e).html('<span>' + hour%24 + '</span>'); // FIX THIS!!!
 
 			});
+
+			timer.track('Draw Timeline');
 	
 		}
 
@@ -134,6 +144,7 @@ function(Layer) {
 				event.stopPropagation();
 
 				if (!event.target.href) {
+					self.layer.hide();
 					return;
 				}
 
@@ -142,6 +153,8 @@ function(Layer) {
 			}
 
 			this.el.bind('click', handler);
+
+			timer.track('Click handler setted');
 
 		}
 
@@ -169,6 +182,8 @@ function(Layer) {
 
 			this.window.bind('scroll resize touchmove', handleEvents);
 
+			timer.track('Scroll handlers setted');
+
 		}
 
 	,	updateBars: function() {
@@ -182,6 +197,8 @@ function(Layer) {
 		}
 
 	,	getEvents: function() {
+
+			requestTimer = new Timer('Grid View Request');
 
 			var self = this;
 
@@ -214,6 +231,8 @@ function(Layer) {
 			$.getJSON(request, function(response) {
 				self.renderEvents(response);
 			});
+
+			requestTimer.track('New Events Request >');
 		}
 
 	,	renderEvents: function(response) {
@@ -222,6 +241,10 @@ function(Layer) {
 
 			// loader feedback
 			this.loader();
+
+			requestTimer.track('New Events Response <');
+
+			var renderingTimer = new Timer('Rendering');
 
 			$(response).each(function(i, eventsCollection) {
 
@@ -280,8 +303,7 @@ function(Layer) {
 							.appendTo('#grid-container')
 							.fadeIn();
 
-//						console.log(offsetLeft);
-//						console.log(eventItem);
+						renderingTimer.track('Event ' + event.id + ' Rendered');
 
 						// Save the eventItem to the eventsBuffer
 						// To control how many elements are rendered
@@ -293,6 +315,8 @@ function(Layer) {
 
 			}); // End each response
 
+			requestTimer.track('New Events Rendered');
+
 			// Check the amount of eventItems on the DOM
 			this.checkEventsBuffer();
 	
@@ -300,7 +324,11 @@ function(Layer) {
 
 	,	checkEventsBuffer: function() {
 
+			requestTimer.track('Events Buffer Check');
+
 			if (this.eventsBuffer.length > this.MAX_DOM_ELEMENTS) {
+
+				requestTimer.track('Events Buffer Start Cleaning');
 
 				console.log('WARNING: ' + this.MAX_DOM_ELEMENTS + ' Events on the DOM');
 
@@ -315,6 +343,8 @@ function(Layer) {
 
 				// need to find a better way, while user scrolls
 				// some things may desapear from his sight
+
+				requestTimer.track('Events Buffer Finish Cleaning');
 
 			}
 
