@@ -1,4 +1,5 @@
-include layout
+if !isAjax
+	include layout
 
 header
 	if (data.subcategory.category.name != data.subcategory.name)
@@ -12,7 +13,7 @@ header
 		#imdbPoster(data-programmetitle="#{title}")
 		script(src='/js/ahah.js')
 		script(src='/js/loadImdbPoster.js')
-
+if !isAjax
 	#user-action
 		button.watch Watch
 		button.record Record

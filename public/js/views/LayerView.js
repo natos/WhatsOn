@@ -16,23 +16,22 @@ function() {
 
 //	,	template: _.template( template )
 
-	,	initialize: function(event) {
-
-			this.event = event;
+	,	initialize: function() {
 
 			this.trigger('view-initialized', this);
 
-			// self load
 			this.load();
+
+			return this;
 		}
 
 	,	load: function() {
 
 			this.el.html('<div class="loader"></div>');
 
-			this.el.load(this.event.target.href, 'body');
-
 			this.trigger('view-created');
+
+			return this;
 
 		}
 
@@ -42,11 +41,34 @@ function() {
 
 			this.trigger('view-unloaded', this);
 
+			return this;
+
 		}
 
-	,	show: function() {
+	,	show: function(event) {
 
-			this.el.appendTo(this.content);
+			this.event = event;
+
+			this.el
+				.hide()
+				.html('<div class="loader"></div>')
+				.load(this.event.target.href, 'body')
+				.css({
+					'top': this.event.pageY + 'px'
+				,	'left': this.event.pageX + 'px'
+				})
+				.appendTo(this.content)
+				.fadeIn();
+
+			return this;
+
+		}
+
+	,	hide: function() {
+
+			this.el.remove();
+
+			return this;
 
 		}
 

@@ -5,6 +5,8 @@ define([
 //	'templates/UserControlTemplate'
 	'views/LayerView'
 
+,	'js/libs/xdate/xdate.js'
+
 ],
 
 function(Layer) {
@@ -13,6 +15,7 @@ function(Layer) {
 
 		el: $('#grid-container')
 
+	// $ shortcuts
 	,   window: $(window)
 
 	,	'time-bar': $('#time-bar')
@@ -23,22 +26,36 @@ function(Layer) {
 
 	,	'channels-bar-list': $('#channels-bar').find('ul')
 
-//	,	template: _.template( template )
+	//	constants
+
+	,	MAX_DOM_ELEMENTS: 500
+
+	//  private classes
+
+	,	layer: new Layer()
+
+	// 	maps
+
+	,	eventsBuffer: []
 
 	,	channelsOffsetMap: {}
 
 	,	initialize: function() {
 
-			this.zeroTime = new Date();
+			// Now
+			this.zeroTime = new Date(); // TODO: Try a framework like XDate: http://arshaw.com/xdate/
 
+			// Constansts
 			this.HOUR_WIDTH = this['time-bar'].find('li').outerWidth();
-
 			this.ROW_HEIGHT = this['channels-bar'].find('li').outerHeight();
 
 			// Map Channel ID / OffsetTop
 			for (var i = 0; i < channels.length; i++) {
 				this.channelsOffsetMap[ channels[i].id ] = i * this.ROW_HEIGHT;
 			}
+
+			// Create Timeline
+			this.drawTimeLine();
 
 			this.trigger('view-initialized', this);
 
@@ -64,14 +81,40 @@ function(Layer) {
 
 		}
 
+	,	drawTimeLine: function() {
+
+			var self = this;
+			
+			var now = new Date();
+
+			var hour = now.getHours();
+
+			this['time-bar-list'].find('li').each(function(i, e) {
+
+				if ( ( hour + i ) > 23 ) {
+					now = new Date( now.valueOf() + 86400000 );
+					hour = now.getHours();
+				}
+
+				hour = hour + i;
+
+				$(e).html('<span>' + hour%24 + '</span>'); // FIX THIS!!!
+
+			});
+	
+		}
+
 		// just a silly loader
 	,	loader: function() {
 
 			var self = this;
-
+	
 			if ( $('.loader')[0] ) {
+
 				$('.loader').fadeOut(function(){ $(this).remove() });
+
 			} else {
+
 				$('<div class="loader">')
 					.hide()
 					.appendTo(self.el)
@@ -83,6 +126,8 @@ function(Layer) {
 
 			var self = this;
 
+			wo.event.trigger('new-layer');
+
 			var handler = function(event) {
 
 				event.preventDefault();
@@ -92,11 +137,7 @@ function(Layer) {
 					return;
 				}
 
-				if (!this.layer) {
-					this.layer = new Layer(event);
-				}
-
-				this.layer.show();
+				self.layer.show(event);
 
 			}
 
@@ -166,7 +207,9 @@ function(Layer) {
 
 			// request
 			// http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/7K%7C7L%7C7U/events/NowAndNext_2012-02-19T15:32Z.json?batchSize=20
-			var request = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/' + channels_to_get + '/events/NowAndNext_' + time + '.json?batchSize=20&callback=?';
+			var request = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/' + channels_to_get + '/events/NowAndNext_' + time + '.json?batchSize=10&callback=?';
+
+			console.log(request)
 
 			$.getJSON(request, function(response) {
 				self.renderEvents(response);
@@ -208,10 +251,14 @@ function(Layer) {
 
 					var width = Math.floor( duration * self.HOUR_WIDTH ); // pixels
 
-					var timeOffset = ( startDateTime.valueOf() - self.zeroTime.valueOf() ) / 3600000; // hours
+					var offsetTime = ( startDateTime.valueOf() - self.zeroTime.valueOf() ) / 3600000; // hours
 
-					var leftOffset = Math.floor( timeOffset * self.HOUR_WIDTH ); // pixels
+//					console.log(startDateTime);
+//					console.log(offsetTime);
 
+					var offsetLeft = Math.floor( offsetTime * self.HOUR_WIDTH ); // pixels
+
+					// Render if the event dosen't exist on the DOM
 					if ( !$('#'+event.id)[0] ) {
 
 						if (!event.programme) {
@@ -219,28 +266,59 @@ function(Layer) {
 							console.log(event);
 						}
 
-						$('<div>')
+						var eventItem = $('<div>')
 							.addClass('event')
 							.attr('id', event.id)
-							.html('<a id="' + event.programme.id + '" class="programme" href="/programme/' + event.programme.id + '.html">' + event.programme.title + '</a>')
+							.html('<a id="' + event.programme.id + '" class="programme" href="/programme/' + event.programme.id + '.html">' + event.programme.title + '</a>' + st)
 							.css({
 								'position': 'absolute'
 							,	'top': offsetTop + 'px'
-							,	'left': leftOffset + 'px'
+							,	'left': offsetLeft + 'px'
 							,	'width': width
 							})
 							.hide()
 							.appendTo('#grid-container')
 							.fadeIn();
 
+//						console.log(offsetLeft);
+//						console.log(eventItem);
+
+						// Save the eventItem to the eventsBuffer
+						// To control how many elements are rendered
+						self.eventsBuffer.push(eventItem);
+
 					}
 
-				});
+				}); // End each eventCollection
 
-			});
-			
+			}); // End each response
+
+			// Check the amount of eventItems on the DOM
+			this.checkEventsBuffer();
+	
 		}
 
+	,	checkEventsBuffer: function() {
+
+			if (this.eventsBuffer.length > this.MAX_DOM_ELEMENTS) {
+
+				console.log('WARNING: ' + this.MAX_DOM_ELEMENTS + ' Events on the DOM');
+
+				var shifted,
+					erase = 100;
+
+				while (erase--) {
+					shifted = this.eventsBuffer.shift();
+					shifted.remove();
+					shifted = null;
+				}
+
+				// need to find a better way, while user scrolls
+				// some things may desapear from his sight
+
+			}
+
+		}
 
 	});
 

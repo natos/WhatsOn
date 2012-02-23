@@ -161,7 +161,7 @@ app.get('/grid', function(req, res) {
 			,	title		: "Grid"
 			,	metadata	: metadata
 			,	prefix		: ''
-			,	timeFrame   : new Array(148) // 148 hrs
+			,	timeFrame   : new Array(72) // 148 hrs
 			}); // HTML output
 			
 		}
@@ -302,7 +302,10 @@ app.get('/programme/:id.:format?', function(req, res) {
     var id = req.params.id
 	,	format = req.params.format // html, json, etc
 	,	events = []
+	,	isAjax = req.headers['x-requested-with'] === 'XMLHttpRequest'
 	,	now = new Date();
+
+//	console.log("isAjaxRequest === " + isAjax);
 
 	var PROGRAMME_DETAILS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Programme/' + id + '.json'
 	,	PROGRAMME_EVENTS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Programme/' + id + '/events.json'
@@ -340,6 +343,12 @@ app.get('/programme/:id.:format?', function(req, res) {
 					// add the events collection to the response body
 					body.events = events;
 
+					if (body.subcategory.category.name.toLowerCase() == 'speelfilm') {
+
+						// Is a film, I need to change the og:type 
+
+					}
+
 					// Meta data
 					var _metadata = [
 					  { property: "fb:app_id"		, content: "153316508108487" }
@@ -363,7 +372,8 @@ app.get('/programme/:id.:format?', function(req, res) {
 								data		: body
 							,	title		: body.title
 							,	metadata	: _metadata
-							,	prefix: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# video: http://ogp.me/ns/video#'
+							,	prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# video: http://ogp.me/ns/video#'
+							,	isAjax		: isAjax
 							}); // HTML output
 			
 					}
