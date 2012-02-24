@@ -93,27 +93,18 @@ function(Layer, GridSource) {
 
 	,	drawTimeLine: function() {
 
-			var self = this;
-			
-			var now = new Date();
+			var self = this,
+				hourTime;
 
-			var hour = now.getHours();
-
+			// Each <li> represents one hour
 			this['time-bar-list'].find('li').each(function(i, e) {
-
-				if ( ( hour + i ) > 23 ) {
-					now = new Date( now.valueOf() + 86400000 );
-					hour = now.getHours();
-				}
-
-				hour = hour + i;
-
-				$(e).html('<span>' + hour%24 + '</span>'); // FIX THIS!!!
-
+				hourTime = new Date(self.zeroTime.valueOf() + (i * (1000 * 60 * 60)));
+				$(e).html('<span>' + ('0' + hourTime.getHours().toString()).slice(-2) + ':00</span>');
 			});
+			this.updateBars();
 
 			timer.track('Draw Timeline');
-	
+
 		}
 
 		// just a silly loader
@@ -193,7 +184,7 @@ function(Layer, GridSource) {
 			var left = this.window.scrollLeft()
 			,	top = this.window.scrollTop();
 
-			this['time-bar-list'].css( 'left', left * -1 );
+			this['time-bar-list'].css( 'left', (left + Math.floor((this.HOUR_WIDTH * (this.zeroTime.getMinutes()/60)))) * -1 );
 			this['channels-bar-list'].css( 'top', top * -1 );
 			
 		}
@@ -224,7 +215,7 @@ function(Layer, GridSource) {
 			var leftBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * msInHour));
 			var rightBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * msInHour) + (hoursWide * msInHour));
 
-			GridSource.getEventsForGrid(channelIds, leftBorderTime, rightBorderTime, this.renderEvent, this);
+			GridSource.getEventsForGrid(channelIds, this.zeroTime, leftBorderTime, rightBorderTime, this.renderEvent, this);
 		}
 
 	,	renderEvent: function(event) {

@@ -10,7 +10,14 @@ function() {
 	var HOURS_PER_SLICE = 4;
 
 	var getSliceStartTimeFromSliceIndex = function(zeroTime, sliceIndex) {
-		return new Date(zeroTime.getFullYear(), zeroTime.getMonth(), zeroTime.getDate(), sliceIndex * HOURS_PER_SLICE, 0, 0);
+		var sliceStartTime = new Date(zeroTime.getFullYear(), zeroTime.getMonth(), zeroTime.getDate(), sliceIndex * HOURS_PER_SLICE, 0, 0);
+		return sliceStartTime;
+	}
+
+	var formatTimeForApiRequest = function(dt) {
+		// TODO: take account of time zones?
+		var formattedTime = dt.getFullYear().toString() + '-' + ('00' + (dt.getMonth() + 1).toString()).slice(-2) + '-' + ('00' + dt.getDate().toString()).slice(-2) + 'T' + ('00' + dt.getHours().toString()).slice(-2) + ':00' + 'Z';
+		return formattedTime;
 	}
 
 	var getSliceIndexFromTime = function(zeroTime, targetTime) {
@@ -32,54 +39,96 @@ function() {
 		return sliceIndex;
 	}
 
-	return {
+	var eventCollectionsCache = {};
 
-		getEventsForGrid: function(channelIds, leftBorderTime, rightBorderTime, eventRendererCallback, gridView) {
-			var self = this;
-
-			// Split channels into batches of 5
-			var channelBatches = [];
-			var batchSize = 5;
-			var batchesCount = Math.ceil(channelIds.length / batchSize);
-			for (var i=0; i<batchesCount; i++) {
-				channelBatches[i] = channelIds.slice( batchSize * i, batchSize * (i+1) );
-			}
-
-			console.log(channelBatches);
-
-			for (var i=0; i<channelBatches.length; i++) {
-				var requestTime = leftBorderTime.toISOString().slice(0,16) + 'Z'; 
-				var request = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/' + channelBatches[i].join('|') + '/events/NowAndNext_' + requestTime + '.json?batchSize=10&callback=?';
-				console.log(request);
-				$.getJSON(request, function(apiResponse) {
-					self.processApiResponse(apiResponse, eventRendererCallback, gridView);
-				});
-			}
-		}
-
-	,	processApiResponse: function(apiResponse, eventRendererCallback, gridView) {
-			var eventsCollections = [];
-			if ($.isArray($(apiResponse)[0])) {
-				// response contains multiple channels (events collections)
-				$(apiResponse).each(function(i, eventsCollection) {
-					eventsCollections.push(eventsCollection);
-				});
-			} else {
-				// response contains a single channel (events collection)
-				eventsCollections[0] = $(apiResponse);
-			}
-
-			$.each(eventsCollections, function(i, eventsCollection) {
-				if (!eventsCollection.length ) {
-					console.log("Warning: eventCollection is an empty array");
-					console.log(apiResponse);
-					return;
-				}
-
+	var getEventsForSliceIndex = function(sliceIndex, channelIds, zeroTime, eventRendererCallback, gridView) {
+		// Iterate over the channels list to see if we have an events collection
+		// for this channel and time slice in cache. If not, add the channel to a list
+		// of channels to fetch from the api.
+		var channelIdsToFetch = []
+		var channelIdsCount = channelIds.length;
+		for (var i=0; i<channelIdsCount; i++) {
+			var cacheKey = channelIds[i] + '|' + sliceIndex;
+			var eventsCollection = eventCollectionsCache[cacheKey];
+			if (eventsCollection) {
+				// render the events collection from cache
+				console.log('Retrieving events for channel ' + channelIds[i] + ', slice ' + sliceIndex + ' from cache');
 				$(eventsCollection).each(function(j, event){
 					eventRendererCallback.call(gridView, event);
 				});
+			} else {
+				// This channel should be fetched remotely.
+				channelIdsToFetch.push(channelIds[i]);
+			}
+		}
+
+		// Split channels to fetch into batches of 5
+		var channelIdBatches = [];
+		var batchSize = 5;
+		var batchesCount = Math.ceil(channelIdsToFetch.length / batchSize);
+		for (var i=0; i<batchesCount; i++) {
+			channelIdBatches[i] = channelIdsToFetch.slice( batchSize * i, batchSize * (i+1) );
+		}
+
+		// Request each batch from the API
+		var channelIdBatchesCount = channelIdBatches.length;
+		for (var i=0; i<channelIdBatchesCount; i++) {
+			var channelIdBatch = channelIdBatches[i]
+
+			var sliceStartTime = getSliceStartTimeFromSliceIndex(zeroTime, sliceIndex);
+			var formattedSliceStartTime = formatTimeForApiRequest(sliceStartTime);
+			var request = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/' + channelIdBatch.join('|') + '/events/NowAndNext_' + formattedSliceStartTime + '.json?batchSize=10&callback=?';
+			console.log(request);
+			$.getJSON(request, function(apiResponse) {
+				processApiResponse(apiResponse, sliceIndex, eventRendererCallback, gridView);
 			});
+		}
+	}
+
+	var processApiResponse = function(apiResponse, sliceIndex, eventRendererCallback, gridView) {
+		var eventsCollections = [];
+		if ($.isArray($(apiResponse)[0])) {
+			// response contains multiple channels (events collections)
+			$(apiResponse).each(function(i, eventsCollection) {
+				eventsCollections.push(eventsCollection);
+			});
+		} else {
+			// response contains a single channel (events collection)
+			eventsCollections[0] = $(apiResponse);
+		}
+
+		$.each(eventsCollections, function(i, eventsCollection) {
+			if (!eventsCollection.length ) {
+				console.log("Warning: eventCollection is an empty array");
+				console.log(apiResponse);
+				return;
+			}
+
+			$(eventsCollection).each(function(j, event){
+				eventRendererCallback.call(gridView, event);
+			});
+
+			// Cache the event collection by channel ID and timeslice index
+			var channelId = eventsCollection[0].channel.id;
+			var cacheKey = channelId + '|' + sliceIndex;
+			eventCollectionsCache[cacheKey] = eventsCollection;
+		});
+	}
+
+
+	return {
+
+		getEventsForGrid: function(channelIds, zeroTime, leftBorderTime, rightBorderTime, eventRendererCallback, gridView) {
+			console.log(eventCollectionsCache);
+			var self = this;
+
+			// Find out what time slices the left and right border time belong to
+			var leftBorderSliceIndex = getSliceIndexFromTime(zeroTime, leftBorderTime);
+			var rightBorderSliceIndex = getSliceIndexFromTime(zeroTime, rightBorderTime);
+
+			for (var sliceIndex=leftBorderSliceIndex; sliceIndex<=rightBorderSliceIndex; sliceIndex++) {
+				getEventsForSliceIndex(sliceIndex, channelIds, zeroTime, eventRendererCallback, gridView);
+			}
 		}
 	}
 
