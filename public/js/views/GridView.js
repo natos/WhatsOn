@@ -99,8 +99,9 @@ function(Layer, GridSource) {
 			// Each <li> represents one hour
 			this['time-bar-list'].find('li').each(function(i, e) {
 				hourTime = new Date(self.zeroTime.valueOf() + (i * (1000 * 60 * 60)));
-				$(e).html('<span>' + ('0' + hourTime.getHours().toString()).slice(-2) + '</span>');
+				$(e).html('<span>' + ('0' + hourTime.getHours().toString()).slice(-2) + ':00</span>');
 			});
+			this.updateBars();
 
 			timer.track('Draw Timeline');
 
@@ -183,7 +184,7 @@ function(Layer, GridSource) {
 			var left = this.window.scrollLeft()
 			,	top = this.window.scrollTop();
 
-			this['time-bar-list'].css( 'left', left * -1 );
+			this['time-bar-list'].css( 'left', (left + Math.floor((this.HOUR_WIDTH * (this.zeroTime.getMinutes()/60)))) * -1 );
 			this['channels-bar-list'].css( 'top', top * -1 );
 			
 		}

@@ -84,10 +84,17 @@ ul li, ol li {
 }
 
 #time-bar li {
+	border-right:1px dashed #000;
 	display: inline-block;
 	width: 200px;
 	height: 50px;
 	text-align: center;
+}
+#time-bar li span {
+	background:gray;
+	position:relative;
+	left:-100px;
+	top:1em;
 }
 
 #channels-bar {
