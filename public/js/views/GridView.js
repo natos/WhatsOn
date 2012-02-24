@@ -224,7 +224,7 @@ function(Layer, GridSource) {
 			var leftBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * msInHour));
 			var rightBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * msInHour) + (hoursWide * msInHour));
 
-			GridSource.getEventsForGrid(channelIds, leftBorderTime, rightBorderTime, this.renderEvent, this);
+			GridSource.getEventsForGrid(channelIds, this.zeroTime, leftBorderTime, rightBorderTime, this.renderEvent, this);
 		}
 
 	,	renderEvent: function(event) {
