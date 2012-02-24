@@ -201,7 +201,11 @@ function(Layer, GridSource) {
 
 			// Calculate which channels to get
 			var channelIds = [];
-			for (var i = 0; i < channelsTall; i++) {
+			// Pre-load 2 channels above and below the visible window 
+			for (var i = -2; i < channelsTall + 2; i++) {
+				if ((firstChannel + i) < 0) {
+					continue;
+				}
 				channelIds.push(channels[firstChannel + i].id);
 			}
 
@@ -222,23 +226,20 @@ function(Layer, GridSource) {
 
 			var renderingTimer = new Timer('Rendering');
 
-			var channel = event.channel;
-
-			// find the offsettop position from this channel
-			var offsetTop = this.channelsOffsetMap[ channel.id ];
-
-			var st = event.startDateTime
-			var et = event.endDateTime
-			var endDateTime = new Date(et.slice(0,4), parseInt(et.slice(5,7),10) -1, parseInt(et.slice(8,10),10), parseInt(et.slice(11,13),10), parseInt(et.slice(14,16),10));
-			var startDateTime = new Date(st.slice(0,4), parseInt(st.slice(5,7),10) -1, parseInt(st.slice(8,10),10), parseInt(st.slice(11,13),10), parseInt(st.slice(14,16),10));
-			var duration = ( endDateTime.valueOf() - startDateTime.valueOf() ) / this.MILLISECONDS_IN_HOUR; // hours
-			var width = Math.floor( duration * this.HOUR_WIDTH ); // pixels
-			var offsetTime = ( startDateTime.valueOf() - this.zeroTime.valueOf() ) / this.MILLISECONDS_IN_HOUR; // hours
-			var offsetTop = this.channelsOffsetMap[ channel.id ];
-			var offsetLeft = Math.floor( offsetTime * this.HOUR_WIDTH ); // pixels
-
 			// Render if the event dosen't exist on the DOM
 			if ( !$('#'+event.id)[0] ) {
+
+				var channel = event.channel,
+					offsetTop = this.channelsOffsetMap[ channel.id ],
+					st = event.startDateTime,
+					et = event.endDateTime,
+					endDateTime = new Date(et.slice(0,4), parseInt(et.slice(5,7),10) -1, parseInt(et.slice(8,10),10), parseInt(et.slice(11,13),10), parseInt(et.slice(14,16),10)),
+					startDateTime = new Date(st.slice(0,4), parseInt(st.slice(5,7),10) -1, parseInt(st.slice(8,10),10), parseInt(st.slice(11,13),10), parseInt(st.slice(14,16),10)),
+					duration = ( endDateTime.valueOf() - startDateTime.valueOf() ) / this.MILLISECONDS_IN_HOUR, // hours
+					width = Math.floor( duration * this.HOUR_WIDTH ), // pixels
+					offsetTime = ( startDateTime.valueOf() - this.zeroTime.valueOf() ) / this.MILLISECONDS_IN_HOUR, // hours
+					offsetTop = this.channelsOffsetMap[ channel.id ],
+					offsetLeft = Math.floor( offsetTime * this.HOUR_WIDTH ); // pixels
 
 				if (!event.programme) {
 					console.log("Warning: event.programme is an empty object");
