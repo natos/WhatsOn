@@ -93,17 +93,17 @@ function(Layer, GridSource) {
 
 	,	drawTimeLine: function() {
 
-			var self = this;
+			var self = this,
+				hourTime;
 
 			// Each <li> represents one hour
 			this['time-bar-list'].find('li').each(function(i, e) {
-				console.log(i);
-				var hourTime = new Date(self.zeroTime.valueOf() + (i * (1000 * 60 * 60)));
+				hourTime = new Date(self.zeroTime.valueOf() + (i * (1000 * 60 * 60)));
 				$(e).html('<span>' + ('0' + hourTime.getHours().toString()).slice(-2) + '</span>');
 			});
 
 			timer.track('Draw Timeline');
-	
+
 		}
 
 		// just a silly loader
