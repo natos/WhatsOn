@@ -4,13 +4,13 @@ define([
 
 //	'templates/UserControlTemplate'
 	'views/LayerView'
-
+,	'js/sources/GridSource.js'
 //,	'js/libs/xdate/xdate.js'
 ,	'js/libs/timer/timer.js'
 
 ],
 
-function(Layer) {
+function(Layer, GridSource) {
 
 	var timer = new Timer('Grid View')
 	,	requestTimer;
@@ -78,6 +78,8 @@ function(Layer) {
 			this.trigger('view-created');
 
 			timer.track('Finish Load');
+
+			this.getEvents();
 
 		}
 
@@ -198,137 +200,92 @@ function(Layer) {
 
 	,	getEvents: function() {
 
-			requestTimer = new Timer('Grid View Request');
+			// How many channels have been scrolled vertically?
+			var channelsScrolledUp = this.window.scrollTop() / this.ROW_HEIGHT;
+			var firstChannel = (channelsScrolledUp < 0) ? 0 : Math.floor(channelsScrolledUp);
+			// How many channels tall is the screen?
+			var topOffset = 100; // TODO: calculate this based on actual dimensions
+			var channelsTall = (window.innerHeight - topOffset) / this.ROW_HEIGHT;
 
-			var self = this;
-
-			// loader feedback
-			this.loader();
-
-			// hours visible
-			var start_time = this.window.scrollLeft() / this.HOUR_WIDTH; // divided by hour width
-				start_time = start_time * 3600000; // milisecons
-
-			// We need to improve this thing
-			var time = new Date((this.zeroTime.valueOf() + start_time)).toISOString().slice(0,16) + 'Z'; 
-
-			// channels visible
-			var first_channel = this.window.scrollTop() / this.ROW_HEIGHT ; // divided by channel height
-				first_channel = (first_channel < 0) ? 0 : Math.floor(first_channel);
-
-			var channels_to_get = channels[first_channel].id;
-
-			for (var i = 1; i < 5; i++) { // start from 1 because we already got the first channel
-				channels_to_get += '|' + channels[first_channel+i].id;
+			// Calculate which channels to get
+			var channelIds = [];
+			for (var i = 0; i < channelsTall; i++) {
+				channelIds.push(channels[firstChannel + i].id);
 			}
 
-			// request
-			// http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/7K%7C7L%7C7U/events/NowAndNext_2012-02-19T15:32Z.json?batchSize=20
-			var request = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/' + channels_to_get + '/events/NowAndNext_' + time + '.json?batchSize=10&callback=?';
+			// How many hours have been scrolled horizontally?
+			var hoursScrolledLeft = this.window.scrollLeft() / this.HOUR_WIDTH;
+			// How many hours wide is the screen?
+			var channelsBarWidth = 43;
+			var hoursWide = (document.body.clientWidth - channelsBarWidth) / this.HOUR_WIDTH;
 
-			console.log(request)
+			// Calculate the left border time, and right border time
+			var msInHour = 3600000;
+			var leftBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * msInHour));
+			var rightBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * msInHour) + (hoursWide * msInHour));
 
-			$.getJSON(request, function(response) {
-				self.renderEvents(response);
-			});
-
-			requestTimer.track('New Events Request >');
+			GridSource.getEventsForGrid(channelIds, leftBorderTime, rightBorderTime, this.renderEvent, this);
 		}
 
-	,	renderEvents: function(response) {
-
-			var self = this;
-
-			// loader feedback
-			this.loader();
-
-			requestTimer.track('New Events Response <');
+	,	renderEvent: function(event) {
 
 			var renderingTimer = new Timer('Rendering');
 
-			$(response).each(function(i, eventsCollection) {
+			var channel = event.channel;
 
-				if ( /* Object.prototype.toString.call(eventsCollection) === "[object Array]" && */ !eventsCollection.length ) {
-					console.log("Warning: eventCollection is an empty array");
-					console.log(response);
-					return;
+			// find the offsettop position from this channel
+			var offsetTop = this.channelsOffsetMap[ channel.id ];
+
+			var st = event.startDateTime
+			var et = event.endDateTime
+			var endDateTime = new Date(et.slice(0,4), parseInt(et.slice(5,7),10) -1, parseInt(et.slice(8,10),10), parseInt(et.slice(11,13),10), parseInt(et.slice(14,16),10));
+			var startDateTime = new Date(st.slice(0,4), parseInt(st.slice(5,7),10) -1, parseInt(st.slice(8,10),10), parseInt(st.slice(11,13),10), parseInt(st.slice(14,16),10));
+			var duration = ( endDateTime.valueOf() - startDateTime.valueOf() ) / 3600000; // hours
+			var width = Math.floor( duration * this.HOUR_WIDTH ); // pixels
+			var offsetTime = ( startDateTime.valueOf() - this.zeroTime.valueOf() ) / 3600000; // hours
+			var offsetTop = this.channelsOffsetMap[ channel.id ];
+			var offsetLeft = Math.floor( offsetTime * this.HOUR_WIDTH ); // pixels
+
+			// Render if the event dosen't exist on the DOM
+			if ( !$('#'+event.id)[0] ) {
+
+				if (!event.programme) {
+					console.log("Warning: event.programme is an empty object");
+					console.log(event);
 				}
 
-				// find the channel
-				var channel = eventsCollection[0].channel;
+				var eventItem = $('<div>')
+					.addClass('event')
+					.attr('id', event.id)
+					.html('<a id="' + event.programme.id + '" class="programme" href="/programme/' + event.programme.id + '.html">' + event.programme.title + '</a>' + st)
+					.css({
+						'position': 'absolute'
+					,	'top': offsetTop + 'px'
+					,	'left': offsetLeft + 'px'
+					,	'width': width
+					})
+					.hide()
+					.appendTo('#grid-container')
+					.fadeIn();
 
-				// find the offsettop position from this channel
-				var offsetTop = self.channelsOffsetMap[ channel.id ];
+				renderingTimer.track('Event ' + event.id + ' Rendered');
 
-				$(eventsCollection).each(function(a, event){
+				// Save the eventItem to the eventsBuffer
+				// To control how many elements are rendered
+				this.eventsBuffer.push(eventItem);
 
-					var st = event.startDateTime
-
-					var et = event.endDateTime
-
-					var endDateTime = new Date(et.slice(0,4), parseInt(et.slice(5,7),10) -1, parseInt(et.slice(8,10),10), parseInt(et.slice(11,13),10), parseInt(et.slice(14,16),10));
-
-					var startDateTime = new Date(st.slice(0,4), parseInt(st.slice(5,7),10) -1, parseInt(st.slice(8,10),10), parseInt(st.slice(11,13),10), parseInt(st.slice(14,16),10));
-
-					var duration = ( endDateTime.valueOf() - startDateTime.valueOf() ) / 3600000; // hours
-
-					var width = Math.floor( duration * self.HOUR_WIDTH ); // pixels
-
-					var offsetTime = ( startDateTime.valueOf() - self.zeroTime.valueOf() ) / 3600000; // hours
-
-//					console.log(startDateTime);
-//					console.log(offsetTime);
-
-					var offsetLeft = Math.floor( offsetTime * self.HOUR_WIDTH ); // pixels
-
-					// Render if the event dosen't exist on the DOM
-					if ( !$('#'+event.id)[0] ) {
-
-						if (!event.programme) {
-							console.log("Warning: event.programme is an empty object");
-							console.log(event);
-						}
-
-						var eventItem = $('<div>')
-							.addClass('event')
-							.attr('id', event.id)
-							.html('<a id="' + event.programme.id + '" class="programme" href="/programme/' + event.programme.id + '.html">' + event.programme.title + '</a>' + st)
-							.css({
-								'position': 'absolute'
-							,	'top': offsetTop + 'px'
-							,	'left': offsetLeft + 'px'
-							,	'width': width
-							})
-							.hide()
-							.appendTo('#grid-container')
-							.fadeIn();
-
-						renderingTimer.track('Event ' + event.id + ' Rendered');
-
-						// Save the eventItem to the eventsBuffer
-						// To control how many elements are rendered
-						self.eventsBuffer.push(eventItem);
-
-					}
-
-				}); // End each eventCollection
-
-			}); // End each response
-
-			requestTimer.track('New Events Rendered');
-
-			// Check the amount of eventItems on the DOM
-			this.checkEventsBuffer();
-	
+				// Check to see if we need to remove events from the DOM
+				this.checkEventsBuffer();
+			}
 		}
 
 	,	checkEventsBuffer: function() {
 
-			requestTimer.track('Events Buffer Check');
+//			requestTimer.track('Events Buffer Check');
 
 			if (this.eventsBuffer.length > this.MAX_DOM_ELEMENTS) {
 
-				requestTimer.track('Events Buffer Start Cleaning');
+//				requestTimer.track('Events Buffer Start Cleaning');
 
 				console.log('WARNING: ' + this.MAX_DOM_ELEMENTS + ' Events on the DOM');
 
@@ -344,7 +301,7 @@ function(Layer) {
 				// need to find a better way, while user scrolls
 				// some things may desapear from his sight
 
-				requestTimer.track('Events Buffer Finish Cleaning');
+//				requestTimer.track('Events Buffer Finish Cleaning');
 
 			}
 
