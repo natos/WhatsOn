@@ -79,7 +79,6 @@ function() {
 			var formattedSliceStartTime = formatTimeForApiRequest(sliceStartTime);
 			var request = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/' + channelIdBatch.join('|') + '/events/NowAndNext_' + formattedSliceStartTime + '.json?batchSize=10&callback=?';
 			console.log(request);
-			console.log(sliceIndex);
 			$.getJSON(request, function(apiResponse) {
 				processApiResponse(apiResponse, sliceIndex, eventRendererCallback, gridView);
 			});
@@ -87,7 +86,6 @@ function() {
 	}
 
 	var processApiResponse = function(apiResponse, sliceIndex, eventRendererCallback, gridView) {
-		console.log(sliceIndex);
 		var eventsCollections = [];
 		if ($.isArray($(apiResponse)[0])) {
 			// response contains multiple channels (events collections)
