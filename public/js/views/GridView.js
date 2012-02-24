@@ -33,6 +33,7 @@ function(Layer, GridSource) {
 	//	constants
 
 	,	MAX_DOM_ELEMENTS: 500
+	,	MILLISECONDS_IN_HOUR: 3600000
 
 	//  private classes
 
@@ -98,7 +99,7 @@ function(Layer, GridSource) {
 
 			// Each <li> represents one hour
 			this['time-bar-list'].find('li').each(function(i, e) {
-				hourTime = new Date(self.zeroTime.valueOf() + (i * (1000 * 60 * 60)));
+				hourTime = new Date(self.zeroTime.valueOf() + (i * (self.MILLISECONDS_IN_HOUR)));
 				$(e).html('<span>' + ('0' + hourTime.getHours().toString()).slice(-2) + ':00</span>');
 			});
 			this.updateBars();
@@ -211,9 +212,8 @@ function(Layer, GridSource) {
 			var hoursWide = (document.body.clientWidth - channelsBarWidth) / this.HOUR_WIDTH;
 
 			// Calculate the left border time, and right border time
-			var msInHour = 3600000;
-			var leftBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * msInHour));
-			var rightBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * msInHour) + (hoursWide * msInHour));
+			var leftBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * this.MILLISECONDS_IN_HOUR));
+			var rightBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * this.MILLISECONDS_IN_HOUR) + (hoursWide * this.MILLISECONDS_IN_HOUR));
 
 			GridSource.getEventsForGrid(channelIds, this.zeroTime, leftBorderTime, rightBorderTime, this.renderEvent, this);
 		}
@@ -231,9 +231,9 @@ function(Layer, GridSource) {
 			var et = event.endDateTime
 			var endDateTime = new Date(et.slice(0,4), parseInt(et.slice(5,7),10) -1, parseInt(et.slice(8,10),10), parseInt(et.slice(11,13),10), parseInt(et.slice(14,16),10));
 			var startDateTime = new Date(st.slice(0,4), parseInt(st.slice(5,7),10) -1, parseInt(st.slice(8,10),10), parseInt(st.slice(11,13),10), parseInt(st.slice(14,16),10));
-			var duration = ( endDateTime.valueOf() - startDateTime.valueOf() ) / 3600000; // hours
+			var duration = ( endDateTime.valueOf() - startDateTime.valueOf() ) / this.MILLISECONDS_IN_HOUR; // hours
 			var width = Math.floor( duration * this.HOUR_WIDTH ); // pixels
-			var offsetTime = ( startDateTime.valueOf() - this.zeroTime.valueOf() ) / 3600000; // hours
+			var offsetTime = ( startDateTime.valueOf() - this.zeroTime.valueOf() ) / this.MILLISECONDS_IN_HOUR; // hours
 			var offsetTop = this.channelsOffsetMap[ channel.id ];
 			var offsetLeft = Math.floor( offsetTime * this.HOUR_WIDTH ); // pixels
 
