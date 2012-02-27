@@ -1,4 +1,6 @@
 body {
+	font-family: arial, sans-serif;
+	font-size: 14px;
 	margin: 50px 0 0 0;
 	padding: 0;
 }
@@ -7,33 +9,56 @@ header, nav {
 	display: none;
 }*/
 
-header.main {
+a {
+	text-decoration: none;
+}
+
+.main a, .main a:visited, .main a:hover, .main a:active {
+	color: #eee;
+}
+
+.main {
 	position: fixed;
 	top: 0;
 	width: 100%;
-	height: 50px;
-	background-color: #eee;
+	height: 70px;
 	z-index: 10;
+
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(102,102,102,1)), color-stop(100%,rgba(17,17,17,1)));
+	background: -webkit-linear-gradient(top, rgba(102,102,102,1) 0%,rgba(17,17,17,1) 100%);
 }
 
-header.main h1 {
+.main h1 {
+
+	text-indent: -9999px;
+
 	margin: 0;
-	padding: 5px;
+	padding: 0;
+
+	position: absolute;
+
+	top: 15px;
+	left: 15px;
+
+	width: 40px;
+	height: 40px;
+
+	background: transparent url('/assets/sprite.png') 0 0 no-repeat;
 }
 
-header.main #user-control {
+.main #user-control {
 	position: fixed;
-	top: 10px;	
+	top: 25px;
 	right: 10px;
 }
 
-header.main nav {
+.main nav {
 	position: fixed;
-	top: 20px;
+	top: 25px;
 	left: 200px;
 }
 
-header.main nav li {
+.main nav li {
 	display: inline;
 	margin-left: 10px;
 }
@@ -54,28 +79,77 @@ ul li, ol li {
 	background: transparent url('/assets/loader.gif') no-repeat;
 }
 
-#grid-container .loader {
+#grid-container .loader { /* need to fix this positioning */
 	top: 80px;
 	left: 43px;
 }
 
 .layer {
-	position: absolute;
-	width: 400px;
+	position: fixed;
 
-	background: white;
+	top: 40px;
+	right: 40px;
+	bottom: 40px;
+	left: 40px;
+
+	padding: 10px;
+
+	background: #fff;
+
+	z-index: 20;
 
 	border-radius: 10px;
+
+	-webkit-box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, .3);
+
+}
+
+.dimmer {
+
+	position: fixed;
+
+	top: 0px;
+	right: 0px;
+	bottom: 0px;
+	left: 0px;
+
+	background: #fff;
+
+	opacity: .5;
+	
+	z-index: 19;	
+}
+
+.close {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	width: 20px;
+	height: 20px;
+	text-align: center;
+	cursor: pointer;
+	color: #fff;
+	background: #999;
+
+	border-radius: 5px;
 }
 
 #time-bar {
 	position: fixed;
-	top: 50px;
-	left: 63px;
+	top: 70px;
+	left: 0;
 	right: 0;
-	height: 50px;
-	background: gray;
-	overflow: hidden;
+	height: 30px;
+
+	border-top: 1px solid #444;
+	color: #ccc;
+	background: #000;
+
+	font-size: .8em;
+
+	z-index: 9;
+
+	-webkit-box-shadow: 0px 1px 2px 2px rgba(0, 0, 0, .3);
 }
 
 #time-bar ol {
@@ -84,17 +158,29 @@ ul li, ol li {
 }
 
 #time-bar li {
-	border-right:1px dashed #000;
+	position: relative;
+/*	border-right:1px dashed #eee; */
 	display: inline-block;
 	width: 200px;
-	height: 50px;
+	height: 30px;
 	text-align: center;
 }
+
+#time-bar li .spike {
+	position: absolute;
+	bottom: -5px;
+	left: -6px;
+	background: #000;
+	width: 10px;
+	height: 10px;
+	z-index: 8;
+	-webkit-transform: rotate(45deg);
+}
+
 #time-bar li span {
-	background:gray;
 	position:relative;
 	left:-100px;
-	top:1em;
+	top: 7px;
 }
 
 #channels-bar {
@@ -103,8 +189,14 @@ ul li, ol li {
 	left: 0;
 	bottom: 0;
 	width: 63px;
-	background: gray;
+
+	background: #fff;
 	overflow: hidden;
+
+	-webkit-box-shadow: 1px 0px 2px 2px rgba(0, 0, 0, .3);
+
+	opacity: .8;
+
 }
 
 #channels-bar ul {
@@ -112,26 +204,72 @@ ul li, ol li {
 }
 
 #channels-bar li {
-	height: 50px;
-	margin: 0;
-	padding: 5px 10px;
+	height: 60px;
+	width: 63px;
+	margin: 0 auto;
+	padding: 0;
+}
+
+#channels-bar .picture {
+	display: block;
+	width: 43px;
+	margin: 0 auto;
+	padding: 0;
+}
+
+#channels-bar .picture img {
+	margin-top: 15px;
 }
 
 #grid-container {
 	position: absolute;
 	margin-top: 50px;
-	margin-left: 63px;
+	/*margin-left: 63px;*/
 	color: #fff;
+	width: 14400px; /* 72hs * 200px */
+	height: 6000px; /* 100 channels * 60px */
+	overflow: hidden;
 }
 
 .back-grid {
-	background: aqua url('/assets/channel_row.png') repeat;
+	background: #ddd url('/assets/channel_row.png') repeat;
 	width: 14400px; /* 72hs * 200px */
 	height: 6000px; /* 100 channels * 60px */
 }
 
 .event {
 	overflow: hidden;
-	border: 1px solid #666;
+	border: 1px solid #ccc;
 	height: 60px;
+	font-size: .9em;
+	cursor: pointer;
+}
+
+.programme, .programme + p {
+	display: block;
+	margin: 5px;
+	padding: 0;
+	color: #333;
+}
+
+.programme {
+	font-weight: bold;
+	color: 000;
+}
+
+.programme + p {
+
+}
+
+.event:hover {
+	color: #fff;
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(102,102,102,1)), color-stop(100%,rgba(17,17,17,1)));
+	background: -webkit-linear-gradient(top, rgba(102,102,102,1) 0%,rgba(17,17,17,1) 100%);
+}
+
+.event:hover .programme {
+	color: #fff;
+}
+.event:hover .programme + p {
+	color: #eee;
 }

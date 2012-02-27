@@ -45,20 +45,45 @@ function() {
 
 		}
 
-	,	show: function(event) {
+	,	show: function(event, href) {
+
+			var self = this;
 
 			this.event = event;
+
+			if (!href) { 
+				this.hide();
+				return;
+			}
+
+			if (href === this.lastRequest) {
+				return;
+			}
+
+			$('<div class="dimmer"><div>')
+				.hide()
+				.appendTo(this.content)
+				.fadeIn();
 
 			this.el
 				.hide()
 				.html('<div class="loader"></div>')
-				.load(this.event.target.href, 'body')
-				.css({
-					'top': this.event.pageY + 'px'
-				,	'left': this.event.pageX + 'px'
+				.load(href, 'body', function(){
+
+					var closeBtn = $('<div class="close">x</div>')
+						.click(self.hide);
+
+					$(this).find('header').append(closeBtn);
+
 				})
+//				.css({
+//					'top': this.event.pageY + 'px'
+//				,	'left': this.event.pageX + 'px'
+//				})
 				.appendTo(this.content)
 				.fadeIn();
+
+			this.lastRequest = href;
 
 			return this;
 
@@ -66,7 +91,7 @@ function() {
 
 	,	hide: function() {
 
-			this.el.remove();
+			$('.layer, .dimmer').fadeOut(function(){ $(this).remove() });
 
 			return this;
 

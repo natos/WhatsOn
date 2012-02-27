@@ -14,8 +14,9 @@ section#content
 	#channels-bar
 		ul
 			each channel in data
-				li 
-					img(title="#{channel.name}", src="http://www.upc.nl#{channel.logoIMG}")
+				li
+					.picture
+						img(title="#{channel.name}", src="http://www.upc.nl#{channel.logoIMG}")
 		
 
 script
