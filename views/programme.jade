@@ -2,6 +2,9 @@ if !isAjax
 	include layout
 
 header
+
+	a#top
+
 	if (data.subcategory.category.name != data.subcategory.name)
 		p #{data.subcategory.category.name} > #{data.subcategory.name}
 	else

@@ -56,12 +56,9 @@ function() {
 				return;
 			}
 
-			if (href === this.lastRequest) {
-				return;
-			}
-
 			$('<div class="dimmer"><div>')
 				.hide()
+				.click(this.hide)
 				.appendTo(this.content)
 				.fadeIn();
 
@@ -82,8 +79,6 @@ function() {
 //				})
 				.appendTo(this.content)
 				.fadeIn();
-
-			this.lastRequest = href;
 
 			return this;
 

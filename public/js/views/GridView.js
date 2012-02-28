@@ -34,7 +34,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 	//	constants
 
-	,	MAX_DOM_ELEMENTS: 500
+	,	MAX_DOM_ELEMENTS: 1000
 
 	//  private classes
 
@@ -294,7 +294,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 					}
 
 				// new EventView
-				var eventItem = new Event(eventModel);
+				var eventItem = new Event(eventModel); // This might degrade performance a little bit
 
 /*				var eventItem = $('<div>')
 					.addClass('event')
@@ -332,7 +332,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 				console.log('WARNING: ' + this.MAX_DOM_ELEMENTS + ' Events on the DOM');
 
 				var shifted,
-					erase = 100;
+					erase = this.MAX_DOM_ELEMENTS;
 
 				while (erase--) {
 					shifted = this.eventsBuffer.shift();
