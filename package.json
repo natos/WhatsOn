@@ -8,5 +8,6 @@
 	,	"socket.io": "0.8.4"
 	,	"jade": "0.20.0"
 	,	"request": "2.9.100"
+	,	"useragent": "1.0.5"
   }
 }
