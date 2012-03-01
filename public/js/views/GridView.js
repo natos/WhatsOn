@@ -36,7 +36,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 	//	constants
 
-	,	MAX_DOM_ELEMENTS: 500
+	,	MAX_DOM_ELEMENTS: 100
 	,	MILLISECONDS_IN_HOUR: 3600000
 
 	,	USE_MANUAL_TIME_CONTROLS: !supportsCSSFixedPosition // With no support of Fixed positioning use manual controls
@@ -299,14 +299,29 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			var leftBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * this.MILLISECONDS_IN_HOUR));
 			var rightBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * this.MILLISECONDS_IN_HOUR) + (hoursWide * this.MILLISECONDS_IN_HOUR));
 
-			GridSource.getEventsForGrid(channelIds, this.zeroTime, leftBorderTime, rightBorderTime, this.renderEvent, this);
+			GridSource.getEventsForGrid(channelIds, this.zeroTime, leftBorderTime, rightBorderTime, this.renderEventsCollection, this);
+		}
+
+	,	renderEventsCollection: function(eventsCollection) {
+			var self = this;
+
+			var t = new Timer('renderEventsCollectionTimer');
+			t.track('Start rendering collection (' + eventsCollection.length + ' events)');
+
+			this.loader();
+
+			$(eventsCollection).each(function(i, event){
+				self.renderEvent(event);
+			});
+
+			// Check to see if we need to remove events from the DOM
+			this.checkEventsBuffer();
+
+			t.track('Finish rendering collection');
 		}
 
 	,	renderEvent: function(event) {
-
 			var renderingTimer = new Timer('Rendering').off();
-
-//			this.loader();
 
 			// Render if the event dosen't exist on the DOM
 			if ( !$('#'+event.id)[0] ) {
@@ -360,9 +375,6 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 				// Save the eventItem to the eventsBuffer
 				// To control how many elements are rendered
 				this.eventsBuffer.push(eventItem);
-
-				// Check to see if we need to remove events from the DOM
-				this.checkEventsBuffer();
 			}
 		}
 
