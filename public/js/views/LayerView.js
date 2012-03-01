@@ -51,6 +51,22 @@ function() {
 
 			this.event = event;
 
+/*			console.log(event);
+
+			var clientX = event.clientX
+			,	clientY = event.clientY;
+
+			$('<div></div>')
+				.html('asdasdasd')
+				.css({
+					'position': 'fixed'
+				,	'top': clientX + 'px'
+				,	'left': clientY + 'px'
+				,	'width': '100px'
+				,	'height': '100px'
+			}).append('#content');
+*/
+
 			if (!href) { 
 				this.hide();
 				return;

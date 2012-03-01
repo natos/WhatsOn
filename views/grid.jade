@@ -8,11 +8,20 @@ section#content
 		.back-grid
 
 	#time-bar
-		a(href="#top")
-			ol
-				each hour, i in timeFrame
-					li
-						span
+		ol
+			each hour, i in timeFrame
+				li
+					span
+
+	#time-controls
+		.move-top
+			span.icon
+		.move-right
+			span.icon
+		.move-bottom
+			span.icon
+		.move-left
+			span.icon
 
 	#channels-bar
 		ul

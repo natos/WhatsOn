@@ -4,13 +4,15 @@ define([
 
 	'views/EventView'
 ,	'views/LayerView'
+,	'views/TimeTickerView'
+,	'views/TimeManualControlsView'
 ,	'js/sources/GridSource.js'
 //,	'js/libs/xdate/xdate.js'
 ,	'js/libs/timer/timer.js'
 
 ],
 
-function(Event, Layer, GridSource) {
+function(EventView, Layer, TimeTicker, TimeManualControls, GridSource) {
 
 // private scope
 var timer = new Timer('Grid View'), requestTimer, bufferTimer;
@@ -37,6 +39,8 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 	,	MAX_DOM_ELEMENTS: 500
 	,	MILLISECONDS_IN_HOUR: 3600000
 
+	,	USE_MANUAL_TIME_CONTROLS: !supportsCSSFixedPosition // With no support of Fixed positioning use manual controls
+
 	//  private classes
 
 	,	layer: new Layer()
@@ -53,12 +57,18 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 			timer.track('Initialize');
 
-			// Now
-			this.zeroTime = new Date(); // TODO: Try a framework like XDate: http://arshaw.com/xdate/
-
 			// Constansts
 			this.HOUR_WIDTH = this['time-bar'].find('li').outerWidth();
 			this.ROW_HEIGHT = this['channels-bar'].find('li').outerHeight();
+
+			// Now
+			this.zeroTime = new Date(); // TODO: Try a framework like XDate: http://arshaw.com/xdate/
+
+			// Ticker
+			this.timeTicker = new TimeTicker(this.zeroTime);
+
+			// Time Manual Constrols
+			this.timeManualControls = this.USE_MANUAL_TIME_CONTROLS && new TimeManualControls();
 
 			// get viewport size
 			this.getViewportSize();
@@ -205,6 +215,14 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 					self.getViewportSize();
 					self.getEvents();
 
+					// Update Time Manual Controls Position
+					// Not necesary if the device suports fixed positioning
+					// Need to improve sniffing
+					//if (self.USE_MANUAL_TIME_CONTROLS) {
+					//	self.timeManualControls.update(self.viewport);
+					//}
+					self.timeManualControls && self.timeManualControls.update(self.viewport);
+
 				}, 200);
 
 				// Update scroll bars
@@ -311,6 +329,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 				}
 
 				// Create a EventModel
+				// Maybe is a good idea use a Backbone Model with a Backbone Collection
 				var eventModel = event;
 					eventModel.duration = duration;
 					eventModel.width = width;
@@ -320,7 +339,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 					}
 
 				// new EventView
-				var eventItem = new Event(eventModel); // This might degrade performance a little bit
+				var eventItem = new EventView(eventModel); // This might degrade performance a little bit
 
 /*				var eventItem = $('<div>')
 					.addClass('event')
@@ -362,7 +381,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 				while (erase--) {
 					shifted = this.eventsBuffer.shift();
-					shifted.el.remove();
+					shifted.remove();
 					shifted = null;
 				}
 
