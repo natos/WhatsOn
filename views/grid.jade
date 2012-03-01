@@ -2,20 +2,27 @@ include layout
 
 section#content
 
+	a#top
+
 	#grid-container
 		.back-grid
 
 	#time-bar
-		ol
-			each hour, i in timeFrame
-				li
-					span
+		a(href="#top")
+			ol
+				each hour, i in timeFrame
+					li
+						span
 
 	#channels-bar
 		ul
 			each channel in data
-				li 
-					img(title="#{channel.name}", src="http://www.upc.nl#{channel.logoIMG}")
+				li
+					.picture
+						img(title="#{channel.name}", src="http://www.upc.nl#{channel.logoIMG}")
+					.fav
+						input(id="#{channel.name}", type="checkbox")
+						label(for="#{channel.name}") favorite
 		
 
 script

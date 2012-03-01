@@ -2,33 +2,35 @@
 
 define([
 
-//	'templates/UserControlTemplate'
-	'views/LayerView'
+	'views/EventView'
+,	'views/LayerView'
 ,	'js/sources/GridSource.js'
 //,	'js/libs/xdate/xdate.js'
 ,	'js/libs/timer/timer.js'
 
 ],
 
-function(Layer, GridSource) {
+function(Event, Layer, GridSource) {
 
-	var timer = new Timer('Grid View')
-	,	requestTimer;
+// private scope
+var timer = new Timer('Grid View'), requestTimer, bufferTimer;
+// end private scope
 
 	return Backbone.View.extend({
 
+	// $ shortcuts
+
 		el: $('#grid-container')
 
-	// $ shortcuts
 	,   window: $(window)
 
 	,	'time-bar': $('#time-bar')
 
-	,	'time-bar-list': $('#time-bar').find('ol')
+	,	'time-bar-list': $('#time-bar ol')
 
 	,	'channels-bar': $('#channels-bar')
 
-	,	'channels-bar-list': $('#channels-bar').find('ul')
+	,	'channels-bar-list': $('#channels-bar ul')
 
 	//	constants
 
@@ -40,6 +42,8 @@ function(Layer, GridSource) {
 	,	layer: new Layer()
 
 	// 	maps
+
+	,	viewport: {}
 
 	,	eventsBuffer: []
 
@@ -56,13 +60,16 @@ function(Layer, GridSource) {
 			this.HOUR_WIDTH = this['time-bar'].find('li').outerWidth();
 			this.ROW_HEIGHT = this['channels-bar'].find('li').outerHeight();
 
+			// get viewport size
+			this.getViewportSize();
+
+			// Create Timeline
+			this.drawTimeLine();
+
 			// Map Channel ID / OffsetTop
 			for (var i = 0; i < channels.length; i++) {
 				this.channelsOffsetMap[ channels[i].id ] = i * this.ROW_HEIGHT;
 			}
-
-			// Create Timeline
-			this.drawTimeLine();
 
 			this.trigger('view-initialized', this);
 
@@ -76,11 +83,11 @@ function(Layer, GridSource) {
 
 			this.clickHandlers();
 
+			this.getEvents();
+
 			this.trigger('view-created');
 
 			timer.track('Finish Load');
-
-			this.getEvents();
 
 		}
 
@@ -92,15 +99,31 @@ function(Layer, GridSource) {
 
 		}
 
+	,	getViewportSize: function() {
+
+			var v = {
+				width		: this.window.width()
+			,	height		: this.window.height()
+			,	top			: this.window.scrollTop()
+			,	left		: this.window.scrollLeft()
+			}
+
+			this.viewport = v;
+
+			return v;
+		}
+
 	,	drawTimeLine: function() {
 
-			var self = this,
-				hourTime;
+			var self = this
+			,	hourTime
+			,	hourString;
 
 			// Each <li> represents one hour
 			this['time-bar-list'].find('li').each(function(i, e) {
 				hourTime = new Date(self.zeroTime.valueOf() + (i * (self.MILLISECONDS_IN_HOUR)));
-				$(e).html('<span>' + ('0' + hourTime.getHours().toString()).slice(-2) + ':00</span>');
+				hourString = ('0' + hourTime.getHours().toString()).slice(-2);
+				$(e).html('<span>' + hourString + ' hs</span><div class="spike"></div>');
 			});
 			this.updateBars();
 
@@ -112,17 +135,21 @@ function(Layer, GridSource) {
 	,	loader: function() {
 
 			var self = this;
-	
+
 			if ( $('.loader')[0] ) {
 
-				$('.loader').fadeOut(function(){ $(this).remove() });
+				$('.loader').fadeOut('fast', function(){ $(this).remove() });
 
 			} else {
 
 				$('<div class="loader">')
 					.hide()
-					.appendTo(self.el)
-					.fadeIn();
+					.css({
+						top:  Math.floor(self.viewport.height / 2) + 'px'
+					,	left: Math.floor(self.viewport.width / 2) + 'px'
+					})
+					.appendTo('#content')
+					.fadeIn('fast');
 			}
 		}
 
@@ -130,19 +157,27 @@ function(Layer, GridSource) {
 
 			var self = this;
 
-			wo.event.trigger('new-layer');
-
 			var handler = function(event) {
 
 				event.preventDefault();
 				event.stopPropagation();
 
-				if (!event.target.href) {
-					self.layer.hide();
-					return;
+				var target = $(event.target)
+				,	href;
+
+				if ( target.hasClass('programme') ) {
+					href = target.attr('href');
 				}
 
-				self.layer.show(event);
+				if ( target.hasClass('event') ) {
+					href = target.find('a').attr('href');
+				}
+				
+				if ( target.hasClass('description') ) {
+					href = target.parent().find('a').attr('href');
+				}
+
+				self.layer.show(event, href);
 
 			}
 
@@ -166,6 +201,8 @@ function(Layer, GridSource) {
 
 				executionTimer = setTimeout(function() {
 
+					self.loader();
+					self.getViewportSize();
 					self.getEvents();
 
 				}, 200);
@@ -224,7 +261,9 @@ function(Layer, GridSource) {
 
 	,	renderEvent: function(event) {
 
-			var renderingTimer = new Timer('Rendering');
+			var renderingTimer = new Timer('Rendering').off();
+
+			this.loader();
 
 			// Render if the event dosen't exist on the DOM
 			if ( !$('#'+event.id)[0] ) {
@@ -246,10 +285,22 @@ function(Layer, GridSource) {
 					console.log(event);
 				}
 
-				var eventItem = $('<div>')
+				// Create a EventModel
+				var eventModel = event;
+					eventModel.duration = duration;
+					eventModel.width = width;
+					eventModel.offset = {
+						top: offsetTop
+					,	left: offsetLeft
+					}
+
+				// new EventView
+				var eventItem = new Event(eventModel); // This might degrade performance a little bit
+
+/*				var eventItem = $('<div>')
 					.addClass('event')
 					.attr('id', event.id)
-					.html('<a id="' + event.programme.id + '" class="programme" href="/programme/' + event.programme.id + '.html">' + event.programme.title + '</a>' + st)
+					.html('<a id="' + event.programme.id + '" class="programme" href="/programme/' + event.programme.id + '.html">' + event.programme.title + '</a>' + '<p>' + event.programme.shortDescription + '</p>')
 					.css({
 						'position': 'absolute'
 					,	'top': offsetTop + 'px'
@@ -259,7 +310,7 @@ function(Layer, GridSource) {
 					.hide()
 					.appendTo('#grid-container')
 					.fadeIn();
-
+*/
 				renderingTimer.track('Event ' + event.id + ' Rendered');
 
 				// Save the eventItem to the eventsBuffer
@@ -273,27 +324,27 @@ function(Layer, GridSource) {
 
 	,	checkEventsBuffer: function() {
 
-//			requestTimer.track('Events Buffer Check');
-
 			if (this.eventsBuffer.length > this.MAX_DOM_ELEMENTS) {
 
-//				requestTimer.track('Events Buffer Start Cleaning');
+				bufferTimer = new Timer('Events Buffer');
+
+				bufferTimer.track('Start Cleaning');
 
 				console.log('WARNING: ' + this.MAX_DOM_ELEMENTS + ' Events on the DOM');
 
 				var shifted,
-					erase = 100;
+					erase = this.MAX_DOM_ELEMENTS;
 
 				while (erase--) {
 					shifted = this.eventsBuffer.shift();
-					shifted.remove();
+					shifted.el.remove();
 					shifted = null;
 				}
 
 				// need to find a better way, while user scrolls
 				// some things may desapear from his sight
 
-//				requestTimer.track('Events Buffer Finish Cleaning');
+				bufferTimer.track('Finish Cleaning');
 
 			}
 

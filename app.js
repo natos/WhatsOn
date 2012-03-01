@@ -10,8 +10,6 @@ var fs = require('fs')
 
 var Timer = require('./public/js/libs/timer/timer.js').Timer;
 
-var appTimer = new Timer('App');
-
 var facebook = {
 	'app-id'		: '153316508108487'
 ,	'app-secret'	: '47a04d4b4c794097717593854b7a4e36'
@@ -99,8 +97,6 @@ app.configure('development', function(){
 app.configure('production', function(){
 	app.use(express.errorHandler()); 
 });
-
-appTimer.track('Configuration');
 
 /**
  * Routing.
@@ -438,8 +434,6 @@ app.get('/imdbPoster/:title', function(req, res) {
 	})
 });
 
-appTimer.track('Routing');
-
 /**
  * app start
  */
@@ -449,5 +443,3 @@ app.listen(port);
  * log
  */
 console.log("Express server listening on port %d", app.address().port);
-
-appTimer.track('Ready');
