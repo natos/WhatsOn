@@ -26,6 +26,7 @@ function() {
 			this.el
 				.addClass('event')
 				.attr('id', this.options.id)
+				.attr('title', this.options.programme.title)
 				.html('<a id="' + this.options.programme.id + '" class="programme" href="/programme/' + this.options.programme.id + '.html">' + this.options.programme.title + '</a>' + '<p class="description">' + this.options.programme.shortDescription + '</p>')
 				.css({
 					'position': 'absolute'
@@ -51,6 +52,15 @@ function() {
 
 			return this;
 
+		}
+
+	,	remove: function() {
+
+			this.unload();
+
+			this.el.remove();
+
+			return this;
 		}
 
 	});

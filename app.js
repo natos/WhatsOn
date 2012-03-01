@@ -62,6 +62,25 @@ function prettyDate(time){
 		day_diff < 31 && Math.ceil( day_diff / 7 ) + " weeks ago"
 }
 
+var getWeekFromToday = function() {
+
+	var week = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']
+	,	thisWeek = []
+	,	today = new Date().getDay();
+
+	// Get the days after today
+	for (var i = today; i < week.length; i++) {
+		thisWeek.push( week[i] );
+	}
+
+	// Get the days before today
+	for (var i = 0; i < today; i++) {
+		thisWeek.push( week[i] );
+	}
+
+	return thisWeek;
+}
+
 /**
  * app configuration.
  */
@@ -170,6 +189,7 @@ app.get('/grid', function(req, res) {
 			,	metadata	: metadata
 			,	prefix		: ''
 			,	timeFrame   : new Array(72) // 148 hrs
+			,	week		: getWeekFromToday()
 			}); // HTML output
 			
 		}
