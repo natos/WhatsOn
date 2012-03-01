@@ -220,31 +220,56 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 	,	updateBars: function() {
 
 			var left = this.window.scrollLeft()
-			,	top = this.window.scrollTop();
+			,	top = this.window.scrollTop()
+			,	visibleChannelIds = this.getVisibleChannelIds()
+			,	i = visibleChannelIds.length
+			,	imgElement;
+
 
 			this['time-bar-list'].css( 'left', (left + Math.floor((this.HOUR_WIDTH * (this.zeroTime.getMinutes()/60)))) * -1 );
 			this['channels-bar-list'].css( 'top', top * -1 );
-			
+
+			/* If a channel is visible in the viewport, show the channel image */
+			while (i--) {
+				imgElement = document.getElementById('channelImg' + visibleChannelIds[i]);
+				if (imgElement) {
+					if (!imgElement.getAttribute('src') && imgElement.getAttribute('data-src')) {
+						imgElement.src = imgElement.getAttribute('data-src');
+					}
+				}
+			}
 		}
 
-	,	getEvents: function() {
+		/**
+		* Return an array of the channel IDs that are currently visible in the viewport
+		*/
+	,	getVisibleChannelIds: function(extraAboveAndBelow) {
+			
+			var channelsScrolledUp = this.window.scrollTop() / this.ROW_HEIGHT // How many channels have been scrolled vertically?
+			,	firstChannel = (channelsScrolledUp < 0) ? 0 : Math.floor(channelsScrolledUp)
+			,	topOffset = 100 // TODO: calculate this based on actual dimensions
+			,	channelsTall = (window.innerHeight - topOffset) / this.ROW_HEIGHT // How many channels tall is the screen?
+			,	channelIds = []
+			,	i = 0;
 
-			// How many channels have been scrolled vertically?
-			var channelsScrolledUp = this.window.scrollTop() / this.ROW_HEIGHT;
-			var firstChannel = (channelsScrolledUp < 0) ? 0 : Math.floor(channelsScrolledUp);
-			// How many channels tall is the screen?
-			var topOffset = 100; // TODO: calculate this based on actual dimensions
-			var channelsTall = (window.innerHeight - topOffset) / this.ROW_HEIGHT;
+			if (!extraAboveAndBelow) {
+				extraAboveAndBelow = 0;
+			}
 
-			// Calculate which channels to get
-			var channelIds = [];
-			// Pre-load 2 channels above and below the visible window 
-			for (var i = -2; i < channelsTall + 2; i++) {
+			// Return 2 channels above and below the visible window 
+			for (i = (0 - extraAboveAndBelow); i < (channelsTall + extraAboveAndBelow); i++) {
 				if ((firstChannel + i) < 0) {
 					continue;
 				}
 				channelIds.push(channels[firstChannel + i].id);
 			}
+
+			return channelIds;
+	}
+
+	,	getEvents: function() {
+
+			var channelIds = this.getVisibleChannelIds(1);
 
 			// How many hours have been scrolled horizontally?
 			var hoursScrolledLeft = this.window.scrollLeft() / this.HOUR_WIDTH;
@@ -263,7 +288,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 			var renderingTimer = new Timer('Rendering').off();
 
-			this.loader();
+//			this.loader();
 
 			// Render if the event dosen't exist on the DOM
 			if ( !$('#'+event.id)[0] ) {
