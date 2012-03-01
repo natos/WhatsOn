@@ -6,9 +6,9 @@ var fs = require('fs')
 ,	util   = require('util')
 ,	express = require('express')
 ,	request = require('request')
-,	port = process.env.PORT || 3000;
-
-var Timer = require('./public/js/libs/timer/timer.js').Timer;
+,	port = process.env.PORT || 3000
+,	IdentifiedBrowser = require('./lib/identifiedbrowser.js').IdentifiedBrowser
+,	Timer = require('./public/js/libs/timer/timer.js').Timer;
 
 var facebook = {
 	'app-id'		: '153316508108487'
@@ -62,6 +62,7 @@ function prettyDate(time){
 		day_diff < 31 && Math.ceil( day_diff / 7 ) + " weeks ago"
 }
 
+<<<<<<< HEAD
 var getWeekFromToday = function() {
 
 	var week = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']
@@ -80,6 +81,8 @@ var getWeekFromToday = function() {
 
 	return thisWeek;
 }
+=======
+>>>>>>> dd5ca4e18375de30c8e5b147f44545fa47b5c00e
 
 /**
  * app configuration.
@@ -168,6 +171,8 @@ app.get('/grid', function(req, res) {
 
 	var gridTimer = new Timer('Grid View');
 
+	var supportsCSSFixedPosition = new IdentifiedBrowser(req).supports.CSSFixedPosition();
+
 	var ALL_CHANNELS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel.json?order=position';
 
 	request(ALL_CHANNELS, function (error, response, body) {
@@ -189,7 +194,11 @@ app.get('/grid', function(req, res) {
 			,	metadata	: metadata
 			,	prefix		: ''
 			,	timeFrame   : new Array(72) // 148 hrs
+<<<<<<< HEAD
 			,	week		: getWeekFromToday()
+=======
+			,	supportsCSSFixedPosition: supportsCSSFixedPosition
+>>>>>>> dd5ca4e18375de30c8e5b147f44545fa47b5c00e
 			}); // HTML output
 			
 		}

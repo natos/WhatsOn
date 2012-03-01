@@ -36,7 +36,8 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 	//	constants
 
-	,	MAX_DOM_ELEMENTS: 1000
+	,	MAX_DOM_ELEMENTS: 500
+	,	MILLISECONDS_IN_HOUR: 3600000
 
 	,	USE_MANUAL_TIME_CONTROLS: true
 
@@ -130,7 +131,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 			// Each <li> represents one hour
 			this['time-bar-list'].find('li').each(function(i, e) {
-				hourTime = new Date(self.zeroTime.valueOf() + (i * (1000 * 60 * 60)));
+				hourTime = new Date(self.zeroTime.valueOf() + (i * (self.MILLISECONDS_IN_HOUR)));
 				hourString = ('0' + hourTime.getHours().toString()).slice(-2);
 				$(e).html('<span>' + hourString + ' hs</span><div class="spike"></div>');
 			});
@@ -254,7 +255,11 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 			// Calculate which channels to get
 			var channelIds = [];
-			for (var i = 0; i < channelsTall; i++) {
+			// Pre-load 2 channels above and below the visible window 
+			for (var i = -2; i < channelsTall + 2; i++) {
+				if ((firstChannel + i) < 0) {
+					continue;
+				}
 				channelIds.push(channels[firstChannel + i].id);
 			}
 
@@ -265,9 +270,8 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			var hoursWide = (document.body.clientWidth - channelsBarWidth) / this.HOUR_WIDTH;
 
 			// Calculate the left border time, and right border time
-			var msInHour = 3600000;
-			var leftBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * msInHour));
-			var rightBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * msInHour) + (hoursWide * msInHour));
+			var leftBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * this.MILLISECONDS_IN_HOUR));
+			var rightBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * this.MILLISECONDS_IN_HOUR) + (hoursWide * this.MILLISECONDS_IN_HOUR));
 
 			GridSource.getEventsForGrid(channelIds, this.zeroTime, leftBorderTime, rightBorderTime, this.renderEvent, this);
 		}
@@ -278,23 +282,20 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 			this.loader();
 
-			var channel = event.channel;
-
-			// find the offsettop position from this channel
-			var offsetTop = this.channelsOffsetMap[ channel.id ];
-
-			var st = event.startDateTime
-			var et = event.endDateTime
-			var endDateTime = new Date(et.slice(0,4), parseInt(et.slice(5,7),10) -1, parseInt(et.slice(8,10),10), parseInt(et.slice(11,13),10), parseInt(et.slice(14,16),10));
-			var startDateTime = new Date(st.slice(0,4), parseInt(st.slice(5,7),10) -1, parseInt(st.slice(8,10),10), parseInt(st.slice(11,13),10), parseInt(st.slice(14,16),10));
-			var duration = ( endDateTime.valueOf() - startDateTime.valueOf() ) / 3600000; // hours
-			var width = Math.floor( duration * this.HOUR_WIDTH ); // pixels
-			var offsetTime = ( startDateTime.valueOf() - this.zeroTime.valueOf() ) / 3600000; // hours
-			var offsetTop = this.channelsOffsetMap[ channel.id ];
-			var offsetLeft = Math.floor( offsetTime * this.HOUR_WIDTH ); // pixels
-
 			// Render if the event dosen't exist on the DOM
 			if ( !$('#'+event.id)[0] ) {
+
+				var channel = event.channel,
+					offsetTop = this.channelsOffsetMap[ channel.id ],
+					st = event.startDateTime,
+					et = event.endDateTime,
+					endDateTime = new Date(et.slice(0,4), parseInt(et.slice(5,7),10) -1, parseInt(et.slice(8,10),10), parseInt(et.slice(11,13),10), parseInt(et.slice(14,16),10)),
+					startDateTime = new Date(st.slice(0,4), parseInt(st.slice(5,7),10) -1, parseInt(st.slice(8,10),10), parseInt(st.slice(11,13),10), parseInt(st.slice(14,16),10)),
+					duration = ( endDateTime.valueOf() - startDateTime.valueOf() ) / this.MILLISECONDS_IN_HOUR, // hours
+					width = Math.floor( duration * this.HOUR_WIDTH ), // pixels
+					offsetTime = ( startDateTime.valueOf() - this.zeroTime.valueOf() ) / this.MILLISECONDS_IN_HOUR, // hours
+					offsetTop = this.channelsOffsetMap[ channel.id ],
+					offsetLeft = Math.floor( offsetTime * this.HOUR_WIDTH ); // pixels
 
 				if (!event.programme) {
 					console.log("Warning: event.programme is an empty object");
