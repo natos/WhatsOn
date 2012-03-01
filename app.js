@@ -62,7 +62,6 @@ function prettyDate(time){
 		day_diff < 31 && Math.ceil( day_diff / 7 ) + " weeks ago"
 }
 
-<<<<<<< HEAD
 var getWeekFromToday = function() {
 
 	var week = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']
@@ -81,8 +80,6 @@ var getWeekFromToday = function() {
 
 	return thisWeek;
 }
-=======
->>>>>>> dd5ca4e18375de30c8e5b147f44545fa47b5c00e
 
 /**
  * app configuration.
@@ -194,11 +191,8 @@ app.get('/grid', function(req, res) {
 			,	metadata	: metadata
 			,	prefix		: ''
 			,	timeFrame   : new Array(72) // 148 hrs
-<<<<<<< HEAD
 			,	week		: getWeekFromToday()
-=======
 			,	supportsCSSFixedPosition: supportsCSSFixedPosition
->>>>>>> dd5ca4e18375de30c8e5b147f44545fa47b5c00e
 			}); // HTML output
 			
 		}
