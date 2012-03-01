@@ -39,7 +39,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 	,	MAX_DOM_ELEMENTS: 500
 	,	MILLISECONDS_IN_HOUR: 3600000
 
-	,	USE_MANUAL_TIME_CONTROLS: true
+	,	USE_MANUAL_TIME_CONTROLS: !supportsCSSFixedPosition // With no support of Fixed positioning use manual controls
 
 	//  private classes
 
@@ -68,7 +68,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			this.timeTicker = new TimeTicker(this.zeroTime);
 
 			// Time Manual Constrols
-			this.timeManualControls = new TimeManualControls();
+			this.timeManualControls = this.USE_MANUAL_TIME_CONTROLS && new TimeManualControls();
 
 			// get viewport size
 			this.getViewportSize();
@@ -218,9 +218,10 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 					// Update Time Manual Controls Position
 					// Not necesary if the device suports fixed positioning
 					// Need to improve sniffing
-					if (self.USE_MANUAL_TIME_CONTROLS) {
-						self.timeManualControls.update(self.viewport);
-					}
+					//if (self.USE_MANUAL_TIME_CONTROLS) {
+					//	self.timeManualControls.update(self.viewport);
+					//}
+					self.timeManualControls && self.timeManualControls.update(self.viewport);
 
 				}, 200);
 
