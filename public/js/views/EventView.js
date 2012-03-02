@@ -34,9 +34,11 @@ function() {
 				,	'left': this.options.offset.left + 'px'
 				,	'width': this.options.width
 				})
-				.hide()
-				.appendTo('#grid-container')
-				.fadeIn();
+//				.hide()
+				.appendTo('#grid-container');
+//				.fadeIn();
+// hide() and fadeIn() kills performance on low-powered devices.
+// Takes 10x longer to render!
 
 			this.trigger('view-created');
 

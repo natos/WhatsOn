@@ -36,7 +36,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 	//	constants
 
-	,	MAX_DOM_ELEMENTS: 100
+	,	MAX_DOM_ELEMENTS: 500
 	,	MILLISECONDS_IN_HOUR: 3600000
 
 	,	USE_MANUAL_TIME_CONTROLS: !supportsCSSFixedPosition // With no support of Fixed positioning use manual controls
@@ -311,7 +311,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			this.loader();
 
 			$(eventsCollection).each(function(i, event){
-				self.renderEvent(event);
+				setTimeout(function(){self.renderEvent(event)}, 0)
 			});
 
 			// Check to see if we need to remove events from the DOM
