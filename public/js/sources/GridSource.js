@@ -52,7 +52,7 @@ function() {
 			var eventsCollection = eventCollectionsCache[cacheKey];
 			if (eventsCollection) {
 				// render the events collection from cache
-				console.log('Retrieved events for channel ' + channelIds[i] + ', slice ' + sliceIndex + ' from cache');
+//				console.log('Retrieved events for channel ' + channelIds[i] + ', slice ' + sliceIndex + ' from cache');
 				eventsCollectionRendererCallback.call(gridView, eventsCollection);
 			} else {
 				// This channel should be fetched remotely.
@@ -76,7 +76,7 @@ function() {
 			var sliceStartTime = getSliceStartTimeFromSliceIndex(zeroTime, sliceIndex);
 			var formattedSliceStartTime = formatTimeForApiRequest(sliceStartTime);
 			var request = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/' + channelIdBatch.join('|') + '/events/NowAndNext_' + formattedSliceStartTime + '.json?batchSize=10&callback=?';
-			console.log(request);
+
 			$.getJSON(request, function(apiResponse) {
 				processApiResponse(apiResponse, sliceIndex, eventsCollectionRendererCallback, gridView);
 			});
@@ -115,7 +115,6 @@ function() {
 	return {
 
 		getEventsForGrid: function(channelIds, zeroTime, leftBorderTime, rightBorderTime, eventsCollectionRendererCallback, gridView) {
-			console.log(eventCollectionsCache);
 			var self = this;
 
 			// Find out what time slices the left and right border time belong to

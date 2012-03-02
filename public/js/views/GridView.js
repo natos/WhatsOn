@@ -61,17 +61,22 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			this.HOUR_WIDTH = this['time-bar'].find('li').outerWidth();
 			this.ROW_HEIGHT = this['channels-bar'].find('li').outerHeight();
 
+			// get viewport size
+			this.getViewportSize();
+
 			// Now
-			this.zeroTime = new Date(); // TODO: Try a framework like XDate: http://arshaw.com/xdate/
+			var now = new Date();
+			// Adjust the zero time so that "now" is half-way across the width of the page
+			var channelsBarWidth = 43;
+			var hoursWide = (this.viewport.width - channelsBarWidth) / this.HOUR_WIDTH;
+			var initialOffsetHoursBetweenZeroTimeAndNow = (0.5 * hoursWide)
+			this.zeroTime = new Date(now.valueOf() - (initialOffsetHoursBetweenZeroTimeAndNow * this.MILLISECONDS_IN_HOUR));
 
 			// Ticker
-			this.timeTicker = new TimeTicker(this.zeroTime);
+			this.timeTicker = new TimeTicker(now, initialOffsetHoursBetweenZeroTimeAndNow, this.HOUR_WIDTH);
 
 			// Time Manual Constrols
 			this.timeManualControls = this.USE_MANUAL_TIME_CONTROLS && new TimeManualControls();
-
-			// get viewport size
-			this.getViewportSize();
 
 			// Create Timeline
 			this.drawTimeLine();
@@ -147,19 +152,15 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			var self = this;
 
 			if ( $('.loader')[0] ) {
-
-				$('.loader').fadeOut('fast', function(){ $(this).remove() });
-
+				$('.loader').remove();
 			} else {
 
 				$('<div class="loader">')
-					.hide()
 					.css({
 						top:  Math.floor(self.viewport.height / 2) + 'px'
 					,	left: Math.floor(self.viewport.width / 2) + 'px'
 					})
-					.appendTo('#content')
-					.fadeIn('fast');
+					.appendTo('#content');
 			}
 		}
 
@@ -223,7 +224,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 					//}
 					self.timeManualControls && self.timeManualControls.update(self.viewport);
 
-				}, 200);
+				}, 100);
 
 				// Update scroll bars
 				self.updateBars();
@@ -236,15 +237,22 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 		}
 
 	,	updateBars: function() {
+			this.updateTimeBar();
+			this.updateChannelsBar();
+		}
 
-			var left = this.window.scrollLeft()
-			,	top = this.window.scrollTop()
+	,	updateTimeBar: function() {
+			var currentScrollLeft = this.window.scrollLeft();
+			this['time-bar-list'].css( 'left', (currentScrollLeft + Math.floor((this.HOUR_WIDTH * (this.zeroTime.getMinutes()/60)))) * -1 );
+		}
+
+	,	updateChannelsBar: function() {
+			var top = this.window.scrollTop()
 			,	visibleChannelIds = this.getVisibleChannelIds()
 			,	i = visibleChannelIds.length
 			,	imgElement;
 
 
-			this['time-bar-list'].css( 'left', (left + Math.floor((this.HOUR_WIDTH * (this.zeroTime.getMinutes()/60)))) * -1 );
 			this['channels-bar-list'].css( 'top', top * -1 );
 
 			/* If a channel is visible in the viewport, show the channel image */
@@ -305,7 +313,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 	,	renderEventsCollection: function(eventsCollection) {
 			var self = this;
 
-			var t = new Timer('renderEventsCollectionTimer');
+			var t = new Timer('renderEventsCollectionTimer').off();
 			t.track('Start rendering collection (' + eventsCollection.length + ' events)');
 
 			this.loader();
@@ -356,20 +364,6 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 				// new EventView
 				var eventItem = new EventView(eventModel); // This might degrade performance a little bit
 
-/*				var eventItem = $('<div>')
-					.addClass('event')
-					.attr('id', event.id)
-					.html('<a id="' + event.programme.id + '" class="programme" href="/programme/' + event.programme.id + '.html">' + event.programme.title + '</a>' + '<p>' + event.programme.shortDescription + '</p>')
-					.css({
-						'position': 'absolute'
-					,	'top': offsetTop + 'px'
-					,	'left': offsetLeft + 'px'
-					,	'width': width
-					})
-					.hide()
-					.appendTo('#grid-container')
-					.fadeIn();
-*/
 				renderingTimer.track('Event ' + event.id + ' Rendered');
 
 				// Save the eventItem to the eventsBuffer
