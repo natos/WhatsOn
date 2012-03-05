@@ -39,7 +39,8 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 	,	MAX_DOM_ELEMENTS: 500
 	,	MILLISECONDS_IN_HOUR: 3600000
 
-	,	USE_MANUAL_TIME_CONTROLS: !supportsCSSFixedPosition // With no support of Fixed positioning use manual controls
+		// With no support of Fixed positioning use manual controls
+	,	USE_MANUAL_TIME_CONTROLS: !supportsCSSFixedPosition
 
 	//  private classes
 
