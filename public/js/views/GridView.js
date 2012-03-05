@@ -57,12 +57,10 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 			timer.track('Initialize');
 
-			// Constansts
-			this.HOUR_WIDTH = this['time-bar'].find('li').outerWidth();
-			this.ROW_HEIGHT = this['channels-bar'].find('li').outerHeight();
-
 			// get viewport size
 			this.getViewportSize();
+
+			this.initializeGridLayout();
 
 			// Now
 			var now = new Date();
@@ -90,6 +88,37 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 			// self load
 			this.load();
+		}
+
+	,	initializeGridLayout: function() {
+			// How many days are visible? Smaller screens => fewer days
+			var screenArea = this.viewport.width * this.viewport.height;
+
+			if (screenArea <= 153600) { // 320 x 480
+				this.DAYS_VISIBLE = 1;
+			} else if (screenArea <= 384000) { // 480 x 800
+				this.DAYS_VISIBLE = 2;
+			} else { // bigger than 480 x 800
+				this.DAYS_VISIBLE = 3;
+			}
+
+			// TODO: Adjust hour width and row height based on screen size.
+			this.HOUR_WIDTH = 200; // px
+			this.ROW_HEIGHT = 60; // px
+
+			this.CHANNELS_COUNT = 100; // TODO: there are more than 100 channels
+
+			// Size the grid
+			this.el.height(this.ROW_HEIGHT * this.CHANNELS_COUNT);
+			this.el.width(this.HOUR_WIDTH * this.DAYS_VISIBLE * 24);
+
+			// Size the time bar
+			this['time-bar-list'].width(this.HOUR_WIDTH * this.DAYS_VISIBLE * 24);
+			this['time-bar-list'].find('li').width(this.HOUR_WIDTH);
+
+			// Size the channels bar
+			this['channels-bar-list'].find('li').css('height', this.ROW_HEIGHT);
+
 		}
 
 	,	load: function() {
@@ -313,7 +342,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 	,	renderEventsCollection: function(eventsCollection) {
 			var self = this;
 
-			var t = new Timer('renderEventsCollectionTimer').off();
+			var t = new Timer('renderEventsCollectionTimer');
 			t.track('Start rendering collection (' + eventsCollection.length + ' events)');
 
 			this.loader();
@@ -342,6 +371,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 					startDateTime = new Date(st.slice(0,4), parseInt(st.slice(5,7),10) -1, parseInt(st.slice(8,10),10), parseInt(st.slice(11,13),10), parseInt(st.slice(14,16),10)),
 					duration = ( endDateTime.valueOf() - startDateTime.valueOf() ) / this.MILLISECONDS_IN_HOUR, // hours
 					width = Math.floor( duration * this.HOUR_WIDTH ), // pixels
+					height = this.ROW_HEIGHT, // pixels
 					offsetTime = ( startDateTime.valueOf() - this.zeroTime.valueOf() ) / this.MILLISECONDS_IN_HOUR, // hours
 					offsetTop = this.channelsOffsetMap[ channel.id ],
 					offsetLeft = Math.floor( offsetTime * this.HOUR_WIDTH ); // pixels
@@ -355,6 +385,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 				// Maybe is a good idea use a Backbone Model with a Backbone Collection
 				var eventModel = event;
 					eventModel.duration = duration;
+					eventModel.height = height;
 					eventModel.width = width;
 					eventModel.offset = {
 						top: offsetTop
