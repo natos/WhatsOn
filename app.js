@@ -124,9 +124,61 @@ app.configure('production', function(){
 // index
 app.get('/', function(req, res) {
 
+	var topbookings, channels;
+
+	var supportsCSSFixedPosition = new IdentifiedBrowser(req).supports.CSSFixedPosition();
+
+	request('http://' + req.headers.host + '/topbookings.json', function(error, response, body) {
+
+		console.log('Top Bookings here');
+
+		topbookings = JSON.parse(body);
+
+	}); // end request
+
+	request('http://' + req.headers.host + '/channels.json', function(error, response, body) {
+
+		console.log('All channels here');
+
+		channels = JSON.parse(body);
+
+	}); // end request
+
+	var i = 0;
+
+	// Wait for both of the responses before render
+	var render = function() {
+
+		console.log('Waiting for APIs… ' + i++ + 'seg');
+
+		if (topbookings && channels) {
+
+			res.render('home.jade', {
+				title		: "Whats On TV"
+			,	metadata	: metadata
+			,	topbookings : topbookings
+			,	channels : channels 
+			,	prefix		: ''
+			,	supportsCSSFixedPosition: supportsCSSFixedPosition
+			}); // HTML output
+
+		} else {
+			setTimeout(render, 1000);
+		}
+	}
+
+	render();
+
+});
+
+app.get('/topbookings.:format?', function(req, res) {
+
 	var topBookingsTimer = new Timer('TopBookings View');
 
-	var events = [];
+	var supportsCSSFixedPosition = new IdentifiedBrowser(req).supports.CSSFixedPosition();
+
+    var format = req.params.format // html, json, etc
+	,	events = [];
 
 	var TOP_BOOKINGS = 'http://tvgids.upc.nl/customerApi/wa/topBookings';
 
@@ -142,6 +194,8 @@ app.get('/', function(req, res) {
 
 			body = JSON.parse(body);
 
+			if (!body) return;
+
 			var event, i = 0, t = body.length;
 			for (i; i < t; i++) {
 				event = body[i][0];
@@ -151,12 +205,24 @@ app.get('/', function(req, res) {
 				events.push( event );
 			}
 
-			res.render('topbookings.jade', { 
-				data		: events
-			,	title		: "Top Bookings"
-			,	metadata	: metadata 
-			,	prefix		: ''
-			}); // HTML output
+			// determine the output rendering
+			switch (format) {
+
+				case "json":
+					res.send(events); // JSON output
+					res.end();
+					break;
+
+				default:
+				case "html": 
+					res.render('topbookings.jade', { 
+						data		: events
+					,	title		: "Top Bookings"
+					,	metadata	: metadata 
+					,	prefix		: ''
+					,	supportsCSSFixedPosition: supportsCSSFixedPosition
+					}); // HTML output
+			}
 			
 		}
 
@@ -208,6 +274,8 @@ app.get('/channels.:format?', function(req, res) {
 
 	var allChannelsTimer = new Timer('All Channels View');
 
+	var supportsCSSFixedPosition = new IdentifiedBrowser(req).supports.CSSFixedPosition();
+
     var id = req.params.id
 	,	format = req.params.format // html, json, etc
 
@@ -230,6 +298,7 @@ app.get('/channels.:format?', function(req, res) {
 
 				case "json":
 					res.send(body); // JSON output
+					res.end();
 					break;
 
 				default:
@@ -239,6 +308,7 @@ app.get('/channels.:format?', function(req, res) {
 					,	title		: "All Channels"
 					,	metadata	: metadata 
 					,	prefix		: ''
+					,	supportsCSSFixedPosition: supportsCSSFixedPosition
 					}); // HTML output
 			
 			}
@@ -253,6 +323,8 @@ app.get('/channels.:format?', function(req, res) {
 app.get('/channel/:id.:format?', function(req, res) {
 
 	var channelTimer = new Timer('Channel View');
+
+	var supportsCSSFixedPosition = new IdentifiedBrowser(req).supports.CSSFixedPosition();
 
     var id = req.params.id
 	,	format = req.params.format // html, json, etc
@@ -322,6 +394,7 @@ app.get('/channel/:id.:format?', function(req, res) {
 							,	title		: body.name
 							,	metadata	: _metadata
 							,	prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-whatson: http://ogp.me/ns/fb/upc-whatson#' 
+							,	supportsCSSFixedPosition: supportsCSSFixedPosition
 							}); // HTML output
 				
 					}
@@ -341,6 +414,8 @@ app.get('/channel/:id.:format?', function(req, res) {
 app.get('/programme/:id.:format?', function(req, res) {
 
 	var programmeTimer = new Timer('Programme View');
+
+	var supportsCSSFixedPosition = new IdentifiedBrowser(req).supports.CSSFixedPosition();
 
     var id = req.params.id
 	,	format = req.params.format // html, json, etc

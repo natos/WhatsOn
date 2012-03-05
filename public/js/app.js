@@ -5,12 +5,9 @@ define([
 	// Dependencies
 //	'routers/AppRouter'
 	'views/UserControlView'
-,	'views/UserActionView'
-,	'views/GridView'
-
 ],
 
-function(UserControl, UserAction, Grid) {
+function(UserControl) {
 
 	var app = {
 
@@ -51,14 +48,18 @@ function(UserControl, UserAction, Grid) {
 
 			// user action
 			if ( /programme/.test( window.location.toString() ) ) {
-				wo.views.useraction = new UserAction();
+				require(['views/UserActionView'], function(UserAction) {
+					wo.views.useraction = new UserAction();
+				});
 			}
 
 			// grid
 			if ( /grid/.test( window.location.toString() ) ) {
-				wo.views.grid = new Grid();
+				require(['views/GridView'], function(Grid){
+					wo.views.grid = new Grid();
+				});
 			}
-			
+
 			return this;
 
 		}
