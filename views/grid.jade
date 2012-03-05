@@ -28,7 +28,7 @@ section#content
 			each channel in data
 				li
 					.picture
-						img(title="#{channel.name}", src="http://www.upc.nl#{channel.logoIMG}")
+						img(title="#{channel.name}", data-src="http://www.upc.nl#{channel.logoIMG}", id="channelImg#{channel.id}")
 					.fav
 						input(id="#{channel.name}", type="checkbox")
 						label(for="#{channel.name}") favorite

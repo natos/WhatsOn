@@ -1,10 +1,5 @@
 // TimeTickerView.js
 
-
-
-// TODO: Fix time bars so we can place the TimeTicker centered on the screen
-
-
 define([
 
 ],
@@ -17,11 +12,11 @@ function() {
 
 	,	content: $('#content')
 
-	,	SECOND_WIDTH: 3 // px
-
-	,	initialize: function(zeroTime) {
+	,	initialize: function(zeroTime, initialOffsetHoursBetweenZeroTimeAndNow, hourWidth) {
 
 			this.zeroTime = zeroTime;
+			this.hourWidth = hourWidth; // How wide an hour is, in pixels
+			this.initialOffsetHoursBetweenZeroTimeAndNow = initialOffsetHoursBetweenZeroTimeAndNow;
 
 			this.trigger('view-initialized', this);
 
@@ -32,9 +27,9 @@ function() {
 
 	,	load: function() {
 
-			this.el.appendTo(this.content);
+			this.el.appendTo($('#grid-container'));
 
-			this.startTicker();
+			this.tick();
 
 			this.trigger('view-created');
 
@@ -52,26 +47,20 @@ function() {
 
 		}
 
-	,	startTicker: function() {
-
-			this.time = 0;
-			this.tick();
-
-		}
-
 	,	tick: function() {
 
 			var self = this;
+			this.draw();
+			this.timer = setTimeout(function(){ self.tick.apply(self) }, 1000 * 5); // update 1x per minute
 
-			this.offsetLeft = Math.floor( this.time ); // * this.SECOND_WIDTH ); // pixels
+		}
 
-console.log(this.time);
+	,	draw: function() {
 
-			this.el.css('left', this.offsetLeft);
-
-			this.timer = setTimeout(function(){ self.tick.apply(self) }, 18000); // every second 18ms
-
-			this.time = this.time + 1;
+			var now = new Date();
+			var hoursBetweenZeroTimeAndNow = (now.valueOf() - this.zeroTime.valueOf()) / (1000 * 60 * 60) + this.initialOffsetHoursBetweenZeroTimeAndNow;
+			var pixelsBetweenZeroTimeAndNow = hoursBetweenZeroTimeAndNow * this.hourWidth;
+			this.el.css('left', pixelsBetweenZeroTimeAndNow);
 
 		}
 

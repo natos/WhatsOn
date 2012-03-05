@@ -41,7 +41,7 @@ function() {
 
 	var eventCollectionsCache = {};
 
-	var getEventsForSliceIndex = function(sliceIndex, channelIds, zeroTime, eventRendererCallback, gridView) {
+	var getEventsForSliceIndex = function(sliceIndex, channelIds, zeroTime, eventsCollectionRendererCallback, gridView) {
 		// Iterate over the channels list to see if we have an events collection
 		// for this channel and time slice in cache. If not, add the channel to a list
 		// of channels to fetch from the api.
@@ -52,10 +52,8 @@ function() {
 			var eventsCollection = eventCollectionsCache[cacheKey];
 			if (eventsCollection) {
 				// render the events collection from cache
-				console.log('Retrieving events for channel ' + channelIds[i] + ', slice ' + sliceIndex + ' from cache');
-				$(eventsCollection).each(function(j, event){
-					eventRendererCallback.call(gridView, event);
-				});
+//				console.log('Retrieved events for channel ' + channelIds[i] + ', slice ' + sliceIndex + ' from cache');
+				eventsCollectionRendererCallback.call(gridView, eventsCollection);
 			} else {
 				// This channel should be fetched remotely.
 				channelIdsToFetch.push(channelIds[i]);
@@ -78,14 +76,14 @@ function() {
 			var sliceStartTime = getSliceStartTimeFromSliceIndex(zeroTime, sliceIndex);
 			var formattedSliceStartTime = formatTimeForApiRequest(sliceStartTime);
 			var request = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/' + channelIdBatch.join('|') + '/events/NowAndNext_' + formattedSliceStartTime + '.json?batchSize=10&callback=?';
-			console.log(request);
+
 			$.getJSON(request, function(apiResponse) {
-				processApiResponse(apiResponse, sliceIndex, eventRendererCallback, gridView);
+				processApiResponse(apiResponse, sliceIndex, eventsCollectionRendererCallback, gridView);
 			});
 		}
 	}
 
-	var processApiResponse = function(apiResponse, sliceIndex, eventRendererCallback, gridView) {
+	var processApiResponse = function(apiResponse, sliceIndex, eventsCollectionRendererCallback, gridView) {
 		var eventsCollections = [];
 		if ($.isArray($(apiResponse)[0])) {
 			// response contains multiple channels (events collections)
@@ -104,9 +102,7 @@ function() {
 				return;
 			}
 
-			$(eventsCollection).each(function(j, event){
-				eventRendererCallback.call(gridView, event);
-			});
+			eventsCollectionRendererCallback.call(gridView, eventsCollection)
 
 			// Cache the event collection by channel ID and timeslice index
 			var channelId = eventsCollection[0].channel.id;
@@ -118,8 +114,7 @@ function() {
 
 	return {
 
-		getEventsForGrid: function(channelIds, zeroTime, leftBorderTime, rightBorderTime, eventRendererCallback, gridView) {
-			console.log(eventCollectionsCache);
+		getEventsForGrid: function(channelIds, zeroTime, leftBorderTime, rightBorderTime, eventsCollectionRendererCallback, gridView) {
 			var self = this;
 
 			// Find out what time slices the left and right border time belong to
@@ -127,7 +122,7 @@ function() {
 			var rightBorderSliceIndex = getSliceIndexFromTime(zeroTime, rightBorderTime);
 
 			for (var sliceIndex=leftBorderSliceIndex; sliceIndex<=rightBorderSliceIndex; sliceIndex++) {
-				getEventsForSliceIndex(sliceIndex, channelIds, zeroTime, eventRendererCallback, gridView);
+				getEventsForSliceIndex(sliceIndex, channelIds, zeroTime, eventsCollectionRendererCallback, gridView);
 			}
 		}
 	}

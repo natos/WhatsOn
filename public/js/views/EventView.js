@@ -34,9 +34,7 @@ function() {
 				,	'left': this.options.offset.left + 'px'
 				,	'width': this.options.width
 				})
-				.hide()
-				.appendTo('#grid-container')
-				.fadeIn();
+				.appendTo('#grid-container');
 
 			this.trigger('view-created');
 

@@ -62,17 +62,22 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			this.HOUR_WIDTH = this['time-bar'].find('li').outerWidth();
 			this.ROW_HEIGHT = this['channels-bar'].find('li').outerHeight();
 
+			// get viewport size
+			this.getViewportSize();
+
 			// Now
-			this.zeroTime = new Date(); // TODO: Try a framework like XDate: http://arshaw.com/xdate/
+			var now = new Date();
+			// Adjust the zero time so that "now" is half-way across the width of the page
+			var channelsBarWidth = 43;
+			var hoursWide = (this.viewport.width - channelsBarWidth) / this.HOUR_WIDTH;
+			var initialOffsetHoursBetweenZeroTimeAndNow = (0.5 * hoursWide)
+			this.zeroTime = new Date(now.valueOf() - (initialOffsetHoursBetweenZeroTimeAndNow * this.MILLISECONDS_IN_HOUR));
 
 			// Ticker
-			this.timeTicker = new TimeTicker(this.zeroTime);
+			this.timeTicker = new TimeTicker(now, initialOffsetHoursBetweenZeroTimeAndNow, this.HOUR_WIDTH);
 
 			// Time Manual Constrols
 			this.timeManualControls = this.USE_MANUAL_TIME_CONTROLS && new TimeManualControls();
-
-			// get viewport size
-			this.getViewportSize();
 
 			// Create Timeline
 			this.drawTimeLine();
@@ -148,19 +153,15 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			var self = this;
 
 			if ( $('.loader')[0] ) {
-
-				$('.loader').fadeOut('fast', function(){ $(this).remove() });
-
+				$('.loader').remove();
 			} else {
 
 				$('<div class="loader">')
-					.hide()
 					.css({
 						top:  Math.floor(self.viewport.height / 2) + 'px'
 					,	left: Math.floor(self.viewport.width / 2) + 'px'
 					})
-					.appendTo('#content')
-					.fadeIn('fast');
+					.appendTo('#content');
 			}
 		}
 
@@ -224,7 +225,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 					//}
 					self.timeManualControls && self.timeManualControls.update(self.viewport);
 
-				}, 200);
+				}, 100);
 
 				// Update scroll bars
 				self.updateBars();
@@ -237,33 +238,65 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 		}
 
 	,	updateBars: function() {
-
-			var left = this.window.scrollLeft()
-			,	top = this.window.scrollTop();
-
-			this['time-bar-list'].css( 'left', (left + Math.floor((this.HOUR_WIDTH * (this.zeroTime.getMinutes()/60)))) * -1 );
-			this['channels-bar-list'].css( 'top', top * -1 );
-			
+			this.updateTimeBar();
+			this.updateChannelsBar();
 		}
 
-	,	getEvents: function() {
+	,	updateTimeBar: function() {
+			var currentScrollLeft = this.window.scrollLeft();
+			this['time-bar-list'].css( 'left', (currentScrollLeft + Math.floor((this.HOUR_WIDTH * (this.zeroTime.getMinutes()/60)))) * -1 );
+		}
 
-			// How many channels have been scrolled vertically?
-			var channelsScrolledUp = this.window.scrollTop() / this.ROW_HEIGHT;
-			var firstChannel = (channelsScrolledUp < 0) ? 0 : Math.floor(channelsScrolledUp);
-			// How many channels tall is the screen?
-			var topOffset = 100; // TODO: calculate this based on actual dimensions
-			var channelsTall = (window.innerHeight - topOffset) / this.ROW_HEIGHT;
+	,	updateChannelsBar: function() {
+			var top = this.window.scrollTop()
+			,	visibleChannelIds = this.getVisibleChannelIds()
+			,	i = visibleChannelIds.length
+			,	imgElement;
 
-			// Calculate which channels to get
-			var channelIds = [];
-			// Pre-load 2 channels above and below the visible window 
-			for (var i = -2; i < channelsTall + 2; i++) {
+
+			this['channels-bar-list'].css( 'top', top * -1 );
+
+			/* If a channel is visible in the viewport, show the channel image */
+			while (i--) {
+				imgElement = document.getElementById('channelImg' + visibleChannelIds[i]);
+				if (imgElement) {
+					if (!imgElement.getAttribute('src') && imgElement.getAttribute('data-src')) {
+						imgElement.src = imgElement.getAttribute('data-src');
+					}
+				}
+			}
+		}
+
+		/**
+		* Return an array of the channel IDs that are currently visible in the viewport
+		*/
+	,	getVisibleChannelIds: function(extraAboveAndBelow) {
+			
+			var channelsScrolledUp = this.window.scrollTop() / this.ROW_HEIGHT // How many channels have been scrolled vertically?
+			,	firstChannel = (channelsScrolledUp < 0) ? 0 : Math.floor(channelsScrolledUp)
+			,	topOffset = 100 // TODO: calculate this based on actual dimensions
+			,	channelsTall = (window.innerHeight - topOffset) / this.ROW_HEIGHT // How many channels tall is the screen?
+			,	channelIds = []
+			,	i = 0;
+
+			if (!extraAboveAndBelow) {
+				extraAboveAndBelow = 0;
+			}
+
+			// Return 2 channels above and below the visible window 
+			for (i = (0 - extraAboveAndBelow); i < (channelsTall + extraAboveAndBelow); i++) {
 				if ((firstChannel + i) < 0) {
 					continue;
 				}
 				channelIds.push(channels[firstChannel + i].id);
 			}
+
+			return channelIds;
+	}
+
+	,	getEvents: function() {
+
+			var channelIds = this.getVisibleChannelIds(1);
 
 			// How many hours have been scrolled horizontally?
 			var hoursScrolledLeft = this.window.scrollLeft() / this.HOUR_WIDTH;
@@ -275,14 +308,29 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			var leftBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * this.MILLISECONDS_IN_HOUR));
 			var rightBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * this.MILLISECONDS_IN_HOUR) + (hoursWide * this.MILLISECONDS_IN_HOUR));
 
-			GridSource.getEventsForGrid(channelIds, this.zeroTime, leftBorderTime, rightBorderTime, this.renderEvent, this);
+			GridSource.getEventsForGrid(channelIds, this.zeroTime, leftBorderTime, rightBorderTime, this.renderEventsCollection, this);
+		}
+
+	,	renderEventsCollection: function(eventsCollection) {
+			var self = this;
+
+			var t = new Timer('renderEventsCollectionTimer').off();
+			t.track('Start rendering collection (' + eventsCollection.length + ' events)');
+
+			this.loader();
+
+			$(eventsCollection).each(function(i, event){
+				setTimeout(function(){self.renderEvent(event)}, 0)
+			});
+
+			// Check to see if we need to remove events from the DOM
+			this.checkEventsBuffer();
+
+			t.track('Finish rendering collection');
 		}
 
 	,	renderEvent: function(event) {
-
 			var renderingTimer = new Timer('Rendering').off();
-
-			this.loader();
 
 			// Render if the event dosen't exist on the DOM
 			if ( !$('#'+event.id)[0] ) {
@@ -317,28 +365,11 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 				// new EventView
 				var eventItem = new EventView(eventModel); // This might degrade performance a little bit
 
-/*				var eventItem = $('<div>')
-					.addClass('event')
-					.attr('id', event.id)
-					.html('<a id="' + event.programme.id + '" class="programme" href="/programme/' + event.programme.id + '.html">' + event.programme.title + '</a>' + '<p>' + event.programme.shortDescription + '</p>')
-					.css({
-						'position': 'absolute'
-					,	'top': offsetTop + 'px'
-					,	'left': offsetLeft + 'px'
-					,	'width': width
-					})
-					.hide()
-					.appendTo('#grid-container')
-					.fadeIn();
-*/
 				renderingTimer.track('Event ' + event.id + ' Rendered');
 
 				// Save the eventItem to the eventsBuffer
 				// To control how many elements are rendered
 				this.eventsBuffer.push(eventItem);
-
-				// Check to see if we need to remove events from the DOM
-				this.checkEventsBuffer();
 			}
 		}
 

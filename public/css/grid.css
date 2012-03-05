@@ -454,16 +454,6 @@ button {
 	top: 3px;
 }
 
-.timer-ticker {
-	position: fixed;
-	height: 100%;
-	width: 2px;
-	background: yellowGreen;
-
-	-webkit-box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, .3);
-	-moz-box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, .3);
-
-}
 /* ==============
    Time moving controls
    ============== */
@@ -549,6 +539,7 @@ button {
 	left: 0;
 	bottom: 0;
 	width: 63px;
+	z-index:5;
 
 	background: #fff;
 	overflow: hidden;
@@ -722,4 +713,17 @@ button {
 }
 .event:hover .programme + p {
 	color: #eee;
+}
+
+.timer-ticker {
+	position: absolute;
+	height: 100%;
+	width: 2px;
+	top:0px;
+	z-index:1;
+	background: yellowGreen;
+	
+	-webkit-box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, .3);
+	-moz-box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, .3);
+
 }
