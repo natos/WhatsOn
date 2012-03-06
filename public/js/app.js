@@ -53,6 +53,13 @@ function(UserControl) {
 				});
 			}
 
+			// TopBookings slide
+			if ( !(/#/).test(window.location.toString()) ) {
+				require(['views/TopBookingsView'], function(TopBookings){
+					wo.views.topbookings = new TopBookings();
+				});
+			}
+
 			// grid
 			if ( /grid/.test( window.location.toString() ) ) {
 				require(['views/GridView'], function(Grid){

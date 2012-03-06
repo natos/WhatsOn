@@ -192,9 +192,11 @@ app.get('/topbookings.:format?', function(req, res) {
 
 			topBookingsTimer.track('Top Bookings API Response');
 
-			body = JSON.parse(body);
-
-			if (!body) return;
+			if (!body) {
+				body = {}
+			} else {
+				body = JSON.parse(body);
+			}
 
 			var event, i = 0, t = body.length;
 			for (i; i < t; i++) {

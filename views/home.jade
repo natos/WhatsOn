@@ -1,27 +1,23 @@
 include layout
 
-header
+section#content
 
-	a#top
+	#topbookings
+		ul.show
+			each event in topbookings
+				li.programme
+					.channel
+						a(href="/channel/#{event.channel.id}") #{event.channel.name}
+					h1
+						a(href="/programme/#{event.programme.id}") #{event.programme.title}
+					p
+						| #{event.prettyDate}, 
+						| #{ new Date(event.startDateTime).getHours() }hs
+						button Record
 
-	section#content
-
-		#topbookings
-			ul.show
-				each event in topbookings
-					li.programme
-						.channel
-							a(href="/channel/#{event.channel.id}") #{event.channel.name}
-						h1
-							a(href="/programme/#{event.programme.id}") #{event.programme.title}
-						p
-							| #{event.prettyDate}, 
-							| #{ new Date(event.startDateTime).getHours() }hs
-							button Record
-
-		#channels
-			ul.mosaic
-				each channel in channels
-					li.channel
-						a(href="/channel/#{channel.id}")
-							img(src="http://www.upc.nl#{channel.logoIMG}", title="(#{channel.position}) #{channel.name}", alt="#{channel.description}")
+	#channels
+		ul.mosaic
+			each channel in channels
+				li.channel
+					a(href="/channel/#{channel.id}")
+						img(id="#{channel.id}", src="http://www.upc.nl#{channel.logoIMG}", title="(#{channel.position}) #{channel.name}", alt="#{channel.description}")

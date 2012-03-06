@@ -10,13 +10,13 @@ function() {
 
 		el: $('#time-controls') // DOM element
 
-	,	moveTop: $('.move-top')
+	,	moveTop: $('<div class="move-top"></div>').html('<span class="icon"></span>')
 
-	,	moveRight: $('.move-right')
+	,	moveRight: $('<div class="move-right"></div>').html('<span class="icon"></span>')
 
-	,	moveBottom: $('.move-bottom')
+	,	moveBottom: $('<div class="move-bottom"></div>').html('<span class="icon"></span>')
 
-	,	moveLeft: $('.move-left')
+	,	moveLeft: $('<div class="move-left"></div>').html('<span class="icon"></span>')
 
 	,	BAR_WIDHT: 50
 
@@ -30,6 +30,8 @@ function() {
 
 	,	initialize: function() {
 
+			console.log('TimeManualControlsView');
+
 			this.trigger('view-initialized', this);
 
 			this.load();
@@ -38,6 +40,12 @@ function() {
 		}
 
 	,	load: function() {
+
+			this.el
+				.append(this.moveTop)
+				.append(this.moveRight)
+				.append(this.moveBottom)
+				.append(this.moveLeft);
 
 			this.trigger('view-created');
 

@@ -219,10 +219,6 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 					// Update Time Manual Controls Position
 					// Not necesary if the device suports fixed positioning
-					// Need to improve sniffing
-					//if (self.USE_MANUAL_TIME_CONTROLS) {
-					//	self.timeManualControls.update(self.viewport);
-					//}
 					self.timeManualControls && self.timeManualControls.update(self.viewport);
 
 				}, 100);
