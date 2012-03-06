@@ -467,20 +467,19 @@ button {
 
 	-webkit-box-shadow: 0px 1px 2px 2px rgba(0, 0, 0, .3);
 	-moz-box-shadow: 0px 1px 2px 2px rgba(0, 0, 0, .3);
-
 }
 
 #time-bar ol {
 	position: absolute;
-	width: 14400px; /* 72hrs * 200px */
+	height: 20px;
+	/* width is set dynamically by the view */
 }
 
 #time-bar li {
 	position: relative;
-/*	border-right:1px dashed #eee; */
 	display: inline-block;
-	width: 200px;
-	height: 20px;
+	height:100%;
+	/* width is set dynamically by the view */
 	text-align: center;
 }
 
@@ -497,7 +496,7 @@ button {
 
 #time-bar li span {
 	position:relative;
-	left:-100px;
+	left:-50%;
 	top: 3px;
 }
 
@@ -617,7 +616,7 @@ button {
 
 #channels-bar li {
 	position: relative;
-	height: 60px;
+	/* height is set dynamically by JS */
 	width: 63px;
 	margin: 0 auto;
 	padding: 0;
@@ -708,24 +707,24 @@ button {
 
 #grid-container {
 	position: absolute;
-	/*margin-top: 50px;
-	margin-left: 63px;*/
 	color: #fff;
-	width: 14400px; /* 72hs * 200px */
-	height: 6000px; /* 100 channels * 60px */
+	/* height and width are set dynamically based by the view */
 	overflow: hidden;
 }
 
 .back-grid {
+	position:absolute;
+	top:0;
+	left:0;
+	height:100%;
+	width:100%;
 	background: #ddd url('/assets/channel_row.png') repeat;
-	width: 14400px; /* 72hs * 200px */
-	height: 6000px; /* 100 channels * 60px */
 }
 
 .event {
 	overflow: hidden;
+	background: #ddd;
 	border: 1px solid #ccc;
-	height: 60px;
 	font-size: .9em;
 	cursor: pointer;
 }
