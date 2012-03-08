@@ -19,9 +19,6 @@ function(EventSearchSource) {
 		}
 
 	,	performSearch: function(e) {
-			e.preventDefault();
-			var query = this.el.find('input[type=search]').val();
-			EventSearchSource.getEventsCollectionForQuery(query);
 		}
 
 	});

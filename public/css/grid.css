@@ -209,7 +209,7 @@ button {
 }
 
 #search input {
-
+	color: #333;
 	text-indent: 5px;
 	background: #eee;
 	border: 1px solid #000;
