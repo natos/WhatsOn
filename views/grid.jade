@@ -1,27 +1,27 @@
 include layout
 
-section#content
+//section#content
 
-	#grid-container
-		.back-grid
+#grid-container
+	.back-grid
 
-	#time-bar
-		ol
-			each hour, i in timeFrame
-				li
-					span
+#time-bar
+	ol
+		each hour, i in timeFrame
+			li
+				span
 
-	#time-controls
+#time-controls
 
-	#channels-bar
-		ul
-			each channel in data
-				li
-					.picture
-						img(title="#{channel.name}", data-src="http://www.upc.nl#{channel.logoIMG}", id="channelImg#{channel.id}")
-					.fav
-						input(id="#{channel.name}", type="checkbox")
-						label(for="#{channel.name}") favorite
+#channels-bar
+	ul
+		each channel in data
+			li
+				.picture
+					img(title="#{channel.name}", data-src="http://www.upc.nl#{channel.logoIMG}", id="channelImg#{channel.id}")
+				.fav
+					input(id="#{channel.name}", type="checkbox")
+					label(for="#{channel.name}") favorite
 		
 
 script

@@ -67,6 +67,72 @@ function(UserControl) {
 				});
 			}
 
+			wo.getCoolPic = (function(){
+
+				var cool_pics = [
+					'http://tv.sky.com/asset/show/8ad586a135af96b70135afe916940151.jpg'
+				,	'http://tv.sky.com/asset/show/8ad586a135af96b70135afead6ef0166.jpg'
+				,	'http://tv.sky.com/asset/show/8ad586a135c83fb50135e242d4720a75.jpg'
+				,	'http://tv.sky.com/asset/show/8ad586a135af96b70135c381691a0a27.jpg'
+				,	'http://tv.sky.com/asset/show/8ad586a135af96b70135aff20fb801b2.jpg'
+				,	'http://tv.sky.com/asset/show/8ad586a135af96b70135c3910b330a31.jpg'
+				,	'http://tv.sky.com/asset/show/8ad586a135af96b70135afece649017b.jpg'
+				,	'http://tv.sky.com/asset/show/8ad586a135af96b70135aff4c1ae01db.jpg'
+				,	'http://tv.sky.com/asset/show/8ad586a135af96b70135aff6b58a01f0.jpg'
+				,	'http://tv.sky.com/asset/show/8ad586a135af96b70135aff825040205.jpg'
+				,	'http://tv.sky.com/asset/show/8ad586a135af96b70135b0254f4e0341.jpg'
+				,	'http://tv.sky.com/asset/show/8ad586a135af96b70135b033bc610391.jpg'
+				,	'http://tv.sky.com/asset/show/8ad586a135af96b70135b03b20bc03e2.jpg'
+				,	'http://tv.sky.com/asset/show/8ad586a135af96b70135b0397b5903cb.jpg'
+				,	'http://tv.sky.com/asset/show/8ad586a135af96b70135bf64939309ea.jpg'
+				,	'http://tv.sky.com/asset/show/8ad586a135af96b70135b03cce4703f5.jpg'
+				,	'http://tv.sky.com/asset/show/8ad586a135af96b70135bf41ffe609d3.jpg'
+				,	'http://tv.sky.com/asset/show/8ad586a135af96b70135be79610005ee.jpg'
+				,	'http://tv.sky.com/asset/show/8ad586a135af96b70135be6725af05b7.jpg'
+				,	'http://tv.sky.com/asset/show/8ad586a135af96b70135bf45fd6709da.jpg'
+				,	'http://tv.sky.com/asset/show/8ad586a135af96b70135bf50c0b809e1.jpg'
+				,	'http://tv.sky.com/asset/show/8ad586a135af96b70135c3cf710e0a6b.jpg'
+				,	'http://tv.sky.com/asset/show/8ad586a135af96b70135c3d2edf90a6f.jpg'
+				,	'http://tv.sky.com/asset/show/8ad586a135c83fb50135c869800b0001.jpg'
+				]
+
+
+				var picked_ones = [];
+
+				var get_random = function(min) {
+
+					return Math.floor(Math.random() * (cool_pics.length - min + 1)) + min;
+
+				}
+
+				var is_used = function(v) {
+
+					var len = picked_ones.length;
+				
+					while (len--) {
+						if (picked_ones[len] === v) {
+							return true;
+						}
+					}
+
+					return false;
+				}
+
+				return function(min) {
+
+					while ( is_used( rnd = get_random(min) ) ) {
+						console.log(rnd + ' repeated');
+					}
+
+					console.log(rnd);
+					picked_ones.push(rnd);
+
+					return cool_pics[rnd] || cool_pics[rnd-1];
+	
+				}
+
+			})();
+
 			return this;
 
 		}

@@ -10,21 +10,6 @@ function() {
 
 		el: $('#topbookings') // DOM element
 
-	,	cool_pics: [
-
-			'http://tv.sky.com/asset/show/8ad586a135af96b70135afe916940151.jpg'
-		,	'http://tv.sky.com/asset/show/8ad586a135af96b70135afead6ef0166.jpg'
-		,	'http://tv.sky.com/asset/show/8ad586a135c83fb50135e242d4720a75.jpg'
-		,	'http://tv.sky.com/asset/show/8ad586a135af96b70135c381691a0a27.jpg'
-		,	'http://tv.sky.com/asset/show/8ad586a135af96b70135aff20fb801b2.jpg'
-		,	'http://tv.sky.com/asset/show/8ad586a135af96b70135c3910b330a31.jpg'
-		,	'http://tv.sky.com/asset/show/8ad586a135af96b70135afece649017b.jpg'
-		,	'http://tv.sky.com/asset/show/8ad586a135af96b70135aff4c1ae01db.jpg'
-		,	'http://tv.sky.com/asset/show/8ad586a135af96b70135aff6b58a01f0.jpg'
-		,	'http://tv.sky.com/asset/show/8ad586a135af96b70135aff825040205.jpg'
-
-	]
-
 	,	content: $('#content')
 
 	,	map: {}
@@ -81,7 +66,7 @@ function() {
 				left = width * i;
 
 				programme.css({
-					'background'	: 'transparent url("' + self.cool_pics[i] + '") 0 0 no-repeat'
+					'background'	: 'transparent url("' + wo.getCoolPic(i) + '") 0 0 no-repeat'
 				,	'left'			: width*i + 'px'
 				});
 

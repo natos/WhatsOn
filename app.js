@@ -6,6 +6,7 @@ var fs = require('fs')
 ,	util   = require('util')
 ,	express = require('express')
 ,	request = require('request')
+,	i18n = require('i18n')
 ,	port = process.env.PORT || 3000
 ,	IdentifiedBrowser = require('./lib/identifiedbrowser.js').IdentifiedBrowser
 ,	Timer = require('./public/js/libs/timer/timer.js').Timer;
@@ -33,7 +34,7 @@ var metadata = [
 
 // Takes an ISO time and returns a string representing how
 // long ago the date represents.
-function prettyDate(time){
+function _prettyDate(time){
 	var date = new Date((time || "").replace(/-/g,"/").replace(/[TZ]/g," ")),
 		diff = (((new Date()).getTime() - date.getTime()) / 1000),
 		day_diff = Math.floor(diff / 86400);
@@ -48,7 +49,7 @@ function prettyDate(time){
 			diff < 7200 && "1 hour ago" ||
 			diff < 86400 && Math.floor( diff / 3600 ) + " hours ago" ||
 			// Added within minutes/hours
-			diff > 60 && "menor a 60" ||
+			diff > 60 && "menor a 60" || // ???
 			diff > 120 && "within 1 min" ||
 			diff > 3600 && "within " + Math.floor( diff / 60 ) + " minutes" ||
 			diff > 7200 && "within 1 hour" ||
@@ -61,6 +62,39 @@ function prettyDate(time){
 //		day_diff < 7 && day_diff + " days ago" ||
 		day_diff < 31 && Math.ceil( day_diff / 7 ) + " weeks ago"
 }
+
+// LOCALE
+function prettyDate(time) {
+
+	var date = new Date((time || "").replace(/-/g,"/").replace(/[TZ]/g," ")),
+		diff = (((new Date()).getTime() - date.getTime()) / 1000),
+		day_diff = Math.floor(diff / 86400);
+			
+	if ( isNaN(day_diff) || /*day_diff < 0 ||*/ day_diff >= 31 )
+		return;
+
+	return day_diff == 0 && (
+			diff < 60 && __("just now") ||
+			diff < 120 && __("1 minute ago") ||
+			diff < 3600 && __("%s minutes ago", Math.floor( diff / 60 ) ) ||
+			diff < 7200 && __("1 hour ago") ||
+			diff < 86400 && __("%s hours ago", Math.floor( diff / 3600 ) ) ||
+			// Added within minutes/hours
+			diff > 60 && __("menor a 60") || // ???
+			diff > 120 && __("within 1 min") ||
+			diff > 3600 && __("within %s minutes", Math.floor( diff / 60 ) ) ||
+			diff > 7200 && __("within 1 hour") ||
+			diff > 86400 && __("within %s hours", Math.floor( diff / 3600 ) ) ) ||
+		day_diff == 1 && __("yesterday") ||
+		// Added tomorrow
+		day_diff == -1 && __("tomorrow") ||
+		// Added within days
+		day_diff < 7 && ( (day_diff < -1) ? __("within %s days", (day_diff*-1) ) : __("%s days ago", day_diff ) ) ||
+//		day_diff < 7 && day_diff + " days ago" ||
+		day_diff < 31 && __("%s weeks ago", Math.ceil( day_diff / 7 ) )
+}
+
+
 
 var getWeekFromToday = function() {
 
@@ -82,6 +116,18 @@ var getWeekFromToday = function() {
 }
 
 /**
+ * i18n
+ */
+
+i18n.configure({
+    // setup some locales - other locales default to en silently
+    locales:['en', 'es', 'nl'],
+
+    // where to register __() and __n() to, might be "global" if you know what you are doing
+    register: global
+});
+
+/**
  * app configuration.
  */
 var app = express.createServer();
@@ -91,6 +137,7 @@ app.configure(function(){
 
 	app.use(express.bodyParser());
 	app.use(express.methodOverride());
+    app.use(i18n.init);
 	app.use(app.router);
 	app.use(express.static(__dirname + '/public'));
 
@@ -117,9 +164,24 @@ app.configure('production', function(){
 	app.use(express.errorHandler()); 
 });
 
+// i18n helpers
+// register helpers for use in templates
+app.helpers({
+  __i: i18n.__,
+  __n: i18n.__n
+});
+
+
 /**
  * Routing.
  */
+
+app.get('*', function(req, res, next){
+	// Force locale
+	i18n.setLocale('nl');
+
+	next();
+})
 
 // index
 app.get('/', function(req, res) {
@@ -130,9 +192,9 @@ app.get('/', function(req, res) {
 
 	request('http://' + req.headers.host + '/topbookings.json', function(error, response, body) {
 
-		console.log('Top Bookings here');
-
 		topbookings = JSON.parse(body);
+
+		console.log('Top Bookings here');
 
 	}); // end request
 
@@ -180,7 +242,8 @@ app.get('/topbookings.:format?', function(req, res) {
     var format = req.params.format // html, json, etc
 	,	events = [];
 
-	var TOP_BOOKINGS = 'http://tvgids.upc.nl/customerApi/wa/topBookings';
+//	var TOP_BOOKINGS = 'http://tvgids.upc.nl/customerApi/wa/topBookings';
+	var TOP_BOOKINGS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGBooking.woa/wa/topBookings';
 
 	request(TOP_BOOKINGS, function (error, response, body) {
 
@@ -192,12 +255,13 @@ app.get('/topbookings.:format?', function(req, res) {
 
 			topBookingsTimer.track('Top Bookings API Response');
 
+			// Grab the data from the mockup
 			if (!body) {
-				body = {}
+				body = JSON.parse(fs.readFileSync(__dirname + "/mocks/topbookings.json"));
 			} else {
 				body = JSON.parse(body);
 			}
-
+		
 			var event, i = 0, t = body.length;
 			for (i; i < t; i++) {
 				event = body[i][0];
@@ -265,10 +329,6 @@ app.get('/grid', function(req, res) {
 			
 		}
 	});
-
-	// more requests to stuff
-//	socket_manager.emit('new-set-of-data', data);	
-
 });
 
 // channel
@@ -334,7 +394,7 @@ app.get('/channel/:id.:format?', function(req, res) {
 	,	now = new Date();
 
 	var CHANNEL_DETAILS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/' + id + '.json',
-		CHANNEL_EVENTS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/' + id + '/events/NowAndNext.json'
+		CHANNEL_EVENTS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/' + id + '/events/NowAndNext.json?order=startDateTime'
 
 	request(CHANNEL_DETAILS, function (error, response, body) {
 
@@ -359,6 +419,8 @@ app.get('/channel/:id.:format?', function(req, res) {
 					body = JSON.parse(body);
 					ibody = JSON.parse(ibody);
 
+					ibody.sort();
+
 					var event, i = 0, t = ibody.length;
 					for (i; i < t; i++) {
 						event = ibody[i];
@@ -378,7 +440,7 @@ app.get('/channel/:id.:format?', function(req, res) {
 					, { property: "og:type"			, content: "upc-whatson:tv_channel" }
 					, { property: "og:url"			, content: "http://upcwhatson.herokuapp.com/channel/" + body.id + ".html" }
 					, { property: "og:title"		, content: body.name }
-					, { property: "og:description"	, content: body.shortDescription } // not working
+					, { property: "og:description"	, content: body.description } // not working
 					, { property: "og:image"		, content: "http://upcwhatson.herokuapp.com/assets/upclogo.jpg" }
 					];
 
@@ -427,7 +489,7 @@ app.get('/programme/:id.:format?', function(req, res) {
 
 
 	var PROGRAMME_DETAILS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Programme/' + id + '.json'
-	,	PROGRAMME_EVENTS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Programme/' + id + '/events.json'
+	,	PROGRAMME_EVENTS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Programme/' + id + '/events.json?order=startDateTime'
 
 	request(PROGRAMME_DETAILS, function (error, response, body) {
 

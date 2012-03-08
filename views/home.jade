@@ -13,11 +13,11 @@ section#content
 					p
 						| #{event.prettyDate}, 
 						| #{ new Date(event.startDateTime).getHours() }hs
-						button Record
+						button #{__i('Record')}
 
 	#channels
 		ul.mosaic
 			each channel in channels
 				li.channel
 					a(href="/channel/#{channel.id}")
-						img(id="#{channel.id}", src="http://www.upc.nl#{channel.logoIMG}", title="(#{channel.position}) #{chnodeannel.name}", alt="#{channel.description}")
+						img(id="#{channel.id}", src="http://www.upc.nl#{channel.logoIMG}", title="(#{channel.position}) #{channel.name}", alt="#{channel.description}")

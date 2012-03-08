@@ -10,7 +10,7 @@ function() {
 
 		el: $('<div class="layer">') // DOM element
 
-	,	content: $('#content')
+	,	content: $('body')
 
 	,   window: $(window)
 
@@ -93,8 +93,8 @@ function() {
 //					'top': this.event.pageY + 'px'
 //				,	'left': this.event.pageX + 'px'
 //				})
-				.appendTo(this.content)
-				.fadeIn();
+				.appendTo(this.content) 
+				.fadeIn(); // not perfom well TODO: use transitions or something else
 
 			return this;
 
@@ -102,7 +102,7 @@ function() {
 
 	,	hide: function() {
 
-			$('.layer, .dimmer').fadeOut(function(){ $(this).remove() });
+			$('.layer, .dimmer').fadeOut(function(){ $(this).remove() }); // TODO: change jquery fx 
 
 			return this;
 

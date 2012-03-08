@@ -28,17 +28,19 @@ html
 		header.main
 			a(href="/")
 				h1 What's On!
-			#user-control
-				button.fb.btn Login
 			nav
 				ul
 					li
-						a(href="/") Explore TV
+						a(href="/") #{__i('Explore TV')}
 					li
-						a(href="/grid") TV Grid
+						a(href="/grid") #{__i('TV Grid')}
+
+			#user-control
+				button.fb.btn #{__i('Login')}
+
 			#search
 				.icon
-				input(placeholder="search")
+				input(placeholder="#{__i('search')}")
 
 		a#top
 
