@@ -14,6 +14,18 @@ require([
 ], 
 function(App) {
 
+	if (!window.console || !window.console.log) {
+		window.console = {
+			assert : function(){},
+			log : function(){},
+			warn : function(){},
+			error : function(){},
+			debug : function(){},
+			dir : function(){},
+			info : function(){}
+		};
+	}
+
 	App.initialize();
 
 });
