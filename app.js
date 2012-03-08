@@ -276,7 +276,6 @@ app.get('/topbookings.:format?', function(req, res) {
 
 				case "json":
 					res.send(events); // JSON output
-					res.end();
 					break;
 
 				default:
@@ -360,7 +359,6 @@ app.get('/channels.:format?', function(req, res) {
 
 				case "json":
 					res.send(body); // JSON output
-					res.end();
 					break;
 
 				default:
