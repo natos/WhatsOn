@@ -38,9 +38,9 @@ html
 			#user-control
 				button.fb.btn #{__i('Login')}
 
-			#search
+			form#search( action='#', method='get' )
 				.icon
-				input(placeholder="#{__i('search')}")
+				input#search_query( type='search', placeholder="#{__i('search')}" )
 
 		a#top
 

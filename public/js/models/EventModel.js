@@ -10,20 +10,18 @@ define([
 
 		},
 
-		defaults: function() {
-			return {
+		defaults: {
+			id: 'no-id'
+		,	startDateTime: 'no-start-date'
+		,	endDateTime: 'no-stop-date'
+		,	channel: {
 				id: 'no-id'
-			,	startDateTime: 'no-start-date'
-			,	endDateTime: 'no-stop-date'
-			,	channel: {
-					id: 'no-id'
-				,	name: 'no-name'
+			,	name: 'no-name'
 			}
-			,	programme: {
-					id: 'no-id'
-				,	title: 'no-title'
-				,	shortDescription: 'no-short-description'
-				}
+		,	programme: {
+				id: 'no-id'
+			,	title: 'no-title'
+			,	shortDescription: 'no-short-description'
 			}
 		}
 

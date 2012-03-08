@@ -68,9 +68,18 @@ td { vertical-align: top; }
 	-o-user-select: none;
 	user-select: none;
 }
-
 *:focus {
-	outline: none;
+/*	outline: none; */
+}
+
+/* Allow text selection for input fields */
+input[type=search],
+input[type=text] {
+	-webkit-user-select: text;
+	-khtml-user-select: text;
+	-moz-user-select: text;
+	-o-user-select: text;
+	user-select: text;
 }
 
 body {
