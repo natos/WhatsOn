@@ -40,7 +40,8 @@ html
 
 			form#search(action="/search", method='get')
 				.icon
-				input(name="q", type="search", placeholder="#{__i('search')}")
+				- var query = typeof(query) === 'undefined' ? '' : query
+				input(name="q", type="search", value=query, placeholder="#{__i('search')})
 
 		a#top
 
