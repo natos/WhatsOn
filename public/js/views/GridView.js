@@ -50,6 +50,8 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 	,	viewport: {}
 
+	,	eventsToRenderCount: 0
+
 	,	eventsBuffer: []
 
 	,	channelsOffsetMap: {}
@@ -176,21 +178,26 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 		}
 
-		// just a silly loader
-	,	loader: function() {
-
-			var self = this;
-
-			if ( $('.loader')[0] ) {
-				$('.loader').remove();
-			} else {
-
+	,	showLoader: function() {
+			if ($('.loader').length===0) {
 				$('<div class="loader">')
 					.css({
-						top:  Math.floor(self.viewport.height / 2) + 'px'
-					,	left: Math.floor(self.viewport.width / 2) + 'px'
+						top:  Math.floor(this.viewport.height / 2) + 'px'
+					,	left: Math.floor(this.viewport.width / 2) + 'px'
 					})
 					.appendTo('#content');
+			}
+		}
+
+	, 	hideLoader: function() {
+			$('.loader').remove();
+		}
+
+	,	checkLoader: function() {
+			if (this.eventsToRenderCount > 0) {
+				this.showLoader();
+			} else {
+				this.hideLoader();
 			}
 		}
 
@@ -242,7 +249,6 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 				executionTimer = setTimeout(function() {
 
-					self.loader();
 					self.getViewportSize();
 					self.getEvents();
 
@@ -333,6 +339,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			var leftBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * this.MILLISECONDS_IN_HOUR));
 			var rightBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * this.MILLISECONDS_IN_HOUR) + (hoursWide * this.MILLISECONDS_IN_HOUR));
 
+			this.showLoader();
 			GridSource.getEventsForGrid(channelIds, this.zeroTime, leftBorderTime, rightBorderTime, this.renderEventsCollection, this);
 		}
 
@@ -342,7 +349,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			var t = new Timer('renderEventsCollectionTimer');
 			t.track('Start rendering collection (' + eventsCollection.length + ' events)');
 
-			this.loader();
+			this.eventsToRenderCount += eventsCollection.length;
 
 			$(eventsCollection).each(function(i, event){
 				setTimeout(function(){self.renderEvent(event)}, 0)
@@ -398,6 +405,10 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 				// To control how many elements are rendered
 				this.eventsBuffer.push(eventItem);
 			}
+
+			this.eventsToRenderCount -= 1;
+
+			this.checkLoader();
 		}
 
 	,	checkEventsBuffer: function() {
