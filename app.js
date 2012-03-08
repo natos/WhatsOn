@@ -572,6 +572,23 @@ app.get('/programme/:id.:format?', function(req, res) {
 
 });
 
+// programme
+app.get('/search', function(req, res) {
+
+	var query = req.query.q || ''
+	,	isAjax = req.headers['x-requested-with'] === 'XMLHttpRequest';
+
+	res.render('search.jade', { 
+		query		: query
+	,	title		: 'Search'
+	,	metadata	: metadata
+	,	prefix		: ''
+	,	isAjax		: isAjax
+	}); // HTML output
+
+});
+
+
 // Get IMDB poster based on title
 app.get('/imdbPoster/:title', function(req, res) {
 
