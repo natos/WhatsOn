@@ -8,6 +8,7 @@
 	"Set Reminder": "Set Reminder",
 	"Share": "Share",
 	"Watch it": "Watch it",
+	"Results for %s": "Results for %s",
 
 "just now": "just now",
 "1 minute ago": "1 minute ago",

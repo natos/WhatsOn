@@ -8,6 +8,7 @@
 	"Set Reminder": "Recordar",
 	"Share": "Compartir",
 	"Watch it": "Miralo",
+	"Results for %s": "Resultados para %s",
 
 "just now": "Ahora",
 "1 minute ago": "hace 1 minuto",

@@ -34,36 +34,7 @@ var metadata = [
 
 // Takes an ISO time and returns a string representing how
 // long ago the date represents.
-function _prettyDate(time){
-	var date = new Date((time || "").replace(/-/g,"/").replace(/[TZ]/g," ")),
-		diff = (((new Date()).getTime() - date.getTime()) / 1000),
-		day_diff = Math.floor(diff / 86400);
-			
-	if ( isNaN(day_diff) || /*day_diff < 0 ||*/ day_diff >= 31 )
-		return;
-
-	return day_diff == 0 && (
-			diff < 60 && "just now" ||
-			diff < 120 && "1 minute ago" ||
-			diff < 3600 && Math.floor( diff / 60 ) + " minutes ago" ||
-			diff < 7200 && "1 hour ago" ||
-			diff < 86400 && Math.floor( diff / 3600 ) + " hours ago" ||
-			// Added within minutes/hours
-			diff > 60 && "menor a 60" || // ???
-			diff > 120 && "within 1 min" ||
-			diff > 3600 && "within " + Math.floor( diff / 60 ) + " minutes" ||
-			diff > 7200 && "within 1 hour" ||
-			diff > 86400 && "within " + Math.floor( diff / 3600 ) + " hours") ||
-		day_diff == 1 && "yesterday" ||
-		// Added tomorrow
-		day_diff == -1 && "tomorrow" ||
-		// Added within days
-		day_diff < 7 && ( (day_diff < -1) ? "within " + (day_diff*-1) + " days" : day_diff + " days ago" ) ||
-//		day_diff < 7 && day_diff + " days ago" ||
-		day_diff < 31 && Math.ceil( day_diff / 7 ) + " weeks ago"
-}
-
-// LOCALE
+// now with LOCALIZATION
 function prettyDate(time) {
 
 	var date = new Date((time || "").replace(/-/g,"/").replace(/[TZ]/g," ")),
@@ -94,8 +65,6 @@ function prettyDate(time) {
 		day_diff < 31 && __("%s weeks ago", Math.ceil( day_diff / 7 ) )
 }
 
-
-
 var getWeekFromToday = function() {
 
 	var week = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']
@@ -113,6 +82,35 @@ var getWeekFromToday = function() {
 	}
 
 	return thisWeek;
+}
+
+/**
+ * Multiple Requests
+ */
+
+/**
+ * Handle multiple requests at once
+ * @param urls [array]
+ * @param callback [function]
+ * @requires request module for node ( https://github.com/mikeal/request )
+ */
+var __request = function(urls, callback) {
+
+	var callee = arguments.callee, results = {}, t = urls.length, c = 0;
+
+	while (t--) {
+
+		request(urls[t], function(error, response, body) {
+
+			var url = response.request.uri.href;
+
+			results[ url ] = { error: error, response: response, body: body };
+
+			(++c === urls.length) && callback.call(callee, results);
+
+		});
+
+	}
 }
 
 /**
@@ -233,6 +231,43 @@ app.get('/', function(req, res) {
 
 });
 
+
+app.get('/grid', function(req, res) {
+
+	var gridTimer = new Timer('Grid View');
+
+	var supportsCSSFixedPosition = new IdentifiedBrowser(req).supports.CSSFixedPosition();
+
+	var ALL_CHANNELS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel.json?order=position';
+
+	request(ALL_CHANNELS, function (error, response, body) {
+
+		if (error) {
+			console.log("Error requesting " + ALL_CHANNELS + ": " + error);
+		}
+
+		if (!error && response.statusCode == 200) {
+
+			gridTimer.track('All channels API Response');
+
+			body = JSON.parse(body);
+//			body = JSON.stringify(body);
+
+			res.render('grid.jade', { 
+				data		: body
+			,	title		: "Grid"
+			,	metadata	: metadata
+			,	prefix		: ''
+			,	timeFrame   : new Array(72) // 148 hrs
+			,	week		: getWeekFromToday()
+			,	supportsCSSFixedPosition: supportsCSSFixedPosition
+			}); // HTML output
+			
+		}
+	});
+});
+
+
 app.get('/topbookings.:format?', function(req, res) {
 
 	var topBookingsTimer = new Timer('TopBookings View');
@@ -293,41 +328,6 @@ app.get('/topbookings.:format?', function(req, res) {
 
 	});
 
-});
-
-app.get('/grid', function(req, res) {
-
-	var gridTimer = new Timer('Grid View');
-
-	var supportsCSSFixedPosition = new IdentifiedBrowser(req).supports.CSSFixedPosition();
-
-	var ALL_CHANNELS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel.json?order=position';
-
-	request(ALL_CHANNELS, function (error, response, body) {
-
-		if (error) {
-			console.log("Error requesting " + ALL_CHANNELS + ": " + error);
-		}
-
-		if (!error && response.statusCode == 200) {
-
-			gridTimer.track('All channels API Response');
-
-			body = JSON.parse(body);
-//			body = JSON.stringify(body);
-
-			res.render('grid.jade', { 
-				data		: body
-			,	title		: "Grid"
-			,	metadata	: metadata
-			,	prefix		: ''
-			,	timeFrame   : new Array(72) // 148 hrs
-			,	week		: getWeekFromToday()
-			,	supportsCSSFixedPosition: supportsCSSFixedPosition
-			}); // HTML output
-			
-		}
-	});
 });
 
 // channel
@@ -574,15 +574,72 @@ app.get('/programme/:id.:format?', function(req, res) {
 app.get('/search', function(req, res) {
 
 	var query = req.query.q || ''
-	,	isAjax = req.headers['x-requested-with'] === 'XMLHttpRequest';
+	,	isAjax = req.headers['x-requested-with'] === 'XMLHttpRequest'
+	,	events = []
+	,	now = new Date();
 
-	res.render('search.jade', { 
-		query		: query
-	,	title		: 'Search'
-	,	metadata	: metadata
-	,	prefix		: ''
-	,	isAjax		: isAjax
-	}); // HTML output
+	// grab data from the mock
+	var results = JSON.parse(fs.readFileSync(__dirname + "/mocks/search.json"));
+
+	var event, i = 0, t = results.length;
+	for (i; i < t; i++) {
+		event = results[i][0];
+		event.prettyDate = prettyDate(event.startDateTime)
+		events.push( event );
+	}
+
+	var CATEGORIES = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Category.json'
+	,	SUBCATEGORIES = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Subcategory.json'
+
+	__request( // Multiple requests
+
+		[CATEGORIES, SUBCATEGORIES],
+
+		function(result) {
+		
+/* 			console.log('CATEGORIES', result[CATEGORIES].body); */
+/* 			console.log('SUBCATEGORIES', result[SUBCATEGORIES].body); */
+
+			var _categories = JSON.parse(result[CATEGORIES].body)
+			,	_subcategories = JSON.parse(result[SUBCATEGORIES].body)
+
+			var categoriesTree = [];
+
+			var category, i = 0, c = _categories.length, s = _subcategories.length;
+
+			for (i; i < t; i++) {
+
+				category = _categories[i];
+				category.subs = [];
+
+				var e = 0;
+
+				for (e; e < s; e++) {
+
+					if (_subcategories[e].category.name === category.name) {
+						category.subs.push(_subcategories[e])
+					}
+
+				}
+
+				categoriesTree.push(category);
+
+			}
+
+			console.log(categoriesTree);
+
+			res.render('search.jade', { 
+				query		: query
+			,	title		: 'Search'
+			,	metadata	: metadata
+			,	prefix		: ''
+			,	results		: events
+			,	isAjax		: isAjax
+			,	categories 	: categoriesTree
+			}); // HTML output
+
+		}
+	);
 
 });
 

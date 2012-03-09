@@ -8,6 +8,7 @@
 	"Set Reminder": "Herinnering instellen",
 	"Share": "Aandeel",
 	"Watch it": "Bekijk hem",
+	"Results for %s": "Resultaten voor %s",
 
 "just now": "daarnet",
 "1 minute ago": "1 uur geleden",

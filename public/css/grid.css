@@ -813,3 +813,29 @@ button {
 .event-list {
 
 }
+
+/* ==============
+   Search View
+   ============== */
+
+#results {
+	margin-top: 10px;
+	margin-left: 200px;
+}
+
+#filters {
+	margin-top: 10px;
+	float: left;
+}
+
+#categories {
+	margin: 5px;
+}
+
+#categories input {
+	margin: 3px 5px;
+}
+
+#subcategories {
+	margin-left: 10px;
+}
