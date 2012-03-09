@@ -38,10 +38,10 @@ html
 			#user-control
 				button.fb.btn #{__i('Login')}
 
-			form#search(action="/search")
+			form#search(action="/search", method='get')
 				.icon
-				input(name="q", type="search", placeholder="#{__i('search')}", value="erase me")
-
+				- var query = typeof(query) === 'undefined' ? '' : query
+				input(name="q", type="search", value=query, placeholder="#{__i('search')})
 
 		a#top
 

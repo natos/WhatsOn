@@ -5,9 +5,10 @@ define([
 	// Dependencies
 //	'routers/AppRouter'
 	'views/UserControlView'
+,	'views/HeaderSearchFormView'
 ],
 
-function(UserControl) {
+function(UserControl, HeaderSearchFormView) {
 
 	var app = {
 
@@ -45,6 +46,7 @@ function(UserControl) {
 */
 
 			wo.views.usercontrol = new UserControl();
+			wo.views.headerSearchForm = new HeaderSearchFormView();
 
 			// user action
 			if ( /programme/.test( window.location.toString() ) ) {
@@ -66,6 +68,13 @@ function(UserControl) {
 					wo.views.grid = new Grid();
 				});
 			}
+
+			// search
+			wo.event.on('search-results-events', function(o){
+				alert(o.length + ' search results received');
+				console.log(o);
+				console.log(o.model());
+			});
 
 			wo.getCoolPic = (function(){
 
