@@ -3,7 +3,7 @@
  * module dependencies.
  */
 var fs = require('fs')
-,	util   = require('util')
+,	util = require('util')
 ,	express = require('express')
 ,	request = require('request')
 ,	i18n = require('i18n')
@@ -63,6 +63,23 @@ function prettyDate(time) {
 		day_diff < 7 && ( (day_diff < -1) ? __("within %s days", (day_diff*-1) ) : __("%s days ago", day_diff ) ) ||
 //		day_diff < 7 && day_diff + " days ago" ||
 		day_diff < 31 && __("%s weeks ago", Math.ceil( day_diff / 7 ) )
+}
+
+/**
+ * @require prettyDate()
+ * @param collection Array
+ * @param [property] String 'startDateTime'
+ * @return events Array
+ */
+
+var prettifyDates = function(collection, property) {
+	var events = [], i = 0, t = collection.length, property = property || 'startDateTime';
+	for (i; i < t; i++) {
+		event = collection[i];
+		collection[i].prettyDate = prettyDate( collection[i][property] );
+		events.push( collection[i] );
+	}
+	return events;
 }
 
 var getWeekFromToday = function() {
@@ -175,6 +192,12 @@ app.helpers({
  */
 
 app.get('*', function(req, res, next){
+
+	// Some sniffing
+	req.support = {
+		FixedPosition: new IdentifiedBrowser(req).supports.CSSFixedPosition()
+	}
+
 	// Force locale
 	i18n.setLocale('nl');
 
@@ -186,57 +209,35 @@ app.get('/', function(req, res) {
 
 	var topbookings, channels;
 
-	var supportsCSSFixedPosition = new IdentifiedBrowser(req).supports.CSSFixedPosition();
+	var TOPBOOKINGS = 'http://' + req.headers.host + '/topbookings.json'
+	,	ALLCHANNELS = 'http://' + req.headers.host + '/channels.json';
 
-	request('http://' + req.headers.host + '/topbookings.json', function(error, response, body) {
+	__request(
 
-		topbookings = JSON.parse(body);
+		[TOPBOOKINGS, ALLCHANNELS],
 
-		console.log('Top Bookings here');
+		function(response) {
 
-	}); // end request
-
-	request('http://' + req.headers.host + '/channels.json', function(error, response, body) {
-
-		console.log('All channels here');
-
-		channels = JSON.parse(body);
-
-	}); // end request
-
-	var i = 0;
-
-	// Wait for both of the responses before render
-	var render = function() {
-
-		console.log('Waiting for APIs… ' + i++ + 'seg');
-
-		if (topbookings && channels) {
+			var _topbookings = JSON.parse( response[TOPBOOKINGS].body )
+			,	_allchannels = JSON.parse( response[ALLCHANNELS].body );
 
 			res.render('home.jade', {
 				title		: "Whats On TV"
 			,	metadata	: metadata
-			,	topbookings : topbookings
-			,	channels : channels 
+			,	topbookings : _topbookings
+			,	channels 	: _allchannels 
 			,	prefix		: ''
-			,	supportsCSSFixedPosition: supportsCSSFixedPosition
+			,	supportsCSSFixedPosition: req.support.FixedPosition
 			}); // HTML output
 
-		} else {
-			setTimeout(render, 1000);
 		}
-	}
-
-	render();
-
+	)
 });
 
 
 app.get('/grid', function(req, res) {
 
 	var gridTimer = new Timer('Grid View');
-
-	var supportsCSSFixedPosition = new IdentifiedBrowser(req).supports.CSSFixedPosition();
 
 	var ALL_CHANNELS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel.json?order=position';
 
@@ -260,7 +261,7 @@ app.get('/grid', function(req, res) {
 			,	prefix		: ''
 			,	timeFrame   : new Array(72) // 148 hrs
 			,	week		: getWeekFromToday()
-			,	supportsCSSFixedPosition: supportsCSSFixedPosition
+			,	supportsCSSFixedPosition: req.support.FixedPosition
 			}); // HTML output
 			
 		}
@@ -271,8 +272,6 @@ app.get('/grid', function(req, res) {
 app.get('/topbookings.:format?', function(req, res) {
 
 	var topBookingsTimer = new Timer('TopBookings View');
-
-	var supportsCSSFixedPosition = new IdentifiedBrowser(req).supports.CSSFixedPosition();
 
     var format = req.params.format // html, json, etc
 	,	events = [];
@@ -288,7 +287,7 @@ app.get('/topbookings.:format?', function(req, res) {
 
 		if (!error && response.statusCode == 200) {
 
-			topBookingsTimer.track('Top Bookings API Response');
+			topBookingsTimer.track('API Response');
 
 			// Grab the data from the mockup
 			if (!body) {
@@ -320,7 +319,7 @@ app.get('/topbookings.:format?', function(req, res) {
 					,	title		: "Top Bookings"
 					,	metadata	: metadata 
 					,	prefix		: ''
-					,	supportsCSSFixedPosition: supportsCSSFixedPosition
+					,	supportsCSSFixedPosition: req.support.FixedPosition
 					}); // HTML output
 			}
 			
@@ -335,8 +334,6 @@ app.get('/channels.:format?', function(req, res) {
 
 	var allChannelsTimer = new Timer('All Channels View');
 
-	var supportsCSSFixedPosition = new IdentifiedBrowser(req).supports.CSSFixedPosition();
-
     var id = req.params.id
 	,	format = req.params.format // html, json, etc
 
@@ -350,7 +347,7 @@ app.get('/channels.:format?', function(req, res) {
 
 		if (!error && response.statusCode == 200) {
 
-			allChannelsTimer.track('All Channels API Response')
+			allChannelsTimer.track('API Response')
 
 			body = JSON.parse(body);
 
@@ -368,7 +365,7 @@ app.get('/channels.:format?', function(req, res) {
 					,	title		: "All Channels"
 					,	metadata	: metadata 
 					,	prefix		: ''
-					,	supportsCSSFixedPosition: supportsCSSFixedPosition
+					,	supportsCSSFixedPosition: req.support.FixedPosition
 					}); // HTML output
 			
 			}
@@ -384,91 +381,55 @@ app.get('/channel/:id.:format?', function(req, res) {
 
 	var channelTimer = new Timer('Channel View');
 
-	var supportsCSSFixedPosition = new IdentifiedBrowser(req).supports.CSSFixedPosition();
-
     var id = req.params.id
 	,	format = req.params.format // html, json, etc
-	,	events = []
-	,	now = new Date();
+	;
 
 	var CHANNEL_DETAILS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/' + id + '.json',
 		CHANNEL_EVENTS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/' + id + '/events/NowAndNext.json?order=startDateTime'
 
-	request(CHANNEL_DETAILS, function (error, response, body) {
+	__request(
 
-		if (error) {
-			console.log("Error requesting " + CHANNEL_DETAILS + ": " + error);
+		[CHANNEL_DETAILS, CHANNEL_EVENTS],
+
+		function(response) {
+
+			channelTimer.track('API Response');
+
+			var _channel_details = JSON.parse( response[CHANNEL_DETAILS].body )
+			,	_channel_events = JSON.parse( response[CHANNEL_EVENTS].body );
+
+			_channel_details.events = prettifyDates( _channel_events );	
+
+			// Meta data
+			var _metadata = [
+				{ property: "fb:app_id"			, content: "153316508108487" }
+			,	{ property: "og:type"			, content: "upc-whatson:tv_channel" }
+			,	{ property: "og:url"			, content: "http://upcwhatson.herokuapp.com/channel/" + _channel_details.id + ".html" }
+			,	{ property: "og:title"			, content: _channel_details.name }
+			,	{ property: "og:description"	, content: _channel_details.description }
+			,	{ property: "og:image"			, content: "http://upcwhatson.herokuapp.com/assets/upclogo.jpg" }
+			];
+
+			// determine the output rendering
+			switch (format) {
+
+				case "json":
+					res.send(_channel_details); // JSON output
+					break;
+
+				default:
+				case "html": 
+					res.render('channel.jade', { 
+						data		: _channel_details
+					,	title		: _channel_details.name
+					,	metadata	: _metadata
+					,	prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-whatson: http://ogp.me/ns/fb/upc-whatson#' 
+					,	supportsCSSFixedPosition: req.support.FixedPosition
+					}); // HTML output	
+			}
 		}
-
-		if (!error && response.statusCode == 200) {
-
-			channelTimer.track('Channel Detail API Response');
-
-			request(CHANNEL_EVENTS, function (ierror, iresponse, ibody) {
-
-				if (ierror) {
-					console.log("Error requesting " + CHANNEL_EVENTS + ": " + ierror);
-				}
-
-				if (!ierror && iresponse.statusCode == 200) {
-
-					channelTimer.track('Channel Events API Response');
-
-					body = JSON.parse(body);
-					ibody = JSON.parse(ibody);
-
-					ibody.sort();
-
-					var event, i = 0, t = ibody.length;
-					for (i; i < t; i++) {
-						event = ibody[i];
-						// Avoid to show events from the past and add a prettyfy date format: 
-						// instead of '2012-02-14T17:14:45.341Z' value show something like 'Tomorrow'
-						if ( new Date(event.startDateTime) > now ) {
-							event.prettyDate = prettyDate(event.startDateTime)
-							events.push( event );
-						}
-					}
-					// add the events collection to the response body
-					body.events = events;
-
-					// Meta data
-					var _metadata = [
-					  { property: "fb:app_id"		, content: "153316508108487" }
-					, { property: "og:type"			, content: "upc-whatson:tv_channel" }
-					, { property: "og:url"			, content: "http://upcwhatson.herokuapp.com/channel/" + body.id + ".html" }
-					, { property: "og:title"		, content: body.name }
-					, { property: "og:description"	, content: body.description } // not working
-					, { property: "og:image"		, content: "http://upcwhatson.herokuapp.com/assets/upclogo.jpg" }
-					];
-
-					// determine the output rendering
-					switch (format) {
-
-						case "json":
-							res.send(body); // JSON output
-							break;
-
-						default:
-						case "html": 
-							res.render('channel.jade', { 
-								data		: body
-							,	title		: body.name
-							,	metadata	: _metadata
-							,	prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-whatson: http://ogp.me/ns/fb/upc-whatson#' 
-							,	supportsCSSFixedPosition: supportsCSSFixedPosition
-							}); // HTML output
-				
-					}
-
-				}
-
-			});
-
-		}
-
-	});
-
+	);
 });
 
 
@@ -476,8 +437,6 @@ app.get('/channel/:id.:format?', function(req, res) {
 app.get('/programme/:id.:format?', function(req, res) {
 
 	var programmeTimer = new Timer('Programme View');
-
-	var supportsCSSFixedPosition = new IdentifiedBrowser(req).supports.CSSFixedPosition();
 
     var id = req.params.id
 	,	format = req.params.format // html, json, etc
@@ -489,85 +448,52 @@ app.get('/programme/:id.:format?', function(req, res) {
 	var PROGRAMME_DETAILS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Programme/' + id + '.json'
 	,	PROGRAMME_EVENTS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Programme/' + id + '/events.json?order=startDateTime'
 
-	request(PROGRAMME_DETAILS, function (error, response, body) {
 
-		if (error) {
-			console.log("Error requesting " + PROGRAMME_DETAILS + ": " + error);
-		}
+	__request(
 
-		if (!error && response.statusCode == 200) {
+		[PROGRAMME_DETAILS, PROGRAMME_EVENTS], 
 
-			programmeTimer.track('Programme Details API Response');
+		function(response) {
 
-			request(PROGRAMME_EVENTS, function (ierror, iresponse, ibody) {
+			var _programme_details = JSON.parse( response[PROGRAMME_DETAILS].body )
+			,	_programme_events = JSON.parse( response[PROGRAMME_EVENTS].body );
 
-				if (ierror) {
-					console.log("Error requesting " + PROGRAMME_EVENTS + ": " + ierror);
-				}
+			// add the events collection to the response body
+			_programme_details.events = _programme_events;
 
-				if (!ierror && iresponse.statusCode == 200) {
+			// Is a film, I need to change the og:type 
+			var isMovie = (_programme_details.subcategory.category.name.toLowerCase() == 'speelfilm');
 
-					programmeTimer.track('Programme Events API Response');
+			// Meta data
+			var _metadata = [
+				{ property: "fb:app_id"			, content: "153316508108487" }
+			,	{ property: "og:type"			, content: (isMovie) ? "video.movie" : "video.tv_show" }
+			,	{ property: "og:url"			, content: "http://upcwhatson.herokuapp.com/programme/" + _programme_details.id + ".html" }
+			,	{ property: "og:title"			, content: _programme_details.title }
+			,	{ property: "og:description"	, content: _programme_details.shortDescription } 
+			,	{ property: "og:image"			, content: "http://upcwhatson.herokuapp.com/assets/upclogo.jpg" }
+			];
 
-					body = JSON.parse(body);
-					ibody = JSON.parse(ibody);
-
-					var event, i = 0, t = ibody.length;
-					for (i; i < t; i++) {
-						event = ibody[i];
-						// Avoid to show events from the past and add a prettyfy date format: 
-						// instead of '2012-02-14T17:14:45.341Z' value show something like 'Tomorrow'
-						if ( new Date(event.startDateTime) > now ) {
-							event.prettyDate = prettyDate(event.startDateTime)
-							events.push( event );
-						}
-					}
-
-					// add the events collection to the response body
-					body.events = events;
-
-					if (body.subcategory.category.name.toLowerCase() == 'speelfilm') {
-
-						// Is a film, I need to change the og:type 
-
-					}
-
-					// Meta data
-					var _metadata = [
-					  { property: "fb:app_id"		, content: "153316508108487" }
-					, { property: "og:type"			, content: "video.tv_show" }
-					, { property: "og:url"			, content: "http://upcwhatson.herokuapp.com/programme/" + body.id + ".html" }
-					, { property: "og:title"		, content: body.title }
-					, { property: "og:description"	, content: body.shortDescription } 
-					, { property: "og:image"		, content: "http://upcwhatson.herokuapp.com/assets/upclogo.jpg" }
-					];
-
-					// determine the output rendering
-					switch (format) {
+			// determine the output rendering
+			switch (format) {
 	
-						case "json":
-							res.send(body); // JSON output
-							break;
+				case "json":
+					res.send(_programme_details); // JSON output
+					break;
 
-						default:
-						case "html": 
-							res.render('programme.jade', { 
-								data		: body
-							,	title		: body.title
-							,	metadata	: _metadata
-							,	prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# video: http://ogp.me/ns/video#'
-							,	isAjax		: isAjax
-							}); // HTML output
-			
-					}
-				}
-
-			}); // End Request PROGRAMME_EVENTS
-
+				default:
+				case "html": 
+					res.render('programme.jade', { 
+						data		: _programme_details
+					,	title		: _programme_details.title
+					,	metadata	: _metadata
+					,	prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# video: http://ogp.me/ns/video#'
+					,	isAjax		: isAjax
+					,	supportsCSSFixedPosition: req.support.FixedPosition
+					}); // HTML output
+			}
 		}
-
-	}); // End Request PROGRAMME_DETAILS
-
+	);
 });
 
 // programme
@@ -588,54 +514,52 @@ app.get('/search', function(req, res) {
 		events.push( event );
 	}
 
-	var CATEGORIES = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Category.json'
+	var QUERY_URL = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Event.json?query=' + query
+	,	ALL_CHANNELS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel.json?order=position'
+	,	CATEGORIES = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Category.json'
 	,	SUBCATEGORIES = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Subcategory.json'
 
 	__request( // Multiple requests
 
-		[CATEGORIES, SUBCATEGORIES],
+		[QUERY_URL, ALL_CHANNELS, CATEGORIES, SUBCATEGORIES],
 
-		function(result) {
+		function(results) {
 		
-/* 			console.log('CATEGORIES', result[CATEGORIES].body); */
-/* 			console.log('SUBCATEGORIES', result[SUBCATEGORIES].body); */
-
-			var _categories = JSON.parse(result[CATEGORIES].body)
-			,	_subcategories = JSON.parse(result[SUBCATEGORIES].body)
+			var _query = JSON.parse( results[QUERY_URL].body )
+			,	_all_channels = JSON.parse( results[ALL_CHANNELS].body )
+			,	_categories = JSON.parse( results[CATEGORIES].body )
+			,	_subcategories = JSON.parse( results[SUBCATEGORIES].body )
 
 			var categoriesTree = [];
-
 			var category, i = 0, c = _categories.length, s = _subcategories.length;
 
 			for (i; i < t; i++) {
-
 				category = _categories[i];
 				category.subs = [];
-
 				var e = 0;
-
 				for (e; e < s; e++) {
-
 					if (_subcategories[e].category.name === category.name) {
 						category.subs.push(_subcategories[e])
 					}
-
 				}
-
 				categoriesTree.push(category);
 
 			}
 
-			console.log(categoriesTree);
+			_query = prettifyDates(_query);
+
+			console.log(_query);
 
 			res.render('search.jade', { 
 				query		: query
 			,	title		: 'Search'
 			,	metadata	: metadata
 			,	prefix		: ''
-			,	results		: events
+			,	results		: _query //events
 			,	isAjax		: isAjax
+			,	channels	: _all_channels
 			,	categories 	: categoriesTree
+			,	supportsCSSFixedPosition: req.support.FixedPosition
 			}); // HTML output
 
 		}

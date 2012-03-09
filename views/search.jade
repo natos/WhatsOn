@@ -6,6 +6,12 @@ section#content
 		#{__i('Results for %s', query)}
 
 	#filters
+		ul#channels
+			each channel in channels
+				li.channel
+					input(type="checkbox", id="#{channel.id}", value="#{channel.id}") 
+					label(for="#{channel.id}") #{channel.name}
+					
 		ul#categories
 			each category in categories
 				li.category

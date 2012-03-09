@@ -837,6 +837,14 @@ button {
 	float: left;
 }
 
+#channels {
+	margin: 5px;
+}
+
+#channels input {
+	margin: 3px 5px;
+}
+
 #categories {
 	margin: 5px;
 }
