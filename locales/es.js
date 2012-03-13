@@ -2,7 +2,7 @@
 	"Explore TV": "Explorar TV",
 	"TV Grid": "Grilla",
 	"Login": "Ingresar",
-	"search": "Buscar",
+	"Search": "Buscar",
 	"Record": "Grabar",
 	"Watch": "Mirar",
 	"Set Reminder": "Recordar",

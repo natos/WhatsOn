@@ -4,6 +4,7 @@
  */
 var fs = require('fs')
 ,	util = require('util')
+,	querystring = require('querystring')
 ,	express = require('express')
 ,	request = require('request')
 ,	i18n = require('i18n')
@@ -111,24 +112,23 @@ var getWeekFromToday = function() {
  * @param callback [function]
  * @requires request module for node ( https://github.com/mikeal/request )
  */
-var __request = function(urls, callback) {
+var __request = function (urls, callback) {
 
-	var callee = arguments.callee, results = {}, t = urls.length, c = 0;
+	'use strict';
 
-	while (t--) {
-
-		request(urls[t], function(error, response, body) {
+	var results = {}, t = urls.length, c = 0,
+		handler = function (error, response, body) {
 
 			var url = response.request.uri.href;
 
-			results[ url ] = { error: error, response: response, body: body };
+			results[url] = { error: error, response: response, body: body };
 
-			(++c === urls.length) && callback.call(callee, results);
+			if (++c === urls.length) { callback(results); }
 
-		});
+		};
 
-	}
-}
+	while (t--) { request(urls[t], handler); }
+};
 
 /**
  * i18n
@@ -193,13 +193,19 @@ app.helpers({
 
 app.get('*', function(req, res, next){
 
-	// Some sniffing
+
+	/**
+	 * Support.
+	 */
+
 	req.support = {
 		FixedPosition: new IdentifiedBrowser(req).supports.CSSFixedPosition()
+	,	sarcasm: false
 	}
 
 	// Force locale
 	i18n.setLocale('nl');
+//	i18n.setLocale('es');
 
 	next();
 })
@@ -252,7 +258,6 @@ app.get('/grid', function(req, res) {
 			gridTimer.track('All channels API Response');
 
 			body = JSON.parse(body);
-//			body = JSON.stringify(body);
 
 			res.render('grid.jade', { 
 				data		: body
@@ -499,7 +504,10 @@ app.get('/programme/:id.:format?', function(req, res) {
 // programme
 app.get('/search', function(req, res) {
 
-	var query = req.query.q || ''
+	// TODO:	Handle Empty responses 
+	//			"Not found"
+
+	var query = querystring.escape(req.query.q) || ''
 	,	isAjax = req.headers['x-requested-with'] === 'XMLHttpRequest'
 	,	events = []
 	,	now = new Date();
@@ -514,8 +522,11 @@ app.get('/search', function(req, res) {
 		events.push( event );
 	}
 
-	var QUERY_URL = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Event.json?query=' + query
-	,	ALL_CHANNELS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel.json?order=position'
+	var QUERY_URL = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Event.json?query=' + query 
+		//	Non of these optional parameters works on search API
+		//+ '&amp;optionalProperties=Event.subcategory,Event.category'
+		//+ '&amp;order=startDateTime'
+	,	ALL_CHANNELS = 'http://' + req.headers.host + '/channels.json'
 	,	CATEGORIES = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Category.json'
 	,	SUBCATEGORIES = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Subcategory.json'
 
@@ -524,15 +535,16 @@ app.get('/search', function(req, res) {
 		[QUERY_URL, ALL_CHANNELS, CATEGORIES, SUBCATEGORIES],
 
 		function(results) {
-		
-			var _query = JSON.parse( results[QUERY_URL].body )
+
+			var _results = JSON.parse( results[QUERY_URL].body )
 			,	_all_channels = JSON.parse( results[ALL_CHANNELS].body )
 			,	_categories = JSON.parse( results[CATEGORIES].body )
 			,	_subcategories = JSON.parse( results[SUBCATEGORIES].body )
 
+
+			// Mixing categorie tree
 			var categoriesTree = [];
 			var category, i = 0, c = _categories.length, s = _subcategories.length;
-
 			for (i; i < t; i++) {
 				category = _categories[i];
 				category.subs = [];
@@ -543,23 +555,43 @@ app.get('/search', function(req, res) {
 					}
 				}
 				categoriesTree.push(category);
-
 			}
 
-			_query = prettifyDates(_query);
 
-			console.log(_query);
+			// Prettyfing dates
+			_results = prettifyDates(_results);
+			
+			// Sorting results
+			_results.sort(function sortResults(a, b) {
+				return new Date(a.startDateTime).valueOf() - new Date(b.startDateTime).valueOf();
+			});
+
+			// Get used channels and times, you know, maps.
+			// this will be help the filters later
+			var _used_channels = {},
+				_used_datetimes = {},
+				_t = _results.length;
+
+			while(_t--) {
+				_used_channels[_results[_t].channel.id] = _results[_t].channel;
+				_used_datetimes[_results[_t].prettyDate] = _results[_t].startDateTime;
+			}
+
+			console.log(_used_channels);
 
 			res.render('search.jade', { 
-				query		: query
+				query		: querystring.unescape(query) // querystring
 			,	title		: 'Search'
 			,	metadata	: metadata
 			,	prefix		: ''
-			,	results		: _query //events
+			,	results		: _results //events
 			,	isAjax		: isAjax
 			,	channels	: _all_channels
 			,	categories 	: categoriesTree
 			,	supportsCSSFixedPosition: req.support.FixedPosition
+			// filtering options
+			,	used_channels: _used_channels
+			,	used_datetimes: _used_datetimes
 			}); // HTML output
 
 		}
