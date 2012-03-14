@@ -401,6 +401,10 @@ app.get('/channel/:id.:format?', function(req, res) {
 
 			channelTimer.track('API Response');
 
+			if (!response[PROGRAMME_DETAILS]||!response[PROGRAMME_EVENTS]) {
+				res.send('Empty response.')
+			}
+
 			var _channel_details = JSON.parse( response[CHANNEL_DETAILS].body )
 			,	_channel_events = JSON.parse( response[CHANNEL_EVENTS].body );
 
@@ -460,6 +464,12 @@ app.get('/programme/:id.:format?', function(req, res) {
 
 		function(response) {
 
+			programmeTimer.track('API Response');
+
+			if (!response[PROGRAMME_DETAILS]||!response[PROGRAMME_EVENTS]) {
+				res.send('Empty response.')
+			}
+
 			var _programme_details = JSON.parse( response[PROGRAMME_DETAILS].body )
 			,	_programme_events = JSON.parse( response[PROGRAMME_EVENTS].body );
 
@@ -507,6 +517,8 @@ app.get('/search', function(req, res) {
 	// TODO:	Handle Empty responses 
 	//			"Not found"
 
+	var searchTimer = new Timer('Search Timer');
+
 	var query = querystring.escape(req.query.q) || ''
 	,	isAjax = req.headers['x-requested-with'] === 'XMLHttpRequest'
 	,	events = []
@@ -535,6 +547,8 @@ app.get('/search', function(req, res) {
 		[QUERY_URL, ALL_CHANNELS, CATEGORIES, SUBCATEGORIES],
 
 		function(results) {
+
+			searchTimer.track('API Response');
 
 			var _results = JSON.parse( results[QUERY_URL].body )
 			,	_all_channels = JSON.parse( results[ALL_CHANNELS].body )
@@ -577,6 +591,7 @@ app.get('/search', function(req, res) {
 				_used_datetimes[_results[_t].prettyDate] = _results[_t].startDateTime;
 			}
 
+			searchTimer.track('End processing');
 			console.log(_used_channels);
 
 			res.render('search.jade', { 
