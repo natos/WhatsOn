@@ -26,6 +26,11 @@ var metadata = [
 ,	{ property: 'fb:app_id'		, content: '153316508108487' }
 ];
 
+var dataCache = {
+	allChannels:[]
+,	allChannels_timestamp:null
+} 
+
 /*
  * JavaScript Pretty Date (http://ejohn.org/files/pretty.js)
  * Copyright (c) 2011 John Resig (ejohn.org)
@@ -245,7 +250,7 @@ app.get('/grid', function(req, res) {
 
 	var gridTimer = new Timer('Grid View');
 
-	var ALL_CHANNELS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel.json?order=position';
+	var ALL_CHANNELS = 'http://' + req.headers.host + '/channels.json';
 
 	request(ALL_CHANNELS, function (error, response, body) {
 
@@ -335,47 +340,82 @@ app.get('/topbookings.:format?', function(req, res) {
 
 // channel
 app.get('/channels.:format?', function(req, res) {
+	'use strict';
 
 	var allChannelsTimer = new Timer('All Channels View');
 
     var id = req.params.id
 	,	format = req.params.format // html, json, etc
 
-	var ALL_CHANNELS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel.json?order=position';
+	var ALL_CHANNELS_0 = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel.json?order=position&batch=0'
+	,	ALL_CHANNELS_1 = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel.json?order=position&batch=1'
+	,	ALL_CHANNELS_2 = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel.json?order=position&batch=2';
 
-	request(ALL_CHANNELS, function (error, response, body) {
+	var renderChannels = function(allChannels) {
+		// determine the output rendering
+		switch (format) {
 
-		if (error) {
-			console.log("Error requesting " + ALL_CHANNELS + ": " + error);
+			case "json":
+				res.send(allChannels); // JSON output
+				break;
+
+			default:
+			case "html": 
+				res.render('channels.jade', { 
+					data		: allChannels
+				,	title		: "All Channels"
+				,	metadata	: metadata 
+				,	prefix		: ''
+				,	supportsCSSFixedPosition: req.support.FixedPosition
+				}); // HTML output
+		
 		}
+	}
 
-		if (!error && response.statusCode == 200) {
+	// Render channels from cache, if available
+	var allChannels = dataCache['allChannels'];
+	var allChannels_timestamp = dataCache['allChannels_timestamp'];
+	var now = new Date();
+	var cacheDurationMilliseconds = 60 * 60 * 1000; // cache for 1 hour
 
-			allChannelsTimer.track('API Response')
+	if (allChannels && allChannels.length > 0 && allChannels_timestamp && typeof(allChannels_timestamp.valueOf)==='function' && (now.valueOf() - allChannels_timestamp.valueOf() < cacheDurationMilliseconds)) {
+		// from cache
+		renderChannels(allChannels);
+	} else {
+		// from api
+		var requestUrls = [ALL_CHANNELS_0, ALL_CHANNELS_1, ALL_CHANNELS_2];
 
-			body = JSON.parse(body);
+		__request(
+			requestUrls,
 
-			// determine the output rendering
-			switch (format) {
+			function (responses) {
+				allChannelsTimer.track('All API Responses received')
+				allChannels = [];
+				var errorsCount = 0;
+				var channelsBatch;
 
-				case "json":
-					res.send(body); // JSON output
-					break;
+				for (var i=0; i<3; i++) {
+					if (!responses[requestUrls[i]] || responses[requestUrls[i]].error) {
+						console.log("Error requesting " + requestUrls[i] + ": " + responses[requestUrls[i]].error);
+						errorsCount++;
+					}
+				}
 
-				default:
-				case "html": 
-					res.render('channels.jade', { 
-						data		: body
-					,	title		: "All Channels"
-					,	metadata	: metadata 
-					,	prefix		: ''
-					,	supportsCSSFixedPosition: req.support.FixedPosition
-					}); // HTML output
-			
+				if (errorsCount===0) {
+					for (var i=0; i<3; i++) {
+						if (!responses[requestUrls[i]].error && responses[requestUrls[i]].response.statusCode == 200) {
+							channelsBatch = JSON.parse(responses[requestUrls[i]].body);
+							allChannels = allChannels.concat(channelsBatch);
+						}
+					}
+					dataCache['allChannels'] = allChannels;
+					dataCache['allChannels_timestamp'] = new Date();
+				}
+
+				renderChannels(allChannels);
 			}
-		}
-
-	});
+		);
+	}
 
 });
 

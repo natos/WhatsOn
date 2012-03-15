@@ -104,13 +104,12 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			} else { // bigger than 480 x 800
 				this.DAYS_VISIBLE = 3;
 			}
-				this.DAYS_VISIBLE = 1;
 
 			// TODO: Adjust hour width and row height based on screen size.
 			this.HOUR_WIDTH = 200; // px
 			this.ROW_HEIGHT = 60; // px
 
-			this.CHANNELS_COUNT = 100; // TODO: there are more than 100 channels
+			this.CHANNELS_COUNT = $('#channels-bar li').length;
 
 			// Size the grid
 			var gridHeight = this.ROW_HEIGHT * this.CHANNELS_COUNT;
@@ -316,21 +315,23 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 		}
 
 	,	updateChannelsBar: function(currentScrollTop, currentScrollLeft) {
-			var currentScrollTop = this.window.scrollTop()
-			,	visibleChannelIds = this.getVisibleChannelIds()
-			,	i = visibleChannelIds.length
-			,	imgElement;
-
-
 			this['channels-bar-list'].css( 'top', currentScrollTop * -1 );
 			// If position:fixed is not supported, reposition the channels bar so that it is still at the left of the screen
 			if (!supportsCSSFixedPosition) {
 				$('#channels-bar').css( 'left', currentScrollLeft + 'px' );
 			}
+		}
+
+		/**
+		* Set the src attribute on an array of channel logos, based on their data-src atribute.
+		*/
+	,	updateChannelImages: function(channelIds) {
+			var i = channelIds.length
+			,	imgElement;
 
 			/* If a channel is visible in the viewport, show the channel image */
 			while (i--) {
-				imgElement = document.getElementById('channelImg' + visibleChannelIds[i]);
+				imgElement = document.getElementById('channelImg' + channelIds[i]);
 				if (imgElement) {
 					if (!imgElement.getAttribute('src') && imgElement.getAttribute('data-src')) {
 						imgElement.src = imgElement.getAttribute('data-src');
@@ -340,7 +341,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 		}
 
 		/**
-		* Return an array of the channel IDs that are currently visible in the viewport
+		* Return an array of the channel IDs that are currently visible in the viewport.
 		*/
 	,	getVisibleChannelIds: function(extraAboveAndBelow) {
 			
@@ -357,7 +358,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 			// Return 2 channels above and below the visible window 
 			for (i = (0 - extraAboveAndBelow); i < (channelsTall + extraAboveAndBelow); i++) {
-				if ((firstChannel + i) < 0) {
+				if ( (firstChannel + i) < 0 || (firstChannel + i) >= channels.length ) {
 					continue;
 				}
 				channelIds.push(channels[firstChannel + i].id);
@@ -379,6 +380,9 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			// Calculate the left border time, and right border time
 			var leftBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * this.MILLISECONDS_IN_HOUR));
 			var rightBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * this.MILLISECONDS_IN_HOUR) + (hoursWide * this.MILLISECONDS_IN_HOUR));
+
+			// Show the channel logos for the visible channels
+			this.updateChannelImages(channelIds);
 
 			this.showLoader();
 			GridSource.getEventsForGrid(channelIds, this.zeroTime, leftBorderTime, rightBorderTime, this.renderEventsCollection, this);
