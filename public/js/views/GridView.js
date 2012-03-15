@@ -190,17 +190,10 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			for (var i=0; i<= this.DAYS_VISIBLE * 24; i++) {
 				hourTime = new Date(self.zeroTime.valueOf() + (i * (self.MILLISECONDS_IN_HOUR)));
 				hourString = ('0' + hourTime.getHours().toString()).slice(-2);
-				timeLineHtml += '<li><span>' + hourString + ' hs</span><div class="spike"></div></li>';
+				timeLineHtml += '<li><span>' + hourString + ' hs</span></li>';
 			}
 			this['time-bar-list'].append(timeLineHtml);
 
-/*			
-			this['time-bar-list'].find('li').each(function(i, e) {
-				hourTime = new Date(self.zeroTime.valueOf() + (i * (self.MILLISECONDS_IN_HOUR)));
-				hourString = ('0' + hourTime.getHours().toString()).slice(-2);
-				$(e).html('<span>' + hourString + ' hs</span><div class="spike"></div>');
-			});
-*/
 			this.updateBars();
 
 			timer.track('Draw Timeline');
