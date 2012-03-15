@@ -1,5 +1,8 @@
 // App.js 
 
+// DOM utility 		https://github.com/ded/bonzo
+// Selector Engine 	https://github.com/ded/qwery
+
 define([
 
 	// Dependencies
@@ -66,6 +69,13 @@ function(UserControl, HeaderSearchFormView) {
 			if ( /grid/.test( window.location.toString() ) ) {
 				require(['views/GridView'], function(Grid){
 					wo.views.grid = new Grid();
+				});
+			}
+
+			// search results
+			if ( /search/.test( window.location.toString() ) ) {
+				require(['views/SearchResultsView'], function(SearchResults){
+					wo.views.search = new SearchResults();
 				});
 			}
 
