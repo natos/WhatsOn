@@ -104,6 +104,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			} else { // bigger than 480 x 800
 				this.DAYS_VISIBLE = 3;
 			}
+				this.DAYS_VISIBLE = 1;
 
 			// TODO: Adjust hour width and row height based on screen size.
 			this.HOUR_WIDTH = 200; // px
@@ -112,16 +113,35 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			this.CHANNELS_COUNT = 100; // TODO: there are more than 100 channels
 
 			// Size the grid
-			this.el.height(this.ROW_HEIGHT * this.CHANNELS_COUNT);
-			this.el.width(this.HOUR_WIDTH * this.DAYS_VISIBLE * 24);
+			var gridHeight = this.ROW_HEIGHT * this.CHANNELS_COUNT;
+			var gridWidth = this.HOUR_WIDTH * this.DAYS_VISIBLE * 24;
 
-			// Size the time bar
-			this['time-bar-list'].width(this.HOUR_WIDTH * this.DAYS_VISIBLE * 24);
-			this['time-bar-list'].find('li').width(this.HOUR_WIDTH);
+			cssText = [];
+			var positionAbsolute = '';
+			if (!supportsCSSFixedPosition) {
+				positionAbsolute = ';position:absolute';
+			}
+			cssText.push('header.main {' + positionAbsolute + '}');
+			cssText.push('#grid-container {height:' + gridHeight + 'px;width:' + gridWidth + 'px;}');
+			cssText.push('#grid-container .event {height:' + this.ROW_HEIGHT + 'px;}');
+			cssText.push('#channels-bar {height:' + gridHeight + 'px' + positionAbsolute + '}');
+			cssText.push('#channels-bar li {height:' + this.ROW_HEIGHT + 'px;}');
+			cssText.push('#time-bar {width:' + gridWidth + 'px' + positionAbsolute + '}');
+			cssText.push('#time-bar ol {width:' + gridWidth + 'px}');
+			cssText.push('#time-bar li {width:' + this.HOUR_WIDTH + 'px;}');
+			this.appendAdaptiveCSS(cssText.join('\n'));
+		}
 
-			// Size the channels bar
-			this['channels-bar-list'].find('li').css('height', this.ROW_HEIGHT);
-
+	,	appendAdaptiveCSS: function(cssText) {
+			var el = document.getElementById('adapt');
+			if (el) {
+				el.innerHTML = cssText;
+			} else {
+				el = document.createElement('style');
+				el.id = 'adapt';
+				el.innerHTML = cssText;
+				document.getElementsByTagName('HEAD')[0].appendChild(el);
+			}
 		}
 
 	,	load: function() {
@@ -164,14 +184,24 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 			var self = this
 			,	hourTime
-			,	hourString;
+			,	hourString
+			,	timeLineHtml = '';
 
 			// Each <li> represents one hour
+			for (var i=0; i<= this.DAYS_VISIBLE * 24; i++) {
+				hourTime = new Date(self.zeroTime.valueOf() + (i * (self.MILLISECONDS_IN_HOUR)));
+				hourString = ('0' + hourTime.getHours().toString()).slice(-2);
+				timeLineHtml += '<li><span>' + hourString + ' hs</span><div class="spike"></div></li>';
+			}
+			this['time-bar-list'].append(timeLineHtml);
+
+/*			
 			this['time-bar-list'].find('li').each(function(i, e) {
 				hourTime = new Date(self.zeroTime.valueOf() + (i * (self.MILLISECONDS_IN_HOUR)));
 				hourString = ('0' + hourTime.getHours().toString()).slice(-2);
 				$(e).html('<span>' + hourString + ' hs</span><div class="spike"></div>');
 			});
+*/
 			this.updateBars();
 
 			timer.track('Draw Timeline');
@@ -269,23 +299,34 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 		}
 
 	,	updateBars: function() {
-			this.updateTimeBar();
-			this.updateChannelsBar();
-		}
-
-	,	updateTimeBar: function() {
 			var currentScrollLeft = this.window.scrollLeft();
-			this['time-bar-list'].css( 'left', (currentScrollLeft + Math.floor((this.HOUR_WIDTH * (this.zeroTime.getMinutes()/60)))) * -1 );
+			var currentScrollTop = this.window.scrollTop();
+			this.updateTimeBar(currentScrollTop, currentScrollLeft);
+			this.updateChannelsBar(currentScrollTop, currentScrollLeft);
 		}
 
-	,	updateChannelsBar: function() {
-			var top = this.window.scrollTop()
+	,	updateTimeBar: function(currentScrollTop, currentScrollLeft) {
+			if (supportsCSSFixedPosition) {
+				this['time-bar-list'].css( 'left', (currentScrollLeft + Math.floor((this.HOUR_WIDTH * (this.zeroTime.getMinutes()/60)))) * -1 );
+			} else {
+				// If position:fixed is not supported, reposition the time bar so that it is still at the top of the screen
+				$('#time-bar').css({'top': (currentScrollTop + 50) + 'px' });
+				$('header.main').css({'top': currentScrollTop + 'px', 'left': currentScrollLeft + 'px' });
+			}
+		}
+
+	,	updateChannelsBar: function(currentScrollTop, currentScrollLeft) {
+			var currentScrollTop = this.window.scrollTop()
 			,	visibleChannelIds = this.getVisibleChannelIds()
 			,	i = visibleChannelIds.length
 			,	imgElement;
 
 
-			this['channels-bar-list'].css( 'top', top * -1 );
+			this['channels-bar-list'].css( 'top', currentScrollTop * -1 );
+			// If position:fixed is not supported, reposition the channels bar so that it is still at the left of the screen
+			if (!supportsCSSFixedPosition) {
+				$('#channels-bar').css( 'left', currentScrollLeft + 'px' );
+			}
 
 			/* If a channel is visible in the viewport, show the channel image */
 			while (i--) {
@@ -375,7 +416,6 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 					startDateTime = new Date(st.slice(0,4), parseInt(st.slice(5,7),10) -1, parseInt(st.slice(8,10),10), parseInt(st.slice(11,13),10), parseInt(st.slice(14,16),10)),
 					duration = ( endDateTime.valueOf() - startDateTime.valueOf() ) / this.MILLISECONDS_IN_HOUR, // hours
 					width = Math.floor( duration * this.HOUR_WIDTH ), // pixels
-					height = this.ROW_HEIGHT, // pixels
 					offsetTime = ( startDateTime.valueOf() - this.zeroTime.valueOf() ) / this.MILLISECONDS_IN_HOUR, // hours
 					offsetTop = this.channelsOffsetMap[ channel.id ],
 					offsetLeft = Math.floor( offsetTime * this.HOUR_WIDTH ); // pixels
@@ -389,7 +429,6 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 				// Maybe is a good idea use a Backbone Model with a Backbone Collection
 				var eventModel = event;
 					eventModel.duration = duration;
-					eventModel.height = height;
 					eventModel.width = width;
 					eventModel.offset = {
 						top: offsetTop

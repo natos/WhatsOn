@@ -513,7 +513,6 @@ button {
 
 #time-controls div {
 	position: absolute;  /* for devices that not support fixed positioning, this is fixed with js  */
-/*	position: fixed;  testing absolute posiotining, uncomment this */
 	background: white;
 	opacity: 0;
 	-webkit-transition: opacity .3s ease-in-out;
@@ -590,7 +589,7 @@ button {
 	position: fixed;
 	top: 70px;
 	left: 0;
-	bottom: 0;
+	bottom:0;
 	width: 63px;
 	z-index:5;
 

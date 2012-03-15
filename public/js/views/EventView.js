@@ -32,7 +32,6 @@ function() {
 					'position': 'absolute'
 				,	'top': this.options.offset.top + 'px'
 				,	'left': this.options.offset.left + 'px'
-				,	'height': this.options.height + 'px'
 				,	'width': this.options.width + 'px'
 				})
 				.appendTo('#grid-container');

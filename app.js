@@ -259,7 +259,6 @@ app.get('/grid', function(req, res) {
 			,	title		: "Grid"
 			,	metadata	: metadata
 			,	prefix		: ''
-			,	timeFrame   : new Array(72) // 148 hrs
 			,	week		: getWeekFromToday()
 			,	supportsCSSFixedPosition: req.support.FixedPosition
 			}); // HTML output
