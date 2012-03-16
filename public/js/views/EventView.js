@@ -30,11 +30,11 @@ function() {
 				.html('<a id="' + this.options.programme.id + '" class="programme" href="/programme/' + this.options.programme.id + '.html">' + this.options.programme.title + '</a>' + '<p class="description">' + this.options.programme.shortDescription + '</p>')
 				.css({
 					'position': 'absolute'
-				,	'top': this.options.offset.top + 'px'
-				,	'left': this.options.offset.left + 'px'
-				,	'width': this.options.width + 'px'
+				,	'top': this.options.dimensions.top + 'px'
+				,	'left': this.options.dimensions.left + 'px'
+				,	'width': this.options.dimensions.width + 'px'
 				})
-				.appendTo('#grid-container');
+				.appendTo(this.options.gridContainer);
 
 			this.trigger('view-created');
 

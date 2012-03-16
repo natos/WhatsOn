@@ -138,15 +138,17 @@ button {
 }
 
 .main {
-	position: fixed;
+	position:absolute;
 	top: 0;
 	right: 0;
 	left: 0;
 	width: 100%;
 	height: 50px;
 	z-index: 10;
-
 	background: #666 url('/assets/main_gradient.png') 0 0 repeat-x;
+}
+.support-fixed-position .main {
+	position: fixed;
 }
 
 .main h1 {
@@ -458,7 +460,7 @@ button {
    ============== */
 
 #time-bar {
-	position: fixed;
+	position: absolute;
 	top: 49px;
 	left: 0;
 	right: 0;
@@ -469,10 +471,9 @@ button {
 
 	/* Fake box-shadow. CSS box-shadow can decrease scrolling performance on old iOS and Android browsers. */ 
 	background:url(../assets/bg-gradient-shadow-bottom.png) repeat-x 0 100%;
-	/*
-	-webkit-box-shadow: 0px 1px 2px 2px rgba(0, 0, 0, .3);
-	-moz-box-shadow: 0px 1px 2px 2px rgba(0, 0, 0, .3);
-	*/
+}
+.support-fixed-position #time-bar {
+	position: fixed;
 }
 
 #time-bar ol {
@@ -579,13 +580,13 @@ button {
    ============== */
 
 #channels-bar {
-	position: fixed;
+	position: absolute;
 	top: 70px;
 	left: 0;
 	bottom:0;
 	width: 69px;
 	z-index:5;
-	overflow: visible;
+	overflow: hidden;
 
 	/* Transition performance is fine on Chrome/Desktop, but not on most mobile browsers */
 	/*
@@ -600,13 +601,12 @@ button {
 
 	/* Fake box-shadow. CSS box-shadow can decrease scrolling performance on old iOS and Android browsers. */ 
 	background:transparent url(../assets/bg-gradient-shadow-right.png) repeat-y 100% 0;
-	/*
-	-webkit-box-shadow: 1px 0px 2px 2px rgba(0, 0, 0, .3);
-	-moz-box-shadow: 1px 0px 2px 2px rgba(0, 0, 0, .3);
-	*/
+}
+.support-fixed-position #channels-bar {
+	position:fixed;
 }
 
-#channels-bar:hover {
+#channels-bar.open {
 	width: 106px;
 }
 
@@ -615,7 +615,7 @@ button {
 	background:#fff;
 	width: 63px;
 }
-#channels-bar:hover ul {
+#channels-bar.open ul {
 	width: 100px;
 }
 
@@ -659,7 +659,6 @@ button {
 }
 
 #channels-bar .fav {
-	display: none;
 	position: absolute;
 	left: 68px;
 	top: 20px;
@@ -668,10 +667,6 @@ button {
 	-webkit-transition: opacity .3s ease-in-out;
 	-moz-transition: opacity .3s ease-in-out;
 */
-}
-
-#channels-bar:hover .fav {
-	display: block;
 }
 
 #channels-bar .fav input[type="checkbox"] {
@@ -703,7 +698,6 @@ button {
 	background-position: -42px 0;
 
 /*	Something wierd happens with the fonts while the animation is going on
-
 	-webkit-animation-name: pulse;
 	-webkit-animation-duration: .2s;
 	-webkit-animation-iteration-count: 1;
@@ -756,31 +750,25 @@ button {
 
 }
 
-.event:hover {
+/* Hover states only supported for non-touch browsers */
+.support-no-touch .event:hover {
 	color: #fff;
 	background: #111 url('/assets/main_gradient.png') 0 0 repeat-x;
 }
-
-.event:hover .programme {
+.support-no-touch .event:hover .programme {
 	color: #fff;
 }
-.event:hover .programme + p {
+.support-no-touch .event:hover .programme + p {
 	color: #eee;
 }
 
 .timer-ticker {
 	position: absolute;
 	height: 100%;
-	width: 2px;
+	width: 4px;
 	top:0px;
 	z-index:1;
-	background: yellowGreen;
-	
-	-webkit-box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, .3);
-	-moz-box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, .3);
-
-	opacity: .9;
-
+	background:url(../assets/bg-timer-ticker.png) repeat-y 0 0;
 }
 
 /* ==============

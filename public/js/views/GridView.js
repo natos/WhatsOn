@@ -2,7 +2,9 @@
 
 define([
 
-	'views/EventView'
+	'models/EventModel'
+,	'collections/EventCollection'
+,	'views/EventView'
 ,	'views/LayerView'
 ,	'views/TimeTickerView'
 ,	'views/TimeManualControlsView'
@@ -12,7 +14,7 @@ define([
 
 ],
 
-function(EventView, Layer, TimeTicker, TimeManualControls, GridSource) {
+function(EventModel, EventCollection, EventView, Layer, TimeTicker, TimeManualControls, GridSource) {
 
 // private scope
 var timer = new Timer('Grid View'), requestTimer, bufferTimer;
@@ -42,6 +44,11 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 		// With no support of Fixed positioning use manual controls
 	,	USE_MANUAL_TIME_CONTROLS: !supportsCSSFixedPosition
 
+	,	support: {
+			cssFixedPosition: supportsCSSFixedPosition,
+			touch: false
+		}
+
 	//  private classes
 
 	,	layer: new Layer()
@@ -63,7 +70,8 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			// get viewport size
 			this.getViewportSize();
 
-			this.initializeGridLayout();
+			// Set features and capabilities, such as 
+			this.initCapabilities();
 
 			// Now
 			var now = new Date();
@@ -76,11 +84,14 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			// Ticker
 			this.timeTicker = new TimeTicker(now, initialOffsetHoursBetweenZeroTimeAndNow, this.HOUR_WIDTH);
 
-			// Time Manual Constrols
+			// Time Manual Controls
 			this.timeManualControls = this.USE_MANUAL_TIME_CONTROLS && new TimeManualControls();
 
 			// Create Timeline
 			this.drawTimeLine();
+
+			// Create loading indicator
+			this.initLoader();
 
 			// Map Channel ID / OffsetTop
 			for (var i = 0; i < channels.length; i++) {
@@ -93,10 +104,15 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			this.load();
 		}
 
-	,	initializeGridLayout: function() {
-			// How many days are visible? Smaller screens => fewer days
-			var screenArea = this.viewport.width * this.viewport.height;
+	,	initCapabilities: function() {
+			var supportClasses = [],
+				cssText = [],
+				screenArea,
+				gridHeight,
+				gridWidth;
 
+			// How many days are visible? Smaller screens => fewer days
+			screenArea = this.viewport.width * this.viewport.height;
 			if (screenArea <= 153600) { // 320 x 480
 				this.DAYS_VISIBLE = 1;
 			} else if (screenArea <= 384000) { // 480 x 800
@@ -110,25 +126,42 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			this.ROW_HEIGHT = 60; // px
 
 			this.CHANNELS_COUNT = $('#channels-bar li').length;
+			this.CHANNEL_BAR_WIDTH = $('#channels-bar').width;
+
+			// Add className to <html> element based on fixed-position support
+			// If no fixed-position support, channel and time bars have to be repositioned after scroll/touch.
+			if (!supportsCSSFixedPosition) {
+				supportClasses.push('support-no-fixed-position');
+			} else {
+				supportClasses.push('support-fixed-position');
+			}
+
+			// Add className to <html> element based on touch event support
+			// If touchscreen device, do not use :hover states and mouseover code.
+			// (Note: not a perfect detection, but good enough for now.)
+			if (('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch) {
+				this.support.touch = true;
+				supportClasses.push('support-touch');
+			} else {
+				this.support.touch = false;
+				supportClasses.push('support-no-touch');
+			}
 
 			// Size the grid
-			var gridHeight = this.ROW_HEIGHT * this.CHANNELS_COUNT;
-			var gridWidth = this.HOUR_WIDTH * this.DAYS_VISIBLE * 24;
+			gridHeight = this.ROW_HEIGHT * this.CHANNELS_COUNT;
+			gridWidth = this.HOUR_WIDTH * this.DAYS_VISIBLE * 24;
 
-			cssText = [];
-			var positionAbsolute = '';
-			if (!supportsCSSFixedPosition) {
-				positionAbsolute = ';position:absolute';
-			}
-			cssText.push('header.main {' + positionAbsolute + '}');
+			// Generate style rules for the heights and widths specific to the current browser
 			cssText.push('#grid-container {height:' + gridHeight + 'px;width:' + gridWidth + 'px;}');
 			cssText.push('#grid-container .event {height:' + this.ROW_HEIGHT + 'px;}');
-			cssText.push('#channels-bar {height:' + gridHeight + 'px' + positionAbsolute + '}');
+			cssText.push('#channels-bar {height:' + gridHeight + 'px}');
 			cssText.push('#channels-bar li {height:' + this.ROW_HEIGHT + 'px;}');
-			cssText.push('#time-bar {width:' + gridWidth + 'px' + positionAbsolute + '}');
+			cssText.push('#time-bar {width:' + gridWidth + 'px}');
 			cssText.push('#time-bar ol {width:' + gridWidth + 'px}');
 			cssText.push('#time-bar li {width:' + this.HOUR_WIDTH + 'px;}');
 			this.appendAdaptiveCSS(cssText.join('\n'));
+
+			$(document.documentElement).addClass(supportClasses.join(' '));
 		}
 
 	,	appendAdaptiveCSS: function(cssText) {
@@ -200,19 +233,22 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 		}
 
+	,	initLoader: function() {
+			this.loadingIndicator = $('<div class="loader">')
+				.css({
+					top:  Math.floor(this.viewport.height / 2) + 'px'
+				,	left: Math.floor(this.viewport.width / 2) + 'px'
+				})
+				.appendTo('#content')
+				.hide();
+		}
+
 	,	showLoader: function() {
-			if ($('.loader').length===0) {
-				$('<div class="loader">')
-					.css({
-						top:  Math.floor(this.viewport.height / 2) + 'px'
-					,	left: Math.floor(this.viewport.width / 2) + 'px'
-					})
-					.appendTo('#content');
-			}
+			this.loadingIndicator.show();
 		}
 
 	, 	hideLoader: function() {
-			$('.loader').remove();
+			this.loadingIndicator.hide();
 		}
 
 	,	checkLoader: function() {
@@ -257,13 +293,12 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 		}
 
-	,	scrollHandlers: function() {
-
+	,	scrollHandlers: function(e) {
 			var self = this;
 	
 			var executionTimer;
 
-			var handleEvents = function() {
+			var handleEvents = function(e) {
 
 				if (executionTimer) {
 					clearTimeout(executionTimer);
@@ -277,7 +312,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 					// Not necesary if the device suports fixed positioning
 					self.timeManualControls && self.timeManualControls.update(self.viewport);
 
-				}, 100);
+				}, 200);
 
 				// Update the viewport
 				self.getViewportSize();
@@ -286,7 +321,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 				self.updateBars();
 			}
 
-			this.window.bind('scroll resize touchmove', handleEvents);
+			this.window.bind('scroll resize', handleEvents);
 
 			timer.track('Scroll handlers setted');
 
@@ -313,7 +348,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			this['channels-bar-list'].css( 'top', currentScrollTop * -1 );
 			// If position:fixed is not supported, reposition the channels bar so that it is still at the left of the screen
 			if (!supportsCSSFixedPosition) {
-				this['#channels-bar'].css( 'left', currentScrollLeft + 'px' );
+				this['channels-bar'].css( 'left', currentScrollLeft + 'px' );
 			}
 		}
 
@@ -391,7 +426,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 			this.eventsToRenderCount += eventsCollection.length;
 
-			$(eventsCollection).each(function(i, event){
+			_.each(eventsCollection, function(event){
 				setTimeout(function(){self.renderEvent(event)}, 0)
 			});
 
@@ -402,10 +437,10 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 		}
 
 	,	renderEvent: function(event) {
-			var renderingTimer = new Timer('Rendering').off();
+			var renderingTimer = new Timer('Rendering');
 
-			// Render if the event dosen't exist on the DOM
-			if ( !$('#'+event.id)[0] ) {
+			// Render if the event doesn't exist on the DOM
+			if ( !document.getElementById(event.id) ) {
 
 				var channel = event.channel,
 					offsetTop = this.channelsOffsetMap[ channel.id ],
@@ -427,21 +462,22 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 				// Create a EventModel
 				// Maybe is a good idea use a Backbone Model with a Backbone Collection
 				var eventModel = event;
-					eventModel.duration = duration;
-					eventModel.width = width;
-					eventModel.offset = {
-						top: offsetTop
-					,	left: offsetLeft
-					}
+				eventModel.dimensions = {
+					top: offsetTop
+				,	left: offsetLeft
+				,	width: width
+				}
+				eventModel.gridContainer = this.el;
 
-				// new EventView
-				var eventItem = new EventView(eventModel); // This might degrade performance a little bit
+				// The overhead of creating a new EventView is very small
+				// compared to just creating the raw DOM elements.
+				var eventView = new EventView(eventModel);
 
 				renderingTimer.track('Event ' + event.id + ' Rendered');
 
-				// Save the eventItem to the eventsBuffer
+				// Save the eventView to the eventsBuffer
 				// To control how many elements are rendered
-				this.eventsBuffer.push(eventItem);
+				this.eventsBuffer.push(eventView);
 			}
 
 			this.eventsToRenderCount -= 1;
