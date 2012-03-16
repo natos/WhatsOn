@@ -636,6 +636,8 @@ button {
 
 #channels-bar .picture img {
 	margin-top: 15px;
+	height:27px;
+	width:43px;
 }
 
 /* ==============

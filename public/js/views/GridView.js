@@ -271,7 +271,6 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 				executionTimer = setTimeout(function() {
 
-					self.getViewportSize();
 					self.getEvents();
 
 					// Update Time Manual Controls Position
@@ -279,6 +278,9 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 					self.timeManualControls && self.timeManualControls.update(self.viewport);
 
 				}, 100);
+
+				// Update the viewport
+				self.getViewportSize();
 
 				// Update scroll bars
 				self.updateBars();
@@ -291,8 +293,8 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 		}
 
 	,	updateBars: function() {
-			var currentScrollLeft = this.window.scrollLeft();
-			var currentScrollTop = this.window.scrollTop();
+			var currentScrollLeft = this.viewport.left;
+			var currentScrollTop = this.viewport.top;
 			this.updateTimeBar(currentScrollTop, currentScrollLeft);
 			this.updateChannelsBar(currentScrollTop, currentScrollLeft);
 		}
@@ -302,7 +304,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 				this['time-bar-list'].css( 'left', (currentScrollLeft + Math.floor((this.HOUR_WIDTH * (this.zeroTime.getMinutes()/60)))) * -1 );
 			} else {
 				// If position:fixed is not supported, reposition the time bar so that it is still at the top of the screen
-				$('#time-bar').css({'top': (currentScrollTop + 50) + 'px' });
+				this['time-bar'].css({'top': (currentScrollTop + 50) + 'px' });
 				$('header.main').css({'top': currentScrollTop + 'px', 'left': currentScrollLeft + 'px' });
 			}
 		}
@@ -311,7 +313,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			this['channels-bar-list'].css( 'top', currentScrollTop * -1 );
 			// If position:fixed is not supported, reposition the channels bar so that it is still at the left of the screen
 			if (!supportsCSSFixedPosition) {
-				$('#channels-bar').css( 'left', currentScrollLeft + 'px' );
+				this['#channels-bar'].css( 'left', currentScrollLeft + 'px' );
 			}
 		}
 
@@ -338,7 +340,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 		*/
 	,	getVisibleChannelIds: function(extraAboveAndBelow) {
 			
-			var channelsScrolledUp = this.window.scrollTop() / this.ROW_HEIGHT // How many channels have been scrolled vertically?
+			var channelsScrolledUp = this.viewport.top / this.ROW_HEIGHT // How many channels have been scrolled vertically?
 			,	firstChannel = (channelsScrolledUp < 0) ? 0 : Math.floor(channelsScrolledUp)
 			,	topOffset = 100 // TODO: calculate this based on actual dimensions
 			,	channelsTall = (window.innerHeight - topOffset) / this.ROW_HEIGHT // How many channels tall is the screen?
@@ -365,7 +367,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			var channelIds = this.getVisibleChannelIds(1);
 
 			// How many hours have been scrolled horizontally?
-			var hoursScrolledLeft = this.window.scrollLeft() / this.HOUR_WIDTH;
+			var hoursScrolledLeft = this.viewport.left / this.HOUR_WIDTH;
 			// How many hours wide is the screen?
 			var channelsBarWidth = 43;
 			var hoursWide = (document.body.clientWidth - channelsBarWidth) / this.HOUR_WIDTH;
