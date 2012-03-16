@@ -459,27 +459,28 @@ button {
 
 #time-bar {
 	position: fixed;
-	top: 50px;
+	top: 49px;
 	left: 0;
 	right: 0;
-	height: 20px;
-
+	height: 26px;
 	border-top: 1px solid #444;
-	color: #ccc;
-	background: #000;
-
 	font-size: .8em;
-
 	z-index: 9;
 
+	/* Fake box-shadow. CSS box-shadow can decrease scrolling performance on old iOS and Android browsers. */ 
+	background:url(../assets/bg-gradient-shadow-bottom.png) repeat-x 0 100%;
+	/*
 	-webkit-box-shadow: 0px 1px 2px 2px rgba(0, 0, 0, .3);
 	-moz-box-shadow: 0px 1px 2px 2px rgba(0, 0, 0, .3);
+	*/
 }
 
 #time-bar ol {
-	position: absolute;
+	background: #000;
+	color: #ccc;
 	height: 20px;
-	/* width is set dynamically by the view */
+	position: absolute;
+	/* Width is set dynamically by the view. It depends on how many hours are shown. */
 }
 
 #time-bar li {
@@ -582,48 +583,54 @@ button {
 	top: 70px;
 	left: 0;
 	bottom:0;
-	width: 63px;
+	width: 69px;
 	z-index:5;
+	overflow: visible;
 
-	background: #fff;
-	overflow: hidden;
-
-	-webkit-box-shadow: 1px 0px 2px 2px rgba(0, 0, 0, .3);
-	-moz-box-shadow: 1px 0px 2px 2px rgba(0, 0, 0, .3);
-
-	opacity: .8;
-
+	/* Transition performance is fine on Chrome/Desktop, but not on most mobile browsers */
+	/*
 	-webkit-transition-timing-function: ease-out;  
 	-webkit-transition-property: width, opacity;  
 	-webkit-transition-duration: .3s;  
 
 	-moz-transition-timing-function: ease-out;  
 	-moz-transition-property: width, opacity;  
-	-moz-transition-duration: .3s;  
+	-moz-transition-duration: .3s;
+	*/
 
+	/* Fake box-shadow. CSS box-shadow can decrease scrolling performance on old iOS and Android browsers. */ 
+	background:transparent url(../assets/bg-gradient-shadow-right.png) repeat-y 100% 0;
+	/*
+	-webkit-box-shadow: 1px 0px 2px 2px rgba(0, 0, 0, .3);
+	-moz-box-shadow: 1px 0px 2px 2px rgba(0, 0, 0, .3);
+	*/
 }
 
 #channels-bar:hover {
-	width: 100px;
-	opacity: .9;
+	width: 106px;
 }
 
 #channels-bar ul {
 	position: absolute;
+	background:#fff;
+	width: 63px;
+}
+#channels-bar:hover ul {
+	width: 100px;
 }
 
 #channels-bar li {
 	position: relative;
-	/* height is set dynamically by JS */
-	width: 63px;
-	margin: 0 auto;
+	margin: 0;
 	padding: 0;
+	width:100%;
+	/* height is set dynamically by JS */
 }
 
 #channels-bar .picture {
 	display: block;
 	width: 43px;
-	margin: 0 auto;
+	margin: 0 0 0 10px;
 	padding: 0;
 }
 
@@ -652,12 +659,13 @@ button {
 #channels-bar .fav {
 	display: none;
 	position: absolute;
-	right: -25px;
+	left: 68px;
 	top: 20px;
 
+/*
 	-webkit-transition: opacity .3s ease-in-out;
 	-moz-transition: opacity .3s ease-in-out;
-
+*/
 }
 
 #channels-bar:hover .fav {
@@ -684,7 +692,8 @@ button {
 
 /*	Dosen't perform well on desktop
 	-webkit-transform: translate3d(0px, 0px, 0px) scale(1);
-	-moz-transform: translate3d(0px, 0px, 0px) scale(1); */
+	-moz-transform: translate3d(0px, 0px, 0px) scale(1); 
+*/
 }
 
 #channels-bar .fav input[type="checkbox"]:checked + label {

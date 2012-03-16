@@ -187,7 +187,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			,	timeLineHtml = '';
 
 			// Each <li> represents one hour
-			for (var i=0; i<= this.DAYS_VISIBLE * 24; i++) {
+			for (var i=0; i< this.DAYS_VISIBLE * 24; i++) {
 				hourTime = new Date(self.zeroTime.valueOf() + (i * (self.MILLISECONDS_IN_HOUR)));
 				hourString = ('0' + hourTime.getHours().toString()).slice(-2);
 				timeLineHtml += '<li><span>' + hourString + ' hs</span></li>';
@@ -384,7 +384,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 	,	renderEventsCollection: function(eventsCollection) {
 			var self = this;
 
-			var t = new Timer('renderEventsCollectionTimer');
+			var t = new Timer('renderEventsCollectionTimer').off();
 			t.track('Start rendering collection (' + eventsCollection.length + ' events)');
 
 			this.eventsToRenderCount += eventsCollection.length;
