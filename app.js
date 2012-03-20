@@ -8,9 +8,16 @@ var fs = require('fs')
 ,	express = require('express')
 ,	request = require('request')
 ,	i18n = require('i18n')
+,	Timer = require('timetrack')
 ,	port = process.env.PORT || 3000
-,	IdentifiedBrowser = require('./lib/identifiedbrowser.js').IdentifiedBrowser
-,	Timer = require('./public/js/libs/timer/timer.js').Timer;
+,	IdentifiedBrowser = require('./lib/identifiedbrowser.js').IdentifiedBrowser;
+
+/**
+ * constants
+ */
+
+var API_PREFIX = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/';
+//var API_PREFIX = 'http://213.46.250.168/cgi-bin/WebObjects/EPGApi.woa/-2004/api/';
 
 var facebook = {
 	'app-id'		: '153316508108487'
@@ -119,7 +126,7 @@ var __request = function (urls, callback) {
 	var results = {}, t = urls.length, c = 0,
 		handler = function (error, response, body) {
 
-			var url = response.request.uri.href;
+			var url = response && response.request.uri.href;
 
 			results[url] = { error: error, response: response, body: body };
 
@@ -193,7 +200,6 @@ app.helpers({
 
 app.get('*', function(req, res, next){
 
-
 	/**
 	 * Support.
 	 */
@@ -224,6 +230,17 @@ app.get('/', function(req, res) {
 
 		function(response) {
 
+			// API Error?
+			var error;
+			for ( API in response ) {
+				if ( response[API].response.statusCode === 500 ) {
+					error = response[API].body + ' requesting: ' + API;
+					console.log(error);
+					res.send(error);
+					return;
+				}
+			}
+
 			var _topbookings = JSON.parse( response[TOPBOOKINGS].body )
 			,	_allchannels = JSON.parse( response[ALLCHANNELS].body );
 
@@ -234,6 +251,7 @@ app.get('/', function(req, res) {
 			,	channels 	: _allchannels 
 			,	prefix		: ''
 			,	supportsCSSFixedPosition: req.support.FixedPosition
+			,	API_PREFIX	: API_PREFIX
 			}); // HTML output
 
 		}
@@ -245,7 +263,7 @@ app.get('/grid', function(req, res) {
 
 	var gridTimer = new Timer('Grid View');
 
-	var ALL_CHANNELS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel.json?order=position';
+	var ALL_CHANNELS = API_PREFIX + 'Channel.json?order=position';
 
 	request(ALL_CHANNELS, function (error, response, body) {
 
@@ -267,6 +285,7 @@ app.get('/grid', function(req, res) {
 			,	timeFrame   : new Array(72) // 148 hrs
 			,	week		: getWeekFromToday()
 			,	supportsCSSFixedPosition: req.support.FixedPosition
+			,	API_PREFIX	: API_PREFIX
 			}); // HTML output
 			
 		}
@@ -325,6 +344,7 @@ app.get('/topbookings.:format?', function(req, res) {
 					,	metadata	: metadata 
 					,	prefix		: ''
 					,	supportsCSSFixedPosition: req.support.FixedPosition
+					,	API_PREFIX	: API_PREFIX
 					}); // HTML output
 			}
 			
@@ -342,7 +362,7 @@ app.get('/channels.:format?', function(req, res) {
     var id = req.params.id
 	,	format = req.params.format // html, json, etc
 
-	var ALL_CHANNELS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel.json?order=position';
+	var ALL_CHANNELS = API_PREFIX + 'Channel.json?order=position';
 
 	request(ALL_CHANNELS, function (error, response, body) {
 
@@ -353,6 +373,11 @@ app.get('/channels.:format?', function(req, res) {
 		if (!error && response.statusCode == 200) {
 
 			allChannelsTimer.track('API Response')
+
+			if ( response.statusCode === 500 ) {
+				res.send(response[CHANNEL_DETAILS].body);
+				return;
+			}
 
 			body = JSON.parse(body);
 
@@ -371,6 +396,7 @@ app.get('/channels.:format?', function(req, res) {
 					,	metadata	: metadata 
 					,	prefix		: ''
 					,	supportsCSSFixedPosition: req.support.FixedPosition
+					,	API_PREFIX	: API_PREFIX
 					}); // HTML output
 			
 			}
@@ -390,8 +416,8 @@ app.get('/channel/:id.:format?', function(req, res) {
 	,	format = req.params.format // html, json, etc
 	;
 
-	var CHANNEL_DETAILS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/' + id + '.json',
-		CHANNEL_EVENTS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/' + id + '/events/NowAndNext.json?order=startDateTime'
+	var CHANNEL_DETAILS = API_PREFIX + 'Channel/' + id + '.json',
+		CHANNEL_EVENTS = API_PREFIX + 'Channel/' + id + '/events/NowAndNext.json?order=startDateTime'
 
 	__request(
 
@@ -401,8 +427,15 @@ app.get('/channel/:id.:format?', function(req, res) {
 
 			channelTimer.track('API Response');
 
-			if (!response[PROGRAMME_DETAILS]||!response[PROGRAMME_EVENTS]) {
-				res.send('Empty response.')
+			// API Error?
+			var error;
+			for ( API in response ) {
+				if ( response[API].response.statusCode === 500 ) {
+					error = response[API].body + ' requesting: ' + API;
+					console.log(error);
+					res.send(error);
+					return;
+				}
 			}
 
 			var _channel_details = JSON.parse( response[CHANNEL_DETAILS].body )
@@ -435,6 +468,7 @@ app.get('/channel/:id.:format?', function(req, res) {
 					,	metadata	: _metadata
 					,	prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-whatson: http://ogp.me/ns/fb/upc-whatson#' 
 					,	supportsCSSFixedPosition: req.support.FixedPosition
+					,	API_PREFIX	: API_PREFIX
 					}); // HTML output	
 			}
 		}
@@ -454,8 +488,8 @@ app.get('/programme/:id.:format?', function(req, res) {
 	,	now = new Date();
 
 
-	var PROGRAMME_DETAILS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Programme/' + id + '.json'
-	,	PROGRAMME_EVENTS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Programme/' + id + '/events.json?order=startDateTime'
+	var PROGRAMME_DETAILS = API_PREFIX + 'Programme/' + id + '.json'
+	,	PROGRAMME_EVENTS = API_PREFIX + 'Programme/' + id + '/events.json?order=startDateTime'
 
 
 	__request(
@@ -466,8 +500,15 @@ app.get('/programme/:id.:format?', function(req, res) {
 
 			programmeTimer.track('API Response');
 
-			if (!response[PROGRAMME_DETAILS]||!response[PROGRAMME_EVENTS]) {
-				res.send('Empty response.')
+			// API Error?
+			var error;
+			for ( API in response ) {
+				if ( response[API].response.statusCode === 500 ) {
+					error = response[API].body + ' requesting: ' + API;
+					console.log(error);
+					res.send(error);
+					return;
+				}
 			}
 
 			var _programme_details = JSON.parse( response[PROGRAMME_DETAILS].body )
@@ -505,6 +546,7 @@ app.get('/programme/:id.:format?', function(req, res) {
 					,	prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# video: http://ogp.me/ns/video#'
 					,	isAjax		: isAjax
 					,	supportsCSSFixedPosition: req.support.FixedPosition
+					,	API_PREFIX	: API_PREFIX
 					}); // HTML output
 			}
 		}
@@ -534,13 +576,13 @@ app.get('/search', function(req, res) {
 		events.push( event );
 	}
 
-	var QUERY_URL = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Event.json?query=' + query 
+	var QUERY_URL = API_PREFIX + 'Event.json?query=' + query 
 		//	Non of these optional parameters works on search API
 		//+ '&amp;optionalProperties=Event.subcategory,Event.category'
 		//+ '&amp;order=startDateTime'
 	,	ALL_CHANNELS = 'http://' + req.headers.host + '/channels.json'
-	,	CATEGORIES = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Category.json'
-	,	SUBCATEGORIES = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Subcategory.json'
+	,	CATEGORIES = API_PREFIX + 'Category.json'
+	,	SUBCATEGORIES = API_PREFIX + 'Subcategory.json'
 
 	__request( // Multiple requests
 
@@ -549,6 +591,17 @@ app.get('/search', function(req, res) {
 		function(results) {
 
 			searchTimer.track('API Response');
+
+			// API Error?
+			var error;
+			for ( API in response ) {
+				if ( response[API].response.statusCode === 500 ) {
+					error = response[API].body + ' requesting: ' + API;
+					console.log(error);
+					res.send(error);
+					return;
+				}
+			}
 
 			var _results = JSON.parse( results[QUERY_URL].body )
 			,	_all_channels = JSON.parse( results[ALL_CHANNELS].body )
@@ -607,6 +660,7 @@ app.get('/search', function(req, res) {
 			// filtering options
 			,	used_channels: _used_channels
 			,	used_datetimes: _used_datetimes
+			,	API_PREFIX	: API_PREFIX
 			}); // HTML output
 
 		}

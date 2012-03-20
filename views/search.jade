@@ -18,6 +18,14 @@ section#content
 								li.subcategory
 									input(type="checkbox", id="#{sub.id}-#{sub._type}", value="#{sub.id}", checked="checked") 
 									label(for="#{sub.id}-#{sub._type}") #{sub.name}
+		h4 Date Times
+		ul#datetimes.selectable
+			each startDateTime, prettyDate in used_datetimes
+				li.datetime
+					input(type="checkbox", id="#{startDateTime}", value="#{prettyDate}", checked="checked") 
+					label(for="#{startDateTime}") #{prettyDate}
+
+
 		h4 Channels
 		ul#channels.selectable
 			each channel in used_channels
@@ -25,12 +33,6 @@ section#content
 					input(type="checkbox", id="#{channel.id}", value="#{channel.id}", checked="checked") 
 					label(for="#{channel.id}") #{channel.name}
 
-		h4 Date Times
-		ul#datetimes.selectable
-			each startDateTime, prettyDate in used_datetimes
-				li.datetime
-					input(type="checkbox", id="#{startDateTime}", value="#{prettyDate}", checked="checked") 
-					label(for="#{startDateTime}") #{prettyDate}
 
 
 

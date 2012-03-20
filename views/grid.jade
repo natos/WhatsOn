@@ -1,6 +1,6 @@
 include layout
 
-//section#content
+link(href="/css/grid.css", rel="stylesheet")
 
 #grid-container
 	.back-grid
@@ -27,3 +27,4 @@ include layout
 script
 	var supportsCSSFixedPosition = #{supportsCSSFixedPosition};
 	var channels = !{JSON.stringify(data)};
+	var API_PREFIX = '#{API_PREFIX}';

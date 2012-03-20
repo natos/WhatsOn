@@ -3,9 +3,12 @@
 */
 define([
 	// Dependencies
+	'js/libs/timer/timer.js'
 ], 
 
 function() {
+
+	var sourceTimer;
 
 	var HOURS_PER_SLICE = 4;
 
@@ -75,7 +78,11 @@ function() {
 
 			var sliceStartTime = getSliceStartTimeFromSliceIndex(zeroTime, sliceIndex);
 			var formattedSliceStartTime = formatTimeForApiRequest(sliceStartTime);
-			var request = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/' + channelIdBatch.join('|') + '/events/NowAndNext_' + formattedSliceStartTime + '.json?batchSize=10&callback=?';
+//			var request = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/' + channelIdBatch.join('|') + '/events/NowAndNext_' + formattedSliceStartTime + '.json?batchSize=10&callback=?';
+
+			var request = API_PREFIX + 'Channel/' + channelIdBatch.join('|') + '/events/NowAndNext_' + formattedSliceStartTime + '.json?batchSize=10&callback=?';
+
+			sourceTimer = new Timer('API Call Timer')
 
 			$.getJSON(request, function(apiResponse) {
 				processApiResponse(apiResponse, sliceIndex, eventsCollectionRendererCallback, gridView);
@@ -84,6 +91,9 @@ function() {
 	}
 
 	var processApiResponse = function(apiResponse, sliceIndex, eventsCollectionRendererCallback, gridView) {
+
+		sourceTimer.track('API Call Response');
+
 		var eventsCollections = [];
 		if ($.isArray($(apiResponse)[0])) {
 			// response contains multiple channels (events collections)

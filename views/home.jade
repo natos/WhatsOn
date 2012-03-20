@@ -1,5 +1,6 @@
 include layout
 
+
 section#content
 
 	#topbookings
@@ -13,7 +14,7 @@ section#content
 					p
 						| #{event.prettyDate}, 
 						| #{ new Date(event.startDateTime).getHours() }hs
-						button #{__i('Record')}
+						button.btn.icon.icon-target #{__i('Record')}
 
 	#channels
 		ul.mosaic

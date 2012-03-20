@@ -346,7 +346,8 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 	,	renderEventsCollection: function(eventsCollection) {
 			var self = this;
 
-			var t = new Timer('renderEventsCollectionTimer');
+			var t = new Timer('renderEventsCollectionTimer').off();
+
 			t.track('Start rendering collection (' + eventsCollection.length + ' events)');
 
 			this.eventsToRenderCount += eventsCollection.length;

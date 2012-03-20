@@ -149,10 +149,9 @@ function(UserControl, HeaderSearchFormView) {
 				return function(min) {
 
 					while ( is_used( rnd = get_random(min) ) ) {
-						console.log(rnd + ' repeated');
+//						console.log(rnd + ' repeated');
 					}
 
-					console.log(rnd);
 					picked_ones.push(rnd);
 
 					return cool_pics[rnd] || cool_pics[rnd-1];
