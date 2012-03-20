@@ -437,7 +437,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 		}
 
 	,	renderEvent: function(event) {
-			var renderingTimer = new Timer('Rendering');
+			var renderingTimer = new Timer('Rendering').off();
 
 			// Render if the event doesn't exist on the DOM
 			if ( !document.getElementById(event.id) ) {

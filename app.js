@@ -1,4 +1,3 @@
-
 /**
  * module dependencies.
  */
@@ -393,7 +392,7 @@ app.get('/channels.:format?', function(req, res) {
 				}); // HTML output
 		}
 	}
-
+	
 	// Render channels from cache, if available
 	var allChannels = dataCache['allChannels'];
 	var allChannels_timestamp = dataCache['allChannels_timestamp'];
@@ -420,6 +419,7 @@ app.get('/channels.:format?', function(req, res) {
 
 				for (var i=0; i<3; i++) {
 					if (!responses[requestUrls[i]] || responses[requestUrls[i]].error) {
+						// TODO: Review this, because it crash when responses[thingy] is empty
 						console.log("Error requesting " + requestUrls[i] + ": " + responses[requestUrls[i]].error);
 						errorsCount++;
 					}
@@ -621,9 +621,11 @@ app.get('/search', function(req, res) {
 	,	CATEGORIES = API_PREFIX + 'Category.json'
 	,	SUBCATEGORIES = API_PREFIX + 'Subcategory.json'
 
+console.log(QUERY_URL)
+
 	__request( // Multiple requests
 
-		[QUERY_URL, ALL_CHANNELS, CATEGORIES, SUBCATEGORIES],
+		[QUERY_URL, ALL_CHANNELS/*, CATEGORIES, SUBCATEGORIES*/],
 
 		function(results) {
 
@@ -631,9 +633,9 @@ app.get('/search', function(req, res) {
 
 			// API Error?
 			var error;
-			for ( API in response ) {
-				if ( response[API].response.statusCode === 500 ) {
-					error = response[API].body + ' requesting: ' + API;
+			for ( API in results ) {
+				if ( results[API].response.statusCode === 500 ) {
+					error = results[API].body + ' requesting: ' + API;
 					console.log(error);
 					res.send(error);
 					return;
@@ -642,12 +644,12 @@ app.get('/search', function(req, res) {
 
 			var _results = JSON.parse( results[QUERY_URL].body )
 			,	_all_channels = JSON.parse( results[ALL_CHANNELS].body )
-			,	_categories = JSON.parse( results[CATEGORIES].body )
-			,	_subcategories = JSON.parse( results[SUBCATEGORIES].body )
+//			,	_categories = JSON.parse( results[CATEGORIES].body )
+//			,	_subcategories = JSON.parse( results[SUBCATEGORIES].body )
 
 
 			// Mixing categorie tree
-			var categoriesTree = [];
+/*			var categoriesTree = [];
 			var category, i = 0, c = _categories.length, s = _subcategories.length;
 			for (i; i < t; i++) {
 				category = _categories[i];
@@ -660,7 +662,7 @@ app.get('/search', function(req, res) {
 				}
 				categoriesTree.push(category);
 			}
-
+*/
 
 			// Prettyfing dates
 			_results = prettifyDates(_results);
@@ -682,7 +684,6 @@ app.get('/search', function(req, res) {
 			}
 
 			searchTimer.track('End processing');
-			console.log(_used_channels);
 
 			res.render('search.jade', { 
 				query		: querystring.unescape(query) // querystring
@@ -692,7 +693,7 @@ app.get('/search', function(req, res) {
 			,	results		: _results //events
 			,	isAjax		: isAjax
 			,	channels	: _all_channels
-			,	categories 	: categoriesTree
+//			,	categories 	: categoriesTree
 			,	supportsCSSFixedPosition: req.support.FixedPosition
 			// filtering options
 			,	used_channels: _used_channels

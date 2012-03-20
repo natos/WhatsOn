@@ -1,13 +1,24 @@
 include layout
 
-link(href="/css/search.css", rel="stylesheet")
-
 section#content
 
 	header
 		#{__i('Results for %s', query)}
 
 	#filters
+		//
+			h4 Categories					
+			ul#categories.selectable
+				each category in categories
+					li.category
+						input(type="checkbox", id="#{category.id}-#{category._type}", value="#{category.id}", checked="checked") 
+						label(for="#{category.id}-#{category._type}") #{category.name}
+						ul#subcategories
+							each sub in category.subs
+								li.subcategory
+									input(type="checkbox", id="#{sub.id}-#{sub._type}", value="#{sub.id}", checked="checked") 
+									label(for="#{sub.id}-#{sub._type}") #{sub.name}
+
 		h4 Date Times
 		ul#datetimes.selectable
 			each startDateTime, prettyDate in used_datetimes
