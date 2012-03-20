@@ -33,6 +33,11 @@ var metadata = [
 ,	{ property: 'fb:app_id'		, content: '153316508108487' }
 ];
 
+var dataCache = {
+	allChannels:[]
+,	allChannels_timestamp:null
+} 
+
 /*
  * JavaScript Pretty Date (http://ejohn.org/files/pretty.js)
  * Copyright (c) 2011 John Resig (ejohn.org)
@@ -282,7 +287,6 @@ app.get('/grid', function(req, res) {
 			,	title		: "Grid"
 			,	metadata	: metadata
 			,	prefix		: ''
-			,	timeFrame   : new Array(72) // 148 hrs
 			,	week		: getWeekFromToday()
 			,	supportsCSSFixedPosition: req.support.FixedPosition
 			,	API_PREFIX	: API_PREFIX
@@ -356,53 +360,91 @@ app.get('/topbookings.:format?', function(req, res) {
 
 // channel
 app.get('/channels.:format?', function(req, res) {
+	'use strict';
 
 	var allChannelsTimer = new Timer('All Channels View');
 
     var id = req.params.id
 	,	format = req.params.format // html, json, etc
 
-	var ALL_CHANNELS = API_PREFIX + 'Channel.json?order=position';
+//	var ALL_CHANNELS = API_PREFIX + 'Channel.json?order=position';
 
-	request(ALL_CHANNELS, function (error, response, body) {
+	var ALL_CHANNELS_0 = API_PREFIX + 'Channel.json?order=position&batch=0'
+	,	ALL_CHANNELS_1 = API_PREFIX + 'Channel.json?order=position&batch=1'
+	,	ALL_CHANNELS_2 = API_PREFIX + 'Channel.json?order=position&batch=2';
 
-		if (error) {
-			console.log("Error requesting " + ALL_CHANNELS + ": " + error);
+	var renderChannels = function(allChannels) {
+		// determine the output rendering
+		switch (format) {
+
+			case "json":
+				res.send(allChannels); // JSON output
+				break;
+
+			default:
+			case "html": 
+				res.render('channels.jade', { 
+					data		: allChannels
+				,	title		: "All Channels"
+				,	metadata	: metadata 
+				,	prefix		: ''
+				,	supportsCSSFixedPosition: req.support.FixedPosition
+				,	API_PREFIX	: API_PREFIX
+				}); // HTML output
 		}
+	}
 
 		if (!error && response.statusCode == 200) {
 
-			allChannelsTimer.track('API Response')
 
-			if ( response.statusCode === 500 ) {
-				res.send(response[CHANNEL_DETAILS].body);
-				return;
-			}
 
 			body = JSON.parse(body);
 
-			// determine the output rendering
-			switch (format) {
+	// Render channels from cache, if available
+	var allChannels = dataCache['allChannels'];
+	var allChannels_timestamp = dataCache['allChannels_timestamp'];
+	var now = new Date();
+	var cacheDurationMilliseconds = 60 * 60 * 1000; // cache for 1 hour
 
-				case "json":
-					res.send(body); // JSON output
-					break;
+	if (allChannels && allChannels.length > 0 && allChannels_timestamp && typeof(allChannels_timestamp.valueOf)==='function' && (now.valueOf() - allChannels_timestamp.valueOf() < cacheDurationMilliseconds)) {
+		// from cache
+		renderChannels(allChannels);
+	} else {
+		// from api
+		var requestUrls = [ALL_CHANNELS_0, ALL_CHANNELS_1, ALL_CHANNELS_2];
 
-				default:
-				case "html": 
-					res.render('channels.jade', { 
-						data		: body
-					,	title		: "All Channels"
-					,	metadata	: metadata 
-					,	prefix		: ''
-					,	supportsCSSFixedPosition: req.support.FixedPosition
-					,	API_PREFIX	: API_PREFIX
-					}); // HTML output
-			
+		__request(
+			requestUrls,
+
+			function (responses) {
+
+				allChannelsTimer.track('All API Responses received')
+				allChannels = [];
+				var errorsCount = 0;
+				var channelsBatch;
+
+				for (var i=0; i<3; i++) {
+					if (!responses[requestUrls[i]] || responses[requestUrls[i]].error) {
+						console.log("Error requesting " + requestUrls[i] + ": " + responses[requestUrls[i]].error);
+						errorsCount++;
+					}
+				}
+
+				if (errorsCount===0) {
+					for (var i=0; i<3; i++) {
+						if (!responses[requestUrls[i]].error && responses[requestUrls[i]].response.statusCode == 200) {
+							channelsBatch = JSON.parse(responses[requestUrls[i]].body);
+							allChannels = allChannels.concat(channelsBatch);
+						}
+					}
+					dataCache['allChannels'] = allChannels;
+					dataCache['allChannels_timestamp'] = new Date();
+				}
+
+				renderChannels(allChannels);
 			}
-		}
-
-	});
+		);
+	}
 
 });
 

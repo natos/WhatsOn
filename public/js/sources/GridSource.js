@@ -95,17 +95,17 @@ function() {
 		sourceTimer.track('API Call Response');
 
 		var eventsCollections = [];
-		if ($.isArray($(apiResponse)[0])) {
-			// response contains multiple channels (events collections)
-			$(apiResponse).each(function(i, eventsCollection) {
+		if (_.isArray(apiResponse) && apiResponse.length > 0 && _.isArray(apiResponse[0])) {
+			// response is an array of channels; each channel contains an array of events
+			_.each(apiResponse, function(eventsCollection) {
 				eventsCollections.push(eventsCollection);
 			});
 		} else {
-			// response contains a single channel (events collection)
-			eventsCollections[0] = $(apiResponse);
+			// response is an array of events for a single channel
+			eventsCollections[0] = apiResponse;
 		}
 
-		$.each(eventsCollections, function(i, eventsCollection) {
+		_.each(eventsCollections, function(eventsCollection) {
 			if (!eventsCollection.length ) {
 				console.log("Warning: eventCollection is an empty array");
 				console.log(apiResponse);

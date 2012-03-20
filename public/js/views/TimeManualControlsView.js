@@ -18,7 +18,7 @@ function() {
 
 	,	moveLeft: $('<div class="move-left"></div>').html('<span class="icon"></span>')
 
-	,	BAR_WIDHT: 50
+	,	BAR_WIDTH: 50
 
 	,	MARGIN_LEFT: 63
 
@@ -71,7 +71,7 @@ function() {
 			,	offsetBottom = viewport.top + viewport.height + this.MARGIN_BOTTOM
 			,	offsetLeft = viewport.left + this.MARGIN_LEFT
 				/* offsetRight but from the left CSS property */
-			,	offsetRight = viewport.left + viewport.width - this.BAR_WIDHT - this.MARGIN_RIGHT 
+			,	offsetRight = viewport.left + viewport.width - this.BAR_WIDTH - this.MARGIN_RIGHT 
 			,	width = viewport.width - this.MARGIN_RIGHT - this.MARGIN_LEFT
 			,	height = viewport.height - this.MARGIN_TOP - this.MARGIN_BOTTOM;
 
@@ -87,12 +87,12 @@ function() {
 				'top'	: offsetTop
 			,	'bottom': offsetBottom
 			,	'left' : offsetRight /* I guess this way is easier */
-			,	'width' : this.BAR_WIDHT
+			,	'width' : this.BAR_WIDTH
 			,	'height': height
 			});
 
 			this.moveBottom.css({
-				'top'	: viewport.top + viewport.height - this.BAR_WIDHT
+				'top'	: viewport.top + viewport.height - this.BAR_WIDTH
 			,	'left'  : offsetLeft
 			,	'width'	: width
 			,	'height': this.BAR_WIDTH
@@ -102,7 +102,7 @@ function() {
 				'top'	: offsetTop
 			,	'bottom': offsetBottom
 			,	'left'  : offsetLeft
-			,	'width' : this.BAR_WIDHT
+			,	'width' : this.BAR_WIDTH
 			,	'height': height
 			});
 
