@@ -394,12 +394,6 @@ app.get('/channels.:format?', function(req, res) {
 		}
 	}
 
-		if (!error && response.statusCode == 200) {
-
-
-
-			body = JSON.parse(body);
-
 	// Render channels from cache, if available
 	var allChannels = dataCache['allChannels'];
 	var allChannels_timestamp = dataCache['allChannels_timestamp'];
@@ -414,6 +408,7 @@ app.get('/channels.:format?', function(req, res) {
 		var requestUrls = [ALL_CHANNELS_0, ALL_CHANNELS_1, ALL_CHANNELS_2];
 
 		__request(
+
 			requestUrls,
 
 			function (responses) {
