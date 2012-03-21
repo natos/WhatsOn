@@ -13,9 +13,21 @@ define([
 
 function(UserControl, HeaderSearchFormView) {
 
+	var TEST_MODE = $('body').attr('data-test').toLocaleLowerCase() === 'true'; // TEST_MODE
+
 	var app = {
 
 		initialize: function() {
+
+			// TEST_MODE Resources
+			// Load QUnit JS
+			require(['js/libs/qunit/qunit.js']);
+			// Load QUnit CSS
+		    var link = document.createElement("link");
+		    	link.type = "text/css";
+			    link.rel = "stylesheet";
+			    link.href = "/css/libs/qunit/qunit.css";
+		    document.getElementsByTagName("head")[0].appendChild(link);
 
 			// Views namespace
 			wo.views = {};
@@ -49,7 +61,7 @@ function(UserControl, HeaderSearchFormView) {
 */
 
 			wo.views.usercontrol = new UserControl();
-			wo.views.headerSearchForm = new HeaderSearchFormView();
+//			wo.views.headerSearchForm = new HeaderSearchFormView();
 
 			// user action
 			if ( /programme/.test( window.location.toString() ) ) {
@@ -69,6 +81,13 @@ function(UserControl, HeaderSearchFormView) {
 			if ( /grid/.test( window.location.toString() ) ) {
 				require(['views/GridView'], function(Grid){
 					wo.views.grid = new Grid();
+
+					if (TEST_MODE) {
+						require(['tests/GridTest'], function(GridTest){
+							new GridTest();
+						});
+					}
+
 				});
 			}
 

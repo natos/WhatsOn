@@ -403,6 +403,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 			// How many hours have been scrolled horizontally?
 			var hoursScrolledLeft = this.viewport.left / this.HOUR_WIDTH;
+
 			// How many hours wide is the screen?
 			var channelsBarWidth = 43;
 			var hoursWide = (document.body.clientWidth - channelsBarWidth) / this.HOUR_WIDTH;

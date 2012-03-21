@@ -80,7 +80,9 @@ function() {
 			var formattedSliceStartTime = formatTimeForApiRequest(sliceStartTime);
 //			var request = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/' + channelIdBatch.join('|') + '/events/NowAndNext_' + formattedSliceStartTime + '.json?batchSize=10&callback=?';
 
-			var request = API_PREFIX + 'Channel/' + channelIdBatch.join('|') + '/events/NowAndNext_' + formattedSliceStartTime + '.json?batchSize=10&callback=?';
+			// &order=startDateTime
+			// to get results in order
+			var request = API_PREFIX + 'Channel/' + channelIdBatch.join('|') + '/events/NowAndNext_' + formattedSliceStartTime + '.json?batchSize=10&order=startDateTime&callback=?'; 
 
 			sourceTimer = new Timer('API Call Timer')
 

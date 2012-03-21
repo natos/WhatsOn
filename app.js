@@ -256,6 +256,7 @@ app.get('/', function(req, res) {
 			,	prefix		: ''
 			,	supportsCSSFixedPosition: req.support.FixedPosition
 			,	API_PREFIX	: API_PREFIX
+			,	TEST_MODE	: false
 			}); // HTML output
 
 		}
@@ -263,9 +264,13 @@ app.get('/', function(req, res) {
 });
 
 
-app.get('/grid', function(req, res) {
+app.get('/grid.:format?', function(req, res) {
 
 	var gridTimer = new Timer('Grid View');
+
+    var format = req.params.format // test?
+
+	var test = format === "test"; // boolean
 
 	var ALL_CHANNELS = API_PREFIX + 'Channel.json?order=position';
 
@@ -286,9 +291,10 @@ app.get('/grid', function(req, res) {
 			,	title		: "Grid"
 			,	metadata	: metadata
 			,	prefix		: ''
-			,	week		: getWeekFromToday()
+//			,	week		: getWeekFromToday()
 			,	supportsCSSFixedPosition: req.support.FixedPosition
 			,	API_PREFIX	: API_PREFIX
+			,	TEST_MODE	: test
 			}); // HTML output
 			
 		}
@@ -348,6 +354,7 @@ app.get('/topbookings.:format?', function(req, res) {
 					,	prefix		: ''
 					,	supportsCSSFixedPosition: req.support.FixedPosition
 					,	API_PREFIX	: API_PREFIX
+					,	TEST_MODE	: false
 					}); // HTML output
 			}
 			
@@ -389,6 +396,7 @@ app.get('/channels.:format?', function(req, res) {
 				,	prefix		: ''
 				,	supportsCSSFixedPosition: req.support.FixedPosition
 				,	API_PREFIX	: API_PREFIX
+				,	TEST_MODE	: false
 				}); // HTML output
 		}
 	}
@@ -506,6 +514,7 @@ app.get('/channel/:id.:format?', function(req, res) {
 					,	prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-whatson: http://ogp.me/ns/fb/upc-whatson#' 
 					,	supportsCSSFixedPosition: req.support.FixedPosition
 					,	API_PREFIX	: API_PREFIX
+					,	TEST_MODE	: false
 					}); // HTML output	
 			}
 		}
@@ -584,6 +593,7 @@ app.get('/programme/:id.:format?', function(req, res) {
 					,	isAjax		: isAjax
 					,	supportsCSSFixedPosition: req.support.FixedPosition
 					,	API_PREFIX	: API_PREFIX
+					,	TEST_MODE	: false
 					}); // HTML output
 			}
 		}
@@ -620,8 +630,6 @@ app.get('/search', function(req, res) {
 	,	ALL_CHANNELS = 'http://' + req.headers.host + '/channels.json'
 	,	CATEGORIES = API_PREFIX + 'Category.json'
 	,	SUBCATEGORIES = API_PREFIX + 'Subcategory.json'
-
-console.log(QUERY_URL)
 
 	__request( // Multiple requests
 
@@ -699,6 +707,7 @@ console.log(QUERY_URL)
 			,	used_channels: _used_channels
 			,	used_datetimes: _used_datetimes
 			,	API_PREFIX	: API_PREFIX
+			,	TEST_MODE	: false
 			}); // HTML output
 
 		}

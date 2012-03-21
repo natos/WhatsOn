@@ -15,15 +15,12 @@ html
 
 			link(href="/css/global.css", rel="stylesheet")
 
-			yield
-
 			script(src="/js/libs/jquery/jquery-1.7.1-dev.js")
 			script(src="/js/libs/backbone/underscore.js")
 			script(src="/js/libs/backbone/backbone.js")
 			script(src="/js/libs/require/require.js", data-main="/js/main")
 
-
-	body
+	body(data-test="#{TEST_MODE}")
 
 		#fb-root
 
@@ -48,4 +45,3 @@ html
 		a#top
 
 		block content
-			yield
