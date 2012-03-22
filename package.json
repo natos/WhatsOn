@@ -1,6 +1,6 @@
 {
 	"name":        "WhatsOn!"
-,	"version":     "0.0.2"
+,	"version":     "0.0.3"
 ,	"description": "UPC shows whats on tv now and next"
 ,	"dependencies": {
 		"express": "2.4.6"
