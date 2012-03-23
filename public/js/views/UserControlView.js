@@ -98,12 +98,12 @@ function() {
 				var uid = response.authResponse.userID;
 				var accessToken = response.authResponse.accessToken;
 
-console.log(response);
-
 				this.facebook = {
 					uid: uid
 				,	accessToken: accessToken
 				}
+
+				this.fbbtn.html('<img src="https://graph.facebook.com/' + uid + '/picture">');
 
 				this.fbbtn
 					.off() // remove all handlers
