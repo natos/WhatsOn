@@ -1,0 +1,318 @@
+
+/* ==============
+   Media Queries
+   ============== */
+
+/* 
+
+240px
+
+320px
+
+480px
+
+768px
+
+1024px
+   
+*/
+
+@media screen and (min-width: 320px) and (orientation:portrait) {
+
+	/* ==============
+	   Top bookings
+	   ============== */
+
+	#topbookings {
+		margin: 0;
+		height: 180px;
+		margin: -20px;
+		margin-top: -40px;
+		margin-bottom: 0px;
+	}	
+
+	.show .programme {
+		background-size: 350px;
+		background-position: center;
+		height: 180px;
+
+		display:block;
+		position: absolute;
+		right: 0;
+		left: 0;
+		margin: 0;
+		padding: 10px;
+		background: #fff;
+
+		-webkit-transition: left 0 ease-in-out;
+
+	}
+
+
+	.show .programme h1 {
+		font-size: 1.4em;
+	}
+
+	.show .programme p {
+		color: #eee;
+		font-size: .9em;
+	}
+	
+	#navigator {
+		left: 30px;
+		bottom: 5px;
+	}
+
+	.disc {
+		width: 20px;
+		height: 20px;
+		border-radius: 20px;
+		display: inline-block;
+		margin-left: 5px;
+		bottom: 20px;
+		opacity: .6;
+	}
+	
+	/* ==============
+	   mosaic
+	   ============== */
+
+	.mosaic {
+		padding: 10px 5px;
+	}
+
+	.mosaic .channel {
+		display: inline-block;
+		margin: 3px;
+		padding: 3px;
+		background: white;
+		border: 1px solid #ccc;
+		border-radius: 10px;
+		width: 50px;
+		height: 30px;
+		opacity: .8;
+	}
+
+}
+
+@media screen and (min-width: 480px) and (max-width: 569px) and (orientation:landscape) {
+
+	/* ==============
+	   Top bookings
+	   ============== */
+
+	#topbookings {
+		margin: 0;
+		height: 180px;
+		margin: -20px;
+		margin-top: -40px;
+		margin-bottom: 0px;
+	}	
+
+	.show .programme {
+		background-size: 480px;
+		height: 180px;
+
+		display:block;
+		position: absolute;
+		right: 0;
+		left: 0;
+		margin: 0;
+		padding: 10px;
+		background: #fff;
+
+		-webkit-transition: left 0 ease-in-out;
+
+	}
+
+
+	.show .programme h1 {
+		font-size: 1.6em;
+	}
+
+	.show .programme p {
+		color: #eee;
+		font-size: .9em;
+	}
+	
+	#navigator {
+		left: 30px;
+		bottom: 5px;
+	}
+
+	.disc {
+		width: 20px;
+		height: 20px;
+		border-radius: 20px;
+		display: inline-block;
+		margin-left: 20px;
+		bottom: 20px;
+		opacity: .6;
+	}
+	
+	/* ==============
+	   mosaic
+	   ============== */
+
+	.mosaic {
+		padding: 10px 3px;
+	}
+
+	.mosaic .channel {
+		display: inline-block;
+		margin: 5px;
+		padding: 5px;
+		background: white;
+		border: 1px solid #ccc;
+		border-radius: 10px;
+		width: 50px;
+		height: 30px;
+		opacity: .8;
+	}
+
+}
+
+/* ugly android phone */
+@media screen and (min-width: 569px) {
+
+	#topbookings {
+		width: 569px;
+	}
+	.show .programme {
+		background-size: 569px;
+		height: 200px;
+	}
+	
+	#navigator {
+		left: 60px;
+		bottom: 5px;
+	}
+}
+
+/* android tablet 600 */
+@media screen and (min-width: 600px) and (orientation:portrait) {
+
+}
+
+/* ipad */
+@media screen and (min-width: 768px) and (orientation:portrait) {
+
+	#topbookings {
+		width: 768px;
+		height: 400px;
+	}
+	.show .programme {
+		background-size: 768px;
+		height: 400px;
+		padding: 30px;
+	}
+
+	.show .programme h1 {
+		font-size: 2.2em;
+	}
+
+	.show .programme p {
+		color: #eee;
+		font-size: 1.2em;
+	}
+	
+	#navigator {
+		left: 50px;
+		bottom: 20px;
+	}
+
+	.disc {
+		width: 20px;
+		height: 20px;
+		border-radius: 30px;
+		margin-left: 40px;
+		bottom: 30px;
+		opacity: .6;
+	}
+	/* ==============
+	   mosaic
+	   ============== */
+
+	.mosaic {
+		padding: 10px 5px;
+	}
+
+	.mosaic .channel {
+		margin: 15px;
+		padding: 10px;
+		background: white;
+		border: 1px solid #ccc;
+		border-radius: 10px;
+		width: 50px;
+		height: 30px;
+		opacity: .8;
+	}
+
+}
+
+/* 1024 */
+@media screen and (min-width: 1024px) and (orientation:landscape) {
+	#topbookings {
+		width: 1024px;
+		height: 400px;
+	}
+	.show .programme {
+		background-size: 1024px;
+		height: 400px;
+		padding: 30px;
+	}
+
+	.show .programme h1 {
+		font-size: 2.2em;
+	}
+
+	.show .programme p {
+		color: #eee;
+		font-size: 1.2em;
+	}
+	
+	#navigator {
+		left: 150px;
+		bottom: 20px;
+	}
+
+	.disc {
+		width: 20px;
+		height: 20px;
+		border-radius: 30px;
+		margin-left: 40px;
+		bottom: 30px;
+		opacity: .6;
+	}
+	/* ==============
+	   mosaic
+	   ============== */
+
+	.mosaic {
+		padding: 20px 15px;
+	}
+
+	.mosaic .channel {
+		margin: 22px;
+		padding: 10px;
+		background: white;
+		border: 1px solid #ccc;
+		border-radius: 10px;
+		width: 50px;
+		height: 30px;
+		opacity: .8;
+	}
+}
+
+/* Portrait */
+@media screen and (orientation:portrait) {
+
+    /* Portrait styles */
+
+}
+
+/* Landscape */
+@media screen and (orientation:landscape) {
+
+    /* Landscape styles */
+}
