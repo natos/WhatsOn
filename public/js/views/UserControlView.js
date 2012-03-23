@@ -113,7 +113,8 @@ function() {
 
 				this.button.logout
 					.off() // remove all handlers
-					.on('click', this.logout);
+					.on('click', this.logout)
+					.show();
 
 				this.button.login
 					.off()
@@ -129,6 +130,9 @@ function() {
 					.off() // remove all handlers
 					.on('click', this.login)
 					.html('Autorize');
+
+				this.button.logout
+					.show();
 
 				// trigger an event, so the app knows the user state
 				wo.event.emit('login-status', { message: 'not-authorized', facebook: this.facebook } );
