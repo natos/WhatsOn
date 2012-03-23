@@ -66,7 +66,8 @@ function() {
 				left = width * i;
 
 				programme.css({
-					'background'	: 'transparent url("' + wo.getCoolPic(i) + '") 0 0 no-repeat'
+					'background-image'	: 'url("' + wo.getCoolPic(i) + '")'
+				,	'background-repeat' : 'no-repeat'
 				,	'left'			: width*i + 'px'
 				});
 
