@@ -20,14 +20,16 @@ function(UserControl, HeaderSearchFormView) {
 		initialize: function() {
 
 			// TEST_MODE Resources
-			// Load QUnit JS
-			require(['js/libs/qunit/qunit.js']);
-			// Load QUnit CSS
-		    var link = document.createElement("link");
-		    	link.type = "text/css";
-			    link.rel = "stylesheet";
-			    link.href = "/css/libs/qunit/qunit.css";
-		    document.getElementsByTagName("head")[0].appendChild(link);
+			if (TEST_MODE) {
+				// Load QUnit JS
+				require(['js/libs/qunit/qunit.js']);
+				// Load QUnit CSS
+			    var link = document.createElement("link");
+			    	link.type = "text/css";
+				    link.rel = "stylesheet";
+			    	link.href = "/css/libs/qunit/qunit.css";
+			    document.getElementsByTagName("head")[0].appendChild(link);
+			}
 
 			// Views namespace
 			wo.views = {};

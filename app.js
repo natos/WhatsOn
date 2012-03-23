@@ -14,9 +14,9 @@ var fs = require('fs')
 /**
  * constants
  */
-var API_PREFIX = 'http://213.46.250.168/cgi-bin/WebObjects/EPGApi.woa/-2004/api/'; 		// jedrzej
+//var API_PREFIX = 'http://213.46.250.168/cgi-bin/WebObjects/EPGApi.woa/-2004/api/'; 		// jedrzej
+//var API_PREFIX = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi-trunk-ivy.woa/api/'; 	// dev (vaca)
 var API_PREFIX = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/'; 			// production
-var API_PREFIX = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi-trunk-ivy.woa/api/'; 	// dev (vaca)
 
 var facebook = {
 	'app-id'		: '153316508108487'
