@@ -37,7 +37,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 	,	'channels-bar-list': $('#channels-bar ul')
 
 	//	constants
-	,	MAX_DOM_ELEMENTS: 500
+	,	MAX_DOM_ELEMENTS: 1500
 
 	,	MILLISECONDS_IN_HOUR: 3600000
 
