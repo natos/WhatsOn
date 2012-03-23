@@ -12,8 +12,6 @@ function() {
 
 		el: $('#user-control')
 
-	,	fbbtn: $('.fb')
-
 	,	SCOPE: 'email, user_interests, user_likes, user_online_presence, friends_online_presence, publish_actions'
 
 //	,	template: _.template( template )
@@ -103,12 +101,10 @@ function() {
 				,	accessToken: accessToken
 				}
 
-				this.fbbtn
+				this.el
 					.off() // remove all handlers
 					.on('click', this.logout)
-					.html('Logout');
-
-				this.fbbtn.html('<img src="https://graph.facebook.com/' + uid + '/picture">');
+					.html('<img src="https://graph.facebook.com/' + uid + '/picture" />');
 
 				// trigger an event, so the app knows the user state
 				wo.event.emit('login-status', { message: 'logged', facebook: this.facebook } );
@@ -116,7 +112,7 @@ function() {
 			} else if (response && response.status === 'not_authorized') {
 				// the user is logged in to Facebook, 
 				// but not connected to the app
-				this.fbbtn
+				this.el
 					.off() // remove all handlers
 					.on('click', this.login)
 					.html('Authorize App');
@@ -126,7 +122,7 @@ function() {
 
 			} else {
 				// the user isn't even logged in to Facebook.
-				this.fbbtn
+				this.el
 					.off() // remove all handlers
 					.on('click', this.login)
 					.html('Login');
