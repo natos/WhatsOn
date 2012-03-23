@@ -550,6 +550,7 @@ app.get('/programme/:id.:format?', function(req, res) {
 			var error;
 			for ( API in response ) {
 				console.log(response[API].response);
+				console.log(response[API].response.statusCode);
 				if ( response[API].response.statusCode === 500 ) {
 					error = response[API].body + ' requesting: ' + API;
 					console.log(error);
