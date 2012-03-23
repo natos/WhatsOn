@@ -103,12 +103,12 @@ function() {
 				,	accessToken: accessToken
 				}
 
-				this.fbbtn.html('<img src="https://graph.facebook.com/' + uid + '/picture">');
-
 				this.fbbtn
 					.off() // remove all handlers
 					.on('click', this.logout)
 					.html('Logout');
+
+				this.fbbtn.html('<img src="https://graph.facebook.com/' + uid + '/picture">');
 
 				// trigger an event, so the app knows the user state
 				wo.event.emit('login-status', { message: 'logged', facebook: this.facebook } );
