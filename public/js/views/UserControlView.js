@@ -88,7 +88,9 @@ function() {
 // Facebook Login Status Handler
 
 	,	facebookLoginStatus: function(response) {
-			
+
+			console.log('Facebook Login Status');
+
 			if (response && response.status === 'connected') {
 				// the user is logged in and connected to your
 				// app, and response.authResponse supplies
