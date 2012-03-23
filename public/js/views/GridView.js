@@ -233,6 +233,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 		}
 
+		// Maybe we need to create a loaderView to take care of all this
 	,	initLoader: function() {
 			this.loadingIndicator = $('<div class="loader">')
 				.css({

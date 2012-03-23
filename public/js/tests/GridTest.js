@@ -9,24 +9,39 @@ function(Test) {
 
 	var GridTest = function() {
 
-		// Borrow the skeleton constructor
+		// Borrow the test skeleton constructor
 		Test.call(this);
 
 	};
 
 	GridTest.prototype.run = function() {
 
+		var grid = wo.views.grid;
+
 		module("Required data");
 
-		test("Channels data and structure", function(){
+		test("Grid basic elements", function() {
 
-			notEqual( channels.length , 0 , "Channel collection is not empty." );
+//	
+//			ok( Object.prototype.toString.call(grid.zeroTime) === '[object Date]' , "zeroTime is a Date Object (call method)");
+
+			ok( !isNaN(new Date(123).getFullYear()) , "zeroTime is a Date Object (valid Date)");
+
+			ok( grid.zeroTime instanceof Date , "zeroTime is a Date Object (instanceof Date)");
+
+			ok( wo.views.grid.timeTicker.el[0] , "timeTicker element exist");
+
+		});
+
+		test("Channels data and structure", function() {
 
 			// Check data integrity
 			var t = channels.length,
 				channel;
 
-			expect(t * 6 + 1);
+//			expect(t * 6 + 1);
+
+			notEqual( channels.length , 0 , "Channel collection is not empty." );
 
 			while (t--) {
 
@@ -47,6 +62,12 @@ function(Test) {
 				ok( channel.logoIMG , channel.name + " has a logo image" );
 
 			}
+
+		});
+
+		module("Required data");
+
+		test("Channels data and structure", function() {
 
 		});
 
