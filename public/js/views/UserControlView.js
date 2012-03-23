@@ -12,7 +12,7 @@ function() {
 
 		el: $('#user-control')
 
-	,	fbbtn: $('.fb.btn')
+	,	fbbtn: $('.fb')
 
 	,	SCOPE: 'email, user_interests, user_likes, user_online_presence, friends_online_presence, publish_actions'
 
@@ -88,8 +88,6 @@ function() {
 // Facebook Login Status Handler
 
 	,	facebookLoginStatus: function(response) {
-
-			console.log('Facebook Login Status');
 
 			if (response && response.status === 'connected') {
 				// the user is logged in and connected to your
