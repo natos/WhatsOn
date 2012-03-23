@@ -237,7 +237,7 @@ app.get('/', function(req, res) {
 			// API Error?
 			var error;
 			for ( API in response ) {
-				if ( response[API].response.statusCode === 500 ) {
+				if ( response[API].response.statusCode === 500 || response[API].response.statusCode === 404) {
 					error = response[API].body + ' requesting: ' + API;
 					console.log(error);
 					res.send(error);
@@ -475,7 +475,7 @@ app.get('/channel/:id.:format?', function(req, res) {
 			// API Error?
 			var error;
 			for ( API in response ) {
-				if ( response[API].response.statusCode === 500 ) {
+				if ( response[API].response.statusCode === 500 || response[API].response.statusCode === 404) {
 					error = response[API].body + ' requesting: ' + API;
 					console.log(error);
 					res.send(error);
@@ -549,9 +549,7 @@ app.get('/programme/:id.:format?', function(req, res) {
 			// API Error?
 			var error;
 			for ( API in response ) {
-				console.log(response[API].response);
-				console.log(response[API].response.statusCode);
-				if ( response[API].response.statusCode === 500 ) {
+				if ( response[API].response.statusCode === 500 || response[API].response.statusCode === 404) {
 					error = response[API].body + ' requesting: ' + API;
 					console.log(error);
 					res.send(error);
