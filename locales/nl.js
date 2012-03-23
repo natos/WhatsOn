@@ -3,6 +3,8 @@
 	"TV Grid": "TV-Gids",
 	"Search": "Zoeken",
 	"Login": "Inloggen",
+	"Logout": "Afmelden",
+	"Settings": "Instellingen",	
 	"Record": "Opnemen",
 	"Watch": "Kijken naar",
 	"Set Reminder": "Herinnering instellen",
@@ -25,5 +27,8 @@
 	"%s days ago": "%s dagen geleden",
 	"%s weeks ago": "%s weken geleden",
 	"Results for \"%s\"": "Results for \"%s\"",
-	"Results for &quot;%s&quot;": "Results for &quot;%s&quot;"
+	"Results for &quot;%s&quot;": "Results for &quot;%s&quot;",
+	"Favorites": "Favorites",
+	"Settings": "Settings",
+	"Logout": "Logout"
 }

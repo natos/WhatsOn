@@ -12,6 +12,16 @@ function() {
 
 		el: $('#user-control')
 
+	,	button: {
+
+			login: $('#user-control .icon-user')
+
+		,	logout: $('#user-control .icon-close')
+
+		,	settings: $('#user-control .icon-settings')
+
+		}
+
 	,	SCOPE: 'email, user_interests, user_likes, user_online_presence, friends_online_presence, publish_actions'
 
 //	,	template: _.template( template )
@@ -101,9 +111,12 @@ function() {
 				,	accessToken: accessToken
 				}
 
-				this.el
+				this.button.logout
 					.off() // remove all handlers
-					.on('click', this.logout)
+					.on('click', this.logout);
+
+				this.button.login
+					.off()
 					.html('<img src="https://graph.facebook.com/' + uid + '/picture" />');
 
 				// trigger an event, so the app knows the user state
@@ -112,26 +125,32 @@ function() {
 			} else if (response && response.status === 'not_authorized') {
 				// the user is logged in to Facebook, 
 				// but not connected to the app
-				this.el
+				this.button.login
 					.off() // remove all handlers
 					.on('click', this.login)
-					.html('Authorize App');
+					.html('Autorize');
 
 				// trigger an event, so the app knows the user state
 				wo.event.emit('login-status', { message: 'not-authorized', facebook: this.facebook } );
 
 			} else {
 				// the user isn't even logged in to Facebook.
-				this.el
+				this.button.login
 					.off() // remove all handlers
 					.on('click', this.login)
 					.html('Login');
+
+				this.button.logout
+					.hide();
 
 				// trigger an event, so the app knows the user state
 				wo.event.emit('login-status', { message: 'not-logged' } );
 			}
 
 		}
+
+// UI Controls
+
 
 	});
 

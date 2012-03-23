@@ -131,7 +131,7 @@ input.icon {
 .icon-search:before { content: "H"; }
 .icon-key:before { content: "i"; }
 .icon-location:before { content: "I"; }
-.icon-configuration:before { content: "j"; }
+.icon-settings:before { content: "j"; }
 .icon-star:before { content: "J"; }
 .icon-piechart:before { content: "k"; }
 .icon-heart:before { content: "K"; }
@@ -176,9 +176,6 @@ input.icon {
 .icon-return:before { content: "9"; }
 .icon-forward:before { content: "|"; }
 .icon-link:before { content: "#"; }	
-
-.icon-a:before { content: ""; }	
-
 
 /* ==============
    main
@@ -256,10 +253,23 @@ input.icon {
 
 #user-control {
 	right: 10px;
+	padding: 0 5px;
+	border-radius: 5px;
+	overflow: hidden;
 }
 
-#user-control .btn {
+#user-control:hover {
+	background: black;
+/*	height: 110px;*/
+	overflow: visible;
+}
 
+#user-control ul {
+	z-index: 10;
+}
+
+#user-control li {
+	margin-bottom: 5px;
 }
 
 /* ==============

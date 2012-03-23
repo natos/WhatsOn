@@ -2,6 +2,8 @@
 	"Explore TV": "Explore TV",
 	"TV Grid": "TV Grid",
 	"Login": "Login",
+	"Logout": "Logout",
+	"Settings": "Settings",	
 	"Search": "Search",
 	"Record": "Record",
 	"Watch": "Watch",

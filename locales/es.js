@@ -2,6 +2,8 @@
 	"Explore TV": "Explorar TV",
 	"TV Grid": "Grilla",
 	"Login": "Ingresar",
+	"Logout": "Salir",
+	"Settings": "Ajustes",	
 	"Search": "Buscar",
 	"Record": "Grabar",
 	"Watch": "Mirar",
