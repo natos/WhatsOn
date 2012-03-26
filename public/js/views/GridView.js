@@ -28,6 +28,8 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 	,   window: $(window)
 
+	,	'header-bar': $('header.main')
+
 	,	'time-bar': $('#time-bar')
 
 	,	'time-bar-list': $('#time-bar ol')
@@ -70,8 +72,11 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			// get viewport size
 			this.getViewportSize();
 
-			// Set features and capabilities, such as 
+			// Set features and capabilities of the device/browser
 			this.initCapabilities();
+
+			// Adapt to the current height/width of the viewport
+			this.adaptToViewport();
 
 			// Now
 			var now = new Date();
@@ -93,11 +98,6 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			// Create loading indicator
 			this.initLoader();
 
-			// Map Channel ID / OffsetTop
-			for (var i = 0; i < channels.length; i++) {
-				this.channelsOffsetMap[ channels[i].id ] = i * this.ROW_HEIGHT;
-			}
-
 			this.trigger('view-initialized', this);
 
 			// self load
@@ -105,13 +105,15 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 		}
 
 	,	initCapabilities: function() {
+
 			var supportClasses = [],
 				cssText = [],
 				screenArea,
 				gridHeight,
 				gridWidth;
 
-			// How many days are visible? Smaller screens => fewer days
+			// How many days are visible? 
+			// Smaller screen => (probably) smaller & slower device => fewer days
 			screenArea = this.viewport.width * this.viewport.height;
 			if (screenArea <= 153600) { // 320 x 480
 				this.DAYS_VISIBLE = 1;
@@ -121,19 +123,14 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 				this.DAYS_VISIBLE = 3;
 			}
 
-			// TODO: Adjust hour width and row height based on screen size.
-			this.HOUR_WIDTH = 200; // px
-			this.ROW_HEIGHT = 60; // px
-
-			this.CHANNELS_COUNT = $('#channels-bar li').length;
-			this.CHANNEL_BAR_WIDTH = $('#channels-bar').width;
-
 			// Add className to <html> element based on fixed-position support
 			// If no fixed-position support, channel and time bars have to be repositioned after scroll/touch.
 			if (!supportsCSSFixedPosition) {
 				supportClasses.push('support-no-fixed-position');
+				cssText.push('.main {position:absolute;}');
 			} else {
 				supportClasses.push('support-fixed-position');
+				cssText.push('.main {position:fixed;}');
 			}
 
 			// Add className to <html> element based on touch event support
@@ -147,6 +144,24 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 				supportClasses.push('support-no-touch');
 			}
 
+			$(document.documentElement).addClass(supportClasses.join(' '));
+			this.appendCSSBlock('deviceAdaptation', cssText.join('\n'));
+		}
+
+		/**
+			Adapt to viewport can be run at any time. Height and width of the page may
+			change when browser resizes, or when onorientationchange is fired.
+		*/
+	,	adaptToViewport: function() {
+			var cssText = [];
+
+			// TODO: Adjust hour width and row height based on screen size.
+			this.HOUR_WIDTH = 200; // px
+			this.ROW_HEIGHT = 60; // px
+
+			this.CHANNELS_COUNT = $('#channels-bar li').length;
+			this.CHANNEL_BAR_WIDTH = $('#channels-bar').width;
+
 			// Size the grid
 			gridHeight = this.ROW_HEIGHT * this.CHANNELS_COUNT;
 			gridWidth = this.HOUR_WIDTH * this.DAYS_VISIBLE * 24;
@@ -159,18 +174,22 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			cssText.push('#time-bar {width:' + gridWidth + 'px}');
 			cssText.push('#time-bar ol {width:' + gridWidth + 'px}');
 			cssText.push('#time-bar li {width:' + this.HOUR_WIDTH + 'px;}');
-			this.appendAdaptiveCSS(cssText.join('\n'));
 
-			$(document.documentElement).addClass(supportClasses.join(' '));
+			this.appendCSSBlock('viewportAdaptation', cssText.join('\n'));
+
+			// Map Channel ID / OffsetTop
+			for (var i = 0; i < channels.length; i++) {
+				this.channelsOffsetMap[ channels[i].id ] = i * this.ROW_HEIGHT;
+			}
 		}
 
-	,	appendAdaptiveCSS: function(cssText) {
-			var el = document.getElementById('adapt');
+	,	appendCSSBlock: function(blockId, cssText) {
+			var el = document.getElementById(blockId);
 			if (el) {
 				el.innerHTML = cssText;
 			} else {
 				el = document.createElement('style');
-				el.id = 'adapt';
+				el.id = blockId;
 				el.innerHTML = cssText;
 				document.getElementsByTagName('HEAD')[0].appendChild(el);
 			}
@@ -178,9 +197,11 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 	,	load: function() {
 
-			this.scrollHandlers();
+			this.initScrollHandlers();
 
-			this.clickHandlers();
+			this.initClickHandlers();
+
+			this.initDimensionHandlers();
 
 			this.getEvents();
 
@@ -260,7 +281,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			}
 		}
 
-	,	clickHandlers: function() {
+	,	initClickHandlers: function() {
 
 			var self = this;
 
@@ -294,12 +315,12 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 		}
 
-	,	scrollHandlers: function(e) {
+	,	initScrollHandlers: function(e) {
 			var self = this;
 	
 			var executionTimer;
 
-			var handleEvents = function(e) {
+			var handler = function(e) {
 
 				if (executionTimer) {
 					clearTimeout(executionTimer);
@@ -322,10 +343,33 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 				self.updateBars();
 			}
 
-			this.window.bind('scroll resize', handleEvents);
+			this.window.bind('scroll', handler);
 
 			timer.track('Scroll handlers setted');
+		}
 
+	,	initDimensionHandlers: function(e) {
+			var self = this,
+				executionTimer;
+
+			var handler = function(e) {
+				if (executionTimer) {
+					clearTimeout(executionTimer);
+				}
+
+				executionTimer = setTimeout(function(){
+					// Update the viewport
+					self.getViewportSize();
+
+					// Reconstruct adaptive CSS
+					self.adaptToViewport();
+
+					// Update scroll bars
+					self.updateBars();
+				}, 200);
+			}
+
+			this.window.bind('resize orientationchange', handler);
 		}
 
 	,	updateBars: function() {
@@ -340,8 +384,9 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 				this['time-bar-list'].css( 'left', (currentScrollLeft + Math.floor((this.HOUR_WIDTH * (this.zeroTime.getMinutes()/60)))) * -1 );
 			} else {
 				// If position:fixed is not supported, reposition the time bar so that it is still at the top of the screen
+				console.log(currentScrollTop);
 				this['time-bar'].css({'top': (currentScrollTop + 50) + 'px' });
-				$('header.main').css({'top': currentScrollTop + 'px', 'left': currentScrollLeft + 'px' });
+				this['header-bar'].css({'top': currentScrollTop + 'px', 'left': currentScrollLeft + 'px' });
 			}
 		}
 
