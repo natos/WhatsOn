@@ -20,8 +20,13 @@ function() {
 	,	initialize: function() {
 
 			this.content = $('meta[property="og:url"]').attr('content');
-
 			this.objectType = $('meta[property="og:type"]').attr('content');
+
+console.log(this.objectType + ': ' + this.content);
+
+			this.graph = {};
+			this.graph['access_token'] = wo.views.usercontrol.facebook.accessToken;
+			this.graph[this.objectType] = this.content;
 
 			this.trigger('view-initialized', this);
 
@@ -47,12 +52,7 @@ function() {
 
 	,	watch: function(event) {
 
-			FB.api('/me/video:watches', 'post', 
-			{ 
-				this.objectType: this.content
-			,	'access_token': wo.views.usercontrol.facebook.accessToken
-			},
-			function(response) {
+			FB.api('/me/video:watches', 'post', this.graph,	function(response) {
 				console.log(response);
 			});
 
