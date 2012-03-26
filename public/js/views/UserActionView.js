@@ -23,10 +23,7 @@ function() {
 			this.objectType = $('meta[property="og:type"]').attr('content');
 
 			this.graph = {};
-			this.graph['access_token'] = wo.views.usercontrol.facebook.accessToken;
 			this.graph[this.objectType] = this.content;
-
-			console.log(this.graph);
 
 			this.trigger('view-initialized', this);
 
@@ -51,6 +48,10 @@ function() {
 		}
 
 	,	watch: function(event) {
+
+			this.graph['access_token'] = wo.views.usercontrol.facebook.accessToken;
+
+			console.log(this.graph);
 
 			FB.api('/me/video:watches', 'post', this.graph,	function(response) {
 				console.log(response);
