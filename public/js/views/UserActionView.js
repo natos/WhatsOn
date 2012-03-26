@@ -19,6 +19,10 @@ function() {
 
 	,	initialize: function() {
 
+			this.content = $('meta[property="og:url"]').attr('content');
+
+			this.objectType = $('meta[property="og:type"]').attr('content');
+
 			this.trigger('view-initialized', this);
 
 			// self load
@@ -43,9 +47,13 @@ function() {
 
 	,	watch: function(event) {
 
-			FB.api('/me/video:watches', 'post', { 'movie' : $('meta[property="og:url"]').attr('content') });
-			FB.api( query, function(response){
-				alert(response);
+			FB.api('/me/video:watches', 'post', 
+			{ 
+				this.objectType: this.content
+			,	'access_token': wo.views.usercontrol.facebook.accessToken
+			},
+			function(response) {
+				console.log(response);
 			});
 
 /*
