@@ -28,6 +28,8 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 	,   window: $(window)
 
+	,	'header-bar': $('header.main')
+
 	,	'time-bar': $('#time-bar')
 
 	,	'time-bar-list': $('#time-bar ol')
@@ -37,7 +39,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 	,	'channels-bar-list': $('#channels-bar ul')
 
 	//	constants
-	,	MAX_DOM_ELEMENTS: 1500
+	,	MAX_DOM_ELEMENTS: 500
 
 	,	MILLISECONDS_IN_HOUR: 3600000
 
@@ -70,15 +72,17 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			// get viewport size
 			this.getViewportSize();
 
-			// Set features and capabilities, such as 
+			// Set features and capabilities of the device/browser
 			this.initCapabilities();
+
+			// Adapt to the current height/width of the viewport
+			this.adaptToViewport();
 
 			// Now
 			var now = new Date();
+
 			// Adjust the zero time so that "now" is half-way across the width of the page
-			var channelsBarWidth = 43;
-			var hoursWide = (this.viewport.width - channelsBarWidth) / this.HOUR_WIDTH;
-			var initialOffsetHoursBetweenZeroTimeAndNow = (0.5 * hoursWide)
+			var initialOffsetHoursBetweenZeroTimeAndNow = (0.5 * this.VIEWPORT_WIDTH_HOURS);
 			this.zeroTime = new Date(now.valueOf() - (initialOffsetHoursBetweenZeroTimeAndNow * this.MILLISECONDS_IN_HOUR));
 
 			// Ticker
@@ -87,16 +91,13 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			// Time Manual Controls
 			this.timeManualControls = this.USE_MANUAL_TIME_CONTROLS && new TimeManualControls();
 
+			this.createChannelContainers();
+
 			// Create Timeline
 			this.drawTimeLine();
 
 			// Create loading indicator
 			this.initLoader();
-
-			// Map Channel ID / OffsetTop
-			for (var i = 0; i < channels.length; i++) {
-				this.channelsOffsetMap[ channels[i].id ] = i * this.ROW_HEIGHT;
-			}
 
 			this.trigger('view-initialized', this);
 
@@ -105,13 +106,15 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 		}
 
 	,	initCapabilities: function() {
+
 			var supportClasses = [],
 				cssText = [],
 				screenArea,
 				gridHeight,
 				gridWidth;
 
-			// How many days are visible? Smaller screens => fewer days
+			// How many days are visible? 
+			// Smaller screen => (probably) smaller & slower device => fewer days
 			screenArea = this.viewport.width * this.viewport.height;
 			if (screenArea <= 153600) { // 320 x 480
 				this.DAYS_VISIBLE = 1;
@@ -121,19 +124,14 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 				this.DAYS_VISIBLE = 3;
 			}
 
-			// TODO: Adjust hour width and row height based on screen size.
-			this.HOUR_WIDTH = 200; // px
-			this.ROW_HEIGHT = 60; // px
-
-			this.CHANNELS_COUNT = $('#channels-bar li').length;
-			this.CHANNEL_BAR_WIDTH = $('#channels-bar').width;
-
 			// Add className to <html> element based on fixed-position support
 			// If no fixed-position support, channel and time bars have to be repositioned after scroll/touch.
 			if (!supportsCSSFixedPosition) {
 				supportClasses.push('support-no-fixed-position');
+				cssText.push('.main {position:absolute;}');
 			} else {
 				supportClasses.push('support-fixed-position');
+				cssText.push('.main {position:fixed;}');
 			}
 
 			// Add className to <html> element based on touch event support
@@ -147,6 +145,26 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 				supportClasses.push('support-no-touch');
 			}
 
+			$(document.documentElement).addClass(supportClasses.join(' '));
+			this.appendCSSBlock('deviceAdaptation', cssText.join('\n'));
+		}
+
+		/**
+			Adapt to viewport can be run at any time. Height and width of the page may
+			change when browser resizes, or when onorientationchange is fired.
+		*/
+	,	adaptToViewport: function() {
+			var cssText = [];
+
+			// TODO: Adjust hour width and row height based on screen size.
+			this.HOUR_WIDTH = 200; // px
+			this.ROW_HEIGHT = 60; // px
+			this.HEADER_HEIGHT = this['header-bar'].height();
+
+			this.CHANNELS_COUNT = $('#channels-bar li').length;
+			this.CHANNEL_BAR_WIDTH = $('#channels-bar').width();
+			this.VIEWPORT_WIDTH_HOURS = (document.body.clientWidth - this.CHANNEL_BAR_WIDTH) / this.HOUR_WIDTH;
+
 			// Size the grid
 			gridHeight = this.ROW_HEIGHT * this.CHANNELS_COUNT;
 			gridWidth = this.HOUR_WIDTH * this.DAYS_VISIBLE * 24;
@@ -159,18 +177,23 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			cssText.push('#time-bar {width:' + gridWidth + 'px}');
 			cssText.push('#time-bar ol {width:' + gridWidth + 'px}');
 			cssText.push('#time-bar li {width:' + this.HOUR_WIDTH + 'px;}');
-			this.appendAdaptiveCSS(cssText.join('\n'));
+			cssText.push('.channel-container {height:' + this.ROW_HEIGHT + 'px;}');
 
-			$(document.documentElement).addClass(supportClasses.join(' '));
+			this.appendCSSBlock('viewportAdaptation', cssText.join('\n'));
+
+			// Map Channel ID / OffsetTop
+			for (var i = 0; i < channels.length; i++) {
+				this.channelsOffsetMap[ channels[i].id ] = i * this.ROW_HEIGHT;
+			}
 		}
 
-	,	appendAdaptiveCSS: function(cssText) {
-			var el = document.getElementById('adapt');
+	,	appendCSSBlock: function(blockId, cssText) {
+			var el = document.getElementById(blockId);
 			if (el) {
 				el.innerHTML = cssText;
 			} else {
 				el = document.createElement('style');
-				el.id = 'adapt';
+				el.id = blockId;
 				el.innerHTML = cssText;
 				document.getElementsByTagName('HEAD')[0].appendChild(el);
 			}
@@ -178,9 +201,11 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 	,	load: function() {
 
-			this.scrollHandlers();
+			this.initScrollHandlers();
 
-			this.clickHandlers();
+			this.initClickHandlers();
+
+			this.initDimensionHandlers();
 
 			this.getEvents();
 
@@ -210,6 +235,19 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			this.viewport = v;
 
 			return v;
+		}
+
+	,	createChannelContainers: function() {
+			var channelContainersHtml = '';
+			for (var i = 0; i < channels.length; i++) {
+				channelContainersHtml += '<div class="channel-container" id="cc_' + channels[i].id + '"></div>';
+			}
+			this.el.append(channelContainersHtml);
+
+			this.channelContainers = {};
+			for (var i = 0; i < channels.length; i++) {
+				this.channelContainers[channels[i].id] = document.getElementById('cc_' + channels[i].id);
+			}
 		}
 
 	,	drawTimeLine: function() {
@@ -260,7 +298,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			}
 		}
 
-	,	clickHandlers: function() {
+	,	initClickHandlers: function() {
 
 			var self = this;
 
@@ -294,12 +332,12 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 		}
 
-	,	scrollHandlers: function(e) {
+	,	initScrollHandlers: function(e) {
 			var self = this;
 	
 			var executionTimer;
 
-			var handleEvents = function(e) {
+			var handler = function(e) {
 
 				if (executionTimer) {
 					clearTimeout(executionTimer);
@@ -322,10 +360,33 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 				self.updateBars();
 			}
 
-			this.window.bind('scroll resize', handleEvents);
+			this.window.bind('scroll', handler);
 
 			timer.track('Scroll handlers setted');
+		}
 
+	,	initDimensionHandlers: function(e) {
+			var self = this,
+				executionTimer;
+
+			var handler = function(e) {
+				if (executionTimer) {
+					clearTimeout(executionTimer);
+				}
+
+				executionTimer = setTimeout(function(){
+					// Update the viewport
+					self.getViewportSize();
+
+					// Reconstruct adaptive CSS
+					self.adaptToViewport();
+
+					// Update scroll bars
+					self.updateBars();
+				}, 200);
+			}
+
+			this.window.bind('resize orientationchange', handler);
 		}
 
 	,	updateBars: function() {
@@ -336,20 +397,33 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 		}
 
 	,	updateTimeBar: function(currentScrollTop, currentScrollLeft) {
+			var zeroTimeOffset = Math.floor( this.HOUR_WIDTH * (this.zeroTime.getMinutes()/60) );
+
 			if (supportsCSSFixedPosition) {
-				this['time-bar-list'].css( 'left', (currentScrollLeft + Math.floor((this.HOUR_WIDTH * (this.zeroTime.getMinutes()/60)))) * -1 );
+				this['time-bar-list'].css({
+					'left': (currentScrollLeft + zeroTimeOffset) * -1
+				});
 			} else {
-				// If position:fixed is not supported, reposition the time bar so that it is still at the top of the screen
-				this['time-bar'].css({'top': (currentScrollTop + 50) + 'px' });
-				$('header.main').css({'top': currentScrollTop + 'px', 'left': currentScrollLeft + 'px' });
+				this['time-bar'].css({
+					'top': currentScrollTop + this.HEADER_HEIGHT,
+					'left': zeroTimeOffset * -1
+				});
+				this['header-bar'].css({
+					'top': currentScrollTop,
+					'left': currentScrollLeft
+				});
 			}
 		}
 
 	,	updateChannelsBar: function(currentScrollTop, currentScrollLeft) {
-			this['channels-bar-list'].css( 'top', currentScrollTop * -1 );
-			// If position:fixed is not supported, reposition the channels bar so that it is still at the left of the screen
-			if (!supportsCSSFixedPosition) {
-				this['channels-bar'].css( 'left', currentScrollLeft + 'px' );
+			if (supportsCSSFixedPosition) {
+				this['channels-bar-list'].css({
+					'top': currentScrollTop * -1
+				});
+			} else {
+				this['channels-bar'].css({
+					'left': currentScrollLeft
+				});
 			}
 		}
 
@@ -405,13 +479,9 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			// How many hours have been scrolled horizontally?
 			var hoursScrolledLeft = this.viewport.left / this.HOUR_WIDTH;
 
-			// How many hours wide is the screen?
-			var channelsBarWidth = 43;
-			var hoursWide = (document.body.clientWidth - channelsBarWidth) / this.HOUR_WIDTH;
-
 			// Calculate the left border time, and right border time
 			var leftBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * this.MILLISECONDS_IN_HOUR));
-			var rightBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * this.MILLISECONDS_IN_HOUR) + (hoursWide * this.MILLISECONDS_IN_HOUR));
+			var rightBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * this.MILLISECONDS_IN_HOUR) + (this.VIEWPORT_WIDTH_HOURS * this.MILLISECONDS_IN_HOUR));
 
 			// Show the channel logos for the visible channels
 			this.updateChannelImages(channelIds);
@@ -469,7 +539,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 				,	left: offsetLeft
 				,	width: width
 				}
-				eventModel.gridContainer = this.el;
+				eventModel.channelContainer = this.channelContainers[event.channel.id];
 
 				// The overhead of creating a new EventView is very small
 				// compared to just creating the raw DOM elements.
@@ -495,19 +565,38 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 				bufferTimer.track('Start Cleaning');
 
-				console.log('WARNING: ' + this.MAX_DOM_ELEMENTS + ' Events on the DOM');
+				console.log('WARNING: ' + this.eventsBuffer.length + ' Events on the DOM (' + this.MAX_DOM_ELEMENTS + ' allowed)');
+
+				var visibleChannelIds = this.getVisibleChannelIds(1);
+				var newBuffer = [];
+
+				// Remove the most recent MAX_DOM_ELEMENTS from this.eventsBuffer, 
+				// and place them in newBuffer (in the same order).
+				newBuffer = this.eventsBuffer.splice(-1 * this.MAX_DOM_ELEMENTS, this.MAX_DOM_ELEMENTS);
 
 				var shifted,
-					erase = this.MAX_DOM_ELEMENTS;
+					i = this.eventsBuffer.length;
 
-				while (erase--) {
+				// Iterate over the remaining elements in this.eventsBuffer.
+				// If an event is still visible, add it to the start of newBuffer;
+				// it will get checked again next time this garbage collector runs.
+				while (i--) {
 					shifted = this.eventsBuffer.shift();
-					shifted.remove();
-					shifted = null;
+
+					// Note: the visibility check currently only tests whether
+					// the event's channel is in view. It doesn't yet test for start/end time.
+					if (_.indexOf(visibleChannelIds, shifted.options.channel.id) >= 0) {
+						// Still visible. Add it to newBuffer.
+						newBuffer.unshift(shifted);
+					} else {
+						shifted.remove();
+					}
 				}
 
-				// need to find a better way, while user scrolls
-				// some things may desapear from his sight
+				// Replace the old buffer with the new contents
+				this.eventsBuffer = newBuffer;
+
+				console.log('eventsBuffer now contains ' + this.eventsBuffer.length + ' Events ');
 
 				bufferTimer.track('Finish Cleaning');
 

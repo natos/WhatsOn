@@ -26,28 +26,29 @@ html
 		#fb-root
 
 		header.main
-			a(href="/")
-				h1 What's On!
+			.inner
+				a(href="/")
+					h1 What's On!
 
-			#navigation
-				a.grid.icon.icon-list(href="/grid", title="#{__i('TV Grid')}")
-					span.label #{__i('TV Grid')}
+				#navigation
+					a.grid.icon.icon-list(href="/grid", title="#{__i('TV Grid')}")
+						span.label #{__i('TV Grid')}
 
-			#user-control
-				ul
-					li.icon.icon-user(title="#{__i('Login')}")
-						span.label #{__i('Login')}
-					li.icon.icon-close(title="#{__i('Logout')}")
-						span.label #{__i('Logout')}
-					li.icon.icon-settings(title="#{__i('Settings')}")
-						span.label #{__i('Settings')}
+				#user-control
+					ul
+						li.icon.icon-user(title="#{__i('Login')}")
+							span.label #{__i('Login')}
+						li.icon.icon-close(title="#{__i('Logout')}")
+							span.label #{__i('Logout')}
+						li.icon.icon-settings(title="#{__i('Settings')}")
+							span.label #{__i('Settings')}
 
-			#search
-				form(action="/search", method='get')
-					a.icon.icon-search(href="/search?q=")
-					input.btn.search(name="search", type="submit")
-					- var query = typeof(query) === 'undefined' ? '' : query
-					input.query(name="q", type="search", value=query, placeholder="#{__i('Search')}")
+				#search
+					form(action="/search", method='get')
+						a.icon.icon-search(href="/search?q=")
+						input.btn.search(name="search", type="submit")
+						- var query = typeof(query) === 'undefined' ? '' : query
+						input.query(name="q", type="search", value=query, placeholder="#{__i('Search')}")
 
 		a#top
 
