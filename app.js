@@ -572,7 +572,7 @@ app.get('/programme/:id.:format?', function(req, res) {
 			// Meta data
 			var _metadata = [
 				{ property: "fb:app_id"			, content: "153316508108487" }
-			,	{ property: "og:type"			, content: (isMovie) ? "video.movie" : "video.tv_show" }
+			,	{ property: "og:type"			, content: (isMovie) ? "movie" : "tv_show" }
 			,	{ property: "og:url"			, content: "http://upcwhatson.herokuapp.com/programme/" + _programme_details.id + ".html" }
 			,	{ property: "og:title"			, content: _programme_details.title }
 			,	{ property: "og:description"	, content: _programme_details.shortDescription } 
