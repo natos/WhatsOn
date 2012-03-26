@@ -24,17 +24,15 @@ function() {
 	,	load: function() {
 
 			this.el
-				.addClass('event')
+				.addClass('grid-event')
 				.attr('id', this.options.id)
 				.attr('title', this.options.programme.title)
 				.html('<a id="' + this.options.programme.id + '" class="programme" href="/programme/' + this.options.programme.id + '.html">' + this.options.programme.title + '</a>' + '<p class="description">' + this.options.programme.shortDescription + '</p>')
 				.css({
-					'position': 'absolute'
-				,	'top': this.options.dimensions.top + 'px'
-				,	'left': this.options.dimensions.left + 'px'
-				,	'width': this.options.dimensions.width + 'px'
+					'left': this.options.dimensions.left
+				,	'width': this.options.dimensions.width
 				})
-				.appendTo(this.options.gridContainer);
+				.appendTo(this.options.channelContainer);
 
 			this.trigger('view-created');
 

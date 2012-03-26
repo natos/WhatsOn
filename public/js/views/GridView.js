@@ -91,6 +91,8 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			// Time Manual Controls
 			this.timeManualControls = this.USE_MANUAL_TIME_CONTROLS && new TimeManualControls();
 
+			this.createChannelContainers();
+
 			// Create Timeline
 			this.drawTimeLine();
 
@@ -175,6 +177,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			cssText.push('#time-bar {width:' + gridWidth + 'px}');
 			cssText.push('#time-bar ol {width:' + gridWidth + 'px}');
 			cssText.push('#time-bar li {width:' + this.HOUR_WIDTH + 'px;}');
+			cssText.push('.channel-container {height:' + this.ROW_HEIGHT + 'px;}');
 
 			this.appendCSSBlock('viewportAdaptation', cssText.join('\n'));
 
@@ -232,6 +235,19 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			this.viewport = v;
 
 			return v;
+		}
+
+	,	createChannelContainers: function() {
+			var channelContainersHtml = '';
+			for (var i = 0; i < channels.length; i++) {
+				channelContainersHtml += '<div class="channel-container" id="cc_' + channels[i].id + '"></div>';
+			}
+			this.el.append(channelContainersHtml);
+
+			this.channelContainers = {};
+			for (var i = 0; i < channels.length; i++) {
+				this.channelContainers[channels[i].id] = document.getElementById('cc_' + channels[i].id);
+			}
 		}
 
 	,	drawTimeLine: function() {
@@ -524,6 +540,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 				,	width: width
 				}
 				eventModel.gridContainer = this.el;
+				eventModel.channelContainer = this.channelContainers[event.channel.id];
 
 				// The overhead of creating a new EventView is very small
 				// compared to just creating the raw DOM elements.

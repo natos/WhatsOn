@@ -376,19 +376,21 @@
 	overflow: hidden;
 }
 
-.back-grid {
-	position:absolute;
-	top:0;
-	left:0;
-	height:100%;
+/* A .channel-container is a container for all events in a channel.
+.channel-container elements are full-width, stacked inside the parent #grid-container */
+.channel-container {
+	position:relative;
 	width:100%;
-	background: #ddd url('/assets/channel_row.png') repeat;
+	background: #ddd url('/assets/channel_row.png') repeat-x;
 }
 
-.event {
+/* A .grid-event represents a single event in the programme grid.
+.grid-event elements are absolutely positioned inside a parent .channel-container */ 
+.grid-event {
+	position:absolute;
 	overflow: hidden;
-	background: #ddd;
-	border: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #ccc;
 	font-size: .9em;
 	cursor: pointer;
 }
@@ -410,14 +412,14 @@
 }
 
 /* Hover states only supported for non-touch browsers */
-.support-no-touch .event:hover {
+.support-no-touch .grid-event:hover {
 	color: #fff;
 	background: #111 url('/assets/main_gradient.png') 0 0 repeat-x;
 }
-.support-no-touch .event:hover .programme {
+.support-no-touch .grid-event:hover .programme {
 	color: #fff;
 }
-.support-no-touch .event:hover .programme + p {
+.support-no-touch .grid-event:hover .programme + p {
 	color: #eee;
 }
 
