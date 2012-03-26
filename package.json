@@ -17,6 +17,6 @@
 	,	"timetrack": "0.0.1"
 	,	"mongodb": "0.9.9-7"
 	,	"mongoose": "2.5.13"
-	,	"hoooks": "0.2.0"
+	,	"hooks": "0.2.0"
   }
 }
