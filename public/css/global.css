@@ -37,7 +37,7 @@ ul li, ol li {
 }
 
 #top-small {
-	height: 50px;
+	height: 60px;
 	display: block;
 }
 
@@ -74,10 +74,12 @@ input.icon {
 
 	color: #ccc;
 
-	width: 30px;
-	height: 30px;
+	width: 40px;
+	height: 40px;
 
 	cursor: pointer;
+
+	padding: 5px 10px;
 }
 
 .main .icon img {
@@ -88,6 +90,10 @@ input.icon {
 	height: 45px;
 }
 
+.main .icon .label {
+	visibility: hidden;
+}
+
 .main .icon:hover {
 	color: #fff;
 }
@@ -95,8 +101,8 @@ input.icon {
 @font-face {
 	font-family: pulsarjs;
 	src: url('/fonts/pulsarjs/pulsarjs.ttf');
-	src: url('/fonts/pulsarjs/pulsarjs.ttf?#iefix') format('embedded-opentype'),
-		url('/fonts/pulsarjs/pulsarjs.ttf') format('truetype')/*,
+/*	src: url('/fonts/pulsarjs/pulsarjs.ttf?#iefix') format('embedded-opentype'),
+		url('/fonts/pulsarjs/pulsarjs.ttf') format('truetype'),
 		url('/fonts/pulsarjs/pulsarjs.ttf') format('svg')*/;
 }
 
@@ -233,8 +239,7 @@ input.icon {
 
 #navigation, #user-control, #search {
 	position: absolute;
-	top: 8px;
-	bottom: 8px;
+	top: 0;
 }
 
 /* ==============
@@ -261,19 +266,24 @@ input.icon {
 
 #user-control {
 	right: 10px;
-	padding: 0 5px;
 	border-radius: 5px;
 	overflow: hidden;
+	bottom: 0;
 }
 
 #user-control:hover {
-	background: black;
-/*	height: 110px;*/
 	overflow: visible;
+}
+
+#user-control:hover ul {
+	background: black;
+	opacity: .8;
 }
 
 #user-control ul {
 	z-index: 10;
+	width: 50px;
+	border-radius: 10px;
 }
 
 #user-control li {

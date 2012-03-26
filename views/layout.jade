@@ -30,17 +30,17 @@ html
 				h1 What's On!
 
 			#navigation
-				a.explore(href="/") #{__i('Explore TV')}
-				a.grid.icon.icon-list(href="/grid") #{__i('TV Grid')}
+				a.grid.icon.icon-list(href="/grid", title="#{__i('TV Grid')}")
+					span.label #{__i('TV Grid')}
 
 			#user-control
 				ul
-					li
-						a.icon.icon-user #{__i('Login')}
-					li
-						a.icon.icon-close #{__i('Logout')}
-					li
-						a.icon.icon-settings #{__i('Settings')}
+					li.icon.icon-user(title="#{__i('Login')}")
+						span.label #{__i('Login')}
+					li.icon.icon-close(title="#{__i('Logout')}")
+						span.label #{__i('Logout')}
+					li.icon.icon-settings(title="#{__i('Settings')}")
+						span.label #{__i('Settings')}
 
 			#search
 				form(action="/search", method='get')
