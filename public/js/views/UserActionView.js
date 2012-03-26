@@ -43,14 +43,16 @@ function() {
 
 	,	watch: function(event) {
 
-//			console.log(event)
-//			console.log( $('meta[property="og:url"]').attr('content') );
-//			var query = prompt('Query','/me/upc-whatson');
-			FB.api('/me/upcwhatson:watch', 'post', { 'video.tv_show' : $('meta[property="og:url"]').attr('content') });
-//			FB.api('/me', function(response){ console.log(response); });
+			FB.api('/me/video:watch', 'post', { 'video.tv_show' : $('meta[property="og:url"]').attr('content') });
 			FB.api( query, function(response){
 				alert(response);
 			});
+
+/*
+			curl -F 			'access_token=AAACLcMgBBscBAGI1QmoIp4HrQAJFZAuv2OEVm5gUn3XTX1RXlb1H0thCVNE9AZCKfixUINZByeKufXoQit4YjZBsbZAryoAoY7gnihF1dRl9r8H4Lud7E' \
+			     -F 'movie=http://example.com' \
+        		'https://graph.facebook.com/me/video.watches'
+*/
 
 		}
 
