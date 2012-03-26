@@ -118,7 +118,11 @@ function() {
 
 				this.button.login
 					.off()
-					.html('<img src="https://graph.facebook.com/' + uid + '/picture" />');
+					.html('<img class="picture" src="https://graph.facebook.com/' + uid + '/picture" />');
+
+				this.button.settings
+					.off()
+					.show();
 
 				// trigger an event, so the app knows the user state
 				wo.event.emit('login-status', { message: 'logged', facebook: this.facebook } );
@@ -129,7 +133,7 @@ function() {
 				this.button.login
 					.off() // remove all handlers
 					.on('click', this.login)
-					.html('Autorize');
+					.html('<span class="label">Autorize</span>');
 
 				this.button.logout
 					.show();
@@ -142,9 +146,12 @@ function() {
 				this.button.login
 					.off() // remove all handlers
 					.on('click', this.login)
-					.html('Login');
+					.html('<span class="label">Login</span>');
 
 				this.button.logout
+					.hide();
+
+				this.button.settings
 					.hide();
 
 				// trigger an event, so the app knows the user state

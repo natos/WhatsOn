@@ -82,14 +82,6 @@ input.icon {
 	padding: 5px 10px;
 }
 
-.main .icon img {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 35px;
-	height: 45px;
-}
-
 .main .icon .label {
 	visibility: hidden;
 }
@@ -288,6 +280,14 @@ input.icon {
 
 #user-control li {
 	margin-bottom: 5px;
+}
+
+.picture { /* avatar */
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 35px;
+	height: 45px;
 }
 
 /* ==============
