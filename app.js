@@ -213,6 +213,11 @@ app.get('*', function(req, res, next){
 	,	sarcasm: false
 	}
 
+	// Allow debug override for CSS fixed position support
+	if (req.query && req.query.fixed) {
+		req.support.FixedPosition = ['1','true','TRUE'].indexOf(req.query.fixed) >= 0 ? true : false;
+	}
+
 	// Force locale
 	i18n.setLocale('nl');
 //	i18n.setLocale('es');
