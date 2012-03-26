@@ -282,12 +282,10 @@ input.icon {
 	margin-bottom: 5px;
 }
 
-.picture { /* avatar */
+.picture { /* avatar overlaying the icon */
 	position: absolute;
 	top: 0;
 	left: 0;
-	width: 35px;
-	height: 45px;
 }
 
 /* ==============
