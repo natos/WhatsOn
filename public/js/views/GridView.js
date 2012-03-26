@@ -39,7 +39,7 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 	,	'channels-bar-list': $('#channels-bar ul')
 
 	//	constants
-	,	MAX_DOM_ELEMENTS: 1500
+	,	MAX_DOM_ELEMENTS: 500
 
 	,	MILLISECONDS_IN_HOUR: 3600000
 
@@ -539,7 +539,6 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 				,	left: offsetLeft
 				,	width: width
 				}
-				eventModel.gridContainer = this.el;
 				eventModel.channelContainer = this.channelContainers[event.channel.id];
 
 				// The overhead of creating a new EventView is very small
@@ -566,19 +565,38 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 				bufferTimer.track('Start Cleaning');
 
-				console.log('WARNING: ' + this.MAX_DOM_ELEMENTS + ' Events on the DOM');
+				console.log('WARNING: ' + this.eventsBuffer.length + ' Events on the DOM (' + this.MAX_DOM_ELEMENTS + ' allowed)');
+
+				var visibleChannelIds = this.getVisibleChannelIds(1);
+				var newBuffer = [];
+
+				// Remove the most recent MAX_DOM_ELEMENTS from this.eventsBuffer, 
+				// and place them in newBuffer (in the same order).
+				newBuffer = this.eventsBuffer.splice(-1 * this.MAX_DOM_ELEMENTS, this.MAX_DOM_ELEMENTS);
 
 				var shifted,
-					erase = this.MAX_DOM_ELEMENTS;
+					i = this.eventsBuffer.length;
 
-				while (erase--) {
+				// Iterate over the remaining elements in this.eventsBuffer.
+				// If an event is still visible, add it to the start of newBuffer;
+				// it will get checked again next time this garbage collector runs.
+				while (i--) {
 					shifted = this.eventsBuffer.shift();
-					shifted.remove();
-					shifted = null;
+
+					// Note: the visibility check currently only tests whether
+					// the event's channel is in view. It doesn't yet test for start/end time.
+					if (_.indexOf(visibleChannelIds, shifted.options.channel.id) >= 0) {
+						// Still visible. Add it to newBuffer.
+						newBuffer.unshift(shifted);
+					} else {
+						shifted.remove();
+					}
 				}
 
-				// need to find a better way, while user scrolls
-				// some things may desapear from his sight
+				// Replace the old buffer with the new contents
+				this.eventsBuffer = newBuffer;
+
+				console.log('eventsBuffer now contains ' + this.eventsBuffer.length + ' Events ');
 
 				bufferTimer.track('Finish Cleaning');
 
