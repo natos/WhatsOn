@@ -272,7 +272,7 @@ app.get('/grid.:format?', function(req, res) {
 
 	var test = format === "test"; // boolean
 
-	var ALL_CHANNELS = API_PREFIX + 'Channel.json?order=position';
+	var ALL_CHANNELS = 'http://' + req.headers.host + '/channels.json'
 
 	request(ALL_CHANNELS, function (error, response, body) {
 
@@ -372,8 +372,6 @@ app.get('/channels.:format?', function(req, res) {
 
     var id = req.params.id
 	,	format = req.params.format // html, json, etc
-
-//	var ALL_CHANNELS = API_PREFIX + 'Channel.json?order=position';
 
 	var ALL_CHANNELS_0 = API_PREFIX + 'Channel.json?order=position&batch=0'
 	,	ALL_CHANNELS_1 = API_PREFIX + 'Channel.json?order=position&batch=1'
