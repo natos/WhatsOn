@@ -22,11 +22,11 @@ function() {
 			this.content = $('meta[property="og:url"]').attr('content');
 			this.objectType = $('meta[property="og:type"]').attr('content');
 
-console.log(this.objectType + ': ' + this.content);
-
 			this.graph = {};
 			this.graph['access_token'] = wo.views.usercontrol.facebook.accessToken;
 			this.graph[this.objectType] = this.content;
+
+			console.log(this.graph);
 
 			this.trigger('view-initialized', this);
 
