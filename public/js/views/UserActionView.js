@@ -43,7 +43,7 @@ function() {
 
 	,	watch: function(event) {
 
-			FB.api('/me/video:watch', 'post', { 'video.tv_show' : $('meta[property="og:url"]').attr('content') });
+			FB.api('/me/video:watches', 'post', { 'movie' : $('meta[property="og:url"]').attr('content') });
 			FB.api( query, function(response){
 				alert(response);
 			});
