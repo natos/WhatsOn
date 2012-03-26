@@ -80,10 +80,9 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 
 			// Now
 			var now = new Date();
+
 			// Adjust the zero time so that "now" is half-way across the width of the page
-			var channelsBarWidth = 43;
-			var hoursWide = (this.viewport.width - channelsBarWidth) / this.HOUR_WIDTH;
-			var initialOffsetHoursBetweenZeroTimeAndNow = (0.5 * hoursWide)
+			var initialOffsetHoursBetweenZeroTimeAndNow = (0.5 * this.VIEWPORT_WIDTH_HOURS);
 			this.zeroTime = new Date(now.valueOf() - (initialOffsetHoursBetweenZeroTimeAndNow * this.MILLISECONDS_IN_HOUR));
 
 			// Ticker
@@ -158,9 +157,11 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			// TODO: Adjust hour width and row height based on screen size.
 			this.HOUR_WIDTH = 200; // px
 			this.ROW_HEIGHT = 60; // px
+			this.HEADER_HEIGHT = this['header-bar'].height();
 
 			this.CHANNELS_COUNT = $('#channels-bar li').length;
-			this.CHANNEL_BAR_WIDTH = $('#channels-bar').width;
+			this.CHANNEL_BAR_WIDTH = $('#channels-bar').width();
+			this.VIEWPORT_WIDTH_HOURS = (document.body.clientWidth - this.CHANNEL_BAR_WIDTH) / this.HOUR_WIDTH;
 
 			// Size the grid
 			gridHeight = this.ROW_HEIGHT * this.CHANNELS_COUNT;
@@ -380,21 +381,33 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 		}
 
 	,	updateTimeBar: function(currentScrollTop, currentScrollLeft) {
+			var zeroTimeOffset = Math.floor( this.HOUR_WIDTH * (this.zeroTime.getMinutes()/60) );
+
 			if (supportsCSSFixedPosition) {
-				this['time-bar-list'].css( 'left', (currentScrollLeft + Math.floor((this.HOUR_WIDTH * (this.zeroTime.getMinutes()/60)))) * -1 );
+				this['time-bar-list'].css({
+					'left': (currentScrollLeft + zeroTimeOffset) * -1
+				});
 			} else {
-				// If position:fixed is not supported, reposition the time bar so that it is still at the top of the screen
-				console.log(currentScrollTop);
-				this['time-bar'].css({'top': (currentScrollTop + 50) + 'px' });
-				this['header-bar'].css({'top': currentScrollTop + 'px', 'left': currentScrollLeft + 'px' });
+				this['time-bar'].css({
+					'top': currentScrollTop + this.HEADER_HEIGHT,
+					'left': zeroTimeOffset * -1
+				});
+				this['header-bar'].css({
+					'top': currentScrollTop,
+					'left': currentScrollLeft
+				});
 			}
 		}
 
 	,	updateChannelsBar: function(currentScrollTop, currentScrollLeft) {
-			this['channels-bar-list'].css( 'top', currentScrollTop * -1 );
-			// If position:fixed is not supported, reposition the channels bar so that it is still at the left of the screen
-			if (!supportsCSSFixedPosition) {
-				this['channels-bar'].css( 'left', currentScrollLeft + 'px' );
+			if (supportsCSSFixedPosition) {
+				this['channels-bar-list'].css({
+					'top': currentScrollTop * -1
+				});
+			} else {
+				this['channels-bar'].css({
+					'left': currentScrollLeft
+				});
 			}
 		}
 
@@ -450,13 +463,9 @@ var timer = new Timer('Grid View'), requestTimer, bufferTimer;
 			// How many hours have been scrolled horizontally?
 			var hoursScrolledLeft = this.viewport.left / this.HOUR_WIDTH;
 
-			// How many hours wide is the screen?
-			var channelsBarWidth = 43;
-			var hoursWide = (document.body.clientWidth - channelsBarWidth) / this.HOUR_WIDTH;
-
 			// Calculate the left border time, and right border time
 			var leftBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * this.MILLISECONDS_IN_HOUR));
-			var rightBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * this.MILLISECONDS_IN_HOUR) + (hoursWide * this.MILLISECONDS_IN_HOUR));
+			var rightBorderTime = new Date(this.zeroTime.valueOf() + (hoursScrolledLeft * this.MILLISECONDS_IN_HOUR) + (this.VIEWPORT_WIDTH_HOURS * this.MILLISECONDS_IN_HOUR));
 
 			// Show the channel logos for the visible channels
 			this.updateChannelImages(channelIds);
