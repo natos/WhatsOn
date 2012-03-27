@@ -1,1 +1,1 @@
-web: node app.js
+web: nodeunit tests/core.js | node app.js
