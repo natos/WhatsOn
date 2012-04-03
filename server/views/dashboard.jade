@@ -1,0 +1,11 @@
+extends layout
+
+block content
+	h1 Dashboard
+	p Som text of the dashboard
+
+	ul#channels.mosaic
+		each channel in channels
+			li.channel
+				a(href="/channel/#{channel.id}.html")
+					img(title="#{channel.name}", src="http://www.upc.nl#{channel.logoIMG}", id="channel#{channel.id}")

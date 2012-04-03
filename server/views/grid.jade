@@ -1,0 +1,27 @@
+extends layout
+
+block styles
+	link(href="/css/grid.css", rel="stylesheet")
+
+block scripts
+	script
+		var channels = !{JSON.stringify(channels)};
+
+
+block content
+	#grid-container
+
+	#time-bar
+		ol
+
+	#time-controls
+
+	#channels-bar
+		ul
+			each channel in channels
+				li
+					.picture
+						img(title="#{channel.name}", data-src="http://www.upc.nl#{channel.logoIMG}", id="channelImg#{channel.id}")
+					.fav
+						input(id="#{channel.name}", type="checkbox")
+						label(for="#{channel.name}") favorite

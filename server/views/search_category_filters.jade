@@ -1,0 +1,51 @@
+include layout
+
+section#content
+
+	header
+		#{__i('Results for %s', query)}
+
+	#filters
+		//
+			h4 Categories					
+			ul#categories.selectable
+				each category in categories
+					li.category
+						input(type="checkbox", id="#{category.id}-#{category._type}", value="#{category.id}", checked="checked") 
+						label(for="#{category.id}-#{category._type}") #{category.name}
+						ul#subcategories
+							each sub in category.subs
+								li.subcategory
+									input(type="checkbox", id="#{sub.id}-#{sub._type}", value="#{sub.id}", checked="checked") 
+									label(for="#{sub.id}-#{sub._type}") #{sub.name}
+
+		h4 Date Times
+		ul#datetimes.selectable
+			each startDateTime, prettyDate in used_datetimes
+				li.datetime
+					input(type="checkbox", id="#{startDateTime}", value="#{prettyDate}", checked="checked") 
+					label(for="#{startDateTime}") #{prettyDate}
+
+
+		h4 Channels
+		ul#channels.selectable
+			each channel in used_channels
+				li.channel
+					input(type="checkbox", id="#{channel.id}", value="#{channel.id}", checked="checked") 
+					label(for="#{channel.id}") #{channel.name}
+
+
+
+
+	ul#search-results
+		each event in results
+			li.programme(data-channel="#{event.channel.id}", data-datetime="#{event.prettyDate}")
+
+				h3
+					a(href="/programme/#{event.programme.id}.html") #{event.programme.title}
+				p
+					| #{event.prettyDate}, 
+					| #{ new Date(event.startDateTime).getHours() }hs
+
+				.channel
+					a(href="/channel/#{event.channel.id}.html") #{event.channel.name}

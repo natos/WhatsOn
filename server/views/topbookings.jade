@@ -1,0 +1,16 @@
+include layout
+
+section#content
+
+	header
+		h1 #{title}
+
+	if data
+		ol#topbookings
+			each event in data
+				li
+					a(href="/programme/#{event.programme.id}.html") #{event.programme.title}
+					|  on 
+					a(href="/channel/#{event.channel.id}.html") #{event.channel.name}
+					|  #{event.prettyDate}
+					p #{event.programme.shortDescription}

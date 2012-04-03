@@ -1,0 +1,16 @@
+include layout
+
+section#content
+
+	header
+		h1 #{title}
+
+	if data
+		ul#channels
+			each channel in data
+				li
+					a(href="/channel/#{channel.id}.html") #{channel.name} 
+					span #{channel.broadcastFormat} 
+					span #{channel.position}
+
+			
