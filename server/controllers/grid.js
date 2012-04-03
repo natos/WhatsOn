@@ -11,6 +11,7 @@ define([
 
 	// utils
 ,	'utils/supports'
+,	'utils/metadata'
 
 ],
 
@@ -19,7 +20,7 @@ define([
  *	@class GridController
  */
 
-function(ChannelService, Supports) {
+function(ChannelService, Supports, Metadata) {
 
 	/** @constructor */
 
@@ -47,12 +48,14 @@ function(ChannelService, Supports) {
 
 		var supports = new Supports(req);
 
+		var metadata = new Metadata();
+
 		ChannelService.once('getChannels', function(error, response, body) {
 
 			var channels = JSON.parse(body);
 
 			res.render('grid.jade', {
-				metadata	: _app.metadata()
+				metadata	: metadata.get()
 			,	config		: _app.config
 			,	channels	: channels
 			,	supportsCSSFixedPosition : supports.CSSFixedPosition() // I might want to expose the entire Supports object.
