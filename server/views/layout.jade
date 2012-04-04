@@ -48,7 +48,7 @@ html
 
 				#search
 					form(action="/search.html", method='get')
-						a.icon.icon-search(href="/search?q=")
+						a.icon.icon-search(href="/search.html?q=")
 						input.btn.search(name="search", type="submit")
 						- var query = typeof(query) === 'undefined' ? '' : query
 						input.query(name="q", type="search", value=query, placeholder="#{__i('Search')}")

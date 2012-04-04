@@ -7,13 +7,13 @@ define([
 	/** @require */
 
 	// services
-	'services/channel'
+	'services/channel',
 
 	// utils
-,	'utils/metadata'
-,	'utils/supports'
-,	'utils/dateutils'
-,	'utils/requestn'
+	'utils/metadata',
+	'utils/supports',
+	'utils/dateutils',
+	'utils/requestn'
 
 ],
 
@@ -22,7 +22,7 @@ define([
  *	@class ChannelController
  */
 
-function(ChannelService, Metadata, Supports, DateUtils, Requestn) {
+function(Channel, Metadata, Supports, DateUtils, Requestn) {
 
 	/** @constructor */
 
@@ -43,11 +43,13 @@ function(ChannelService, Metadata, Supports, DateUtils, Requestn) {
 
 	/** @private */
 
-	var _app;
+	var _app,
 
-	var ChannelService = new ChannelService();
+		metadata = new Metadata(),
 
-	var DateUtils = new DateUtils();
+		ChannelService = new Channel(),
+
+		dateUtils = new DateUtils();
 
 	/** @public */
 
@@ -56,8 +58,8 @@ function(ChannelService, Metadata, Supports, DateUtils, Requestn) {
 
 		var id = req.params.id;
 
-		var CHANNEL_DETAILS = 'http://' + req.headers.host + '/channel/' + id + '/details.json'
-		,	CHANNEL_EVENTS = 'http://' + req.headers.host + '/channel/' + id + '/events.json'
+		var CHANNEL_DETAILS = 'http://' + req.headers.host + '/channel/' + id + '/details.json',
+			CHANNEL_EVENTS = 'http://' + req.headers.host + '/channel/' + id + '/events.json';
 
 		var supports = new Supports(req);
 
@@ -68,8 +70,8 @@ function(ChannelService, Metadata, Supports, DateUtils, Requestn) {
 			function(response) {
 
 				// API Error?
-				var error;
-				for ( API in response ) {
+				var error, API;
+				for (API in response) {
 					if ( response[API].response.statusCode === 500 || response[API].response.statusCode === 404) {
 						error = response[API].body + ' requesting: ' + API;
 						console.log(error);
@@ -78,36 +80,36 @@ function(ChannelService, Metadata, Supports, DateUtils, Requestn) {
 					}
 				}
 
-				var _channel_details = JSON.parse( response[CHANNEL_DETAILS].body )
-				,	_channel_events = JSON.parse( response[CHANNEL_EVENTS].body );
+				var _channel_details = JSON.parse( response[CHANNEL_DETAILS].body ),
+					_channel_events = JSON.parse( response[CHANNEL_EVENTS].body );
 
 				// add the events collection to the response body
 				_channel_details.events = _channel_events;
 
 				// Meta data
 				var metadata = [
-					{ property: "og:type"			, content: "upc-whatson:tv_channel" }
-				,	{ property: "og:url"			, content: "http://upcwhatson.herokuapp.com/channel/" + _channel_details.id + ".html" }
-				,	{ property: "og:title"			, content: _channel_details.name }
-				,	{ property: "og:description"	, content: _channel_details.description }
-				,	{ property: "og:image"			, content: "http://upcwhatson.herokuapp.com/assets/upclogo.jpg" }
+					{ property: "og:type"			, content: "upc-whatson:tv_channel" },
+					{ property: "og:url"			, content: "http://upcwhatson.herokuapp.com/channel/" + _channel_details.id + ".html" },
+					{ property: "og:title"			, content: _channel_details.name },
+					{ property: "og:description"	, content: _channel_details.description },
+					{ property: "og:image"			, content: "http://upcwhatson.herokuapp.com/assets/upclogo.jpg" }
 				];
 
 				var _metadata = new Metadata();
 					_metadata.override(metadata, 'property');
 
 					res.render('channel.jade', {
-						metadata	: _metadata.get()
-					,	config		: _app.config
-					,	data		: _channel_details
-					,	title		: _channel_details.name
-					,	prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-whatson: http://ogp.me/ns/fb/upc-whatson#' 
-					,	supports 	: req.supports
-					,	TEST_MODE	: false
+						metadata	: _metadata.get(),
+						config		: _app.config,
+						data		: _channel_details,
+						title		: _channel_details.name,
+						prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-whatson: http://ogp.me/ns/fb/upc-whatson#',
+						supports	: req.supports,
+						TEST_MODE	: false
 					}); // HTML output	
 		});
 
-	}
+	};
 
 	/** Render a JSON of channel details */
 	ChannelController.prototype.renderDetails = function(req, res) {
@@ -122,7 +124,7 @@ function(ChannelService, Metadata, Supports, DateUtils, Requestn) {
 
 		}).getDetails(id);
 
-	}
+	};
 
 
 	/** Render a JSON of channel events */
@@ -134,13 +136,13 @@ function(ChannelService, Metadata, Supports, DateUtils, Requestn) {
 
 			var channel_events = JSON.parse(body);
 
-				channel_events = DateUtils.prettifyCollection(channel_events, 'startDateTime');
+				channel_events = dateUtils.prettifyCollection(channel_events, 'startDateTime');
 
 			res.send(channel_events); // JSON output
 
 		}).getEvents(id);
 
-	}
+	};
 
 	/** @return */
 

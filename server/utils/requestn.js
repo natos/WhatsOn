@@ -37,7 +37,7 @@ function(request) {
 
 		while (t--) { request(urls[t], handler); }
 
-	}
+	};
 
 	/** @private */
 

@@ -7,12 +7,12 @@ define([
 	/** @require */
 
 	//modules
-	'util'
-,	'events'
-,	'request'
+	'util',
+	'events',
+	'request',
 
 	// config
-,	'config/global.config'
+	'config/global.config'
 
 ],
 
@@ -40,8 +40,8 @@ function(util, events, request, config) {
 
 	/** @private */
 
-	var PROGRAMME_DETAILS	= config.API_PREFIX + 'Programme/%%id%%.json'
-	,	PROGRAMME_EVENTS	= config.API_PREFIX + 'Programme/%%id%%/events.json?order=startDateTime';
+	var PROGRAMME_DETAILS	= config.API_PREFIX + 'Programme/%%id%%.json',
+		PROGRAMME_EVENTS	= config.API_PREFIX + 'Programme/%%id%%/events.json?order=startDateTime';
 
 
 	/** @public */

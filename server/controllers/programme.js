@@ -7,13 +7,13 @@ define([
 	/** @require */
 
 	// services
-	'services/programme'
+	'services/programme',
 
 	// utils
-,	'utils/metadata'
-,	'utils/supports'
-,	'utils/dateutils'
-,	'utils/requestn'
+	'utils/metadata',
+	'utils/supports',
+	'utils/dateutils',
+	'utils/requestn'
 
 ],
 
@@ -22,7 +22,7 @@ define([
  *	@class ChannelController
  */
 
-function(ProgrammeService, Metadata, Supports, DateUtils, Requestn) {
+function(Programme, Metadata, Supports, DateUtils, Requestn) {
 
 	/** @constructor */
 
@@ -43,11 +43,13 @@ function(ProgrammeService, Metadata, Supports, DateUtils, Requestn) {
 
 	/** @private */
 
-	var _app;
+	var _app,
 
-	var ProgrammeService = new ProgrammeService();
+		metadata = new Metadata(),
 
-	var DateUtils = new DateUtils();
+		ProgrammeService = new Programme(),
+
+		dateUtils = new DateUtils();
 
 	/** @public */
 
@@ -56,10 +58,8 @@ function(ProgrammeService, Metadata, Supports, DateUtils, Requestn) {
 
 		var id = req.params.id;
 
-		var PROGRAMME_DETAILS = 'http://' + req.headers.host + '/programme/' + id + '/details.json'
-		,	PROGRAMME_EVENTS = 'http://' + req.headers.host + '/programme/' + id + '/events.json'
-
-		var supports = new Supports(req);
+		var PROGRAMME_DETAILS = 'http://' + req.headers.host + '/programme/' + id + '/details.json',
+			PROGRAMME_EVENTS = 'http://' + req.headers.host + '/programme/' + id + '/events.json';
 
 		Requestn(
 
@@ -68,8 +68,8 @@ function(ProgrammeService, Metadata, Supports, DateUtils, Requestn) {
 			function(response) {
 
 				// API Error?
-				var error;
-				for ( API in response ) {
+				var error, API;
+				for (API in response) {
 					if ( response[API].response.statusCode === 500 || response[API].response.statusCode === 404) {
 						error = response[API].body + ' requesting: ' + API;
 						console.log(error);
@@ -78,8 +78,8 @@ function(ProgrammeService, Metadata, Supports, DateUtils, Requestn) {
 					}
 				}
 
-				var _programme_details = JSON.parse( response[PROGRAMME_DETAILS].body )
-				,	_programme_events = JSON.parse( response[PROGRAMME_EVENTS].body );
+				var _programme_details = JSON.parse( response[PROGRAMME_DETAILS].body ),
+					_programme_events = JSON.parse( response[PROGRAMME_EVENTS].body );
 
 				// add the events collection to the response body
 				_programme_details.events = _programme_events;
@@ -88,29 +88,26 @@ function(ProgrammeService, Metadata, Supports, DateUtils, Requestn) {
 				var isMovie = (_programme_details.subcategory.category.name.toLowerCase() == 'speelfilm');
 
 				// Meta data
-				var metadata = [
-					{ property: "og:type"			, content: (isMovie) ? "upc-whatson:movie" : "upc-whatson:tv_show" }
-				,	{ property: "og:url"			, content: "http://upcwhatson.herokuapp.com/programme/" + _programme_details.id + ".html" }
-				,	{ property: "og:title"			, content: _programme_details.title }
-				,	{ property: "og:description"	, content: _programme_details.description }
-				,	{ property: "og:image"			, content: "http://upcwhatson.herokuapp.com/assets/upclogo.jpg" }
+				var _metadata = [
+					{ property: "og:type"			, content: (isMovie) ? "upc-whatson:movie" : "upc-whatson:tv_show" },
+					{ property: "og:url"			, content: "http://upcwhatson.herokuapp.com/programme/" + _programme_details.id + ".html" },
+					{ property: "og:title"			, content: _programme_details.title },
+					{ property: "og:description"	, content: _programme_details.description },
+					{ property: "og:image"			, content: "http://upcwhatson.herokuapp.com/assets/upclogo.jpg" }
 				];
 
-				var _metadata = new Metadata();
-					_metadata.override(metadata, 'property');
-
-					res.render('programme.jade', {
-						metadata	: _metadata.get()
-					,	config		: _app.config
-					,	data		: _programme_details
-					,	title		: _programme_details.title
-					,	prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-whatson: http://ogp.me/ns/fb/upc-whatson#' 
-					,	supports 	: req.supports
-					,	isAjax		: req.isAjax
-					}); // HTML output	
+				res.render('programme.jade', {
+					metadata	: metadata.override(_metadata, 'property').get(),
+					config		: _app.config,
+					data		: _programme_details,
+					title		: _programme_details.title,
+					prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-whatson: http://ogp.me/ns/fb/upc-whatson#',
+					supports	: req.supports,
+					isAjax		: req.isAjax
+				}); // HTML output	
 		});
 
-	}
+	};
 
 	/** Render a JSON of programme details */
 	ProgrammeController.prototype.renderDetails = function(req, res) {
@@ -125,7 +122,7 @@ function(ProgrammeService, Metadata, Supports, DateUtils, Requestn) {
 
 		}).getDetails(id);
 
-	}
+	};
 
 
 	/** Render a JSON of programme events */
@@ -137,13 +134,13 @@ function(ProgrammeService, Metadata, Supports, DateUtils, Requestn) {
 
 			var programme_events = JSON.parse(body);
 
-				programme_events = DateUtils.prettifyCollection(programme_events, 'startDateTime');
+				programme_events = dateUtils.prettifyCollection(programme_events, 'startDateTime');
 
 			res.send(programme_events); // JSON output
 
 		}).getEvents(id);
 
-	}
+	};
 
 	/** @return */
 

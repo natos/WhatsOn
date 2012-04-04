@@ -11,9 +11,9 @@ requirejs.config({
 
 requirejs([
 
-	'config/global.config'
-,	'utils/metadata'
-,	'utils/list'
+	'config/global.config',
+	'utils/metadata',
+	'utils/list'
 
 ],
 
@@ -75,7 +75,7 @@ function(config, Metadata, List) {
 
 			it('should add new new tag to the collection and be different to the original collection', function() {
 
-				metadata.add({ property: 'author', content: 'Natan' })
+				metadata.add({ property: 'author', content: 'Natan' });
 
 				expect( metadata.get() ).not.toEqual( rawMetadata.get() );
 

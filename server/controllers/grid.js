@@ -7,11 +7,11 @@ define([
 	/** @require */
 
 	// services
-	'services/channel'
+	'services/channel',
 
 	// utils
-,	'utils/supports'
-,	'utils/metadata'
+	'utils/supports',
+	'utils/metadata'
 
 ],
 
@@ -20,7 +20,7 @@ define([
  *	@class GridController
  */
 
-function(ChannelService, Supports, Metadata) {
+function(Channel, Supports, Metadata) {
 
 	/** @constructor */
 
@@ -37,33 +37,31 @@ function(ChannelService, Supports, Metadata) {
 
 	/** @private */
 
-	var _app;
+	var _app,
 
-	var ChannelService = new ChannelService();
+		metadata = new Metadata(),
+
+		ChannelService = new Channel();
 
 
 	/** @public */
 
 	GridController.prototype.render = function(req, res) {
 
-		var supports = new Supports(req);
-
-		var metadata = new Metadata();
-
 		ChannelService.once('getChannels', function(error, response, body) {
 
 			var channels = JSON.parse(body);
 
 			res.render('grid.jade', {
-				metadata	: metadata.get()
-			,	config		: _app.config
-			,	channels	: channels
-			,	supports 	: req.supports
+				metadata	: metadata.get(),
+				config		: _app.config,
+				channels	: channels,
+				supports	: req.supports
 			});
 
 		}).getChannels();
 
-	}
+	};
 
 	/** @return */
 

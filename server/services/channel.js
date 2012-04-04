@@ -7,19 +7,19 @@ define([
 	/** @require */
 
 	//modules
-	'util'
-,	'events'
-,	'request'
+	'util',
+	'events',
+	'request',
 
 	// config
-,	'config/global.config'
+	'config/global.config'
 
 ],
 
 
 /**
- *	@class ChannelService
- */
+*	@class ChannelService
+*/
 
 function(util, events, request, config) {
 
@@ -40,14 +40,14 @@ function(util, events, request, config) {
 
 	/** @private */
 
-	var ALL_CHANNELS 	= config.API_PREFIX + 'Channel.json?order=position'
-	,	CHANNEL_DETAILS = config.API_PREFIX + 'Channel/%%id%%.json'
-	,	CHANNEL_EVENTS 	= config.API_PREFIX + 'Channel/%%id%%/events/NowAndNext.json?order=startDateTime';
+	var ALL_CHANNELS	= config.API_PREFIX + 'Channel.json?order=position',
+		CHANNEL_DETAILS	= config.API_PREFIX + 'Channel/%%id%%.json',
+		CHANNEL_EVENTS	= config.API_PREFIX + 'Channel/%%id%%/events/NowAndNext.json?order=startDateTime';
 
 	var CACHE = {
-		list		: []
-	,	timestamp	: null
-	,	duration	: 60 * 60 * 1000 // cache for 1 hour
+		list		: [],
+		timestamp	: null,
+		duration	: 60 * 60 * 1000 // cache for 1 hour
 	};
 
 	/** @public */

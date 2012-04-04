@@ -7,8 +7,8 @@ define([
 /**
 *	@requires
 */
-	'useragent'
-,	'useragent/features'
+	'useragent',
+	'useragent/features'
 
 ],
 
@@ -32,13 +32,13 @@ function(useragent, useragent_features) {
 			family = agent.family.toLowerCase();
 
 		/**
-		 * Whether the user agent supports CSS fixed position elements.
-		 * Assumption: new browsers support position:fixed. Only old
-		 * browsers do not support it. Therefore, we only need to identify
-		 * and reject old browsers. This is more maintainable than the opposite:
-		 * the list of old (incapable) browsers is (mostly) known and static. 
-		 * The list of new (capable) browsers grows every day.
-		 */
+		* Whether the user agent supports CSS fixed position elements.
+		* Assumption: new browsers support position:fixed. Only old
+		* browsers do not support it. Therefore, we only need to identify
+		* and reject old browsers. This is more maintainable than the opposite:
+		* the list of old (incapable) browsers is (mostly) known and static. 
+		* The list of new (capable) browsers grows every day.
+		*/
 		this.CSSFixedPosition = function() {
 			var supported = true,
 				identified = false;
@@ -88,18 +88,17 @@ function(useragent, useragent_features) {
 				identified = true;
 			}
 
-	//		console.log("supports CSSFixedPosition = " + supported);
 			return supported;
-		}
+		};
 
 		// Supports
 		return {
 			positionFixed: this.CSSFixedPosition()
-		}
-	}
+		};
+	};
 
 	/** @public */
- 
+
 	/** @return */
 
 	return Supports;

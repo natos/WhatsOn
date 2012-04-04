@@ -28,7 +28,5 @@
 	"%s weeks ago": "%s weken geleden",
 	"Results for \"%s\"": "Results for \"%s\"",
 	"Results for &quot;%s&quot;": "Results for &quot;%s&quot;",
-	"Favorites": "Favorites",
-	"Settings": "Settings",
-	"Logout": "Logout"
+	"Favorites": "Favorites"
 }

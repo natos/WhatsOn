@@ -30,17 +30,17 @@ function(config) {
 		this.children = [];
 
 		// add data directly
-		data && this.add(data);
+		if (data) { this.add(data); }
 
 		return this;
 
-	}
+	};
 
 
 	/** @public */
 
 	/** collection */ 
-	List.prototype.children;
+	List.prototype.children = [];
 
 	/** add new child */
 	List.prototype.add = function(child) {
@@ -69,7 +69,7 @@ function(config) {
 
 			return this.children.splice( t , 1 )[0];
 
-		}
+		};
 
 		return this.get(q, remove);
 

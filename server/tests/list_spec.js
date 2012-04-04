@@ -19,9 +19,9 @@ function(List) {
 
 	/** Raw Data */
 	var data = [
-		{ name: "Jimi", last: "Hendrix" }
-	,	{ name: "Janis", last: "Joplin" }
-	,	{ name: "Jim", last: "Morrison" }
+		{ name: "Jimi", last: "Hendrix" },
+		{ name: "Janis", last: "Joplin" },
+		{ name: "Jim", last: "Morrison" }
 	];
 
 

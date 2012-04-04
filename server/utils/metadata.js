@@ -8,9 +8,9 @@ define([
 *	@requires
 */
 
-	'util'
-,	'config/global.config'
-,	'utils/list'
+	'util',
+	'config/global.config',
+	'utils/list'
 
 ],
 
@@ -24,12 +24,12 @@ function(util, config, List) {
 	/** @private */
 
 	var meta = [
-		{ property: 'og:title'		, content: config.APP_NAME }
-	,	{ property: 'og:type'		, content: 'app' }
-	,	{ property: 'og:url'		, content: config.APP_URL }
-	,	{ property: 'og:image'		, content: config.APP_LOGO }
-	,	{ property: 'og:site_name'	, content: config.APP_NAME }
-	,	{ property: 'fb:app_id'		, content: config.facebook['app-id'] }
+		{ property: 'og:title'		, content: config.APP_NAME },
+		{ property: 'og:type'		, content: 'app' },
+		{ property: 'og:url'		, content: config.APP_URL },
+		{ property: 'og:image'		, content: config.APP_LOGO },
+		{ property: 'og:site_name'	, content: config.APP_NAME },
+		{ property: 'fb:app_id'		, content: config.facebook['app-id'] }
 	];
 
 
@@ -44,7 +44,7 @@ function(util, config, List) {
 
 		return this;
 
-	}
+	};
 
 	/** @inheritance */
 	util.inherits(Metadata, List);

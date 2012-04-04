@@ -8,20 +8,21 @@ define([
 	/** @require */
 
 	// modules
-	'express'
-,	'i18n'
+	'express',
+	'i18n',
 
 	// config
-,	'config/global.config'
+	'config/global.config',
 
 	// utils
-,	'utils/supports'
+	'utils/supports',
 
 	// controllers
-,	'controllers/dashboard'
-,	'controllers/grid'
-,	'controllers/channel'
-,	'controllers/programme'
+	'controllers/dashboard',
+	'controllers/grid',
+	'controllers/channel',
+	'controllers/programme',
+	'controllers/search'
 
 ],
 
@@ -30,7 +31,7 @@ define([
  *	@class AppController
  */
 
-function(express, i18n, config, Supports, Dashboard, Grid, Channel, Programme) {
+function(express, i18n, config, Supports, Dashboard, Grid, Channel, Programme, Search) {
 
 	/** @constructor */
 
@@ -51,10 +52,11 @@ function(express, i18n, config, Supports, Dashboard, Grid, Channel, Programme) {
 			//	setup app controllers
 			self.controllers = [
 
-				new Dashboard(self)
-			,	new Grid(self)
-			,	new Channel(self)
-			,	new Programme(self)
+				new Dashboard(self),
+				new Grid(self),
+				new Channel(self),
+				new Programme(self),
+				new Search(self)
 
 			];
 
@@ -76,7 +78,7 @@ function(express, i18n, config, Supports, Dashboard, Grid, Channel, Programme) {
 				server.use(server.router);
 				server.use(express.bodyParser());
 				server.use(express.methodOverride());
-				server.use(express.static('client'));
+				server.use(express['static']('client'));
 				server.use(i18n.init);
 				server.set('views', 'server/views');
 				server.set('view options', { layout: false });
@@ -93,8 +95,8 @@ function(express, i18n, config, Supports, Dashboard, Grid, Channel, Programme) {
 			// register i18n helpers for use in templates
 
 			server.helpers({
-			  __i: i18n.__,
-			  __n: i18n.__n
+				__i: i18n.__,
+				__n: i18n.__n
 			});
 
 			// start the server
@@ -104,7 +106,7 @@ function(express, i18n, config, Supports, Dashboard, Grid, Channel, Programme) {
 
 		return server;
 
-	}
+	};
 
 
 	/** @public */
@@ -117,7 +119,7 @@ function(express, i18n, config, Supports, Dashboard, Grid, Channel, Programme) {
 
 		next();
 
-	}
+	};
 
 
 	/** @return */
