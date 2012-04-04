@@ -86,14 +86,21 @@ function(express, i18n, config, Supports, Dashboard, Grid, Channel, Programme, S
 
 			server.configure('development', function() {
 				server.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
+				i18n.configure({ debug: true });
 			});
 
 			server.configure('production', function() {
-				server.use(express.errorHandler()); 
+				server.use(express.errorHandler());
+				i18n.configure({ debug: false });
+			});
+
+			i18n.configure({ 
+				locales:['en', 'nl', 'es'], 
+				register: global, 
+				directory: './server/locales'
 			});
 
 			// register i18n helpers for use in templates
-
 			server.helpers({
 				__i: i18n.__,
 				__n: i18n.__n
