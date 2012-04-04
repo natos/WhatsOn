@@ -102,7 +102,7 @@ function(ChannelService, Metadata, Supports, DateUtils, Requestn) {
 					,	data		: _channel_details
 					,	title		: _channel_details.name
 					,	prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-whatson: http://ogp.me/ns/fb/upc-whatson#' 
-					,	supportsCSSFixedPosition : supports.CSSFixedPosition() // I might want to expose the entire Supports object.
+					,	supports 	: req.supports
 					,	TEST_MODE	: false
 					}); // HTML output	
 		});

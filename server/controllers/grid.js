@@ -30,7 +30,7 @@ function(ChannelService, Supports, Metadata) {
 
 		// Routing
 
-		app.server.get('/grid', this.render);
+		app.server.get('/grid.html', this.render);
 
 	};
 
@@ -58,7 +58,7 @@ function(ChannelService, Supports, Metadata) {
 				metadata	: metadata.get()
 			,	config		: _app.config
 			,	channels	: channels
-			,	supportsCSSFixedPosition : supports.CSSFixedPosition() // I might want to expose the entire Supports object.
+			,	supports 	: req.supports
 			});
 
 		}).getChannels();

@@ -1,6 +1,6 @@
 !!! 5
 html
-	head(prefix="#{config.HTML_PREFIX}", data-api="#{config.API_PREFIX}", data-fixposition="#{config.FIX_POSITION}", data-test="false")
+	head(prefix="#{config.HTML_PREFIX}", data-api="#{config.API_PREFIX}", data-fixposition="#{supports.positionFixed}", data-test="false")
 
 		title #{config.APP_NAME}
 
@@ -34,7 +34,7 @@ html
 					h1 #{config.APP_NAME}
 
 				#navigation
-					a.grid.icon.icon-list(href="/grid", title="#{__i('TV Grid')}")
+					a.grid.icon.icon-list(href="/grid.html", title="#{__i('TV Grid')}")
 						span.label #{__i('TV Grid')}
 
 				#user-control
@@ -47,7 +47,7 @@ html
 							span.label #{__i('Settings')}
 
 				#search
-					form(action="/search", method='get')
+					form(action="/search.html", method='get')
 						a.icon.icon-search(href="/search?q=")
 						input.btn.search(name="search", type="submit")
 						- var query = typeof(query) === 'undefined' ? '' : query

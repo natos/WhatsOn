@@ -91,6 +91,11 @@ function(useragent, useragent_features) {
 	//		console.log("supports CSSFixedPosition = " + supported);
 			return supported;
 		}
+
+		// Supports
+		return {
+			positionFixed: this.CSSFixedPosition()
+		}
 	}
 
 	/** @public */

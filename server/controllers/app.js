@@ -44,6 +44,10 @@ function(express, i18n, config, Supports, Dashboard, Grid, Channel, Programme) {
 			// create server
 			self.server = createServer();
 
+			// wildcards: global handler for .html files
+			self.server.get('/', self.globalHandler);
+			self.server.get('*.html', self.globalHandler);
+
 			//	setup app controllers
 			self.controllers = [
 

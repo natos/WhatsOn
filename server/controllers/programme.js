@@ -105,8 +105,7 @@ function(ProgrammeService, Metadata, Supports, DateUtils, Requestn) {
 					,	data		: _programme_details
 					,	title		: _programme_details.title
 					,	prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-whatson: http://ogp.me/ns/fb/upc-whatson#' 
-					,	supportsCSSFixedPosition : supports.CSSFixedPosition() // I might want to expose the entire Supports object.
-					,	TEST_MODE	: false
+					,	supports 	: req.supports
 					,	isAjax		: req.isAjax
 					}); // HTML output	
 		});
