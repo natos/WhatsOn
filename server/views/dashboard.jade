@@ -3,7 +3,7 @@ extends layout
 block content
 	#topbookings
 		ul.show
-			each booking in topbookings
+			each event in topbookings
 				li.programme
 					.channel
 						a(href="/channel/#{event.channel.id}.html") #{event.channel.name}
