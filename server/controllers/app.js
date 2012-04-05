@@ -46,19 +46,17 @@ function(express, i18n, config, Supports, Dashboard, Grid, Channel, Programme, S
 			self.server = createServer();
 
 			// wildcards: global handler for .html files
-			self.server.get('/', self.globalHandler);
-			self.server.get('*.html', self.globalHandler);
+			self.server.get('/', globalHandler);
+			self.server.get('*.html', globalHandler);
 
 			//	setup app controllers
-			self.controllers = [
-
-				new Dashboard(self),
-				new Grid(self),
-				new Channel(self),
-				new Programme(self),
-				new Search(self)
-
-			];
+			self.controllers = {
+				dashboard	: new Dashboard(self),
+				grid		: new Grid(self),
+				channel		: new Channel(self),
+				programme	: new Programme(self),
+				search		: new Search(self)
+			};
 
 		return self;
 	};
@@ -66,11 +64,26 @@ function(express, i18n, config, Supports, Dashboard, Grid, Channel, Programme, S
 
 	/** @private */
 
-	var port = process.env.PORT || 3000;
+	var globalHandler = function(req, res, next) {
+
+		req.isAjax = req.headers['x-requested-with'] === 'XMLHttpRequest';
+
+		req.supports = new Supports(req);
+
+		next();
+
+	};
 
 	var createServer = function() {
 
-		var self = this;
+		// not working on version 0.3.0, fixed on 0.3.4
+		// but is not available on npm yet
+		i18n.configure({ 
+			directory: 'server/locales',
+			locales:['en', 'nl', 'es'], 
+			register: global, 
+			debug: true
+		});
 
 		var server = express.createServer();
 
@@ -78,7 +91,7 @@ function(express, i18n, config, Supports, Dashboard, Grid, Channel, Programme, S
 				server.use(server.router);
 				server.use(express.bodyParser());
 				server.use(express.methodOverride());
-				server.use(express['static']('client'));
+				server.use(express['static']('client')); // static is a reserved word?
 				server.use(i18n.init);
 				server.set('views', 'server/views');
 				server.set('view options', { layout: false });
@@ -86,18 +99,10 @@ function(express, i18n, config, Supports, Dashboard, Grid, Channel, Programme, S
 
 			server.configure('development', function() {
 				server.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
-				i18n.configure({ debug: true });
 			});
 
 			server.configure('production', function() {
 				server.use(express.errorHandler());
-				i18n.configure({ debug: false });
-			});
-
-			i18n.configure({ 
-				locales:['en', 'nl', 'es'], 
-				register: global, 
-				directory: './server/locales'
 			});
 
 			// register i18n helpers for use in templates
@@ -107,9 +112,7 @@ function(express, i18n, config, Supports, Dashboard, Grid, Channel, Programme, S
 			});
 
 			// start the server
-			server.listen(port);
-
-			console.log("Express server listening on port %d", server.address().port);
+			server.listen(process.env.PORT || config.PORT); console.log("Express server listening on port %d", server.address().port);
 
 		return server;
 
@@ -117,16 +120,6 @@ function(express, i18n, config, Supports, Dashboard, Grid, Channel, Programme, S
 
 
 	/** @public */
-
-	AppController.prototype.globalHandler = function(req, res, next) {
-
-		req.isAjax = req.headers['x-requested-with'] === 'XMLHttpRequest';
-
-		req.supports = new Supports(req);
-
-		next();
-
-	};
 
 
 	/** @return */
