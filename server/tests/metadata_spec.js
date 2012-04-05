@@ -72,7 +72,6 @@ function(config, Metadata, List) {
 
 		describe("Metadata basic behaviors", function() {
 
-
 			it('should add new new tag to the collection and be different to the original collection', function() {
 
 				metadata.add({ property: 'author', content: 'Natan' });

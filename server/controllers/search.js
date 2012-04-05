@@ -13,7 +13,6 @@ define([
 	'services/search',
 
 	// utils
-	'utils/supports',
 	'utils/metadata',
 	'utils/dateutils'
 
@@ -24,7 +23,7 @@ define([
 *	@class SearchController
 */
 
-function(querystring, Search, Supports, Metadata, DateUtils) {
+function(querystring, Search, Metadata, DateUtils) {
 
 	/** @constructor */
 

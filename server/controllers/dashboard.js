@@ -8,9 +8,10 @@ define([
 
 	// services
 	'services/channel',
+	'services/bookings',
 
 	// utils
-	'utils/supports',
+	'utils/dateutils',
 	'utils/metadata'
 
 ],
@@ -20,7 +21,7 @@ define([
  *	@class DashboardController
  */
 
-function(Channel, Supports, Metadata) {
+function(Channel, Bookings, DateUtils, Metadata) {
 
 	/** @constructor */
 
@@ -41,23 +42,50 @@ function(Channel, Supports, Metadata) {
 
 		metadata = new Metadata(),
 
-		ChannelService = new Channel();
+		dateUtils = new DateUtils(),
+
+		ChannelService = new Channel(),
+
+		BookingsService = new Bookings();
 
 
 	/** @public */
 
 	DashboardController.prototype.render = function(req, res) {
 
-		ChannelService.once('getChannels', function(error, response, body) {
+		var channels, topbookings, render = function() {
 
-			var channels = JSON.parse(body);
+			if (!channels||!topbookings) { return; }
+
+			topbookings = dateUtils.prettifyCollection(topbookings, 'startDateTime');
 
 			res.render('dashboard.jade', {
 				metadata	: metadata.get(),
 				config		: _app.config,
 				channels	: channels,
+				topbookings : topbookings,
 				supports	: req.supports
 			});
+
+		};
+
+		BookingsService.once('getTopBookings', function(error, response, body) {
+
+			topbookings = JSON.parse(body);
+
+			// Weird, every event comes wrapped whitin an array (??)
+			// this is just for unwrap the event;
+			topbookings = (function() {	var events = []; topbookings.forEach(function(e, i) { events.push(e[0]); }); return events; }());
+
+			render();
+
+		}).getTopBookings();
+
+		ChannelService.once('getChannels', function(error, response, body) {
+
+			channels = JSON.parse(body);
+
+			render();
 
 		}).getChannels();
 

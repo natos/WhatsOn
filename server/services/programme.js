@@ -43,7 +43,6 @@ function(util, events, request, config) {
 	var PROGRAMME_DETAILS	= config.API_PREFIX + 'Programme/%%id%%.json',
 		PROGRAMME_EVENTS	= config.API_PREFIX + 'Programme/%%id%%/events.json?order=startDateTime';
 
-
 	/** @public */
 
 	/** Get data from a programme */

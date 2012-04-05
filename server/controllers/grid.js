@@ -10,7 +10,6 @@ define([
 	'services/channel',
 
 	// utils
-	'utils/supports',
 	'utils/metadata'
 
 ],
@@ -20,7 +19,7 @@ define([
  *	@class GridController
  */
 
-function(Channel, Supports, Metadata) {
+function(Channel, Metadata) {
 
 	/** @constructor */
 

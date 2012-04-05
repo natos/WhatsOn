@@ -11,7 +11,6 @@ define([
 
 	// utils
 	'utils/metadata',
-	'utils/supports',
 	'utils/dateutils',
 	'utils/requestn'
 
@@ -22,7 +21,7 @@ define([
  *	@class ChannelController
  */
 
-function(Programme, Metadata, Supports, DateUtils, Requestn) {
+function(Programme, Metadata, DateUtils, Requestn) {
 
 	/** @constructor */
 

@@ -1,7 +1,18 @@
 extends layout
 
 block content
-	h1 #{__i('Dashboard')}
+	#topbookings
+		ul.show
+			each booking in topbookings
+				li.programme
+					.channel
+						a(href="/channel/#{event.channel.id}.html") #{event.channel.name}
+					h1
+						a(href="/programme/#{event.programme.id}.html") #{event.programme.title}
+					p
+						| #{event.prettyDate}, 
+						| #{ new Date(event.startDateTime).getHours() }hs
+						button.btn.icon.icon-target #{__i('Record')}
 
 	ul#channels.mosaic
 		each channel in channels

@@ -11,7 +11,6 @@ define([
 
 	// utils
 	'utils/metadata',
-	'utils/supports',
 	'utils/dateutils',
 	'utils/requestn'
 
@@ -22,7 +21,7 @@ define([
  *	@class ChannelController
  */
 
-function(Channel, Metadata, Supports, DateUtils, Requestn) {
+function(Channel, Metadata, DateUtils, Requestn) {
 
 	/** @constructor */
 
@@ -60,8 +59,6 @@ function(Channel, Metadata, Supports, DateUtils, Requestn) {
 
 		var CHANNEL_DETAILS = 'http://' + req.headers.host + '/channel/' + id + '/details.json',
 			CHANNEL_EVENTS = 'http://' + req.headers.host + '/channel/' + id + '/events.json';
-
-		var supports = new Supports(req);
 
 		Requestn(
 
