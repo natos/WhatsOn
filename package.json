@@ -1,25 +1,29 @@
 {
-	"name":        "WhatsOn!"
-,	"version":     "0.1.1"
-,	"description": "UPC shows whats on tv now and next"
-,	"engines": {
-		"node": "0.6.14"
-	,	"npm":  "1.1.9"
-	}
-,	"dependencies": {
-		"express": "2.5.8"
-	,	"nodeunit": "0.7.4"
-	,	"node-uuid": "1.2.0"
-	,	"socket.io": "0.8.4"
-	,	"jade": "0.20.0"
-	,	"request": "2.9.100"
-	,	"useragent": "1.0.5"
-	,	"i18n": "0.3.0"
-	,	"timetrack": "0.0.1"
-	,	"mongodb": "0.9.9-7"
-	,	"mongoose": "2.5.13"
-	,	"hooks": "0.2.0"
-	,	"jasmine-node": "1.0.22"
-	,	"requirejs": "1.0.7"
+	"name": "WhatsOn!",
+	"version": "0.1.2",
+	"author": "Natan Santolo <nsantolo@upcbroadband.com>",
+	"description": "UPC shows whats on tv now and next",
+	"engines": {
+		"node": "0.6.14",
+		"npm":  "1.1.9"
+	},
+	"scripts": {
+		"start": "node ./main",
+		"test": "jasmine-node ./server"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://natos@github.com/natos/WhatsOn.git"
+	},
+	"dependencies": {
+		"express": "2.5.8",
+		"jade": "0.20.0",
+		"request": "2.9.100",
+		"useragent": "1.0.5",
+		"i18n": "0.3.4",
+		"timetrack": "0.0.1",
+		"hooks": "0.2.0",
+		"jasmine-node": "1.0.22",
+		"requirejs": "1.0.7"
   }
 }
