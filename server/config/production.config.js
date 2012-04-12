@@ -17,6 +17,7 @@ function() {
 
 	var config = {
 
+		'ENV'			: 'production',
 		'APP_NAME'		: 'WhatsOn!',
 		'APP_URL'		: 'http://upcwhatson.herokuapp.com/',
 		'APP_LOGO'		: 'http://upcwhatson.herokuapp.com/assets/upclogo.jpg',
