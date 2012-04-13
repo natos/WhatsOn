@@ -5,14 +5,15 @@ block content
 		ul.show
 			each event in topbookings
 				li.programme
-					.channel
-						a(href="/channel/#{event.channel.id}.html") #{event.channel.name}
-					h1
-						a(href="/programme/#{event.programme.id}.html") #{event.programme.title}
-					p
-						| #{event.prettyDate}, 
-						| #{ new Date(event.startDateTime).getHours() }hs
-						button.btn.icon.icon-target #{__i('Record')}
+					div.programme-details
+						.channel
+							a(href="/channel/#{event.channel.id}.html") #{event.channel.name}
+						h1
+							a(href="/programme/#{event.programme.id}.html") #{event.programme.title}
+						p
+							| #{event.prettyDate}, 
+							| #{ new Date(event.startDateTime).getHours() }hs
+							button.btn.icon.icon-target #{__i('Record')}
 
 	ul#channels.mosaic
 		each channel in channels

@@ -338,7 +338,15 @@ input.icon {
    ============== */
 
 .mosaic {
-	padding: 20px 10px;
+	padding: 20px 0;
+	margin:0 -10px;
+	text-align:justify;
+}
+
+@media (min-width:480px) {
+		.mosaic {
+			margin:0 10px;
+		}
 }
 
 .mosaic .channel {
@@ -372,20 +380,17 @@ input.icon {
 #topbookings {
 	position: relative;
 	margin: 0;
-	height: 580px;
+	max-height: 580px;
 	right: 0;
 	left: 0;
 	margin: -20px;
-	margin-top: -40px;
-	margin-bottom: 0px;
 	overflow: hidden;
 }
 
 #navigator {
-	display: block;
-	position: absolute;
-	left: 45%;
-	bottom: 10px;
+	position:relative;
+	top: -30px;
+	text-align:center;
 }
 
 .disc {
@@ -412,38 +417,57 @@ input.icon {
 	display: block;
 	position: relative;
 	background: #fff;
-	height: 100%;
+	height: 100%; /* 100% of #topbookings parent container */
 
-	-webkit-transition: left .5s ease-in-out;
+	-webkit-transition: 	left .5s ease-in-out;
+	-moz-transition: 		left .5s ease-in-out;
+	-o-transition: 		left .5s ease-in-out;
+	transition: 			left .5s ease-in-out;
 }
 
-.show .programme {
-	display:block;
-	position: absolute;
-	right: 0;
-	left: 0;
-	margin: 0;
-	padding: 40px;
-	background: #fff;
-	height: 500px;
+	.show > .programme {
+		display:block;
+		position: absolute;
+		left: 0;
+		margin: 0;
+		width:100%;
+	}
+
+		.programme > .programme-bg {
+			position:relative;
+			width:100%;
+			z-index:0;	
+		}
+
+		.programme > .programme-details {
+			position:absolute;
+			padding: 20px;
+			z-index:1;
+		}
+
+			.programme-details h1 {
+				font-size: 2em;
+			}
+
+			.programme-details p {
+				color: #eee;
+			}
+
+			.programme-details a,
+			.programme-details a:hover,
+			.programme-details a:visited,
+			.programme-details a:active,
+			.programme-details p {
+				color: #fff;
+				text-shadow: 2px 2px 2px #000000;
+			}
+
+@media (min-width:480px) {
+		.programme > .programme-details {
+			padding: 40px;
+		}
 }
 
-.show .programme h1 {
-	font-size: 2em;
-}
-
-.show .programme p {
-	color: #eee;
-}
-
-.show .programme a,
-.show .programme a:hover,
-.show .programme a:visited,
-.show .programme a:active,
-.show .programme p {
-	color: #fff;
-	text-shadow: 2px 2px 2px #000000;
-}
 
 
 /* ==============
