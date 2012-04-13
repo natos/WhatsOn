@@ -23,6 +23,10 @@
 	   Top bookings
 	   ============== */
 
+	#top {
+		height: 70px;
+	}
+
 	#topbookings {
 		margin: 0;
 		height: 180px;
@@ -100,6 +104,10 @@
 	/* ==============
 	   Top bookings
 	   ============== */
+
+	#top {
+		height: 70px;
+	}
 
 	#topbookings {
 		margin: 0;

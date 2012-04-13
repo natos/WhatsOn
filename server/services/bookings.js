@@ -42,6 +42,7 @@ function(util, events, request, config) {
 
 	var TOP_BOOKINGS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGBooking.woa/wa/topBookings';
 
+	var cache;
 
 	/** @public */
 
@@ -50,9 +51,19 @@ function(util, events, request, config) {
 
 		var self = this;
 
+		if (cache) { 
+
+			self.emit('getTopBookings', '', '', cache);
+
+			return this;
+
+		}
+
 		request(TOP_BOOKINGS, function(error, response, body) {
 
 			self.emit('getTopBookings', error, response, body);
+
+			cache = body;
 
 		});
 
