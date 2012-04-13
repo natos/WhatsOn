@@ -1,139 +1,71 @@
 [
     [{
         "channel": {
-            "id": "7D",
+            "id": "7M",
             "_type": "Channel",
-            "name": "Nederland 2 HD"
+            "name": "RTL 7"
         },
-        "endDateTime": "2012-03-06T20:05Z",
+        "endDateTime": "2012-04-12T22:05Z",
         "_type": "Event",
-        "id": "136890356",
+        "id": "141104697",
         "programme": {
-            "title": "De dag dat Pim Fortuyn...",
+            "title": "American Gangster",
             "_type": "Programme",
-            "id": "18578989",
-            "shortDescription": "Documentaire. Precies 10 jaar geleden, op zes maart 2002, boekte Pim Fortuyn als voorman van Leefbaar Rotterdam een bijzondere zege bij de gemeenteraadsverkiezingen in de Maasstad."
+            "id": "19106597",
+            "shortDescription": "Misdaaddrama. Harlem, 1968. Frank Lucas is de rechterhand van misdaadkopstuk Bumpy Johnson. Na de plotse dood van zijn baas is Frank vastberaden uit diens schaduw te treden. Hij besluit zich toe te leggen op de invoer van heroïne vanuit Bangkok en slaagt erin de drugs het land binnen te smokkelen. Vanaf dat ogenblik stroomt het geld bij hem binnen. Ondertussen stelt de integere politiedetective Richie Roberts een hecht team samen dat de groeiende drugshandel in New York moet aanpakken."
         },
-        "startDateTime": "2012-03-06T19:15Z"
+        "startDateTime": "2012-04-12T18:30Z"
     }],
     [{
         "channel": {
-            "id": "9o",
+            "id": "7J",
             "_type": "Channel",
-            "name": "RTL 5 HD"
+            "name": "Nederland 1"
         },
-        "endDateTime": "2012-03-06T20:30Z",
+        "endDateTime": "2012-04-12T19:30Z",
         "_type": "Event",
-        "id": "136304000",
+        "id": "141868045",
         "programme": {
-            "title": "Barbies bruiloft",
+            "title": "Bloedverwanten",
             "_type": "Programme",
-            "id": "18510505",
-            "shortDescription": "Realityprogramma over de huwelijksvoorbereidingen van Barbie en Michael. Het Haagse koppel en hun kleurrijke familie en vrienden geven een indruk van hun extravagante wereld."
+            "id": "19210474",
+            "shortDescription": "Dramaserie. Esther is zo geobsedeerd door de mysterieuze nieuwe vriendin van Anton dat ze het stel besluit te volgen naar de golfclub. Dit gaat Anton te ver en hij vertelt haar de keiharde waarheid. Gekwetst en verdrietig vindt Esther troost in de armen van Mok."
         },
-        "startDateTime": "2012-03-06T19:30Z"
+        "startDateTime": "2012-04-12T18:30Z"
     }],
     [{
         "channel": {
-            "id": "90",
+            "id": "8B",
             "_type": "Channel",
-            "name": "Net 5 HD"
+            "name": "RTL Crime"
         },
-        "endDateTime": "2012-03-06T21:25Z",
+        "endDateTime": "2012-04-12T10:00Z",
         "_type": "Event",
-        "id": "136890831",
+        "id": "141067941",
         "programme": {
-            "title": "Hollywood Vrouwen",
+            "title": "24",
             "_type": "Programme",
-            "id": "18578963",
-            "shortDescription": "Realityserie. In deze tweede serie geven Yolanda, Myrthe, Inge en nieuwe Hollywood vrouw Conchita de kijker een kijkje in hun turbulente leven in Los Angeles."
+            "id": "18614672",
+            "shortDescription": "Amerikaanse thrillerreeks. Jack Bauer heeft CTU verlaten en werkt nu voor de minister van defensie. Tevens heeft hij een relatie met diens dochter. Dan slaat het noodlot weer toe."
         },
-        "startDateTime": "2012-03-06T20:30Z"
+        "startDateTime": "2012-04-12T09:00Z"
     }],
     [{
         "channel": {
-            "id": "9n",
+            "id": "7J",
             "_type": "Channel",
-            "name": "RTL 4 HD"
+            "name": "Nederland 1"
         },
-        "endDateTime": "2012-03-06T19:30Z",
+        "endDateTime": "2012-04-12T21:05Z",
         "_type": "Event",
-        "id": "136303957",
+        "id": "141868056",
         "programme": {
-            "title": "GTST",
+            "title": "Het snelle geld",
             "_type": "Programme",
-            "id": "18481118",
-            "shortDescription": "Anton is niet blij met Mike. Maxime heeft er genoeg van als Jef weer over haar aanbidder begint. Bing verbergt voor Sjors dat hij bezig is met het zoeken naar een draagmoeder."
+            "id": "19210472",
+            "shortDescription": "In de afgelopen 25 jaar is ons land schatrijk geworden. En nu zitten we in een crisis die ons allen treft. Wat is er gebeurd? Deze vraag bracht Jort Kelder en de VPRO bij elkaar. Jort Kelder kijkt als getuige-deskundige en betrokkene terug op een kwart eeuw van wilde kapitalistische jaren in Nederland."
         },
-        "startDateTime": "2012-03-06T19:00Z"
-    }],
-    [{
-        "channel": {
-            "id": "77",
-            "_type": "Channel",
-            "name": "SBS 6 HD"
-        },
-        "endDateTime": "2012-03-06T20:30Z",
-        "_type": "Event",
-        "id": "136890952",
-        "programme": {
-            "title": "NCIS",
-            "_type": "Programme",
-            "id": "18579027",
-            "shortDescription": "Misdaadserie. Nadat een kapitein van de marine is vermoord in zijn hotelkamer, moet het NCIS-team zijn zwangere partner vinden om haar te beschermen tegen onbekende aanvallers."
-        },
-        "startDateTime": "2012-03-06T19:30Z"
-    }],
-    [{
-        "channel": {
-            "id": "77",
-            "_type": "Channel",
-            "name": "SBS 6 HD"
-        },
-        "endDateTime": "2012-03-06T21:30Z",
-        "_type": "Event",
-        "id": "136890963",
-        "programme": {
-            "title": "NCIS",
-            "_type": "Programme",
-            "id": "18579030",
-            "shortDescription": "Amerikaanse misdaadserie. Ducky komt tot de ontdekking dat een van de lijken die hij gebruikt voor onderzoek, het slachtoffer is van een moord."
-        },
-        "startDateTime": "2012-03-06T20:30Z"
-    }],
-    [{
-        "channel": {
-            "id": "9n",
-            "_type": "Channel",
-            "name": "RTL 4 HD"
-        },
-        "endDateTime": "2012-03-07T23:20Z",
-        "_type": "Event",
-        "id": "136449011",
-        "programme": {
-            "title": "The Voice Kids",
-            "_type": "Programme",
-            "id": "17905770",
-            "shortDescription": "Zoektocht naar zangtalent bij kinderen tussen de 6 en 14 jaar zoals bij The Voice of Holland. Zij worden gescout en gecoacht door Marco Borsato, Angela Groothuizen en Nick & Simon."
-        },
-        "startDateTime": "2012-03-07T21:30Z"
-    }],
-    [{
-        "channel": {
-            "id": "7G",
-            "_type": "Channel",
-            "name": "Nederland 3"
-        },
-        "endDateTime": "2012-03-06T19:30Z",
-        "_type": "Event",
-        "id": "136889976",
-        "programme": {
-            "title": "De Wereld Draait Door",
-            "_type": "Programme",
-            "id": "17679778",
-            "shortDescription": "Liveprogramma met actuele gasten uit de politiek, wetenschap, sport, cultuur en media. Met optredens, opmerkelijke tv-fragmenten, de Jakhalzen, Fokke & Sukke en LuckyTV."
-        },
-        "startDateTime": "2012-03-06T18:30Z"
+        "startDateTime": "2012-04-12T20:15Z"
     }],
     [{
         "channel": {
@@ -141,32 +73,100 @@
             "_type": "Channel",
             "name": "RTL 4"
         },
-        "endDateTime": "2012-03-06T20:30Z",
+        "endDateTime": "2012-04-12T19:30Z",
         "_type": "Event",
-        "id": "136302840",
+        "id": "141104675",
         "programme": {
-            "title": "TV Makelaar",
+            "title": "Help, mijn man is klusser",
             "_type": "Programme",
-            "id": "18188649",
-            "shortDescription": "Programma waarin Lieke van Lexmond en Froukje de Both verschillende huizen bezoeken om een koop of verkoop te realiseren."
+            "id": "19106364",
+            "shortDescription": "Realityprogramma waarin John Williams wanhopige vrouwen van doe-het-zelvers bezoekt die vaak al jaren in onafgemaakte huizen bivakkeren. John confronteert de man en zet hem met het klusteam aan het werk."
         },
-        "startDateTime": "2012-03-06T19:30Z"
+        "startDateTime": "2012-04-12T18:30Z"
     }],
     [{
         "channel": {
-            "id": "eY",
+            "id": "7L",
             "_type": "Channel",
-            "name": "Veronica HD/Disney XD"
+            "name": "RTL 5"
         },
-        "endDateTime": "2012-03-06T19:55Z",
+        "endDateTime": "2012-04-12T19:30Z",
         "_type": "Event",
-        "id": "136891026",
+        "id": "141104691",
         "programme": {
-            "title": "The Big Bang Theory",
+            "title": "Echte meisjes op zoek naar zichzelf",
             "_type": "Programme",
-            "id": "18578969",
-            "shortDescription": "Sitcom. Sheldon wordt niet gewaardeerd door Amy wanneer hij niet onder de indruk is van haar prestaties. Howard probeert te accepteren dat Bernadette niet van kinderen houdt."
+            "id": "19106505",
+            "shortDescription": "Realityprogramma. Tien meisjes uit verschillende televisieprogramma's verruilen hun luxe leven voor een avontuurlijke reis door Nepal. Onder leiding van Ad Visser maken zij kennis met de wereld van mystiek en spiritualiteit. Hij probeert de dames in het gareel te houden en hen de weg naar innerlijke rust te wijzen."
         },
-        "startDateTime": "2012-03-06T19:30Z"
+        "startDateTime": "2012-04-12T18:30Z"
+    }],
+    [{
+        "channel": {
+            "id": "7M",
+            "_type": "Channel",
+            "name": "RTL 7"
+        },
+        "endDateTime": "2012-04-15T09:00Z",
+        "_type": "Event",
+        "id": "141461967",
+        "programme": {
+            "title": "RTL GP",
+            "_type": "Programme",
+            "id": "19168796",
+            "shortDescription": "Sportprogramma. Verslag van de Formule 1 Grand Prix van China."
+        },
+        "startDateTime": "2012-04-15T06:20Z"
+    }],
+    [{
+        "channel": {
+            "id": "8h",
+            "_type": "Channel",
+            "name": "Net 5"
+        },
+        "endDateTime": "2012-04-12T21:00Z",
+        "_type": "Event",
+        "id": "141868277",
+        "programme": {
+            "title": "Unfaithful",
+            "_type": "Programme",
+            "id": "19107096",
+            "shortDescription": "Thriller. Edward Sumner ontdekt dat zijn vrouw Connie een relatie heeft met een ander. Hij vermoordt deze man in een woeste bui. Op dat moment gebeurt er iets opvallends: Connie ziet de passie in Edward die ze jarenlang in hem gemist heeft. Hun relatie bloeit opnieuw op en ze besluit hem te helpen om de misdaad te verbergen."
+        },
+        "startDateTime": "2012-04-12T18:30Z"
+    }],
+    [{
+        "channel": {
+            "id": "7K",
+            "_type": "Channel",
+            "name": "RTL 4"
+        },
+        "endDateTime": "2012-04-15T19:00Z",
+        "_type": "Event",
+        "id": "141483824",
+        "programme": {
+            "title": "Buch in de bajes",
+            "_type": "Programme",
+            "id": "19172320",
+            "shortDescription": "Het strakke regime binnen de muren van een Nederlandse gevangenis wordt laten zien. Nog niet eerder kreeg een cameraploeg toestemming om de dagelijkse realiteit van het leven binnen een gevangenis op de voet te volgen. Medewerkers en gedetineerden worden gevolgd in hun werk en verblijf in de Penitentiaire Inrichting Almere."
+        },
+        "startDateTime": "2012-04-15T18:00Z"
+    }],
+    [{
+        "channel": {
+            "id": "7C",
+            "_type": "Channel",
+            "name": "Nederland 1 HD"
+        },
+        "endDateTime": "2012-04-12T21:05Z",
+        "_type": "Event",
+        "id": "141104646",
+        "programme": {
+            "title": "Het snelle geld",
+            "_type": "Programme",
+            "id": "19106016",
+            "shortDescription": "In de afgelopen 25 jaar is ons land schatrijk geworden. En nu zitten we in een crisis die ons allen treft. Wat is er gebeurd? Deze vraag bracht Jort Kelder en de VPRO bij elkaar. Jort Kelder kijkt als getuige-deskundige en betrokkene terug op een kwart eeuw van wilde kapitalistische jaren in Nederland."
+        },
+        "startDateTime": "2012-04-12T20:15Z"
     }]
 ]
