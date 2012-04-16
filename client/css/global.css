@@ -344,21 +344,39 @@ input.icon {
 }
 
 @media (min-width:480px) {
-		.mosaic {
-			margin:0 10px;
-		}
+	.mosaic {
+		margin:0 10px;
+	}
 }
 
 .mosaic .channel {
 	display: inline-block;
-	margin: 10px;
-	padding: 10px;
+	margin: 3px;
+	padding: 3px;
 	background: white;
 	border: 1px solid #ccc;
 	border-radius: 10px;
 	width: 50px;
 	height: 30px;
 	opacity: .8;
+}
+
+@media (min-width:480px) {
+	.mosaic .channel {
+		margin:5px;
+		padding:5px;
+	}
+}
+@media (min-width:768px) {
+	.mosaic .channel {
+		margin:15px;
+		padding:10px;
+	}
+}
+@media (min-width:1024px) {
+	.mosaic .channel {
+		margin:22px;
+	}
 }
 
 .mosaic .channel:hover {
@@ -393,22 +411,39 @@ input.icon {
 	text-align:center;
 }
 
-.disc {
-	width: 10px;
-	height: 10px;
+#navigator .disc {
+	width: 20px;
+	height: 20px;
 	background: #ddd;
 	border-radius: 10px;
 	display: inline-block;
-	margin-left: 10px;
+	margin: 0 5px;
 	bottom: 20px;
 	cursor: pointer;
 
 	-webkit-box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, .5);
+	-moz-box-shadow: 	1px 1px 1px 1px rgba(0, 0, 0, .5);
+	-o-box-shadow: 		1px 1px 1px 1px rgba(0, 0, 0, .5);
+	box-shadow: 		1px 1px 1px 1px rgba(0, 0, 0, .5);
 
-	opacity: .9;
+	opacity: .6;
 }
 
-.disc.selected {
+@media (min-width:480px) {
+	/* for wider screens, make discs bigger, and further apart */
+	#navigator {
+			top: -40px;
+	}
+	#navigator .disc {
+		width:24px;
+		height:24px;
+		border-radius:12px;
+		margin:0 10px;
+	}
+}
+
+
+#navigator .disc.selected {
 	background: #fff;
 	opacity: 1;
 }
@@ -418,14 +453,15 @@ input.icon {
 	position: relative;
 	background: #fff;
 	height: 100%; /* 100% of #topbookings parent container */
+	overflow:hidden;
 
 	-webkit-transition: 	left .5s ease-in-out;
 	-moz-transition: 		left .5s ease-in-out;
-	-o-transition: 		left .5s ease-in-out;
+	-o-transition: 			left .5s ease-in-out;
 	transition: 			left .5s ease-in-out;
 }
 
-	.show > .programme {
+	.show .programme {
 		display:block;
 		position: absolute;
 		left: 0;
@@ -433,39 +469,55 @@ input.icon {
 		width:100%;
 	}
 
-		.programme > .programme-bg {
+		.show .programme-bg {
 			position:relative;
 			width:100%;
 			z-index:0;	
 		}
 
-		.programme > .programme-details {
+		.show .programme-details {
 			position:absolute;
 			padding: 20px;
 			z-index:1;
 		}
 
-			.programme-details h1 {
-				font-size: 2em;
+			.show .programme-details h1 {
+				font-size: 1.4em;
+				margin:0.5em 0;
 			}
 
-			.programme-details p {
+			.show .programme-details p {
 				color: #eee;
+				font-size:1em;
 			}
 
-			.programme-details a,
-			.programme-details a:hover,
-			.programme-details a:visited,
-			.programme-details a:active,
-			.programme-details p {
+			.show .programme-details a,
+			.show .programme-details a:hover,
+			.show .programme-details a:visited,
+			.show .programme-details a:active,
+			.show .programme-details p {
 				color: #fff;
 				text-shadow: 2px 2px 2px #000000;
 			}
 
 @media (min-width:480px) {
-		.programme > .programme-details {
-			padding: 40px;
-		}
+	.show .programme-details {
+		padding: 40px;
+	}
+	.show .programme-details h1 {
+		font-size: 1.8em;
+	}
+	.show .programme-details p {
+		font-size: 1.2em;
+	}
+}
+@media (min-width:768px) {
+	.show .programme-details h1 {
+		font-size: 2.2em;
+	}
+	.show .programme-details p {
+		font-size: 1.4em;
+	}
 }
 
 

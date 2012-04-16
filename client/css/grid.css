@@ -395,20 +395,17 @@
 	cursor: pointer;
 }
 
-.programme, .programme + p {
+#grid-container .programme,
+#grid-container .programme + p {
 	display: block;
 	margin: 5px;
 	padding: 0;
 	color: #333;
 }
 
-.programme {
+#grid-container .programme {
 	font-weight: bold;
 	color: 000;
-}
-
-.programme + p {
-
 }
 
 /* Hover states only supported for non-touch browsers */

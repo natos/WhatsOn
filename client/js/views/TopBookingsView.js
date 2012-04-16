@@ -67,6 +67,9 @@ function() {
 
 			var self = this;
 			var sizeHandler = function() {
+				// The images are in 16:9 aspect ratio. Limit height to no more than 400px.
+				// (Height limit is just so that the channel list remains visible even on very
+				// wide screens.)
 				self.list.css({'height': Math.min(400, (self.window.width() * 0.5625)) + 'px'});
 			}
 
