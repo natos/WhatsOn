@@ -13,5 +13,5 @@
 *.ico
 
 # Ignore git commits
-./.git/*
+.git/*
 
