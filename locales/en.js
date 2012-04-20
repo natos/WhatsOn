@@ -35,5 +35,7 @@
 	"Now &amp; Next": "Now &amp; Next",
 	"Movies": "Movies",
 	"Favorites": "Favorites",
-	"Play": "Play"
+	"Play": "Play",
+	"Top shows among friends": "Top shows among friends",
+	"Top Bookings": "Top Bookings"
 }
