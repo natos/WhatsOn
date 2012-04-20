@@ -22,7 +22,8 @@ define([
 	'controllers/grid',
 	'controllers/channel',
 	'controllers/programme',
-	'controllers/search'
+	'controllers/search',
+	'controllers/list'
 
 ],
 
@@ -31,7 +32,7 @@ define([
  *	@class AppController
  */
 
-function(express, i18n, config, Supports, Dashboard, Grid, Channel, Programme, Search) {
+function(express, i18n, config, Supports, Dashboard, Grid, Channel, Programme, Search, List) {
 
 	/** @constructor */
 
@@ -57,7 +58,8 @@ function(express, i18n, config, Supports, Dashboard, Grid, Channel, Programme, S
 				grid		: new Grid(self),
 				channel		: new Channel(self),
 				programme	: new Programme(self),
-				search		: new Search(self)
+				search		: new Search(self),
+				list 		: new List(self)
 			};
 
 		return self;

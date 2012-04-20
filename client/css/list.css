@@ -1,0 +1,53 @@
+.channels-toggle {
+	margin-bottom:1em;
+	text-align:center;
+}
+.channels-list-channel {
+	width:100%;
+	background:#fefefe;
+	margin-bottom:1em;
+	border-radius:4px;
+	overflow:hidden;
+	border:1px solid #ccc;
+}
+
+.channels-list-channel__timecontrols {
+	display:block;
+	text-align:center;
+	padding:5px 10px;
+	border-bottom:1px solid #ccc;
+}
+
+.channels-list-channel__channelcontrols {
+	display:block;
+	float:left;
+	padding:5px 10px;
+}
+
+.channels-list-channel__programmes {
+	display:block;
+	padding:5px;
+	margin-left:80px;
+}
+
+	.channels-list-channel__programme {
+		display:block;
+		margin-bottom:5px;
+	}
+
+		.channels-list-channel__programme-time {
+			display:inline;
+			color:#666;
+			font-size:80%;
+			margin-right:10px;
+		}
+		.channels-list-channel__programme-title {
+			display:inline;
+			font-size:120%;
+			font-weight:bold;
+		}
+		.channels-list-channel__programme-desc {
+			display:block;
+			max-height:32px;
+			overflow:hidden;
+		}

@@ -1,0 +1,29 @@
+extends layout
+
+block styles
+	link(href="/css/list.css", rel="stylesheet")
+
+block scripts
+	script
+		var channels = !{JSON.stringify(channels)};
+
+
+block content
+	div.channels-toggle
+		button all channels
+		button favourite channels
+
+	ul.channels-list
+		each channel in channels
+			li.channels-list-channel
+				div.channels-list-channel__timecontrols
+					button &lt;
+					span(id="channels-list_channel_#{channel.id}__timewindow")
+					button &gt;
+					a(href="#content") &nbsp;top
+				div.channels-list-channel__channelcontrols
+					img(title="#{channel.name}", src="http://www.upc.nl#{channel.logoIMG}", data-src="http://www.upc.nl#{channel.logoIMG}", id="channelImg#{channel.id}")
+					.fav
+						input(id="#{channel.name}", type="checkbox")
+						label(for="#{channel.name}") favorite				
+				div.channels-list-channel__programmes(id="channels-list_channel_#{channel.id}__programmes")
