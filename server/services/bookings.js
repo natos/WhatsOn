@@ -45,6 +45,7 @@ function(util, events, request, config, TOP_BOOKINGS_MOCK) {
 
 	var TOP_BOOKINGS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGBooking.woa/wa/topBookings';
 
+	var TOP_BOOKINGS_MOCK = JSON.stringify(TOP_BOOKINGS_MOCK); // emulating a text response
 
 	/** @public */
 

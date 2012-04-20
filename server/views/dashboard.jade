@@ -28,3 +28,7 @@ block content
 				a(href="/channel/#{channel.id}.html")
 					img(title="#{channel.name}", src="http://www.upc.nl#{channel.logoIMG}", id="channel#{channel.id}")
 			&shy;
+
+block scripts
+	script
+		require(['components/carousel'], function(carousel) { carousel.initialize(); });

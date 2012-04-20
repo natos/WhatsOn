@@ -171,6 +171,6 @@ define([], function() {
         },
         "startDateTime": "2012-04-20T18:30Z"
     }]
-];
+]
 
 });
