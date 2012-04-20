@@ -1,0 +1,324 @@
+/* Avoid text selection in general */
+* {
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+
+/* Allow text selection for input fields */
+input[type=search],
+input[type=text] {
+	-webkit-user-select: text;
+	-khtml-user-select: text;
+	-moz-user-select: text;
+	-o-user-select: text;
+	user-select: text;
+}
+
+/**
+*	body
+*/
+
+body {
+	font-family: "Helvetica Neue", Helvetica, Arial, "Nimbus Sans L", sans-serif;
+	font-size: 14px;
+	font-size-adjust: inherit;
+	padding: 0;
+	padding-top: 45px;
+	padding-bottom: 10px;
+	background-color: #ccc;
+}
+
+a:hover {
+	text-decoration: none;
+}
+
+/**
+*	fluid images
+*/
+
+img {
+	max-width: 100%;
+}
+
+
+/**
+*	button
+*/
+
+.btn {
+	font-size: 1em;
+	color: #050505;
+	padding: 10px 20px;
+	background: -moz-linear-gradient(
+		top,
+		#ffffff 0%,
+		#ebebeb 50%,
+		#dbdbdb 50%,
+		#b5b5b5);
+	background: -webkit-gradient(
+		linear, left top, left bottom, 
+		from(#ffffff),
+		color-stop(0.50, #ebebeb),
+		color-stop(0.50, #dbdbdb),
+		to(#b5b5b5));
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border: 1px solid #949494;
+	-moz-box-shadow:
+		0px 1px 3px rgba(000,000,000,0.5),
+		inset 0px 0px 2px rgba(255,255,255,1);
+	-webkit-box-shadow:
+		0px 1px 3px rgba(000,000,000,0.5),
+		inset 0px 0px 2px rgba(255,255,255,1);
+	text-shadow:
+		0px -1px 0px rgba(000,000,000,0.2),
+		0px 1px 0px rgba(255,255,255,1);
+}
+
+.btn:hover {
+	border: 1px solid #000;
+}
+
+/**
+*	navbar
+*/
+
+.navbar {
+	display: block;
+	left: 0;
+	right: 0;
+	height: 50px;
+	margin: 0;
+	padding: 0;
+	z-index: 100;
+	background: transparent url('/assets/images/main_gradient.png') 0 0 repeat-x;
+}
+
+.navbar-inner {
+	width: 100%;
+	height: 55px;
+	margin: 0;
+	padding: 0;
+	background: transparent url('/assets/images/bg-gradient-shadow-bottom.png') 0 50px repeat-x;
+}
+
+.navbar-fixed-top {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+}
+
+/* logo */
+.upc-logo {
+
+	display: block;
+	text-indent: 100%;
+	overflow:hidden;
+
+	margin: 0;
+	padding: 0;
+
+	width: 40px;
+	height: 40px;
+
+	top: 5px;
+	left: 5px;
+	position: absolute;
+
+	background: transparent url('/assets/images/sprite.png') 0 0 no-repeat;
+
+	opacity: .7; /* hipster branding ;) */
+}
+
+/* navbar links */
+
+.navbar a,
+.navbar a:hover,
+.navbar a:visited,
+.navbar a:active {
+	color: #999;
+	display: inline-block;
+	height: 48px;
+	padding: 0 10px;
+	line-height: 48px;
+
+}
+
+.navbar a.active {
+	color: #ccc;
+	background: #333 url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
+	border-bottom: solid 1px #000;
+}
+
+.navbar a.active i {
+	color: #ccc;
+}
+
+.navbar a.active b {
+	font-weight: bold;
+}
+
+/* icons */
+
+.navbar i {
+	color: #999;
+	font-size: 24px;
+	margin: 0 5px;
+}
+
+.navbar b {
+	font-weight: normal;
+	vertical-align: top;
+	display: none;
+}
+
+.nav, .user-control {
+	position: absolute;
+}
+
+.nav {
+	right: 5px;
+	left: 5px;
+}
+
+.nav a {
+
+}
+
+.login {
+	float: right;
+}
+
+.user-control {
+	right: 15px;
+}
+
+.user-control ul {
+	display: none;
+}
+
+/**
+*	main
+*/
+
+.main {
+	/* for positioning beneath navbar's fake shade,
+	   a little bit hacky I know */
+	margin-top: -10px;
+	background-color: #eee;
+}
+
+
+/**
+*	top-bookings
+*/
+
+#topbookings {
+	position: relative;
+	max-height: 580px;
+	margin: 0;
+	right: 0;
+	left: 0;
+	overflow: hidden;
+}
+
+#topbookings .btn {
+	margin-right: 10px; 
+}
+
+.navigator {
+	position:relative;
+	text-align:center;
+	bottom: 10px;
+}
+
+.navigator .disc {
+	width: 15px;
+	height: 15px;
+	background: #ddd;
+	border-radius: 15px;
+	display: inline-block;
+	margin: 0 5px;
+	bottom: 10px;
+	cursor: pointer;
+
+	-webkit-box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, .5);
+	-moz-box-shadow: 	1px 1px 1px 1px rgba(0, 0, 0, .5);
+	-o-box-shadow: 		1px 1px 1px 1px rgba(0, 0, 0, .5);
+	box-shadow: 		1px 1px 1px 1px rgba(0, 0, 0, .5);
+
+	-webkit-transition: all ease-in-out .3s;
+
+	opacity: .6;
+}
+
+.navigator .disc.selected {
+	background: #fff;
+	opacity: 1;
+}
+
+.show {
+	display: block;
+	position: relative;
+	background: #fff;
+	height: 100%; /* 100% of #topbookings parent container */
+	overflow:visible;
+
+	-webkit-transition: 	left .5s ease-in-out;
+	-moz-transition: 		left .5s ease-in-out;
+	-o-transition: 			left .5s ease-in-out;
+	transition: 			left .5s ease-in-out;
+}
+
+	.show .programme {
+		display:block;
+		position: absolute;
+		left: 0;
+		margin: 0;
+		width:100%;
+	}
+
+		.show .programme-bg {
+			position:relative;
+			width:100%;
+			z-index:0;	
+		}
+
+		.show .programme-details {
+			position:absolute;
+			padding: 20px;
+			z-index:1;
+			-webkit-transition: font-size ease-in-out .3s;
+		}
+
+			.show .programme-details h1 {
+				font-size: 1.4em;
+			}
+
+			.show .programme-details p {
+				color: #eee;
+				font-size:1em;
+			}
+
+			.show .programme-details a,
+			.show .programme-details a:hover,
+			.show .programme-details a:visited,
+			.show .programme-details a:active,
+			.show .programme-details p {
+				color: #fff;
+				text-shadow: 2px 2px 2px #000000;
+			}
+
+/**
+*	footer
+*/
+
+footer {
+	padding: 10px;
+	background: transparent url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
+}

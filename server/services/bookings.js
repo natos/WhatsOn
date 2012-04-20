@@ -12,7 +12,10 @@ define([
 	'request',
 
 	// config
-	'config/global.config'
+	'config/global.config',
+
+	// mock
+	'mocks/topbookings'
 
 ],
 
@@ -21,7 +24,7 @@ define([
  *	@class BookingsService
  */
 
-function(util, events, request, config) {
+function(util, events, request, config, TOP_BOOKINGS_MOCK) {
 
 	/** @constructor */
 
@@ -42,7 +45,6 @@ function(util, events, request, config) {
 
 	var TOP_BOOKINGS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGBooking.woa/wa/topBookings';
 
-	var cache;
 
 	/** @public */
 
@@ -51,19 +53,19 @@ function(util, events, request, config) {
 
 		var self = this;
 
-		if (cache) { 
-
-			self.emit('getTopBookings', '', '', cache);
-
-			return this;
-
-		}
-
 		request(TOP_BOOKINGS, function(error, response, body) {
 
-			self.emit('getTopBookings', error, response, body);
+			/** API Error? Grab the mock */
+			if ( /<title>Error<\/title>/.test(body) ) {
 
-			cache = body;
+				console.log(' Bookings Service >>> Error getting TopBookings: ', body);
+
+				self.emit('getTopBookings', error, response, TOP_BOOKINGS_MOCK);
+
+				return;
+			}
+
+			self.emit('getTopBookings', error, response, body);
 
 		});
 
