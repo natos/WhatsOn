@@ -1,0 +1,17 @@
+# .nodemonignore file
+
+# The agents.js file contains a set of regexes for identifying browsers.
+# The Useragent module will update this file with the latest versions
+# (fetched remotely), and we don't want node restarting when this happens.
+/node_modules/useragent/lib/agents.js
+
+# Don't restart because of changed CSS or image files
+*.css
+*.png
+*.jpg
+*.gif
+*.ico
+
+# Ignore git commits
+.git/*
+
