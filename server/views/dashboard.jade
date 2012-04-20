@@ -6,14 +6,20 @@ block content
 			each event in topbookings
 				li.programme
 					div.programme-details
-						p
-							a(href="/channel/#{event.channel.id}.html") #{event.channel.name}
+
 						h1
 							a(href="/programme/#{event.programme.id}.html") #{event.programme.title}
+
+						button.btn.primary
+							i.icon-time
+							b.label #{__i('Record')}
+						button.btn.primary.skin
+							i.icon-play-circle
+							b.label #{__i('Play')}
 						p
-							| #{event.prettyDate}, 
-							| #{ new Date(event.startDateTime).getHours() }hs
-							button.btn.icon.icon-target #{__i('Record')}
+							| #{event.prettyDate} 
+							| on
+							a(href="/channel/#{event.channel.id}.html") #{event.channel.name} 
 
 	// Whitespace is significant for justified inline-block! The &shy; character between <li> elements forces word-break for text-align:justify. 
 	ul#channels.mosaic

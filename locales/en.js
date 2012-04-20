@@ -30,5 +30,10 @@
 	"within 1 minute": "within 1 minute",
 	"within a week": "within a week",
 	"a week ago": "a week ago",
-	"within %s weeks": "within %s weeks"
+	"within %s weeks": "within %s weeks",
+	"Home": "Home",
+	"Now &amp; Next": "Now &amp; Next",
+	"Movies": "Movies",
+	"Favorites": "Favorites",
+	"Play": "Play"
 }

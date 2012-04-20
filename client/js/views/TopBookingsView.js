@@ -100,7 +100,7 @@ function() {
 
 			var self = this;
 
-			var buttons = $('<div>').attr('id','navigator').appendTo(this.el),
+			var buttons = $('<div>').addClass('navigator').appendTo(this.el),
 				button = $('<div>').addClass('disc'),
 				programme,
 				maxScreenWidth = Math.max(this.window.width(), this.window.height()),
