@@ -2,7 +2,7 @@ define([
 
 ], function() {
 
-	var Carousel = {};
+var Carousel = {};
 	
 	Carousel.el = $('#topbookings'); // DOM element
 
@@ -116,6 +116,38 @@ define([
 
 		// select first
 		$('.disc').first().addClass('selected');
+
+
+		this.el.swipeRight(function(event) {
+
+			var disc = $('.disc.selected').prev();
+
+			!disc[0] && bounceRight() || disc.trigger('click');
+
+		});
+
+		this.el.swipeLeft(function(event) {
+
+			var disc = $('.disc.selected').next();
+
+			!disc[0] && bounceLeft() || disc.trigger('click');
+
+		});
+
+	};
+
+	var bounceRight = function() {
+		Carousel.list.css('left', '5%');
+		setTimeout(function(){
+		Carousel.list.css('left', '0%');
+		},300);
+	};
+
+	var bounceLeft = function() {
+		Carousel.list.css('left', '-905%');
+		setTimeout(function(){
+		Carousel.list.css('left', '-900%');
+		},300);
 	};
 
 	return Carousel;
