@@ -123,8 +123,8 @@ img {
 	margin: 0;
 	padding: 0;
 
-	width: 40px;
-	height: 40px;
+	width: 41px;
+	height: 41px;
 
 	top: 5px;
 	left: 5px;
@@ -218,7 +218,7 @@ img {
 *	top-bookings
 */
 
-#topbookings {
+#featured {
 	position: relative;
 	max-height: 580px;
 	margin: 0;
@@ -227,7 +227,7 @@ img {
 	overflow: hidden;
 }
 
-#topbookings .btn {
+#featured .btn {
 	margin-right: 10px; 
 }
 
@@ -266,7 +266,7 @@ img {
 	display: block;
 	position: relative;
 	background: #fff;
-	height: 100%; /* 100% of #topbookings parent container */
+	height: 100%; /* 100% of #featured parent container */
 	overflow:visible;
 
 	-webkit-transition: 	left .3s ease-in-out;

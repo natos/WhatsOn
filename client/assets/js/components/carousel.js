@@ -4,7 +4,7 @@ define([
 
 var Carousel = {};
 	
-	Carousel.el = $('#topbookings'); // DOM element
+	Carousel.el = $('#featured'); // DOM element
 
 	Carousel.content = $('#content');
 

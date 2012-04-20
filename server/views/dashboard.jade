@@ -1,7 +1,7 @@
 extends layout
 
 block content
-	#topbookings
+	#featured
 		ul.show
 			each event in topbookings
 				li.programme
@@ -21,13 +21,56 @@ block content
 							| on
 							a(href="/channel/#{event.channel.id}.html") #{event.channel.name} 
 
-	// Whitespace is significant for justified inline-block! The &shy; character between <li> elements forces word-break for text-align:justify. 
-	ul#channels.mosaic
-		each channel in channels
-			li.channel
-				a(href="/channel/#{channel.id}.html")
-					img(title="#{channel.name}", src="http://www.upc.nl#{channel.logoIMG}", id="channel#{channel.id}")
-			&shy;
+
+	#dashboard
+		.top-among-friends
+			h3 #{__i('Top shows among friends')} 
+			ul
+				li 
+					a(href="/programme/19106430.html") Holland's Got Talent
+				li
+					a(href="/programme/19345320.html") Flikken Antwerpen
+				li
+					a(href="/programme/19253716.html") Lord of War
+				li
+					a(href="/programme/19345424.html") Schat van de Oranje
+				li
+					a(href="/programme/19106570.html") Voetbal International
+				li
+					a(href="/programme/18614672.html") 24
+				li
+					a(href="/programme/19106467.html") Big Fat Gypsy Weddings
+				li
+					a(href="/programme/19253597.html") Doomsday
+				li
+					a(href="/programme/19253599.html") The Mummy: Tomb of the Dragon Emperor
+				li
+					a(href="/programme/19345437.html") Top Gear
+
+		.top-bookings
+			h3 #{__i('Top Bookings')} 
+			ul
+				li 
+					a(href="/programme/19106430.html") Holland's Got Talent
+				li
+					a(href="/programme/19345320.html") Flikken Antwerpen
+				li
+					a(href="/programme/19253716.html") Lord of War
+				li
+					a(href="/programme/19345424.html") Schat van de Oranje
+				li
+					a(href="/programme/19106570.html") Voetbal International
+				li
+					a(href="/programme/18614672.html") 24
+				li
+					a(href="/programme/19106467.html") Big Fat Gypsy Weddings
+				li
+					a(href="/programme/19253597.html") Doomsday
+				li
+					a(href="/programme/19253599.html") The Mummy: Tomb of the Dragon Emperor
+				li
+					a(href="/programme/19345437.html") Top Gear
+
 
 block scripts
 	script
