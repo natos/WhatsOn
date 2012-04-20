@@ -1,6 +1,5 @@
-.channels-toggle {
-	margin-bottom:1em;
-	text-align:center;
+.channels-list {
+	padding:0;
 }
 .channels-list-channel {
 	width:100%;
@@ -9,6 +8,7 @@
 	border-radius:4px;
 	overflow:hidden;
 	border:1px solid #ccc;
+	list-style-type:none;
 }
 
 .channels-list-channel__timecontrols {
@@ -29,10 +29,15 @@
 	padding:5px;
 	margin-left:80px;
 }
+	.channels-list-channel__programmes ul {
+		padding:0;
+		margin:0;
+	}
 
 	.channels-list-channel__programme {
 		display:block;
 		margin-bottom:5px;
+		list-style-type:none;
 	}
 
 		.channels-list-channel__programme-time {
@@ -48,6 +53,6 @@
 		}
 		.channels-list-channel__programme-desc {
 			display:block;
-			max-height:32px;
+			max-height:2.4em;
 			overflow:hidden;
 		}

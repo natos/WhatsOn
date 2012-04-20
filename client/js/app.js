@@ -93,13 +93,6 @@ function(UserControl, HeaderSearchFormView) {
 				});
 			}
 
-			// list
-			if ( /list/.test( window.location.toString() ) ) {
-				require(['views/ListView'], function(List){
-					wo.views.list = new List();
-				});
-			}
-
 			// search results
 			if ( /search/.test( window.location.toString() ) ) {
 				require(['views/SearchResultsView'], function(SearchResults){
