@@ -89,38 +89,36 @@
 	display: none;
   }
 
-  .nav {
+  /* space for logo */
+  .nav, .main {
 	left: 60px;
   }
-
 }
 
 @media (min-width: 480px) {
 
   /* navbar */
-
   .nav a.home {
 	display: inline-block;
   }
 
-  .nav {
-	left: 60px;
+  /* buttons */
+  .btn {
+	padding: 7px 13px;
   }
 
-
-  /* topbookings */
+  /* carousel */
+  .show .programme-details {
+	padding: 20px;
+  }
 
   .show .programme-details h1 { 
 	font-size: 1.8em;
   }
 
   .navigator .disc {
-	width: 20px;
-	height: 20px;
-	border-radius: 10px;
-	margin: 0 10px;
+	font-size: 1.5em;
   }
-
 
 }
 
@@ -129,12 +127,12 @@
 }
 
 @media (min-width: 768px) and (max-width: 979px) {
-
   .navigator .disc {
-	width: 20px;
-	height: 20px;
-	border-radius: 10px;
-	margin: 0 20px;
+	font-size: 2em;
+  }
+
+  .movie {
+	width: 31.4%;
   }
 
 }
@@ -146,48 +144,156 @@
 @media (min-width: 980px) {
 
   /* navbar */
-
   .upc-logo {
 	display: block;
 	left: 50%;
   }
 
-  .nav {
-	left: 15px;
+  .nav, .main {
+	left: 0;
 	margin: 0 auto;
   }
+  .nav {
+	left: 15px;
+  }
+  .main {
+	margin-top: -10px;
+  }
 
-  /* topbookings */
+  /* buttons */
+  .btn {
+	padding: 7px 13px;
+	padding: 10px 20px;
+  }
+
+  /* carousel */
+  .show .programme-details {
+	padding: 20px;
+  }
+
+  .navigator {
+	bottom: 15px;
+  }
 
   .navigator .disc {
-	width:24px;
-	height:24px;
-	border-radius:12px;
-	margin:0 20px;
+	font-size: 2.5em;
   }
 
   .show .programme-details {
 	font-size: 1.4em;
   }
 
+  /**
+  *	fluid
+  */
+
+  .fluid {
+	width: 100%;
+	*zoom: 1;
+  }
+  .fluid:before,
+  .fluid:after {
+	display: table;
+	content: "";
+  }
+  .fluid:after {
+	clear: both;
+  }
+  .fluid > [class*="span"] {
+	float: left;
+	margin-left: 2.127659574%;
+  }
+  .fluid > [class*="span"]:first-child {
+	margin-left: 0;
+  }
+  .fluid > .span12 {
+	width: 99.99999998999999%;
+  }
+  .fluid > .span11 {
+	width: 91.489361693%;
+  }
+  .fluid > .span10 {
+	width: 82.97872339599999%;
+  }
+  .fluid > .span9 {
+	width: 74.468085099%;
+  }
+  .fluid > .span8 {
+	width: 65.95744680199999%;
+  }
+  .fluid > .span7 {
+	width: 57.446808505%;
+  }
+  .fluid > .span6 {
+	width: 48.93617020799999%;
+  }
+  .fluid > .span5 {
+	width: 40.425531911%;
+  }
+  .fluid > .span4 {
+	width: 31.914893614%;
+  }
+  .fluid > .span3 {
+	width: 23.404255317%;
+  }
+  .fluid > .span2 {
+	width: 14.89361702%;
+  }
+  .fluid > .span1 {
+	width: 6.382978723%;
+  }
+
+  /* no margin spans */
+
+  .fluid > .span4 {
+	margin: 0;
+	width: 33.33333333333333%
+  }
+
+/* dashboard */
+  #dashboard ul li i {
+	float: left;
+  }
+
+  .movie {
+	width: 23%;
+  }
+
 }
 @media (min-width: 1200px) {
 
   /* navbar */
+  .nav {
+	left: 0;
+  }
 
   .navbar b {
 	display: inline;
   }
 
-  .nav {
+  .nav, .main {
 	min-width: 1200px;
 	max-width: 1600px;
   }	
 
-  /* topbookings */
+  /* carousel */
+  .navigator {
+	bottom: 20px;
+  }
+
+  .navigator .disc {
+	font-size: 3em;
+  }
 
   .show .programme-details {
 	font-size: 1.8em;
+	padding: 30px;
+  }
+
+  /* dashboard */
+
+  #dashboard {
+	font-size: 1.2em;
   }
 
 }
@@ -195,10 +301,19 @@
 @media (min-width: 1600px) {
 
   /* navbar */
-
-  .nav {
+  .nav, .main {
 	min-width: 1600px;
 	max-width: 2000px;
   }	
 
+  /* carousel */
+
+  .show .programme-details {
+	font-size: 1.8em;
+	padding: 40px;
+  }
+
+  .show .programme-bg {
+	margin-top: -6%;
+  }
 }

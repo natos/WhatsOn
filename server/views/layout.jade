@@ -24,47 +24,8 @@ html
 
 		#fb-root
 
-		.navbar.navbar-fixed-top
-			.navbar-inner
-				.upc-logo #{config.APP_NAME}
-				.nav
-					a.home(href="#", title="#{__i('Home')}").active
-						i.icon-home
-						b.label #{__i('Home')}
-					a.nowandnext(href="#", title="#{__i('Now &amp; Next')}")
-						i.icon-time
-						b.label #{__i('Now &amp; Next')}
-					a.movies(href="#", title="#{__i('Movies')}")
-						i.icon-film
-						b.label #{__i('Movies')}
-					a.grid(href="#", title="#{__i('TV Grid')}")
-						i.icon-th
-						b.label #{__i('TV Grid')}
-					a.search(href="#", title="#{__i('Search')}")
-						i.icon-search
-						b.label #{__i('Search')}
-					a.login(href="#", title="#{__i('Login')}")
-						i.icon-user
-						b.label #{__i('Login')}
+		include navigation
 
-				.user-control
-					ul
-						li.active
-							a(href="#")
-								i.icon-cogs
-								b.label #{__i('Settings')}
-						li
-							a(href="#") 
-								i.icon-star
-								b.label #{__i('Favorites')}
-						li
-							a(href="#") 
-								i.icon-signin
-								b.label #{__i('Login')}
-						li
-							a(href="#") 
-								i.icon-signout
-								b.label #{__i('Logout')}
 		.main
 
 			block content

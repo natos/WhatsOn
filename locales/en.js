@@ -37,5 +37,9 @@
 	"Favorites": "Favorites",
 	"Play": "Play",
 	"Top shows among friends": "Top shows among friends",
-	"Top Bookings": "Top Bookings"
+	"Top Bookings": "Top Bookings",
+	"Top Favorites": "Top Favorites",
+	"Top favorites": "Top favorites",
+	"Top bookings": "Top bookings",
+	"Top channels": "Top channels"
 }

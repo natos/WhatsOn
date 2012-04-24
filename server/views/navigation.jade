@@ -1,0 +1,36 @@
+.navbar.navbar-fixed-top
+	.navbar-inner
+		.upc-logo #{config.APP_NAME}
+		.nav
+			a.home(href="/", title="#{__i('Home')}")
+				i.icon-home
+				b.label #{__i('Home')}
+			a.nowandnext(href="list.html", title="#{__i('Now &amp; Next')}")
+				i.icon-time
+				b.label #{__i('Now &amp; Next')}
+			a.movies(href="/movies.html", title="#{__i('Movies')}")
+				i.icon-film
+				b.label #{__i('Movies')}
+			a.grid(href="/grid.html", title="#{__i('TV Grid')}")
+				i.icon-th
+				b.label #{__i('TV Grid')}
+			a.search(href="/search.html", title="#{__i('Search')}")
+				i.icon-search
+				b.label #{__i('Search')}
+			a.login(href="/login.html", title="#{__i('Login')}")
+				i.icon-user
+				b.label #{__i('Login')}
+
+		.user-control
+			a(href="#").active
+				i.icon-cogs
+				b.label #{__i('Settings')}
+			a(href="#")
+				i.icon-star
+				b.label #{__i('Favorites')}
+			a(href="#")
+				i.icon-signin
+				b.label #{__i('Login')}
+			a(href="#")
+				i.icon-signout
+				b.label #{__i('Logout')}

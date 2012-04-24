@@ -8,9 +8,16 @@ var Dashboard = {};
 
 	Dashboard.initialize = function() {
 
-		console.log('Dashboard initialized');
+		// save this
+		window.upc.controllers.dashboard = this;
 
-		carousel.initialize();
+		// components
+		this.components = {};
+
+		// configure and run components
+		this.components.carousel = carousel.initialize('#featured'); // dom query to select the carousel
+		
+		return this;
 
 	};
 

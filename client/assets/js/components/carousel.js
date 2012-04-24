@@ -3,16 +3,37 @@ define([
 ], function() {
 
 var Carousel = {};
-	
-	Carousel.el = $('#featured'); // DOM element
 
-	Carousel.content = $('#content');
+	$window = $(window);
 
 	Carousel.map = {};
 
-	Carousel.window = $(window);
+	Carousel.initialize = function(el) {
 
-	Carousel.coolPics = [
+		var self = this;
+
+		this.el = $(el).addClass('carousel');
+
+		this.list = this.el.find('.show').addClass('slide');
+
+		var sizeHandler = function() {
+			// The images are in 16:9 aspect ratio. Limit height to no more than 400px.
+			// (Height limit is just so that the channel list remains visible even on very
+			// wide screens.)
+			self.list.css({'height': ($window.width() * 0.5625) + 'px' });
+			$('#featured').css({'height': ($window.width() * 0.5625) + 'px' });
+		}
+
+		$window.bind('resize orientationchange', sizeHandler);
+
+		sizeHandler();
+
+		loadButtons();
+
+		return this;
+	};
+
+	var coolPics = [
 		'8ad586a135af96b70135afe916940151',
 		'8ad586a135af96b70135afead6ef0166',
 		'8ad586a135c83fb50135e242d4720a75',
@@ -48,42 +69,18 @@ var Carousel = {};
 		'8ad586a135af96b70135bf7cd35a09f7'
 	];
 
-	Carousel.initialize = function() {
+	// randomize pictures
+	coolPics.sort(function() {return 0.5 - Math.random()});
 
-		this.list = this.el.find('.show');
+	var loadButtons = function() {
 
-		var self = this;
-
-		var sizeHandler = function() {
-			// The images are in 16:9 aspect ratio. Limit height to no more than 400px.
-			// (Height limit is just so that the channel list remains visible even on very
-			// wide screens.)
-			self.list.css({'height': Math.min(400, (self.window.width() * 0.5625)) + 'px'});
-		}
-
-		this.window.bind('resize orientationchange', sizeHandler);
-
-		sizeHandler();
-
-		this.list.addClass('slide');
-
-		this.loadButtons();
-
-		return this;
-	};
-
-
-	Carousel.loadButtons = function() {
-
-		var self = this;
-
-		var buttons = $('<div>').addClass('navigator').appendTo(this.el),
-			button = $('<div>').addClass('disc'),
+		var buttons = $('<div>').addClass('navigator').appendTo(Carousel.el),
+			button = $('<i>').addClass('disc').addClass('icon-stop'),
 			programme,
-			maxScreenWidth = Math.max(this.window.width(), this.window.height()),
+			maxScreenWidth = Math.max($window.width(), $window.height()),
 			imgSize;
 
-		this.list.find('.programme').each(function(i, e) {
+		Carousel.list.find('.programme').each(function(i, e) {
 
 			programme = $(e);
 
@@ -101,13 +98,13 @@ var Carousel = {};
 				imgSize = 'xl'
 			}
 
-			programme.append('<img class="programme-bg" src="/assets/programmes/' + imgSize + '/' + self.coolPics[i] + '.jpg" />');
+			programme.append('<img class="programme-bg" src="/assets/programmes/' + imgSize + '/' + coolPics[i] + '.jpg" />');
 
-			self.map['disc-' + i] = button
+			Carousel.map['disc-' + i] = button
 				.clone()
 				.data('index', i)
 				.click(function(event) {
-					self.list.css('left', $(this).data('index') * -100 + '%' );
+					Carousel.list.css('left', $(this).data('index') * -100 + '%' );
 					$('.disc').removeClass('selected');
 					$(this).addClass('selected');
 				})
@@ -117,32 +114,69 @@ var Carousel = {};
 		// select first
 		$('.disc').first().addClass('selected');
 
+		// add touch events
+		Carousel.el.bind('swipeRight swipeLeft', swipe);
 
-		this.el.swipeRight(function(event) {
+		// start timer
+		timer.start();
+		// restart timer every disc click
+		$('.disc').bind('click', timer.restart );
+		
+	};
 
-			var disc = $('.disc.selected').prev();
-
-			!disc[0] && bounceRight() || disc.trigger('click');
-
-		});
-
-		this.el.swipeLeft(function(event) {
-
+	var timer = {
+		clock: '',
+		time: 5000, // time to slide
+		start: function() {
+			this.clock = setInterval(timer.tick, timer.time);
+		},
+		tick: function() {
 			var disc = $('.disc.selected').next();
+			!disc[0] && $('.disc').first().trigger('click') || disc.trigger('click');
+			timer.restart();
+		},
+		restart: function() {
+			timer.stop();
+			timer.start();
+		},
+		stop: function() {
+			clearInterval(timer.clock);
+		}
+	};
 
-			!disc[0] && bounceLeft() || disc.trigger('click');
+	// swipe handler
+	var swipe = function(event) {
 
-		});
+		var bounce, disc = $('.disc.selected');
+
+		// restart timer
+		timer.restart();
+
+		switch(event.type) {
+
+			case "swipeRight": 
+				bounce = bounceRight;
+				disc = disc.prev();
+				break;
+			case "swipeLeft": 
+				bounce = bounceLeft;
+				disc = disc.next();
+				break;
+		};
+
+		!disc[0] && bounce() || disc.trigger('click');
 
 	};
 
+	// bounce when the limit is reached
+	// for the rightswipe
 	var bounceRight = function() {
 		Carousel.list.css('left', '5%');
 		setTimeout(function(){
 		Carousel.list.css('left', '0%');
 		},300);
 	};
-
+	// for the leftswipe
 	var bounceLeft = function() {
 		Carousel.list.css('left', '-905%');
 		setTimeout(function(){

@@ -2,10 +2,6 @@ require.config({
 /* ... */
 });
 
-var upc = {
-	views: {}
-};
-
 require([	
 
 	'controllers/app'

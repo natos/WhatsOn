@@ -1,12 +1,7 @@
 extends layout
 
 block styles
-	link(href="/css/grid.css", rel="stylesheet")
-
-block scripts
-	script
-		var channels = !{JSON.stringify(channels)};
-
+	link(href="/assets/css/grid.css", rel="stylesheet")
 
 block content
 	#grid-container
@@ -25,3 +20,9 @@ block content
 					.fav
 						input(id="#{channel.name}", type="checkbox")
 						label(for="#{channel.name}") favorite
+
+
+block scripts
+	script
+		var channels = !{JSON.stringify(channels)};
+		require(['controllers/grid'], function(grid) { grid.initialize(); });

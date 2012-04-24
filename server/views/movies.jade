@@ -2,24 +2,17 @@ extends layout
 
 block content
 	#featured
-		ul.show
-			each event in topbookings
-				li.programme
-					div.programme-details
-
-						h1
-							a(href="/programme/#{event.programme.id}.html") #{event.programme.title}
-
-						button.btn.primary
-							i.icon-time
-							b.label #{__i('Record')}
-						button.btn.primary.skin
-							i.icon-play-circle
-							b.label #{__i('Play')}
-						p
-							| #{event.prettyDate} 
-							| on
-							a(href="/channel/#{event.channel.id}.html") #{event.channel.name} 
+		ul.movies
+			each movie in topmovies
+				li.movie
+					p 
+						strong #{movie.title} 
+						| (#{movie.year})
+					.poster
+						.score
+							i.icon-star
+							| #{movie.score}
+						img(src="/assets/posters/#{movie.poster}")
 
 
 	#dashboard.fluid
@@ -133,4 +126,4 @@ block content
 
 block scripts
 	script
-		require(['controllers/dashboard'], function(dashboard) { dashboard.initialize(); });
+//		require(['controllers/dashboard'], function(dashboard) { dashboard.initialize(); });
