@@ -29,7 +29,7 @@ function(Channel, Metadata) {
 
 		// Routing
 
-		app.server.get('/grid.html', this.render);
+		app.server.get('/grid', this.render);
 
 	};
 

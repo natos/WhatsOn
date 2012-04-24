@@ -31,7 +31,7 @@ function(Channel, Metadata, DateUtils, Requestn) {
 
 		// Routing
 
-		app.server.get('/channel/:id.html', this.render);
+		app.server.get('/channel/:id', this.render);
 
 		app.server.get('/channel/:id/details.json', this.renderDetails);
 

@@ -18,5 +18,5 @@ section#content.channel
 							| #{ event.prettyDate }, 
 							| #{ new Date(event.startDateTime).getHours() }hs
 						h3 
-							a(href="/programme/#{event.programme.id}.html") #{event.programme.title}	
+							a(href="/programme/#{event.programme.id}") #{event.programme.title}	
 						p #{event.programme.shortDescription}

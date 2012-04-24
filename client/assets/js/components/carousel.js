@@ -2,9 +2,9 @@ define([
 
 ], function() {
 
-var Carousel = {};
-
 	$window = $(window);
+
+var Carousel = {};
 
 	Carousel.map = {};
 
@@ -78,7 +78,8 @@ var Carousel = {};
 			button = $('<i>').addClass('disc').addClass('icon-stop'),
 			programme,
 			maxScreenWidth = Math.max($window.width(), $window.height()),
-			imgSize;
+			imgSize,
+			src;
 
 		Carousel.list.find('.programme').each(function(i, e) {
 
@@ -98,7 +99,9 @@ var Carousel = {};
 				imgSize = 'xl'
 			}
 
-			programme.append('<img class="programme-bg" src="/assets/programmes/' + imgSize + '/' + coolPics[i] + '.jpg" />');
+			//programme.prepend('<img class="programme-bg" src="/assets/programmes/' + imgSize + '/' + coolPics[i] + '.jpg" />');
+			src = "/assets/programmes/" + imgSize + "/" + coolPics[i] + ".jpg";
+			programme.find('.programme-bg').attr('src', src);
 
 			Carousel.map['disc-' + i] = button
 				.clone()

@@ -31,7 +31,7 @@ function(Programme, Metadata, DateUtils, Requestn) {
 
 		// Routing
 
-		app.server.get('/programme/:id.html', this.render);
+		app.server.get('/programme/:id', this.render);
 
 		app.server.get('/programme/:id/details.json', this.renderDetails);
 

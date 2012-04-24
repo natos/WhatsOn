@@ -8,9 +8,6 @@ var Dashboard = {};
 
 	Dashboard.initialize = function() {
 
-		// save this
-		window.upc.controllers.dashboard = this;
-
 		// components
 		this.components = {};
 

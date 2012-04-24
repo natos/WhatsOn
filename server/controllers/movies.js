@@ -30,7 +30,7 @@ function(Movies, DateUtils, Metadata) {
 
 		// Routing
 
-		app.server.get('/movies.html', this.render);
+		app.server.get('/movies', this.render);
 
 	};
 

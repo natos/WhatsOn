@@ -33,7 +33,7 @@ function(Channel, Metadata, RequestN, QS, config) {
 
 		// Routing
 
-		app.server.get('/list.html', this.render);
+		app.server.get('/list', this.render);
 
 	};
 

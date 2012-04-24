@@ -101,16 +101,25 @@ img {
 	height: 50px;
 	margin: 0;
 	padding: 0;
-	z-index: 100;
+	z-index: 1000;
+}
+
+.navbar-background {
+	position: absolute;
+	width: 100%;
+	height: 100%;
 	background: transparent url('/assets/images/main_gradient.png') 0 0 repeat-x;
+	z-index: 800;
 }
 
 .navbar-inner {
+	position: absolute;
 	width: 100%;
 	height: 55px;
 	margin: 0;
 	padding: 0;
 	background: transparent url('/assets/images/bg-gradient-shadow-bottom.png') 0 50px repeat-x;
+	z-index: 900;
 }
 
 .navbar-fixed-top {
@@ -210,6 +219,61 @@ img {
 }
 
 /**
+*	search-box
+*/
+
+.search-box {
+	position: absolute;
+	display: block;
+	background: #666 url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
+	font-size: 1em;
+	padding: 5px;
+	margin: 0;
+	right: 0px;
+	left: 0px;
+	border-bottom: 3px solid #333;
+	z-index: 700;
+    -webkit-transition: top 0.7s ease-in-out 0s;
+    -moz-transition: top 0.7s ease-in-out 0s;
+    -o-transition: top 0.7s ease-in-out 0s;
+    transition: top 0.7s ease-in-out 0s;
+}
+
+.search-box.active {
+	top: 50px;
+}
+
+.search-box i {
+	margin-top: 5px;
+	float: right;
+}
+
+.search-box input[type="search"] {
+    border: 1px solid #d1d1d1;
+    color: #bebebe;
+    width: 200px;
+	margin-top: 5px;
+    padding: 5px;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    border-radius: 20px;
+    text-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) inset;
+    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) inset;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) inset;
+    -webkit-transition: width 0.7s ease 0s;
+    -moz-transition: width 0.7s ease 0s;
+    -o-transition: width 0.7s ease 0s;
+    transition: width 0.7s ease 0s;
+}
+
+.search-box input[type="search"]:focus {
+	width: 230px;
+}
+
+
+
+/**
 *	main
 */
 
@@ -219,6 +283,7 @@ img {
 	margin-top: -10px;
 	background-color: #eee;
 	border: 1px solid #333;
+	z-index: 0;
 }
 
 
@@ -313,15 +378,13 @@ img {
 	}
 
 		.show .programme-bg {
-			position:relative;
+			position: absolute;
 			width:100%;
-			z-index:0;	
 		}
 
 		.show .programme-details {
-			position:absolute;
+			position: absolute;
 			padding: 10px 20px;
-			z-index:1;
 			-webkit-transition: font-size ease-in-out .3s;
 		}
 
@@ -331,7 +394,7 @@ img {
 
 			.show .programme-details p {
 				color: #eee;
-				font-size:1em;
+				font-size: 1em;
 			}
 
 			.show .programme-details a,

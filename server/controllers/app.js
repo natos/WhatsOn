@@ -50,8 +50,7 @@ function(express, i18n, config, Supports, Dashboard, Grid, Channel, Programme, M
 			// # Global Routing
 			// wildcards: global handler
 			// for root and .html files
-			self.server.get('/', globalHandler);
-			self.server.get('*.html', globalHandler);
+			self.server.get('*', globalHandler);
 
 			//	setup app controllers
 			self.controllers = {

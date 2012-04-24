@@ -1,6 +1,8 @@
 define([
 
-], function() {
+	'components/search'
+
+], function(Search) {
 
 	/* global signature */
 	window.upc = App = {};
@@ -10,6 +12,12 @@ define([
 
 		// controllers instances
 		this.controllers = {};
+
+		// components
+		this.components = {};
+
+		// setup search component
+		this.components.search = Search.initialize();
 
 		// cutting the mustard
 		this.mustard = function() {

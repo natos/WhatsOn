@@ -33,7 +33,7 @@ function(querystring, Search, Metadata, DateUtils) {
 
 		// Routing
 
-		app.server.get('/search.html', this.render);
+		app.server.get('/search', this.render);
 
 	};
 
@@ -53,7 +53,13 @@ function(querystring, Search, Metadata, DateUtils) {
 
 	SearchController.prototype.render = function(req, res) {
 
-		var query = querystring.escape(req.query.q) || '';
+		var query = querystring.escape(req.query.q);
+
+		if (!query) {
+			console.log('Search box');
+			res.end('Search box');
+			return;
+		}
 
 		SearchService.once('search', function(error, response, body) {
 
