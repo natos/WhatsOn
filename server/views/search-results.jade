@@ -1,11 +1,10 @@
-include layout
+extends layout
 
-link(href="/css/search.css", rel="stylesheet")
+block styles
+	link(href="/assets/css/search.css", rel="stylesheet")
 
-section#content
-
-	header
-		#{__i('Results for %s', query)}
+block content
+	header #{__i('Results for %s', query)}
 
 	#filters
 		h4 Date Times
@@ -38,3 +37,9 @@ section#content
 
 				.channel
 					a(href="/channel/#{event.channel.id}") #{event.channel.name}
+
+block scripts
+	script
+		setTimeout(function(){
+			upc.components.search.calibrate();
+		},300);

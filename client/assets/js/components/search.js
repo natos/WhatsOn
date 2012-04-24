@@ -16,12 +16,16 @@ var Search = {};
 
 		var self = this;
 
+		self.isAlwaysActive = false;
+
 		// setup layout
-		$search.click(function(event){
+		$search.on('click', function(event){
 
 			event.preventDefault();
 
-			$box.toggleClass('active');
+			if (!self.isAlwaysActive) {
+				$box.toggleClass('active');
+			}
 
 		});
 
@@ -30,6 +34,19 @@ var Search = {};
 		});
 
 		return this;
+	};
+
+	Search.calibrate = function() {
+
+		var self = this;
+
+		self.isAlwaysActive = true;
+
+		$box.addClass('active');
+		$box.find('.icon-remove-sign').hide();
+
+		return this;
+
 	};
 
 	return Search;

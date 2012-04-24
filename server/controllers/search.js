@@ -55,11 +55,8 @@ function(querystring, Search, Metadata, DateUtils) {
 
 		var query = querystring.escape(req.query.q);
 
-		if (!query) {
-			console.log('Search box');
-			res.end('Search box');
-			return;
-		}
+		// avoid empty query
+		if (!query) { res.end(); return; }
 
 		SearchService.once('search', function(error, response, body) {
 
@@ -84,9 +81,10 @@ function(querystring, Search, Metadata, DateUtils) {
 				used_datetimes[results[t].prettyDate] = results[t].startDateTime;
 			}
 
-			res.render('search.jade', {
+			res.render('search-results.jade', {
 				metadata		: metadata.get(),
 				config			: _app.config,
+				query			: query,
 				used_channels	: used_channels,
 				used_datetimes	: used_datetimes,
 				results			: results,

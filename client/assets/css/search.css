@@ -1,0 +1,55 @@
+/* ==============
+   Search View
+   ============== */
+
+#search-results {
+	margin-top: 10px;
+	margin-left: 200px;
+}
+
+#filters {
+	margin-top: 10px;
+	float: left;
+}
+
+#channels,
+#datetimes {
+	margin: 5px;
+}
+
+#channels input,
+#datetimes input {
+	margin: 3px 5px;
+}
+
+#categories {
+	margin: 5px;
+}
+
+#categories input {
+	margin: 3px 5px;
+}
+
+#subcategories {
+	margin-left: 10px;
+}
+
+#search-results {
+	
+}
+#search-results .programme {
+	margin: 10px;
+}
+
+#search-results .programme .channel a,
+#search-results .programme p {
+	color: #666;
+	font-size: .9em;
+	margin-left: 10px;
+}
+
+#search-results .programme .channel,
+#search-results .programme h3,
+#search-results .programme p {
+	display: inline;
+}
