@@ -17,6 +17,13 @@ input[type=text] {
 	user-select: text;
 }
 
+/* reset lists */
+ul, ol, li {
+	margin: 0;
+	padding: 0;
+}
+
+
 /**
 *	body
 */
@@ -26,7 +33,6 @@ body {
 	font-size: 14px;
 	font-size-adjust: inherit;
 	padding: 0;
-	padding-top: 45px;
 	padding-bottom: 10px;
 	background-color: #ccc;
 }
@@ -107,7 +113,7 @@ img {
 .navbar-background {
 	position: absolute;
 	width: 100%;
-	height: 100%;
+	height: 50px;
 	background: transparent url('/assets/images/main_gradient.png') 0 0 repeat-x;
 	z-index: 800;
 }
@@ -122,7 +128,7 @@ img {
 	z-index: 900;
 }
 
-.navbar-fixed-top {
+.fixed-top .navbar {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -162,6 +168,9 @@ img {
 	height: 48px;
 	padding: 0 10px;
 	line-height: 48px;
+	text-shadow:
+		0px -1px 0px rgba(000,000,000,0.2),
+		0px 1px 0px rgba(000,000,000,1);
 
 }
 
@@ -218,20 +227,19 @@ img {
 	display: none;
 }
 
+
 /**
 *	search-box
 */
-
 .search-box {
-	position: absolute;
 	display: block;
 	background: #666 url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
 	font-size: 1em;
-	padding: 5px;
+	padding: 10px;
 	margin: 0;
 	right: 0px;
 	left: 0px;
-	border-bottom: 3px solid #333;
+	border-bottom: 1px solid #333;
 	z-index: 700;
     -webkit-transition: top 0.7s ease-in-out 0s;
     -moz-transition: top 0.7s ease-in-out 0s;
@@ -239,7 +247,12 @@ img {
     transition: top 0.7s ease-in-out 0s;
 }
 
-.search-box.active {
+.fixed-top .search-box {
+	position: fixed;
+	top: 0;
+}
+
+.fixed-top .search-box.active {
 	top: 50px;
 }
 
@@ -250,13 +263,13 @@ img {
 
 .search-box input[type="search"] {
     border: 1px solid #d1d1d1;
-    color: #bebebe;
-    width: 200px;
-	margin-top: 5px;
-    padding: 5px;
-    -webkit-border-radius: 20px;
-    -moz-border-radius: 20px;
-    border-radius: 20px;
+    color: #333;
+    width: 230px;
+	margin: 0;
+    padding: 3px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
     text-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
     -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) inset;
     -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) inset;
@@ -265,11 +278,20 @@ img {
     -moz-transition: width 0.7s ease 0s;
     -o-transition: width 0.7s ease 0s;
     transition: width 0.7s ease 0s;
+
+	opacity: .8;
+
+	outline-style: none;
+
+	background-color: #eee;
 }
 
 .search-box input[type="search"]:focus {
 	width: 230px;
+	opacity: 1;
+    border: 1px solid #fff;
 }
+
 
 
 
@@ -278,14 +300,16 @@ img {
 */
 
 .main {
-	/* for positioning beneath navbar's fake shade,
-	   a little bit hacky I know */
-	margin-top: -10px;
 	background-color: #eee;
 	border: 1px solid #333;
+	margin: 0;
+	padding: 0;
 	z-index: 0;
 }
 
+.fixed-top .main {
+	margin-top: 50px;
+}
 
 /**
 *	featured
@@ -297,7 +321,6 @@ img {
 
 .carousel {
 	position: relative;
-	max-height: 800px;
 	margin: 0;
 	right: 0;
 	left: 0;
@@ -355,7 +378,6 @@ img {
 .show {
 	display: block;
 	position: relative;
-	background: #fff;
 	height: 100%; /* 100% of #featured parent container */
 	overflow:visible;
 

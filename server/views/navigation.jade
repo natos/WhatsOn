@@ -1,10 +1,5 @@
-.navbar.navbar-fixed-top
+.navbar
 	.navbar-background
-	.search-box
-		form(action="/search", method="GET")
-			i.icon-remove-sign
-			input(name="q", type="search", results="5", placeholder="#{__i('Search')}")
-
 	.navbar-inner
 		.upc-logo #{config.APP_NAME}
 		.nav
@@ -20,12 +15,10 @@
 			a.grid(href="/grid", title="#{__i('TV Grid')}")
 				i.icon-th
 				b.label #{__i('TV Grid')}
-			a.search(href="/search", title="#{__i('Search')}")
-				i.icon-search
-				b.label #{__i('Search')}
 			a.login(href="/login", title="#{__i('Login')}")
 				i.icon-user
 				b.label #{__i('Login')}
+
 
 		.user-control
 			a(href="#").active
@@ -40,3 +33,7 @@
 			a(href="#")
 				i.icon-signout
 				b.label #{__i('Logout')}
+
+.search-box
+	form(action="/search", method="GET")
+		input(id="q", name="q", type="search", results="5", placeholder="#{__i('Search')}")

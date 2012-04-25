@@ -4,9 +4,11 @@ define([
 
 	$window = $(window);
 
-	$search = $('.search');
-
 	$box = $('.search-box');
+
+	$button = $('<a href="/search"></a>');
+
+	$close = $('<i>');
 
 /* class */
 var Search = {};
@@ -16,37 +18,33 @@ var Search = {};
 
 		var self = this;
 
-		self.isAlwaysActive = false;
+		// not support
+		if (!$('.fixed-top')[0]) {
+			return this;
+		}
 
-		// setup layout
-		$search.on('click', function(event){
+		var label = $box.find('input').attr('placeholder');
 
-			event.preventDefault();
-
-			if (!self.isAlwaysActive) {
+		// build search button
+		$button
+			.addClass('search')
+			.append('<i class="icon-search">')
+			.append('<b class="label">' + label + '</i>')
+			.appendTo('.nav')
+			.on('click', function(event) {
+				event.preventDefault();
 				$box.toggleClass('active');
-			}
+			});
 
-		});
-
-		$box.find('.icon-remove-sign').click(function() {
-			$box.removeClass('active');
-		});
-
-		return this;
-	};
-
-	Search.calibrate = function() {
-
-		var self = this;
-
-		self.isAlwaysActive = true;
-
-		$box.addClass('active');
-		$box.find('.icon-remove-sign').hide();
+		// build close button
+		$close
+			.addClass('icon-remove-sign')
+			.appendTo('.search-box form')
+			.click(function() {
+				$box.removeClass('active');
+			});
 
 		return this;
-
 	};
 
 	return Search;

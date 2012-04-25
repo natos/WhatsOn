@@ -121,9 +121,9 @@ var Carousel = {};
 		Carousel.el.bind('swipeRight swipeLeft', swipe);
 
 		// start timer
-		timer.start();
+		//timer.start();
 		// restart timer every disc click
-		$('.disc').bind('click', timer.restart );
+		//$('.disc').bind('click', timer.restart );
 		
 	};
 

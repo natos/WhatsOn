@@ -63,7 +63,7 @@ function(util, events, request, config, TOP_BOOKINGS_MOCK) {
 
 				self.emit('getTopBookings', error, response, TOP_BOOKINGS_MOCK);
 
-				return;
+				return this;
 			}
 
 			self.emit('getTopBookings', error, response, body);
