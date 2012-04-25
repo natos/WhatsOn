@@ -12,7 +12,7 @@ block content
 						.score
 							i.icon-star
 							| #{movie.score}
-						img(src="/assets/posters/#{movie.poster}")
+						img(src="/assets/posters/s/#{movie.poster}")
 
 
 	#dashboard.fluid
@@ -126,4 +126,4 @@ block content
 
 block scripts
 	script
-//		require(['controllers/dashboard'], function(dashboard) { dashboard.initialize(); });
+		require(['controllers/movies'], function(movies) { movies.initialize(); });
