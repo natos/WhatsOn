@@ -22,8 +22,6 @@ var filterHandler = function(event) {
 	Search.filters[klass][value] = checked;
 
 	applyFilters();
-
-	console.log(Search.filters);
 };
 
 var isEmpty = function(klass) {
@@ -97,6 +95,9 @@ var Search = {};
 		// layout quirks
 		// min-heigth for results
 		$results.css('min-height', $filters.height());
+
+		// Assign the query to the search box
+		$('#q').val(query);
 
 		return this;
 
