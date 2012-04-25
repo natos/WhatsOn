@@ -1,54 +1,63 @@
 /* ==============
    Search View
    ============== */
+
+ul {
+	list-style: none;
+}
+
 #search-results {
-	margin-top: 10px;
-	margin-left: 200px;
+	background-color: white;
+	border-left: 1px solid #CCC;
+	margin-left: 15%;
+	padding: 0 10px;
+	overflow: hidden;
+}
+
+.programme {
+	margin: 10px;
+}
+
+.programme h3 {
+	font-size: 1.6em;
+	margin-bottom: 10px;
+}
+
+.programme .details {
+	position: relative;
+	border-top: 1px solid #ccc;
+}
+
+.programme .details .icons {
+	color: #666;
+	font-size: 1.3em;
+	position: absolute;
+	top: 10px;
+}
+
+.programme .details ul {
+	padding: 10px;
+	padding-left: 50px;
 }
 
 #filters {
-	margin-top: 10px;
-	float: left;
+	font-size: .9em;
+	width: 15%;
+	position: absolute;
+	padding: 0 10px;
+	margin: 0;
+}
+
+#filters h4 {
+	margin-bottom: 5px;
 }
 
 #channels,
 #datetimes {
-	margin: 5px;
+	margin: 0 10px;
 }
 
 #channels input,
 #datetimes input {
-	margin: 3px 5px;
-}
-
-#categories {
-	margin: 5px;
-}
-
-#categories input {
-	margin: 3px 5px;
-}
-
-#subcategories {
-	margin-left: 10px;
-}
-
-#search-results {
-	
-}
-#search-results .programme {
-	margin: 10px;
-}
-
-#search-results .programme .channel a,
-#search-results .programme p {
-	color: #666;
-	font-size: .9em;
-	margin-left: 10px;
-}
-
-#search-results .programme .channel,
-#search-results .programme h3,
-#search-results .programme p {
-	display: inline;
+	margin-right: 10px;
 }
