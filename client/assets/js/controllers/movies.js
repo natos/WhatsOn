@@ -7,21 +7,17 @@ var $window = $(window);
 var resizeImages = function() {
 
 	var maxScreenWidth = Math.max($window.width(), $window.height()),
-		imgSize, src, oldSrc, newSrc, $item;
+		imgSize, oldSrc, newSrc, $item;
 
 	if (maxScreenWidth <= 865) {
 		imgSize = 's';
 	} else if (maxScreenWidth <= 1200) {
-		imgSize = 'm'
+		imgSize = 'm';
 	} else  {
-		imgSize = 'l'
+		imgSize = 'l';
 	}/* else {
 		imgSize = 'xl'
 	}*/
-
-	src = '/assets/posters/' + imgSize + '/';
-
-	console.log(maxScreenWidth, src);
 
 	$('.poster img').each(function(index, item) {
 		$item = $(item);

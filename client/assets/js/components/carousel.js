@@ -22,7 +22,7 @@ var Carousel = {};
 			// wide screens.)
 			self.list.css({'height': ($window.width() * 0.5625) + 'px' });
 			$('#featured').css({'height': ($window.width() * 0.5625) + 'px' });
-		}
+		};
 
 		$window.bind('resize orientationchange', sizeHandler);
 
@@ -70,16 +70,26 @@ var Carousel = {};
 	];
 
 	// randomize pictures
-	coolPics.sort(function() {return 0.5 - Math.random()});
+	coolPics.sort(function() { return 0.5 - Math.random(); });
 
 	var loadButtons = function() {
 
 		var buttons = $('<div>').addClass('navigator').appendTo(Carousel.el),
 			button = $('<i>').addClass('disc').addClass('icon-stop'),
-			programme,
 			maxScreenWidth = Math.max($window.width(), $window.height()),
+			programme,
 			imgSize,
 			src;
+
+			if (maxScreenWidth <= 320) {
+				imgSize = 's';
+			} else if (maxScreenWidth <= 480) {
+				imgSize = 'm';
+			} else if (maxScreenWidth <= 1024) {
+				imgSize = 'l';
+			} else {
+				imgSize = 'xl';
+			}
 
 		Carousel.list.find('.programme').each(function(i, e) {
 
@@ -88,16 +98,6 @@ var Carousel = {};
 			programme.css({
 				'left' : 100*i + '%'
 			});
-
-			if (maxScreenWidth <= 320) {
-				imgSize = 's';
-			} else if (maxScreenWidth <= 480) {
-				imgSize = 'm'
-			} else if (maxScreenWidth <= 1024) {
-				imgSize = 'l'
-			} else {
-				imgSize = 'xl'
-			}
 
 			//programme.prepend('<img class="programme-bg" src="/assets/programmes/' + imgSize + '/' + coolPics[i] + '.jpg" />');
 			src = "/assets/programmes/" + imgSize + "/" + coolPics[i] + ".jpg";
@@ -135,7 +135,11 @@ var Carousel = {};
 		},
 		tick: function() {
 			var disc = $('.disc.selected').next();
-			!disc[0] && $('.disc').first().trigger('click') || disc.trigger('click');
+			if (!disc[0]) {
+				$('.disc').first().trigger('click');
+			} else {
+				disc.trigger('click');
+			}
 			timer.restart();
 		},
 		restart: function() {
@@ -165,9 +169,13 @@ var Carousel = {};
 				bounce = bounceLeft;
 				disc = disc.next();
 				break;
-		};
+		}
 
-		!disc[0] && bounce() || disc.trigger('click');
+		if (!disc[0]) {
+			bounce();
+		} else { 
+			disc.trigger('click');
+		}
 
 	};
 

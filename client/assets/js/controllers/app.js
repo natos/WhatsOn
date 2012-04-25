@@ -22,9 +22,7 @@ define([
 		// cutting the mustard
 		this.mustard = function() {
 
-			if('querySelector' in document
-			&& 'localStorage' in window
-			&& 'addEventListener' in window) {
+			if('querySelector' in document && 'localStorage' in window && 'addEventListener' in window) {
 				return true;
 			}
 
@@ -47,7 +45,7 @@ define([
 		if (path === "/") {
 			$('.home').addClass('active'); 
 			return; 
-		};
+		}
 
 		nav.find('a').each(function(index, item) {
 			if (this.href.toString().indexOf(path)>-1) { 
