@@ -52,13 +52,18 @@ function(Channel, Metadata, RequestN, QS, config) {
 	var renderChannelsAndEvents = function(req, res, channels, formattedSliceStartTime) {
 
 		// Compose a list of channelEventsCollections, ordered according to the original channel list
-		var channelEventsCollections = [];
-		for (var i=0; i<channels.length; i++) {
-			var cacheKey = channels[i].id + "__" + formattedSliceStartTime;
-			channelEventsCollections.push({
-				'channel' : channels[i],
-				'channelEvents' : cache[cacheKey]
-			});
+		var channelEventsCollections = [],
+			cacheKey,
+			i;
+
+		for (i=0; i<channels.length; i++) {
+			cacheKey = channels[i].id + "__" + formattedSliceStartTime;
+			if (cache[cacheKey]) {
+				channelEventsCollections.push({
+					'channel' : channels[i],
+					'channelEvents' : cache[cacheKey]
+				});
+			}
 		}
 
 		// Render
@@ -80,17 +85,15 @@ function(Channel, Metadata, RequestN, QS, config) {
 		// Step 2: once we have a list of channels, make a batch of now+next api calls, and combine their results 
 		// TODO: refactor this use the same style as the other controllers: move most of the code into a service.
 		ChannelService.once('getChannels', function(error, response, body) {
-			var i,j;
-			var channels = JSON.parse(body);
-
-			var dt = new Date();
-			var formattedSliceStartTime = dt.getFullYear().toString() + '-' + ('00' + (dt.getMonth() + 1).toString()).slice(-2) + '-' + ('00' + dt.getDate().toString()).slice(-2) + 'T' + ('00' + dt.getHours().toString()).slice(-2) + ':00' + 'Z';
-
-			// Compose an array of the channel Ids whose events for this slice are not in cache yet
-			var channelIdsToFetch = [];
+			var i, j,
+				channels = JSON.parse(body),
+				dt = new Date(),
+				formattedSliceStartTime = dt.getFullYear().toString() + '-' + ('00' + (dt.getMonth() + 1).toString()).slice(-2) + '-' + ('00' + dt.getDate().toString()).slice(-2) + 'T' + ('00' + dt.getHours().toString()).slice(-2) + ':00' + 'Z',
+				channelIdsToFetch = [], // Compose an array of the channel Ids whose events for this slice are not in cache yet
+				cacheKey;
 
 			for (i=0; i<channels.length; i++) {
-				var cacheKey = channels[i].id + "__" + formattedSliceStartTime;
+				cacheKey = channels[i].id + "__" + formattedSliceStartTime;
 				if (!cache[cacheKey]) {
 					channelIdsToFetch.push(channels[i].id);
 				}
@@ -117,13 +120,20 @@ function(Channel, Metadata, RequestN, QS, config) {
 					nowAndNextRequests,
 
 					function(responses) {
+						var i, j,
+							response,
+							eventsForChannel, 
+							cacheKey;
+
 						// Take the responses, extract the channelEvents, and put them in cache
-						for (var i=0; i< nowAndNextRequests.length; i++) {
-							var response = JSON.parse(responses[nowAndNextRequests[i]].body);
-							for (var j=0; j<response.length; j++) {
-								var eventsForChannel = response[j];
-								var cacheKey = eventsForChannel[0].channel.id + "__" + formattedSliceStartTime;
-								cache[cacheKey] = eventsForChannel;
+						for (i=0; i< nowAndNextRequests.length; i++) {
+							response = JSON.parse(responses[nowAndNextRequests[i]].body);
+							for (j=0; j<response.length; j++) {
+								eventsForChannel = response[j];
+								if (eventsForChannel.length > 0) {
+									cacheKey = eventsForChannel[0].channel.id + "__" + formattedSliceStartTime;
+									cache[cacheKey] = eventsForChannel;
+								}
 							}
 						}
 
