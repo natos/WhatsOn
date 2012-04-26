@@ -7,9 +7,6 @@ block content
 	#grid-container
 
 	#time-bar
-		ol
-
-	#time-controls
 
 	#channels-bar
 		ul
@@ -25,4 +22,4 @@ block content
 block scripts
 	script
 		var channels = !{JSON.stringify(channels)};
-		require(['controllers/grid'], function(grid) { grid.initialize(); });
+		require(['views/grid'], function(grid) { grid.initialize(); });

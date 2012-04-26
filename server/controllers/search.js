@@ -97,10 +97,6 @@ function(querystring, Search, Metadata, DateUtils) {
 
 			}
 
-			// avoid fixed positions on Search result pages
-			var _supports = Object.create(req.supports);
-				_supports.positionFixed = false;
-
 			res.render('search-results.jade', {
 				metadata		: metadata.get(),
 				config			: _app.config,
@@ -108,7 +104,7 @@ function(querystring, Search, Metadata, DateUtils) {
 				used_channels	: used_channels,
 				used_datetimes	: used_datetimes,
 				programmes		: programmes,
-				supports		: _supports
+				supports		: req.supports
 			});
 
 		}).search(query);

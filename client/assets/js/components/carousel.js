@@ -21,7 +21,6 @@ var Carousel = {};
 			// (Height limit is just so that the channel list remains visible even on very
 			// wide screens.)
 			self.list.css({'height': ($window.width() * 0.5625) + 'px' });
-			$('#featured').css({'height': ($window.width() * 0.5625) + 'px' });
 		};
 
 		$window.bind('resize orientationchange', sizeHandler);
@@ -121,9 +120,9 @@ var Carousel = {};
 		Carousel.el.bind('swipeRight swipeLeft', swipe);
 
 		// start timer
-		//timer.start();
+		timer.start();
 		// restart timer every disc click
-		//$('.disc').bind('click', timer.restart );
+		$('.disc').bind('click', timer.restart );
 		
 	};
 

@@ -127,6 +127,11 @@
 }
 
 @media (min-width: 768px) and (max-width: 979px) {
+
+  .show {
+	max-height: 600px;
+  }
+
   .navigator .disc {
 	font-size: 2em;
   }
@@ -164,6 +169,11 @@
   }
 
   /* carousel */
+
+  .show {
+	max-height: 600px;
+  }
+
   .show .programme-details {
 	padding: 20px;
   }
@@ -274,6 +284,11 @@
   }	
 
   /* carousel */
+
+  .show {
+	max-height: 800px;
+  }
+
   .navigator {
 	bottom: 20px;
   }
@@ -304,6 +319,10 @@
   }	
 
   /* carousel */
+
+  .show {
+	max-height: 1000px;
+  }
 
   .show .programme-details {
 	font-size: 1.8em;

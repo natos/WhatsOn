@@ -10,6 +10,8 @@ require([
 ], 
 function(App) {
 
+	App.initialize();
+
 	if (!window.console || !window.console.log) {
 		window.console = {
 			assert : function(){},
@@ -21,7 +23,5 @@ function(App) {
 			info : function(){}
 		};
 	}
-
-	App.initialize();
 
 });

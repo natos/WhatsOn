@@ -18,7 +18,7 @@ var Search = {};
 
 		var self = this;
 
-		// not support
+		// not supported for fixed positioning
 		if (!$('.fixed-top')[0]) {
 			return this;
 		}

@@ -1,8 +1,9 @@
 define([
 
+	'components/grid',
 	'components/search'
 
-], function(Search) {
+], function(Grid, Search) {
 
 	/* global signature */
 	window.upc = App = {};
@@ -10,27 +11,25 @@ define([
 	/* constructor */
 	App.initialize = function() {
 
+		// cutting the mustard
+		this.mustard = ('querySelector' in document && 'localStorage' in window && 'addEventListener' in window);
+
 		// controllers instances
 		this.controllers = {};
 
-		// components
-		this.components = {};
+		// views instances
+		this.views = {};
 
-		// setup search component
-		this.components.search = Search.initialize();
-
-		// cutting the mustard
-		this.mustard = function() {
-
-			if('querySelector' in document && 'localStorage' in window && 'addEventListener' in window) {
-				return true;
-			}
-
-			return false;
-		}();
+		// setup components
+		this.components = {
+			grid: Grid.initialize(),
+			search: Search.initialize()
+		};
 
 		// start navigation
 		navigation();
+
+		return this;
 
 	};
 
