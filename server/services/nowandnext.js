@@ -49,6 +49,7 @@ function(ChannelService, util, events, request, RequestN, config) {
 	var API_CHANNEL_BATCH_SIZE = 5,
 		API_EVENTS_BATCH_SIZE = 4;
 
+	// TODO: build a mechanism to flush the cache. At the moment, it is write-only.
 	var _cache = {};
 
 	var _channelService = new ChannelService();

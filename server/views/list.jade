@@ -12,12 +12,11 @@ block content
 	ul.channels-list
 		each channelEventsCollection in channelEventsCollections
 			li.channels-list-channel
-				//
-					div.channels-list-channel__timecontrols
-						button &lt;
-						span(id="channels-list_channel_#{channelEventsCollection.channel.id}__timewindow")
-						button &gt;
-						a(href="#content") &nbsp;top
+				div.channels-list-channel__timecontrols
+					a(href='?dt=' + dtStringPreviousSlice + "#channels-list_channel_#{channelEventsCollection.channel.id}__timewindow") &lt; earlier
+					span(id="channels-list_channel_#{channelEventsCollection.channel.id}__timewindow") #{dt}
+					a(href='?dt=' + dtStringNextSlice + "#channels-list_channel_#{channelEventsCollection.channel.id}__timewindow") later &gt;
+					a(href="#content") &nbsp;top
 				div.channels-list-channel__channelcontrols
 					img(title="#{channelEventsCollection.channel.name}", src="http://www.upc.nl#{channelEventsCollection.channel.logoIMG}", data-src="http://www.upc.nl#{channelEventsCollection.channel.logoIMG}", id="channelImg#{channelEventsCollection.channel.id}")
 				div.channels-list-channel__programmes(id="channels-list_channel_#{channelEventsCollection.channel.id}__programmes")
