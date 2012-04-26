@@ -379,6 +379,7 @@ img {
 	display: block;
 	position: relative;
 	height: 100%; /* 100% of #featured parent container */
+	max-height: 400px;
 	overflow:visible;
 
 	-webkit-transition: 	left .3s ease-in-out;
