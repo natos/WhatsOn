@@ -8,7 +8,9 @@ define([
 		ESTIMATED_AVERAGE_EVENTS_PER_HOUR = 4,
 		EVENTS_PER_SLICE = ESTIMATED_AVERAGE_EVENTS_PER_HOUR * HOURS_PER_SLICE,
 		API_PREFIX = $('head').attr('data-api'),
-		$CUSTOM_EVENT_ROOT = $(document.body);
+		$CUSTOM_EVENT_ROOT = $(document.body),
+		CHANNEL_EVENTS_RECEIVED_EVENT = 'eventsReceived',
+		SEARCH_RESULTS_RECEIVED_EVENT = 'searchResultsReceived';
 
 	// Special cache variable for holding events retrieved from the API.
 	// TODO: mechanism for flushing the cache?
@@ -102,7 +104,7 @@ define([
 			channelId = channelIds[i]; 
 			cacheKey = getCacheKey(channelId, timeSlice);
 			if (_eventsForChannelCache[cacheKey]) {
-				$CUSTOM_EVENT_ROOT.trigger('eventsReceived', [_eventsForChannelCache[cacheKey]]);
+				$CUSTOM_EVENT_ROOT.trigger(CHANNEL_EVENTS_RECEIVED_EVENT, [_eventsForChannelCache[cacheKey]]);
 			} else {
 				channelIdsToFetchFromApi.push(channelId);
 			}
@@ -180,7 +182,7 @@ define([
 			cacheKey = getCacheKey(channelId, timeSlice);
 			_eventsForChannelCache[cacheKey] = eventsForChannel;
 
-			$CUSTOM_EVENT_ROOT.trigger('eventsReceived', [eventsForChannel]);
+			$CUSTOM_EVENT_ROOT.trigger(CHANNEL_EVENTS_RECEIVED_EVENT, [eventsForChannel]);
 		});
 
 	};
@@ -203,7 +205,6 @@ define([
 		var startTime = new Date();
 		var endTime = new Date(startTime.valueOf() + (4 * 60 * 60 * 1000));
 		EpgApi.getEventsForChannels(channelIds, startTime, endTime);
-
 	 *
 	 * @public
 	 * @async
@@ -220,8 +221,34 @@ define([
 		}
 	}
 
+	/**
+	 * Perform an EPG search for events. Raises an "searchResultsReceived"
+	 * message when the eventsd have been returned.
+	 * 
+	 * Usage:
+
+		// Start listening for searchResultsReceived event
+		$CUSTOM_EVENT_ROOT.bind('searchResultsReceived', function(e, data){
+			console.log(data);
+		});
+
+		EpgApi.searchForEvents('monkeys');
+	 *
+	 * @public
+	 * @async
+	 * @return void
+	 */
+	var searchForEvents = function(q) {
+		// Use "&order=startDateTime" to get results in order
+		var request = API_PREFIX + 'Event.json?query=' + escape(q) + '&callback=?';
+		$.getJSON(request, function(apiResponse) {
+			$CUSTOM_EVENT_ROOT.trigger(SEARCH_RESULTS_RECEIVED_EVENT, [apiResponse]);
+		});
+	}
+
 	return {
-		getEventsForChannels: getEventsForChannels
+		getEventsForChannels: getEventsForChannels,
+		searchForEvents: searchForEvents
 	};
 
 });
