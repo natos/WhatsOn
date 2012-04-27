@@ -14,6 +14,8 @@ define([
 
 var $window = $(window),
 
+	$CUSTOM_EVENT_ROOT = $(document.body),
+
 	$container = $('#grid-container');
 
 /* @class GridView */
@@ -34,15 +36,6 @@ var GridView = {};
 			timebar		: TimeBar.initialize(),
 			channelbar	: ChannelBar.initialize()
 		};
-
-		// Start listening for eventsReceived event
-		$(window).bind('eventsReceived', function(e, data){
-			console.log(data);
-		});
-		var channelIds = ['7s','7l','6s'];
-		var startTime = new Date();
-		var endTime = new Date(startTime.valueOf() + (4 * 60 * 60 * 1000));
-		EpgApi.getEventsForChannels(channelIds, startTime, endTime);
 
 		return this;
 
