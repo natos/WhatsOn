@@ -5,9 +5,10 @@ define([
 	'models/grid',
 	'components/timebar',
 	'components/channelbar',
-	'utils/viewport'
+	'utils/viewport',
+	'utils/epgapi'
 
-], function(App, GridController, GridModel, TimeBar, ChannelBar, Viewport) {
+], function(App, GridController, GridModel, TimeBar, ChannelBar, Viewport, EpgApi) {
 
 /* private */
 

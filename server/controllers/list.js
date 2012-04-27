@@ -7,11 +7,10 @@ define([
 	/** @require */
 
 	// services
-	'services/channel',
+	'services/nowandnext',
 
 	// utils
 	'utils/metadata',
-	'utils/requestn',
 
 	'querystring',
 	'config/global.config'
@@ -23,7 +22,7 @@ define([
  *	@class ListController
  */
 
-function(Channel, Metadata, RequestN, QS, config) {
+function(NowAndNextService, Metadata, QS, config) {
 
 	/** @constructor */
 
@@ -44,108 +43,65 @@ function(Channel, Metadata, RequestN, QS, config) {
 
 		metadata = new Metadata(),
 
-		ChannelService = new Channel(),
+		nowAndNextService = new NowAndNextService();
 
-		cache = {};
+	// Given a date, return a string in the format 'YYYY-MM-DDTHH:00Z',
+	// which is the format the EPG api accepts for marking the start time.
+	// Note that we ignore that MINUTES of the specified time, so that we
+	// always ask the EPG api for data starting at the top of each hour.
+	var getFormattedSliceStartTime = function(dt) {
+		return dt.getFullYear().toString() + '-' + ('00' + (dt.getMonth() + 1).toString()).slice(-2) + '-' + ('00' + dt.getDate().toString()).slice(-2) + 'T' + ('00' + dt.getHours().toString()).slice(-2) + ':00Z';
+	};
 
+	var getDateFromQueryString = function(req) {
+		var dt,
+			dtString = req.query['dt'],
+			parts,
+			dateParts,
+			timeParts;
 
-	var renderChannelsAndEvents = function(req, res, channels, formattedSliceStartTime) {
-
-		// Compose a list of channelEventsCollections, ordered according to the original channel list
-		var channelEventsCollections = [],
-			cacheKey,
-			i;
-
-		for (i=0; i<channels.length; i++) {
-			cacheKey = channels[i].id + "__" + formattedSliceStartTime;
-			if (cache[cacheKey]) {
-				channelEventsCollections.push({
-					'channel' : channels[i],
-					'channelEvents' : cache[cacheKey]
-				});
+		try {
+			parts = dtString.split('T');
+			dateParts = parts[0].split('-');
+			timeParts = parts[1].split(':');
+			dt = new Date(dateParts[0], dateParts[1] - 1, dateParts[2], timeParts[0], 0);
+			if (isNaN(dt.getFullYear())) {
+				throw (new Exception('','unable to construct date'));
 			}
 		}
-
-		// Render
-		res.render('list.jade', {
-			metadata	: metadata.get(),
-			config		: _app.config,
-			channels	: channels,
-			channelEventsCollections: channelEventsCollections,
-			supports	: req.supports
-		});
-
+		catch (err) {
+			dt = new Date();
+			dt.setMinutes(0);
+			dt.setSeconds(0);
+		}
+		return dt;
 	}
+
 
 	/** @public */
 
 	ListController.prototype.render = function(req, res) {
 
-		// Step 1: get a list of all channels (should be cached)
-		// Step 2: once we have a list of channels, make a batch of now+next api calls, and combine their results 
-		// TODO: refactor this use the same style as the other controllers: move most of the code into a service.
-		ChannelService.once('getChannels', function(error, response, body) {
-			var i, j,
-				channels = JSON.parse(body),
-				dt = new Date(),
-				formattedSliceStartTime = dt.getFullYear().toString() + '-' + ('00' + (dt.getMonth() + 1).toString()).slice(-2) + '-' + ('00' + dt.getDate().toString()).slice(-2) + 'T' + ('00' + dt.getHours().toString()).slice(-2) + ':00' + 'Z',
-				channelIdsToFetch = [], // Compose an array of the channel Ids whose events for this slice are not in cache yet
-				cacheKey;
+		var dt = getDateFromQueryString(req),
+			dtPreviousSlice = new Date(dt.valueOf() - (60 * 60 * 1000)),
+			dtNextSlice = new Date(dt.valueOf() + (60 * 60 * 1000)),
+			dtStringPreviousSlice = getFormattedSliceStartTime(dtPreviousSlice),
+			dtStringNextSlice = getFormattedSliceStartTime(dtNextSlice);
 
-			for (i=0; i<channels.length; i++) {
-				cacheKey = channels[i].id + "__" + formattedSliceStartTime;
-				if (!cache[cacheKey]) {
-					channelIdsToFetch.push(channels[i].id);
-				}
-			}
+		nowAndNextService.once('getNowAndNext', function(channels, channelEventsCollections){
 
-			// Build an array of channel batches
-			var channelIdBatches = [];
-			var batchSize = 5;
-			var batchesCount = Math.ceil(channelIdsToFetch.length / batchSize);
-			for (i=0; i<batchesCount; i++) {
-				channelIdBatches[i] = channelIdsToFetch.slice( batchSize * i, batchSize * (i+1) );
-			}
+			res.render('list.jade', {
+				metadata	: metadata.get(),
+				config		: _app.config,
+				dt 			: dt,
+				dtStringPreviousSlice 			: dtStringPreviousSlice,
+				dtStringNextSlice 			: dtStringNextSlice,
+				channels	: channels,
+				channelEventsCollections: channelEventsCollections,
+				supports	: req.supports
+			});
 
-			// For each channel batch, create an API request URL
-			var nowAndNextRequests = [];
-			var EVENTS_PER_SLICE = 4;
-			for (i=0; i<channelIdBatches.length; i++) {
-				var request = config.API_PREFIX + 'Channel/' + channelIdBatches[i].join('|') + '/events/NowAndNext_' + formattedSliceStartTime + '.json?batchSize=' + EVENTS_PER_SLICE + '&order=startDateTime';
-				nowAndNextRequests.push(request);
-			}
-
-			if (nowAndNextRequests.length > 0) {
-				RequestN(
-					nowAndNextRequests,
-
-					function(responses) {
-						var i, j,
-							response,
-							eventsForChannel, 
-							cacheKey;
-
-						// Take the responses, extract the channelEvents, and put them in cache
-						for (i=0; i< nowAndNextRequests.length; i++) {
-							response = JSON.parse(responses[nowAndNextRequests[i]].body);
-							for (j=0; j<response.length; j++) {
-								eventsForChannel = response[j];
-								if (eventsForChannel.length > 0) {
-									cacheKey = eventsForChannel[0].channel.id + "__" + formattedSliceStartTime;
-									cache[cacheKey] = eventsForChannel;
-								}
-							}
-						}
-
-						renderChannelsAndEvents(req, res, channels, formattedSliceStartTime);
-					}
-
-				);
-			} else {
-				renderChannelsAndEvents(req, res, channels, formattedSliceStartTime);
-			}
-
-		}).getChannels();
+		}).getNowAndNext(dt);
 
 	};
 
