@@ -55,6 +55,7 @@ function(Channel, Metadata) {
 				metadata	: metadata.get(),
 				config		: _app.config,
 				channels	: channels,
+				timebar		: new Array(24),
 				supports	: req.supports
 			});
 

@@ -66,84 +66,40 @@
 }
 
 /* ==============
-   Control Bar 				// NOT USING THIS YET
-   ============== */
-
-#control-bar {
-	position: fixed;
-	width: 100%;
-	height: 30px;
-	top: 50px;
-	right: 0;
-	left: 0;
-	background: #222;
-	border: 1px solid #333;
-}
-
-.week {
-	display: block;
-	position: absolute;
-	left: 60px;
-	top: 0;
-	height: 30px;
-	background: #222;
-	overflow: hidden;
-}
-
-.week:hover {
-	height: 260px;
-	z-index: 30;
-}
-
-.week li {
-	display: block;
-	padding: 10px;
-
-	overflow: hidden;
-}
-
-.week li:hover {
-	background: #333;
-}
-
-.week li:first-of-type {
-
-}
-
-.week li a {
-	width: 10px;
-	text-overflow: ellipsis;
-}
-
-/* ==============
    Time Bar
    ============== */
 
 #time-bar {
-	position: absolute;
+	position: fixed;
 	top: 50px;
 	left: 0;
 	right: 0;
-	height: 26px;
+	height: 20px;
 	font-size: .8em;
 	z-index: 9;
+	background-color: black;
+}
 
+#time-bar .shade {
 	/* Fake box-shadow. CSS box-shadow can decrease scrolling performance on old iOS and Android browsers. */ 
 	background:url('/assets/images/bg-gradient-shadow-bottom.png') repeat-x 0 100%;
-}
-.support-fixed-position #time-bar {
-	position: fixed;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	bottom: -6px;
 }
 
 #time-bar ol {
 	background: #000;
 	color: #ccc;
 	height: 20px;
+	width: 4800px;
 	position: absolute;
 	/* Width is set dynamically by the view. It depends on how many hours are shown. */
 }
 
 #time-bar li {
+	width: 200px;
 	position: relative;
 	display: inline-block;
 	height:100%;
@@ -239,34 +195,22 @@
    ============== */
 
 #channels-bar {
-	position: absolute;
+	position: fixed;
 	top: 70px;
 	left: 0;
 	bottom:0;
-	width: 69px;
+	width: 63px;
 	z-index:5;
-	overflow: hidden;
+	background-color: white;
+}
 
-	/* Transition performance is fine on Chrome/Desktop, but not on most mobile browsers */
-	/*
-	-webkit-transition-timing-function: ease-out;  
-	-webkit-transition-property: width, opacity;  
-	-webkit-transition-duration: .3s;  
-
-	-moz-transition-timing-function: ease-out;  
-	-moz-transition-property: width, opacity;  
-	-moz-transition-duration: .3s;
-	*/
-
+#channels-bar .shade {
 	/* Fake box-shadow. CSS box-shadow can decrease scrolling performance on old iOS and Android browsers. */ 
-	background:transparent url('/assets/images/bg-gradient-shadow-right.png') repeat-y 100% 0;
-}
-.support-fixed-position #channels-bar {
-	position:fixed;
-}
-
-#channels-bar.open {
-	width: 106px;
+	background: transparent url('/assets/images/bg-gradient-shadow-right.png') repeat-y 100% 0;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	right: -6px;
 }
 
 #channels-bar ul {

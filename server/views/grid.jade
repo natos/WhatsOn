@@ -2,24 +2,27 @@ extends layout
 
 block styles
 	link(href="/assets/css/grid.css", rel="stylesheet")
+	style(id="grid-styles")
 
 block content
 	#grid-container
 
 	#time-bar
+		.shade
+		ol
+			each time, i in timebar
+				li
+					span #{i}hs
 
 	#channels-bar
+		.shade
 		ul
 			each channel in channels
 				li
 					.picture
-						img(title="#{channel.name}", data-src="http://www.upc.nl#{channel.logoIMG}", id="channelImg#{channel.id}")
-					.fav
-						input(id="#{channel.name}", type="checkbox")
-						label(for="#{channel.name}") favorite
-
+						img(title="#{channel.name}", src="http://www.upc.nl#{channel.logoIMG}", id="channelImg#{channel.id}")
 
 block scripts
 	script
 		var channels = !{JSON.stringify(channels)};
-		require(['views/grid'], function(grid) { grid.initialize(); });
+		require(['views/grid'], function(grid, timebar) { grid.initialize(); });
