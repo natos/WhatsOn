@@ -35,7 +35,7 @@ define([
 			width = Math.floor( duration * g.HOUR_WIDTH ); // pixels
 
 			offsetTime = ( startDateTime.valueOf() - g.ZERO.valueOf() ) / g.MILLISECONDS_IN_HOUR; // hours
-			left = Math.floor(offsetTime * g.HOUR_WIDTH);
+			left = Math.floor(offsetTime * g.HOUR_WIDTH); // pixels
 
 			link = $('<a>')
 				.addClass('programme')
@@ -123,7 +123,10 @@ var GridView = {};
 
 	GridView.getEvents = function() {
 
-		EpgApi.getEventsForChannels(ChannelBar.getSelectedChannels(), TimeBar.getSelectedTime().startTime, TimeBar.getSelectedTime().endTime);
+		var selectedChannels = ChannelBar.getSelectedChannels(),
+			selectedTime = TimeBar.getSelectedTime();
+
+		EpgApi.getEventsForChannels(selectedChannels, selectedTime.startTime, selectedTime.endTime);
 
 	};
 
