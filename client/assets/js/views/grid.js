@@ -32,10 +32,10 @@ define([
 			startDateTime = new Date(event.startDateTime);
 			endDateTime = new Date(event.endDateTime);
 
-			duration = ( endDateTime.valueOf() - startDateTime.valueOf() ) / g.MILLISECONDS_IN_HOUR, // hours
-			width = Math.floor( duration * g.HOUR_WIDTH ), // pixels
+			duration = ( endDateTime.valueOf() - startDateTime.valueOf() ) / g.MILLISECONDS_IN_HOUR; // hours
+			width = Math.floor( duration * g.HOUR_WIDTH ); // pixels
 
-			offsetTime = ( startDateTime.valueOf() - g.ZERO.valueOf() ) / g.MILLISECONDS_IN_HOUR, // hours
+			offsetTime = ( startDateTime.valueOf() - g.ZERO.valueOf() ) / g.MILLISECONDS_IN_HOUR; // hours
 			left = Math.floor(offsetTime * g.HOUR_WIDTH);
 
 			link = $('<a>')
