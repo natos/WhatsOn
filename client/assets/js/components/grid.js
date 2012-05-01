@@ -17,7 +17,6 @@ var Grid = {};
 				.addClass('grid')
 				.html('<i class="icon-th"></i><b class="label">TV Gids</b>')
 				.appendTo('.nav');
-
 		}
 		
 		return this;

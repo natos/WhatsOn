@@ -323,7 +323,7 @@
 /* A .channel-container is a container for all events in a channel.
 .channel-container elements are full-width, stacked inside the parent #grid-container */
 .channel-container {
-	position:relative;
+	position:absolute;
 	width:100%;
 	background: #ddd url('/assets/images/channel_row.png') repeat-x;
 }

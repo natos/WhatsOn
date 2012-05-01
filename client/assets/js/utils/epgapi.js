@@ -100,7 +100,7 @@ define([
 		// Iterate over the channels list to see if we have an events collection
 		// for this channel and time slice in cache. If not, add the channel to a list
 		// of channels to fetch from the api.
-		for (i=0; i<channelIdsCount; i++) {
+		for (i = 0; i < channelIdsCount; i++) {
 			channelId = channelIds[i]; 
 			cacheKey = getCacheKey(channelId, timeSlice);
 			if (_eventsForChannelCache[cacheKey]) {
@@ -129,7 +129,7 @@ define([
 			channelIdBatch,
 			request;
 
-		for (i=0; i<batchesCount; i++) {
+		for (i = 0; i < batchesCount; i++) {
 			channelIdBatches[i] = channelIds.slice( batchSize * i, batchSize * (i+1) );
 		}
 
@@ -137,7 +137,7 @@ define([
 		channelIdBatchesCount = channelIdBatches.length;
 		for (i=0; i<channelIdBatchesCount; i++) {
 			channelIdBatch = channelIdBatches[i];
-
+console.log(channelIdBatch)
 			// Use "&order=startDateTime" to get results in order
 			request = API_PREFIX + 'Channel/' + channelIdBatch.join('|') + '/events/NowAndNext_' + formattedStartTime + '.json?batchSize=' + EVENTS_PER_SLICE + '&order=startDateTime&callback=?'; 
 			$.getJSON(request, function(apiResponse) {
@@ -180,12 +180,14 @@ define([
 			// Cache the event collection by channel ID and timeslice index
 			channelId = eventsForChannel[0].channel.id;
 			cacheKey = getCacheKey(channelId, timeSlice);
+
 			_eventsForChannelCache[cacheKey] = eventsForChannel;
 
 			$CUSTOM_EVENT_ROOT.trigger(CHANNEL_EVENTS_RECEIVED_EVENT, [eventsForChannel]);
 		});
 
 	};
+
 
 	/**
 	 * Retrieve events for the specified channel IDs and time range.
