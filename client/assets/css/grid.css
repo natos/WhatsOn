@@ -318,6 +318,8 @@
 	color: #fff;
 	/* height and width are set dynamically based by the view */
 	overflow: hidden;
+
+	background-color: #eee;
 }
 
 /* A .channel-container is a container for all events in a channel.
@@ -325,7 +327,7 @@
 .channel-container {
 	position:absolute;
 	width:100%;
-	background: #ddd url('/assets/images/channel_row.png') repeat-x;
+	background: transparent url('/assets/images/channel_row.png') repeat-x;
 }
 
 /* A .grid-event represents a single event in the programme grid.
@@ -339,17 +341,23 @@
 	cursor: pointer;
 }
 
+.grid-event:active {
+	background: #fff url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
+	border-left: 1px solid #aaa;
+	border-right: 1px solid #aaa;
+}
+
 #grid-container .programme,
 #grid-container .programme + p {
 	display: block;
 	margin: 5px;
 	padding: 0;
-	color: #333;
+	color: #666;
 }
 
 #grid-container .programme {
 	font-weight: bold;
-	color: 000;
+	color: #000;
 }
 
 /* Hover states only supported for non-touch browsers */
@@ -368,6 +376,7 @@
 	position: absolute;
 	height: 100%;
 	width: 4px;
+	margin-left: -2px;
 	top:0px;
 	z-index:1;
 
@@ -375,6 +384,7 @@
 	
 	-webkit-box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, .3);
 	-moz-box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, .3);
+	box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, .3);
 
 	opacity: .9;
 

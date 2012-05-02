@@ -137,7 +137,7 @@ define([
 		channelIdBatchesCount = channelIdBatches.length;
 		for (i=0; i<channelIdBatchesCount; i++) {
 			channelIdBatch = channelIdBatches[i];
-console.log(channelIdBatch)
+
 			// Use "&order=startDateTime" to get results in order
 			request = API_PREFIX + 'Channel/' + channelIdBatch.join('|') + '/events/NowAndNext_' + formattedStartTime + '.json?batchSize=' + EVENTS_PER_SLICE + '&order=startDateTime&callback=?'; 
 			$.getJSON(request, function(apiResponse) {

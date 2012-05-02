@@ -14,7 +14,8 @@ var	$channellist = g.$channelsbar.find('ul'),
 	/* constructor */
 	ChannelBar.initialize = function() {
 
-		g.$body.on('grid:moved', this.move);
+		// move with the grid
+		g.$body.on(g.GRID_MOVED, this.move);
 
 		// Map Channel ID / OffsetTop
 		for (var i = 0; i < channels.length; i++) {

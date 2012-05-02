@@ -38,6 +38,8 @@ define([
 	
 		VIEWPORT_WIDTH_HOURS: 0,
 
+		MAX_DOM_ELEMENTS: 500,
+
 		// Events
 
 		GRID_MOVED: 'grid:moved',

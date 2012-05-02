@@ -6,9 +6,11 @@ define([
 	'models/grid',
 	'components/timebar',
 	'components/channelbar',
-	'utils/epgapi'
+	'components/buffer',
+	'utils/epgapi',
+	'utils/convert'
 
-], function(GridConfig, App, GridController, GridModel, TimeBar, ChannelBar, EpgApi) {
+], function(GridConfig, App, GridController, GridModel, TimeBar, ChannelBar, Buffer, EpgApi, convert) {
 
 /* private */
 
@@ -16,7 +18,7 @@ define([
 
 	renderEvents = function(events) {
 
-		var link, description, i, event, width, left, startDateTime, endDateTime, offsetTime, duration;
+		var link, description, i, event, width, left, startDateTime, endDateTime;
 
 		for (i = 0; i < events.length; i++) {
 
@@ -31,15 +33,12 @@ define([
 			startDateTime = new Date(event.startDateTime);
 			endDateTime = new Date(event.endDateTime);
 
-			duration = ( endDateTime.valueOf() - startDateTime.valueOf() ) / g.MILLISECONDS_IN_HOUR; // hours
-			width = Math.floor( duration * g.HOUR_WIDTH ); // pixels
-
-			offsetTime = ( startDateTime.valueOf() - g.ZERO.valueOf() ) / g.MILLISECONDS_IN_HOUR; // hours
-			left = Math.floor(offsetTime * g.HOUR_WIDTH); // pixels
+			width = convert.timeToPixels(endDateTime, startDateTime);
+			left = convert.timeToPixels(startDateTime, g.ZERO);
 
 			link = $('<a>')
 				.addClass('programme')
-				.attr({ 'id': event.programme.id, 'href': '/programme/' + event.programme.id })
+				.attr({ 'id': event.programme.id, 'href': '/programme/' + event.programme.id, 'title': event.programme.title })
 				.text(event.programme.title);
 
 			description = $('<p>')
@@ -59,6 +58,8 @@ define([
 				})
 				.appendTo('#cc_' + event.channel.id);
 		}
+
+		g.$body.trigger(g.GRID_RENDERED);
 
 	};
 
@@ -88,8 +89,12 @@ var GridView = {};
 		// setup components
 		this.components = {
 			timebar		: TimeBar.initialize(),
-			channelbar	: ChannelBar.initialize()
+			channelbar	: ChannelBar.initialize(),
+			buffer		: Buffer.initialize()
 		};
+
+		// add logo behavior, move to 'now'
+		$('.upc-logo').click(function(event){ TimeBar.goTo('now'); });
 
 		/** 
 		*	Events handlers
@@ -99,7 +104,7 @@ var GridView = {};
 		var executionTimer,
 			handler = function(e) {
 
-				g.$body.trigger('grid:moved');
+				g.$body.trigger(g.GRID_MOVED);
 
 				if (executionTimer) {
 					clearTimeout(executionTimer);
@@ -108,13 +113,13 @@ var GridView = {};
 				executionTimer = setTimeout(function() { GridView.getEvents(); }, 200);
 			};
 
-		g.$window.on('scroll', handler);
+		g.$window.on('resize scroll', handler);
 
 		g.$body.on('eventsReceived', function(event, results) {
 			renderEvents(results);
 		});
 
-		// Get first events
+		// Get first events | No need because the thicker starts the movement.
 		GridView.getEvents();
 
 		return this;
@@ -123,11 +128,12 @@ var GridView = {};
 
 	GridView.getEvents = function() {
 
-		var selectedChannels = ChannelBar.getSelectedChannels(),
+		var selectedChannels = ChannelBar.getSelectedChannels(2),
 			selectedTime = TimeBar.getSelectedTime();
 
 		EpgApi.getEventsForChannels(selectedChannels, selectedTime.startTime, selectedTime.endTime);
-
+	
+		return this;
 	};
 
 	return GridView;

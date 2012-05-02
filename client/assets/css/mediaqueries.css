@@ -152,6 +152,7 @@
   .upc-logo {
 	display: block;
 	left: 50%;
+	margin-left: -15px;
   }
 
   .nav, .main {
