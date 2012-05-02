@@ -4,10 +4,6 @@ define([
 
 /* private */
 
-var ZERO = new Date();
-	ZERO.setHours(0);
-	ZERO.setMinutes(0);
-	ZERO.setSeconds(0);
 
 /* Grid Config */
 
@@ -15,7 +11,18 @@ var ZERO = new Date();
 
 		// constants
 
-		ZERO: ZERO,
+		ZERO: (function(){
+
+			var _ZERO = new Date();
+				_ZERO.setHours(0);
+				_ZERO.setMinutes(0);
+				_ZERO.setSeconds(0);
+
+			return _ZERO;
+
+		}()),
+
+		NOW: new Date(),
 	
 		HOUR_WIDTH: 200,
 	
@@ -30,6 +37,12 @@ var ZERO = new Date();
 		CHANNEL_BAR_WIDTH: 0,
 	
 		VIEWPORT_WIDTH_HOURS: 0,
+
+		// Events
+
+		GRID_MOVED: 'grid:moved',
+
+		GRID_RENDERED: 'grid:rendered',
 
 		// DOM Access
 
