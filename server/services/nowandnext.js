@@ -92,12 +92,26 @@ function(ChannelService, util, events, request, RequestN, config) {
 		// Take the responses, extract the channelEvents, and put them in cache
 		for (i=0; i< nowAndNextRequests.length; i++) {
 			response = JSON.parse(responses[nowAndNextRequests[i]].body);
-			for (j=0; j<response.length; j++) {
-				eventsForChannel = response[j];
-				if (eventsForChannel.length > 0) {
-					cacheKey = eventsForChannel[0].channel.id + "__" + formattedSliceStartTime;
-					_cache[cacheKey] = eventsForChannel;
+			if (response && response.length > 0) {
+				// If only one channel was requested, the response is an array of events.
+				// If multiple channels were requested, the response in an array of channels, and each channel holds an array of events
+				// See also: http://christianheilmann.com/2010/09/22/the-annoying-thing-about-yqls-json-output-and-the-reason-for-it/
+				if (response[0]._type === 'Event') {
+					eventsForChannel = response;
+					if (eventsForChannel.length > 0) {
+						cacheKey = eventsForChannel[0].channel.id + "__" + formattedSliceStartTime;
+						_cache[cacheKey] = eventsForChannel;
+					}
+				} else {
+					for (j=0; j<response.length; j++) {
+						eventsForChannel = response[j];
+						if (eventsForChannel.length > 0) {
+							cacheKey = eventsForChannel[0].channel.id + "__" + formattedSliceStartTime;
+							_cache[cacheKey] = eventsForChannel;
+						}
+					}
 				}
+
 			}
 		}
 	};
@@ -106,7 +120,7 @@ function(ChannelService, util, events, request, RequestN, config) {
 	/** @public */
 
 	/** Get list of top movies */
-	NowAndNextService.prototype.getNowAndNext = function(dt) {
+	NowAndNextService.prototype.getNowAndNext = function(dt, requestedChannelIds) {
 
 		var self = this;
 
@@ -115,6 +129,7 @@ function(ChannelService, util, events, request, RequestN, config) {
 		_channelService.once('getChannels', function(error, response, body) {
 			var i, j,
 				channels = JSON.parse(body),
+				requestedChannels = [],
 				formattedSliceStartTime = getFormattedSliceStartTime(dt),
 				channelIdsToFetch = [], // Compose an array of the channel Ids whose events for this slice are not in cache yet
 				cacheKey,
@@ -124,13 +139,23 @@ function(ChannelService, util, events, request, RequestN, config) {
 				request,
 				channelEventsCollection;
 
+			// If we have been passed an array of channels, limit the lookup to just these channels
+			if (requestedChannelIds) {
+				requestedChannels = channels.filter(function(channel, index, arr){
+					return (requestedChannelIds.indexOf(channel.id) >= 0);
+				});
+			} else {
+				// No array of channels: return ALL channels
+				requestedChannels = channels;
+			}
+
 			// First, check the cache for this time slice. 
 			// If we do not have events for a [channel + timeslice],
 			// then add the channel to a list of channels to fetch from the API. 
-			for (i=0; i<channels.length; i++) {
-				cacheKey = channels[i].id + "__" + formattedSliceStartTime;
+			for (i=0; i<requestedChannels.length; i++) {
+				cacheKey = requestedChannels[i].id + "__" + formattedSliceStartTime;
 				if (!_cache[cacheKey]) {
-					channelIdsToFetch.push(channels[i].id);
+					channelIdsToFetch.push(requestedChannels[i].id);
 				}
 			}
 
@@ -152,12 +177,12 @@ function(ChannelService, util, events, request, RequestN, config) {
 					nowAndNextRequests,
 					function(responses) {
 						cacheNowAndNextApiResponses(nowAndNextRequests, responses, formattedSliceStartTime);
-						self.emit('getNowAndNext', channels, getChannelEventsCollections(channels, formattedSliceStartTime));
+						self.emit('getNowAndNext', requestedChannels, getChannelEventsCollections(requestedChannels, formattedSliceStartTime));
 					}
 				);
 			} else {
 				// Retrieve results directly from cache
-				self.emit('getNowAndNext', channels, getChannelEventsCollections(channels, formattedSliceStartTime));
+				self.emit('getNowAndNext', requestedChannels, getChannelEventsCollections(requestedChannels, formattedSliceStartTime));
 			}
 
 		}).getChannels();
