@@ -16,20 +16,6 @@ define([
 
 	var g = GridConfig,
 
-	/**
-	 * The EPG API returns dates (event.startDateTime, event.endDateTime)
-	 * in the format YYYY-MM-DDThh:mmZ. Safari can't use this string as a
-	 * parameters for a new Date constructor.
-	 */
-	parseApiDate = function(apiDate) {
-		var dt;
-		if (typeof(apiDate) === 'string') {
-			dt = new Date(apiDate.slice(0,4), parseInt(apiDate.slice(5,7),10) -1, parseInt(apiDate.slice(8,10),10), parseInt(apiDate.slice(11,13),10), parseInt(apiDate.slice(14,16),10));
-		}
-		return dt;
-	},
-
-
 	renderEvents = function(events) {
 
 		var link, description, i, event, width, left, startDateTime, endDateTime;
@@ -40,12 +26,11 @@ define([
 
 			// Avoid duplicate DOM elements
 			if ( $('#event-' + event.id)[0] ) {
-				//console.log('duplication avoided');
 				return;
 			}
 
-			startDateTime = parseApiDate(event.startDateTime);
-			endDateTime = parseApiDate(event.endDateTime);
+			startDateTime = convert.parseApiDate(event.startDateTime);
+			endDateTime = convert.parseApiDate(event.endDateTime);
 
 			width = convert.timeToPixels(endDateTime, startDateTime);
 			left = convert.timeToPixels(startDateTime, g.ZERO);
