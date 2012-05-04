@@ -3,7 +3,8 @@ ul.channels-list
 		li.channels-list-channel
 			span.channelmarker(id="channelmarker-#{channelEventsCollection.channel.id}") mark
 			div.channels-list-channel__controls
-				img.logo(title="#{channelEventsCollection.channel.name}", src="http://www.upc.nl#{channelEventsCollection.channel.logoIMG}", data-src="http://www.upc.nl#{channelEventsCollection.channel.logoIMG}", id="channelImg#{channelEventsCollection.channel.id}")
+				a.logo(href="/channel/#{channelEventsCollection.channel.id}")
+					img(title="#{channelEventsCollection.channel.name}", src="http://www.upc.nl#{channelEventsCollection.channel.logoIMG}", data-src="http://www.upc.nl#{channelEventsCollection.channel.logoIMG}", id="channelImg#{channelEventsCollection.channel.id}")
 				a.earlier(href=earlierUrl + "#channelmarker-#{channelEventsCollection.channel.id}")
 					span.icon-chevron-left 
 					#{earlierText}
