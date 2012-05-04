@@ -18,6 +18,7 @@ ul.channels-list
 				ul
 					each event in channelEventsCollection.channelEvents
 						li.channels-list-channel__programme
-							div.channels-list-channel__programme-time #{event.startDateTime.slice(11,13) + ':' + event.startDateTime.slice(14,16) + '-' + event.endDateTime.slice(11,13) + ':' + event.endDateTime.slice(14,16)}
-							div.channels-list-channel__programme-title #{event.programme.title}
-							div.channels-list-channel__programme-desc #{event.programme.shortDescription}
+							a(href="/programme/#{event.programme.id}")
+								div.channels-list-channel__programme-time #{event.startDateTime.slice(11,13) + ':' + event.startDateTime.slice(14,16) + '-' + event.endDateTime.slice(11,13) + ':' + event.endDateTime.slice(14,16)}
+								div.channels-list-channel__programme-title #{event.programme.title}
+								div.channels-list-channel__programme-desc #{event.programme.shortDescription}
