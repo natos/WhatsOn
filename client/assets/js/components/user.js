@@ -45,6 +45,7 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 	handleButtonClick = function(event) {
 
 		event.preventDefault();
+		event.stopPropagation();
 
 		switch (CURRENT_STATUS) {
 
@@ -66,6 +67,7 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 	handleUserControlClick = function(event) {
 		
 		event.preventDefault();
+		event.stopPropagation();
 
 		switch (this.className) {
 
@@ -88,13 +90,16 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 	/* constructor */
 	User.initialize = function() {
 
-		// Data Events
+		// Handle when the login status change
 		upc.on(u.STATUS_CHANGED, manageLoginStatus);
+		// Handle when the user model change
+
 		upc.on(u.MODEL_CHANGED, manageModelChanges);
 
 		// UI Events
 		u.$button.on('click', handleButtonClick);
 		u.$userControl.on('click', 'a', handleUserControlClick);
+		y.$body.on('click', User.pulldown.hide());
 	};
 
 	User.pulldown = {
