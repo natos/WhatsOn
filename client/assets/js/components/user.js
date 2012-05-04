@@ -49,6 +49,8 @@ var u = UserController,
 	/* constructor */
 	User.initialize = function() {
 
+		console.log(u);
+
 		upc.on(u.STATUS_CHANGED, manageLoginStatus);
 
 		upc.on(u.STARTED, function(event) {
