@@ -50,7 +50,7 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 
 			case u.LOGGED:
 				//UserController.logout();
-				$userControl.togleClass('active');
+				User.pulldown.toggle();
 				break;
 
 			case u.NOT_LOGGED:
@@ -78,11 +78,13 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 
 	};
 
-	User.control = {
+	User.pulldown = {
 
-		show: function() {	$userControl.addClass('active'); return this; },
+		toggle: function() { u.$userControl.togleClass('active'); return this; },
 
-		hide: function() {	$userControl.removeClass('active'); return this; }
+		show: function() {	u.$userControl.addClass('active'); return this; },
+
+		hide: function() {	u.$userControl.removeClass('active'); return this; }
 
 	}
 
