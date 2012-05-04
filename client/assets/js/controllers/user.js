@@ -8,7 +8,7 @@ define([
 
 // constants
 
-var SCOPE = 'email, user_interests, user_likes, user_online_presence, friends_online_presence, publish_actions',
+var SCOPE = 'email, user_interests, user_likes, user_location, friends_likes, publish_actions, user_activities, user_events, friends_events, friends_online_presence, read_friendlists, user_online_presence, status_update, publish_stream, share_item, create_event, rsvp_event',
 
 // events
 
