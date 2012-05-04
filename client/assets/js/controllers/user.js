@@ -61,8 +61,8 @@ var SCOPE = 'email, user_interests, user_likes, user_online_presence, friends_on
 
 		// FB init
 		FB.init({
-			appId      : '153316508108487',
-			channelUrl : '//upcwhatson.herokuapp.com/channel.html',
+			appId      : '290742221014129',
+			channelUrl : '//upcsocial.herokuapp.com/channel.html',
 			status     : true,
 			cookie     : true
 		});
