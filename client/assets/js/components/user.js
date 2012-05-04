@@ -45,7 +45,6 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 	handleButtonClick = function(event) {
 
 		event.preventDefault();
-		event.stopPropagation();
 
 		switch (CURRENT_STATUS) {
 
@@ -67,7 +66,6 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 	handleUserControlClick = function(event) {
 		
 		event.preventDefault();
-		event.stopPropagation();
 
 		switch (this.className) {
 
@@ -77,7 +75,6 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 
 			case "logout":
 				UserController.logout();
-				User.pulldown.hide();
 				break;
 
 		}
@@ -99,7 +96,7 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 		// UI Events
 		u.$button.on('click', handleButtonClick);
 		u.$userControl.on('click', 'a', handleUserControlClick);
-		u.$body.on('click', User.pulldown.hide());
+		u.$body.on('click', User.pulldown.hide);
 	};
 
 	User.pulldown = {
