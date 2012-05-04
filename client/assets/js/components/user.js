@@ -47,6 +47,7 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 	handleLoginButtonClick = function(event) {
 
 		event.preventDefault();
+		event.stopPropagation();
 
 		switch (CURRENT_STATUS) {
 
