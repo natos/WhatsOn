@@ -6,36 +6,15 @@ block styles
 block scripts
 	script
 		var channels = !{JSON.stringify(channels)};
-
+		require(['views/list'], function(list) { list.initialize(); });
 
 block content
 	ul(class=["channels-list-types", "#{listType}"])
 		li.type
-			a.type-top(href=topUrl) Top channels
+			a.type-pop(href=popUrl) Popular
 		li.type
-			a.type-fav(href=favUrl) My favourites
+			a.type-fav(href=favUrl) Favourites
 		li.type
 			a.type-all(href=allUrl) All channels
-	ul.channels-list
-		each channelEventsCollection in channelEventsCollections
-			li.channels-list-channel
-				span.channelmarker(id="channelmarker-#{channelEventsCollection.channel.id}") mark
-				div.channels-list-channel__timecontrols
-					a.earlier(href=earlierUrl + "#channelmarker_#{channelEventsCollection.channel.id}")
-						span.icon-chevron-left 
-						#{earlierText}
-					span.now
-						span.nowtime #{nowTime}
-						span.nowdate #{nowDate}
-					a.later(href=laterUrl + "#channelmarker-#{channelEventsCollection.channel.id}")
-						#{laterText} 
-						span.icon-chevron-right
-				div.channels-list-channel__channelcontrols
-					img(title="#{channelEventsCollection.channel.name}", src="http://www.upc.nl#{channelEventsCollection.channel.logoIMG}", data-src="http://www.upc.nl#{channelEventsCollection.channel.logoIMG}", id="channelImg#{channelEventsCollection.channel.id}")
-				div.channels-list-channel__programmes(id="channels-list_channel_#{channelEventsCollection.channel.id}__programmes")
-					ul
-						each event in channelEventsCollection.channelEvents
-							li.channels-list-channel__programme
-								div.channels-list-channel__programme-time #{event.startDateTime.slice(11,13) + ':' + event.startDateTime.slice(14,16) + '-' + event.endDateTime.slice(11,13) + ':' + event.endDateTime.slice(14,16)}
-								div.channels-list-channel__programme-title #{event.programme.title}
-								div.channels-list-channel__programme-desc #{event.programme.shortDescription}
+	#channels-list-container
+		include list-ajax

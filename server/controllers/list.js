@@ -46,12 +46,12 @@ function(NowAndNextService, Metadata, QS, config) {
 		nowAndNextService = new NowAndNextService(),
 
 		LIST_TYPE_ALL = 'ALL',
-		LIST_TYPE_TOP = 'TOP',
+		LIST_TYPE_POP = 'POP',
 		LIST_TYPE_FAV = 'FAV',
 
-		ALLOWED_LIST_TYPES = [LIST_TYPE_ALL, LIST_TYPE_TOP, LIST_TYPE_FAV],
+		ALLOWED_LIST_TYPES = [LIST_TYPE_ALL, LIST_TYPE_POP, LIST_TYPE_FAV],
 
-		DEFAULT_LIST_TYPE = LIST_TYPE_TOP;
+		DEFAULT_LIST_TYPE = LIST_TYPE_POP;
 
 	// Given a date, return a string in the format 'YYYY-MM-DDTHH:00Z',
 	// which is the format the EPG api accepts for marking the start time.
@@ -61,8 +61,8 @@ function(NowAndNextService, Metadata, QS, config) {
 		return dt.getFullYear().toString() + '-' + ('00' + (dt.getMonth() + 1).toString()).slice(-2) + '-' + ('00' + dt.getDate().toString()).slice(-2) + 'T' + ('00' + dt.getHours().toString()).slice(-2) + ':00Z';
 	};
 
-	// TODO: Implement top channels per country
-	var getTopChannels = function(countryId) {
+	// TODO: Implement popular channels per country
+	var getPopularChannels = function(countryId) {
 		return ['7J', '6s', '7G'];
 	}
 
@@ -128,7 +128,7 @@ function(NowAndNextService, Metadata, QS, config) {
 			channelIds,
 			dtPreviousSlice = new Date(dt.valueOf() - (60 * 60 * 1000)),
 			dtNextSlice = new Date(dt.valueOf() + (60 * 60 * 1000)),
-			topUrl = '?dt=' + getFormattedSliceStartTime(dt) + '&type=top',
+			popUrl = '?dt=' + getFormattedSliceStartTime(dt) + '&type=pop',
 			allUrl = '?dt=' + getFormattedSliceStartTime(dt) + '&type=all',
 			favUrl,
 			earlierUrl = '?dt=' + getFormattedSliceStartTime(dtPreviousSlice),
@@ -139,10 +139,10 @@ function(NowAndNextService, Metadata, QS, config) {
 			channelIds = null;
 			earlierUrl += '&type=' + LIST_TYPE_ALL;
 			laterUrl += '&type=' + LIST_TYPE_ALL;
-		} else if (listType == LIST_TYPE_TOP) {
-			channelIds = getTopChannels('NL');
-			earlierUrl += '&type=' + LIST_TYPE_TOP;
-			laterUrl += '&type=' + LIST_TYPE_TOP;
+		} else if (listType == LIST_TYPE_POP) {
+			channelIds = getPopularChannels('NL');
+			earlierUrl += '&type=' + LIST_TYPE_POP;
+			laterUrl += '&type=' + LIST_TYPE_POP;
 		} else {
 			channelIds = getChannelIdsFromQueryString(req);
 			earlierUrl += '&type=' + LIST_TYPE_FAV + '&channels=' + channelIds.join('|');
@@ -153,11 +153,13 @@ function(NowAndNextService, Metadata, QS, config) {
 
 		nowAndNextService.once('getNowAndNext', function(channels, channelEventsCollections){
 
-			res.render('list.jade', {
+			var template = req.xhr ? 'list-ajax.jade' : 'list.jade'
+
+			res.render(template, {
 				metadata	: metadata.get(),
 				config		: _app.config,
 				dt 			: dt,
-				topUrl      : topUrl,
+				popUrl      : popUrl,
 				favUrl      : favUrl,
 				allUrl      : allUrl,
 				nowTime     : strftime(dt, '%R'),

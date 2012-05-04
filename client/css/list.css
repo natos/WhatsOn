@@ -5,6 +5,7 @@
 .channels-list-types .type {
 	display:table-cell;
 	list-style-type:none;
+	width:33.33333%;
 }
 .channels-list-types .type a {
 	display:block;
@@ -15,7 +16,7 @@
 	background:#eee;
 	cursor:pointer;
 }
-.channels-list-types.TOP a.type-top,
+.channels-list-types.POP a.type-pop,
 .channels-list-types.FAV a.type-fav,
 .channels-list-types.ALL a.type-all {
 	background:#ccc;
