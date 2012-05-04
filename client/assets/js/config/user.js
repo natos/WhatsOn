@@ -40,7 +40,7 @@ define([
 	
 		$body: $(document.body),
 
-		$button: $('.login'),
+		$loginButton: $('.login'),
 	
 		$userControl: $('.user-control')
 

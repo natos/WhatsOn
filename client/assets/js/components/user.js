@@ -96,8 +96,8 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 		upc.on(u.MODEL_CHANGED, manageModelChanges);
 
 		// UI Events
-		u.$loginButton.on('click', handleLoginButtonClick);
 		u.$userControl.on('click', 'a', handleUserControlClick);
+		u.$loginButton.on('click', handleLoginButtonClick);
 
 	};
 
