@@ -41,7 +41,7 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 
 	},
 
-	// handle <a> behavior
+	// handle a.login behavior
 	handleButtonClick = function(event) {
 
 		event.preventDefault();
@@ -49,7 +49,6 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 		switch (CURRENT_STATUS) {
 
 			case u.LOGGED:
-				//UserController.logout();
 				User.pulldown.toggle();
 				break;
 
@@ -60,6 +59,15 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 				break;
 
 		}
+
+	},
+
+	// handle usercontrol behavior
+	handleUserControlClick = function(event) {
+		
+		event.preventDefault();
+
+		console.log(event.target.className);
 
 	},
 
@@ -74,19 +82,14 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 		upc.on(u.MODEL_CHANGED, manageModelChanges);
 
 		// UI Events
-		u.$button.click(handleButtonClick);
+		u.$button.on('click', handleButtonClick);
 
+		u.$userControl.on('click' handleUserControlClick);
 	};
 
 	User.pulldown = {
 
-		toggle: function() { 
-
-			if (u.$userControl.hasClass('active')) { this.hide(); } else { this.show(); }
-
-			return this; 
-
-		},
+		toggle: function() { if (u.$userControl.hasClass('active')) { this.hide(); } else { this.show(); } return this; },
 
 		show: function() {	u.$userControl.addClass('active'); return this; },
 
