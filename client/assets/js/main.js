@@ -5,7 +5,6 @@ require.config({
 require([	
 
 	'controllers/app'
-//,	'//connect.facebook.net/es_LA/all.js#xfbml=1&appId=153316508108487'
 
 ], 
 function(App) {

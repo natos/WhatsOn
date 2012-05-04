@@ -1,12 +1,15 @@
 define([
 
+	'/assets/js/lib/event/event.js',
+	'controllers/user',
+	'components/user',
 	'components/grid',
 	'components/search'
 
-], function(Grid, Search) {
+], function(EventEmitter, UserController, User, Grid, Search) {
 
 	/* global signature */
-	window.upc = App = {};
+	window.upc = App = new EventEmitter();
 
 	/* constructor */
 	App.initialize = function() {
@@ -15,7 +18,9 @@ define([
 		this.mustard = ('querySelector' in document && 'localStorage' in window && 'addEventListener' in window);
 
 		// controllers instances
-		this.controllers = {};
+		this.controllers = {
+			user: UserController.initialize()
+		};
 
 		// views instances
 		this.views = {};
@@ -23,7 +28,8 @@ define([
 		// setup components
 		this.components = {
 			grid: Grid.initialize(),
-			search: Search.initialize()
+			search: Search.initialize(),
+			user: User.initialize()
 		};
 
 		// start navigation
