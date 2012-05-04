@@ -67,7 +67,7 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 		
 		event.preventDefault();
 
-		console.log(event.target.className);
+		console.log(this.className);
 
 	},
 
