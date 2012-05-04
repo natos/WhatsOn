@@ -26,6 +26,8 @@ var SCOPE = 'email, user_interests, user_likes, user_location, friends_likes, pu
 
 	facebookLoginStatus = function(response) {
 
+		console.log(response);
+
 		if (response && response.status === 'connected') {
 			// the user is logged in and connected to your
 			// app, and response.authResponse supplies
