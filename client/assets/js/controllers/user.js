@@ -1,35 +1,18 @@
 define([
 
+	'config/user',
 	'//connect.facebook.net/en_US/all.js'
 
-], function() {
+], function(u) {
 
 /* private */
 
-// constants
-
-var SCOPE = 'email, user_interests, user_likes, user_location, friends_likes, publish_actions, user_activities, user_events, friends_events, friends_online_presence, read_friendlists, user_online_presence, status_update, publish_stream, share_item, create_event, rsvp_event',
-
-// events
-
-	STARTED = 'user:started',
-
-	STATUS_CHANGED = 'user:status_changed',
-
-// messages
-
-	NOT_AUTHORIZED = 'user:not_authorized',
-
-	NOT_LOGGED = 'user:not_logged',
-
-	LOGGED = 'user:logged',
-
 // funtions
 
-	facebookLoginStatus = function(response) {
-
+	var facebookLoginStatus = function(response) {
+	
 		console.log(response);
-
+	
 		if (response && response.status === 'connected') {
 			// the user is logged in and connected to your
 			// app, and response.authResponse supplies
@@ -45,20 +28,20 @@ var SCOPE = 'email, user_interests, user_likes, user_location, friends_likes, pu
 			}
 		
 			// trigger an event, so the app knows the user state
-			upc.emit(STATUS_CHANGED, { message: LOGGED } );
+			upc.emit(u.STATUS_CHANGED, { message: u.LOGGED } );
 		
 		} else if (response && response.status === 'not_authorized') {
 			// the user is logged in to Facebook, 
 			// but not connected to the app
 		
 			// trigger an event, so the app knows the user state
-			upc.emit(STATUS_CHANGED, { message: NOT_AUTHORIZED } );
+			upc.emit(u.STATUS_CHANGED, { message: u.NOT_AUTHORIZED } );
 		
 		} else {
 			// the user isn't even logged in to Facebook.
 		
 			// trigger an event, so the app knows the user state
-			upc.emit(STATUS_CHANGED, { message: NOT_LOGGED } );
+			upc.emit(u.STATUS_CHANGED, { message: u.NOT_LOGGED } );
 		}
 	
 	},
@@ -71,8 +54,7 @@ var SCOPE = 'email, user_interests, user_likes, user_location, friends_likes, pu
 
 		// FB init
 		FB.init({
-			appId      : '290742221014129',
-			channelUrl : '//upcsocial.herokuapp.com/channel.html',
+			appId      : u.APP_ID,
 			status     : true,
 			cookie     : true
 		});
@@ -83,7 +65,7 @@ var SCOPE = 'email, user_interests, user_likes, user_location, friends_likes, pu
 		// Lisent for changes on Facebook login status
 		FB.Event.subscribe('auth.statusChange', facebookLoginStatus);
 
-		upc.emit(STARTED, 'nothing, just the thing has started');
+		upc.emit(u.STARTED, 'nothing, just the thing has started');
 
 		console.log('UserController initializated');
 
@@ -95,7 +77,7 @@ var SCOPE = 'email, user_interests, user_likes, user_location, friends_likes, pu
 
 		FB.login(function(response) {
 
-		}, {scope: SCOPE });
+		}, {scope: u.SCOPE });
 
 	};
 

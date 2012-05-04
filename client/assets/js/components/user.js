@@ -1,26 +1,18 @@
 define([
 
+	'config/user',
+	'models/user',
 	'controllers/user'
 
-], function(UserController) {
+], function(u, UserModel, UserController) {
 
 /* private */
 
 // constants
 
-var u = UserController,
-
-// DOM access
-
-	$body = $('body'),
-
-	$button = $('.login'),
-
-	$userControl = $('#user-control'),
-
 // functions
 
-	manageLoginStatus = function(event) {
+	var	manageLoginStatus = function(event) {
 
 		console.log('manageLoginStatus');
 		console.log(event);
@@ -31,7 +23,7 @@ var u = UserController,
 		switch (event.message) {
 
 			case u.LOGGED:
-				$button.html('<img class="picture" src="https://graph.facebook.com/' + u.facebook.uid + '/picture" />');
+				$button.html('<img class="picture" src="https://graph.facebook.com/' + UserController.facebook.uid + '/picture" />');
 				break;
 
 			case u.NOT_LOGGED: break;	
@@ -48,8 +40,6 @@ var u = UserController,
 
 	/* constructor */
 	User.initialize = function() {
-
-		console.log(u);
 
 		upc.on(u.STATUS_CHANGED, manageLoginStatus);
 
