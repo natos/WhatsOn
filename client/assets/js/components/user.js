@@ -51,7 +51,7 @@ var u = UserController,
 
 		upc.on(u.STATUS_CHANGED, manageLoginStatus);
 
-		upc.on('user:started', function(event) {
+		upc.on(u.STARTED, function(event) {
 			console.log('user:started', event);
 		});
 

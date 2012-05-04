@@ -12,6 +12,8 @@ var SCOPE = 'email, user_interests, user_likes, user_location, friends_likes, pu
 
 // events
 
+	STARTED = 'user:started',
+
 	STATUS_CHANGED = 'user:status_changed',
 
 // messages
@@ -81,7 +83,7 @@ var SCOPE = 'email, user_interests, user_likes, user_location, friends_likes, pu
 		// Lisent for changes on Facebook login status
 		FB.Event.subscribe('auth.statusChange', facebookLoginStatus);
 
-		upc.emit('user:started');
+		upc.emit(STARTED, 'nothing, just the thing has started');
 
 		console.log('UserController initializated');
 
