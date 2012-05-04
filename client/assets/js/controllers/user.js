@@ -79,6 +79,8 @@ var SCOPE = 'email, user_interests, user_likes, user_location, friends_likes, pu
 		// Lisent for changes on Facebook login status
 		FB.Event.subscribe('auth.statusChange', facebookLoginStatus);
 
+		console.log('UserController initializated');
+
 		return this;
 
 	};
