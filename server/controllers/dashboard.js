@@ -81,9 +81,7 @@ function(Channel, Bookings, DateUtils, Metadata) {
 
 		}).getTopBookings();
 
-		ChannelService.once('getChannels', function(error, response, body) {
-
-			channels = JSON.parse(body);
+		ChannelService.once('getChannels', function(channels) {
 
 			render();
 

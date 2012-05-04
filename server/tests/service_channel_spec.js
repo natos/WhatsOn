@@ -46,15 +46,13 @@ function(ChannelService) {
 
 			it('should response as an async service', function() {
 
-				var done = false, error, response, body, finish = function() { return done; };
+				var done = false, channels, finish = function() { return done; };
 
 				// getDetails
-				channelService.once('getChannels', function(_error, _response, _body) {
+				channelService.once('getChannels', function(_channels) {
 
 					// globalize
-					error = _error;
-					response = _response;
-					body = _body;
+					channels = _channels;
 
 					// release the test
 					// wierd sync stuff
@@ -73,11 +71,9 @@ function(ChannelService) {
 				// Async assertions
 				runs(function() {
 
-					expect(error).toBeNull();
+					expect(typeof channels).toEqual('object'); // actually an array
 
-					expect(response).toBeTruthy();
-
-					expect(typeof body).toEqual('string');
+					expect(channels.length).toBeGreaterThan(0);
 
 				});
 

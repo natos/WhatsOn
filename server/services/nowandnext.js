@@ -126,9 +126,8 @@ function(ChannelService, util, events, request, RequestN, config) {
 
 		// Step 1: get a list of all channels (should be cached)
 		// Step 2: once we have a list of channels, make a batch of now+next api calls, and combine their results 
-		_channelService.once('getChannels', function(error, response, body) {
+		_channelService.once('getChannels', function(channels) {
 			var i, j,
-				channels = JSON.parse(body),
 				requestedChannels = [],
 				formattedSliceStartTime = getFormattedSliceStartTime(dt),
 				channelIdsToFetch = [], // Compose an array of the channel Ids whose events for this slice are not in cache yet
