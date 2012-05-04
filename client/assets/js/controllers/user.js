@@ -54,7 +54,7 @@ var SCOPE = 'email, user_interests, user_likes, user_location, friends_likes, pu
 			// the user isn't even logged in to Facebook.
 		
 			// trigger an event, so the app knows the user state
-			upc.emit(STATUS_CHANGED, { message: NOT_AUTHORIZED } );
+			upc.emit(STATUS_CHANGED, { message: NOT_LOGGED } );
 		}
 	
 	},

@@ -28,6 +28,19 @@ var u = UserController,
 
 		console.log(u);
 
+		switch (event.message) {
+
+			u.LOGGED: 
+				$button.html('<img class="picture" src="https://graph.facebook.com/' + u.facebook.uid + '/picture" />');
+				break;
+
+			u.NOT_LOGGED: break;	
+
+			u.NOT_AUTHORIZED: break;	
+
+			default: break;
+		}
+
 	},
 
 /* @class User */
