@@ -80,11 +80,29 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 
 	User.pulldown = {
 
-		toggle: function() { u.$userControl.toggleClass('active'); return this; },
+		toggle: function() { 
 
-		show: function() {	u.$userControl.addClass('active'); return this; },
+			if (u.$userControl.hasClass('active')) { this.hide(); } else { this.show(); }
 
-		hide: function() {	u.$userControl.removeClass('active'); return this; }
+			return this; 
+
+		},
+
+		show: function() {	
+
+			$('.main').css('margin-top', '200px');
+
+			u.$userControl.addClass('active'); return this; 
+
+		},
+
+		hide: function() {	
+
+			$('.main').removeAttr('style');
+
+			u.$userControl.removeClass('active'); return this; 
+
+		}
 
 	}
 

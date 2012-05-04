@@ -217,7 +217,6 @@ img {
 }
 
 .login {
-	z-index: 10000;
 	float: right;
 }
 
@@ -225,7 +224,9 @@ img {
 	display: none;
 	overflow: hidden;
 	right: 0px;
+	left: 0px;
 	top: 50px;
+	height: 150px;
 	background: #333 url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
 }
 
