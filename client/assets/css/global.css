@@ -160,10 +160,10 @@ img {
 
 /* navbar links */
 
-.navbar a,
-.navbar a:hover,
-.navbar a:visited,
-.navbar a:active {
+.navbar a, .user-control a,
+.navbar a:hover, .user-control a:hover,
+.navbar a:visited, .user-control a:visited,
+.navbar a:active, .user-control a:active {
 	color: #999;
 	display: inline-block;
 	height: 48px;
@@ -175,13 +175,13 @@ img {
 
 }
 
-.navbar a.active {
+.navbar a.active, .user-control a:active {
 	color: #ccc;
 	background: #333 url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
 	border-bottom: solid 1px #000;
 }
 
-.navbar a.active i {
+.navbar a.active i, .user-control a.active i {
 	color: #ccc;
 }
 
@@ -223,13 +223,20 @@ img {
 .user-control {
 	display: none;
 	overflow: hidden;
-	right: 0px;
-	top: 50px;
+	right: 10px;
+	top: -50px;
 	background: #333 url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
+
+    -webkit-transition: top .3s ease-in-out 0s;
+    -moz-transition: top .3s ease-in-out 0s;
+    -o-transition: top .3s ease-in-out 0s;
+    transition: top .3s ease-in-out 0s;
 }
 
 .user-control.active {
 	display: block;
+	top: 50px;
+	z-index: 1;
 }
 
 .user-control a {
