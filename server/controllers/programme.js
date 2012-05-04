@@ -95,7 +95,9 @@ function(Programme, Metadata, DateUtils, Requestn) {
 					{ property: "og:image"			, content: "http://upcwhatson.herokuapp.com/assets/upclogo.jpg" }
 				];
 
-				res.render('programme.jade', {
+				var template = req.xhr ? 'programme-ajax.jade' : 'programme.jade'
+
+				res.render(template, {
 					metadata	: metadata.override(_metadata, 'property').get(),
 					config		: _app.config,
 					data		: _programme_details,
