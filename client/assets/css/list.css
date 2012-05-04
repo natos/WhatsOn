@@ -22,6 +22,13 @@
 	background:#ccc;
 	text-shadow:1px 1px 1px #fff;
 }
+@media screen and (min-width:640px) {
+	.channels-list-types {
+		border-bottom:1px solid #ccc;
+	}
+}
+
+
 
 .channels-list {
 	padding:0;
@@ -34,6 +41,27 @@
 	border:1px solid #ccc;
 	list-style-type:none;
 	position:relative;
+}
+@media screen and (min-width:640px) {
+	.channels-list {
+		margin-top:10px;
+		overflow:hidden;
+	}
+	.channels-list-channel {
+	}
+	.channels-list-channel:nth-child(odd) {
+		float:left;
+		margin-left:10px;
+		width:48%;
+		height:22em;
+	}
+	.channels-list-channel:nth-child(even) {
+		float:right;
+		margin-right:10px;
+		width:48%;
+		height:22em;
+	}
+
 }
 
 .channels-list-channel .channelmarker {
