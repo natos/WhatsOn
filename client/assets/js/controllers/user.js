@@ -1,3 +1,4 @@
+/* UserController */
 define([
 
 	'config/user',

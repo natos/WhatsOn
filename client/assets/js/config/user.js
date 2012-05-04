@@ -1,3 +1,4 @@
+/* UserConfig */
 define([
 
 ], function() {

@@ -1,3 +1,4 @@
+/* UserComponent */
 define([
 
 	'config/user',
@@ -10,11 +11,11 @@ define([
 
 // constants
 
+var	CURRENT_STATUS = u.NOT_LOGGED,
+
 // functions
 
-	var	manageLoginStatus = function(event) {
-
-		console.log(event.message);
+	manageLoginStatus = function(event) {
 
 		switch (event.message) {
 
@@ -29,6 +30,36 @@ define([
 			default: break;
 		}
 
+		// save current status
+		CURRENT_STATUS = event.message;
+
+	},
+
+	manageModelChanges = function(event) {
+
+		console.log(event);
+
+	},
+
+	// handle <a> behavior
+	handleButtonClick = function(event) {
+
+		event.preventDefault();
+
+		switch (CURRENT_STATUS) {
+
+			case u.LOGGED:
+				UserController.logout();
+				break;
+
+			case u.NOT_LOGGED:
+			case u.NOT_AUTHORIZED:
+			default: 
+				UserController.login();
+				break;
+
+		}
+
 	},
 
 /* @class User */
@@ -37,18 +68,12 @@ define([
 	/* constructor */
 	User.initialize = function() {
 
+		// Data Events
 		upc.on(u.STATUS_CHANGED, manageLoginStatus);
+		upc.on(u.MODEL_CHANGED, manageModelChanges);
 
-		upc.on(u.MODEL_CHANGED, function(event) {
-			console.log(event);
-		});
-
-		console.log('user widget loaded, waiting for events');
-
-		u.$button.click(function(event) {
-			event.preventDefault();
-			u.login();
-		});
+		// UI Events
+		u.$button.click(handleButtonClick);
 
 	};
 

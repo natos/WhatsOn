@@ -1,3 +1,4 @@
+/* UserModel */
 define([
 
 	'config/user'
