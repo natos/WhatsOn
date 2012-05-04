@@ -30,13 +30,13 @@ var u = UserController,
 
 		switch (event.message) {
 
-			u.LOGGED: 
+			case u.LOGGED:
 				$button.html('<img class="picture" src="https://graph.facebook.com/' + u.facebook.uid + '/picture" />');
 				break;
 
-			u.NOT_LOGGED: break;	
+			case u.NOT_LOGGED: break;	
 
-			u.NOT_AUTHORIZED: break;	
+			case u.NOT_AUTHORIZED: break;	
 
 			default: break;
 		}
