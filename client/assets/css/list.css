@@ -42,26 +42,32 @@
 	left:0;
 }
 
-.channels-list-channel__timecontrols {
+.channels-list-channel__controls {
 	display:block;
 	text-align:center;
-	padding:5px 10px;
+	padding:5px 10px 5px 80px;
 	border-bottom:1px solid #ccc;
+	position:relative;
 }
-	.channels-list-channel__timecontrols .now {
+	.channels-list-channel__controls .logo {
+		position:absolute;
+		top:5px;
+		left:10px;
+	}
+	.channels-list-channel__controls .now {
 		display:inline-block;
 		vertical-align:middle;
 	}
-		span.nowtime {
+		.channels-list-channel__controls .nowtime {
 			display:block;
 			font-weight:bold;
 		}
-		span.nowdate {
+		.channels-list-channel__controls .nowdate {
 			display:block;
 			font-size:10px;
 		}
-	.channels-list-channel__timecontrols .earlier,
-	.channels-list-channel__timecontrols .later {
+	.channels-list-channel__controls .earlier,
+	.channels-list-channel__controls .later {
 		display:inline-block;
 		border:1px solid #ccc;
 		border-radius:3px;
@@ -72,30 +78,24 @@
 		vertical-align:middle;
 		padding:0.4em 0.5em;
 	}
-	.channels-list-channel__timecontrols .earlier {
+	.channels-list-channel__controls .earlier {
 		padding-left:0;
 	}
-	.channels-list-channel__timecontrols .later {
+	.channels-list-channel__controls .later {
 		padding-right:0;
 	}
-	.channels-list-channel__timecontrols .earlier:hover,
-	.channels-list-channel__timecontrols .later:hover,
-	.channels-list-channel__timecontrols .earlier:active,
-	.channels-list-channel__timecontrols .later:active {
+	.channels-list-channel__controls .earlier:hover,
+	.channels-list-channel__controls .later:hover,
+	.channels-list-channel__controls .earlier:active,
+	.channels-list-channel__controls .later:active {
 		background:#ccc;
 		border-color:#aaa;
 	}
 
-.channels-list-channel__channelcontrols {
-	display:block;
-	float:left;
-	padding:5px 10px;
-}
 
 .channels-list-channel__programmes {
 	display:block;
 	padding:5px;
-	margin-left:80px;
 }
 	.channels-list-channel__programmes ul {
 		padding:0;
@@ -104,23 +104,32 @@
 
 	.channels-list-channel__programme {
 		display:block;
-		margin-bottom:5px;
 		list-style-type:none;
 	}
+	.channels-list-channel__programme a {
+		display:block;
+		padding:5px 0;
+		color:inherit;
+	}
+	.channels-list-channel__programme a:hover,
+	.channels-list-channel__programme a:active {
+		background-color:#f0f0f0;
+	}
 
-		.channels-list-channel__programme-time {
-			display:inline;
+		.channels-list-channel__programme .time {
 			color:#666;
-			font-size:80%;
-			margin-right:10px;
+			font-size:12px;
+			padding-top:5px;
+			float:left;
 		}
-		.channels-list-channel__programme-title {
-			display:inline;
-			font-size:120%;
+		.channels-list-channel__programme .title {
+			margin-left:80px;
+			font-size:16px;
 			font-weight:bold;
 		}
-		.channels-list-channel__programme-desc {
-			display:block;
-			max-height:2.4em;
+		.channels-list-channel__programme .desc {
+			margin-left:80px;
+			line-height:1.231;
+			max-height:2.45em;
 			overflow:hidden;
 		}
