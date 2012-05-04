@@ -1,5 +1,5 @@
 /**
- *	ListController
+ *	NowAndNextController
  */
 
 define([
@@ -19,20 +19,21 @@ define([
 
 
 /**
- *	@class ListController
+ *	@class NowAndNextController
  */
 
 function(NowAndNextService, Metadata, QS, config) {
 
 	/** @constructor */
 
-	var ListController = function(app) {
+	var NowAndNextController = function(app) {
 
 		_app = app;
 
 		// Routing
 
-		app.server.get('/list', this.render);
+		app.server.get('/nowandnext', this.render);
+		app.server.get('/list', this.render); // backwards compatibility
 
 	};
 
@@ -121,7 +122,7 @@ function(NowAndNextService, Metadata, QS, config) {
 
 	/** @public */
 
-	ListController.prototype.render = function(req, res) {
+	NowAndNextController.prototype.render = function(req, res) {
 
 		var dt = getDateFromQueryString(req),
 			listType = getListTypeFromQueryString(req),
@@ -153,7 +154,7 @@ function(NowAndNextService, Metadata, QS, config) {
 
 		nowAndNextService.once('getNowAndNext', function(channels, channelEventsCollections){
 
-			var template = req.xhr ? 'list-ajax.jade' : 'list.jade'
+			var template = req.xhr ? 'nowandnext-ajax.jade' : 'nowandnext.jade'
 
 			res.render(template, {
 				metadata	: metadata.get(),
@@ -182,6 +183,6 @@ function(NowAndNextService, Metadata, QS, config) {
 
 	/** @return */
 
-	return ListController;
+	return NowAndNextController;
 
 });

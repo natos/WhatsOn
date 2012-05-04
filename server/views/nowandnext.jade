@@ -1,12 +1,12 @@
 extends layout
 
 block styles
-	link(href="/assets/css/list.css", rel="stylesheet")
+	link(href="/assets/css/nowandnext.css", rel="stylesheet")
 
 block scripts
 	script
 		var channels = !{JSON.stringify(channels)};
-		require(['views/list'], function(list) { list.initialize(); });
+		require(['views/nowandnext'], function(list) { list.initialize(); });
 
 block content
 	ul(class=["channels-list-types", "#{listType}"])
@@ -17,4 +17,4 @@ block content
 		li.type
 			a.type-all(href=allUrl) All channels
 	#channels-list-container
-		include list-ajax
+		include nowandnext-ajax

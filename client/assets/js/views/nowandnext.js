@@ -4,14 +4,14 @@ define([
 
 /* private */
 
-/* @class ListView */
-var ListView = {};
+/* @class NowAndNextView */
+var NowAndNextView = {};
 
 	/* constructor */
-	ListView.initialize = function() {
+	NowAndNextView.initialize = function() {
 
 		// Let the App know you're here
-		App.views.list = this;
+		App.views.nowandnext = this;
 
 		/** 
 		*	Events handlers
@@ -29,6 +29,6 @@ var ListView = {};
 
 	};
 
-	return ListView;
+	return NowAndNextView;
 
 });
