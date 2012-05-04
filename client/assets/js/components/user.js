@@ -42,7 +42,9 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 	},
 
 	// handle a.login behavior
-	handleButtonClick = function(event) {
+	handleLoginButtonClick = function(event) {
+
+		console.log(event);
 
 		event.preventDefault();
 
@@ -94,7 +96,7 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 		upc.on(u.MODEL_CHANGED, manageModelChanges);
 
 		// UI Events
-		u.$button.on('click', handleButtonClick);
+		u.$loginButton.on('click', handleLoginButtonClick);
 		u.$userControl.on('click', 'a', handleUserControlClick);
 
 	};
