@@ -106,6 +106,7 @@ var Carousel = {};
 				.clone()
 				.data('index', i)
 				.click(function(event) {
+					event.stopPropagation();
 					Carousel.list.css('left', $(this).data('index') * -100 + '%' );
 					$('.disc').removeClass('selected');
 					$(this).addClass('selected');
