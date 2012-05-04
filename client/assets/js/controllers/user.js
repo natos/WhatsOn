@@ -1,9 +1,10 @@
 define([
 
 	'config/user',
+	'models/user',
 	'//connect.facebook.net/en_US/all.js'
 
-], function(u) {
+], function(u, UserModel) {
 
 /* private */
 
@@ -19,13 +20,7 @@ define([
 			// the user's ID, a valid access token, a signed
 			// request, and the time the access token 
 			// and signed request each expire
-			var uid = response.authResponse.userID;
-			var accessToken = response.authResponse.accessToken;
-		
-			UserController.facebook = {
-				uid: uid
-			,	accessToken: accessToken
-			}
+			UserModel.set('facebook', { uid: response.authResponse.userID, accessToken: response.authResponse.accessToken });
 		
 			// trigger an event, so the app knows the user state
 			upc.emit(u.STATUS_CHANGED, { message: u.LOGGED } );
@@ -33,13 +28,11 @@ define([
 		} else if (response && response.status === 'not_authorized') {
 			// the user is logged in to Facebook, 
 			// but not connected to the app
-		
 			// trigger an event, so the app knows the user state
 			upc.emit(u.STATUS_CHANGED, { message: u.NOT_AUTHORIZED } );
 		
 		} else {
 			// the user isn't even logged in to Facebook.
-		
 			// trigger an event, so the app knows the user state
 			upc.emit(u.STATUS_CHANGED, { message: u.NOT_LOGGED } );
 		}

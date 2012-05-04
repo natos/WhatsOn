@@ -22,6 +22,8 @@ define([
 		LOGOUT: 'user:logout',
 	
 		STATUS_CHANGED: 'user:status_changed',
+
+		MODEL_CHANGED: 'user:model_changed',
 	
 		// messages
 	

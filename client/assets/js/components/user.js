@@ -39,6 +39,10 @@ define([
 
 		upc.on(u.STATUS_CHANGED, manageLoginStatus);
 
+		upc.on(u.MODEL_CHANGED, function(event) {
+			console.log(event);
+		});
+
 		console.log('user widget loaded, waiting for events');
 
 		u.$button.click(function(event) {
