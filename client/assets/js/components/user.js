@@ -23,11 +23,11 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 				u.$button.html('<img class="picture" src="https://graph.facebook.com/' + UserModel.facebook.uid + '/picture" />');
 				break;
 
-			case u.NOT_LOGGED: break;	
-
-			case u.NOT_AUTHORIZED: break;	
-
-			default: break;
+			case u.NOT_LOGGED:
+			case u.NOT_AUTHORIZED:
+			default:
+				u.$button.html('<i class="icon-user"></i><b class="label">Login</b>');
+				break;
 		}
 
 		// save current status
@@ -49,7 +49,8 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 		switch (CURRENT_STATUS) {
 
 			case u.LOGGED:
-				UserController.logout();
+				//UserController.logout();
+				$userControl.togleClass('active');
 				break;
 
 			case u.NOT_LOGGED:
@@ -76,6 +77,14 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 		u.$button.click(handleButtonClick);
 
 	};
+
+	User.control = {
+
+		show: function() {	$userControl.addClass('active'); return this; },
+
+		hide: function() {	$userControl.removeClass('active'); return this; }
+
+	}
 
 	return User;
 

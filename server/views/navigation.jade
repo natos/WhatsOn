@@ -16,20 +16,13 @@
 				i.icon-user
 				b.label #{__i('Login')}
 
-
-		.user-control
-			a(href="#").active
-				i.icon-cogs
-				b.label #{__i('Settings')}
-			a(href="#")
-				i.icon-star
-				b.label #{__i('Favorites')}
-			a(href="#")
-				i.icon-signin
-				b.label #{__i('Login')}
-			a(href="#")
-				i.icon-signout
-				b.label #{__i('Logout')}
+			.user-control
+				a.settings(href="#")
+					i.icon-cog
+					b.label #{__i('Settings')}
+				a.logout(href="#")
+					i.icon-signout
+					b.label #{__i('Log Out')}
 
 .search-box
 	form(action="/search", method="GET")

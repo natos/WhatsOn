@@ -42,7 +42,7 @@ define([
 
 		$button: $('.login'),
 	
-		$userControl: $('#user-control')
+		$userControl: $('.user-control')
 
 	};
 

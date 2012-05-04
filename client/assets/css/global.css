@@ -217,15 +217,24 @@ img {
 }
 
 .login {
+	z-index: 10000;
 	float: right;
 }
 
 .user-control {
-	right: 15px;
+	display: none;
+	overflow: hidden;
+	right: 0px;
+	top: 50px;
+	background: #333 url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
 }
 
-.user-control {
-	display: none;
+.user-control.active {
+	display: block;
+}
+
+.user-control a {
+	display: block;
 }
 
 
