@@ -75,6 +75,7 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 
 			case "logout":
 				UserController.logout();
+				User.pulldown.hide();
 				break;
 
 		}
