@@ -37,7 +37,7 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 
 	manageModelChanges = function(event) {
 
-		console.log(event);
+		console.log('User Model has changed: ', event);
 
 	},
 
@@ -97,16 +97,24 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 		u.$button.on('click', handleButtonClick);
 		u.$userControl.on('click', 'a', handleUserControlClick);
 
-		u.$body.on('click', function(event) { User.pulldown.hide(); });
 	};
 
 	User.pulldown = {
 
-		toggle: function() { if (u.$userControl.hasClass('active')) { this.hide(); } else { this.show(); } return this; },
+		toggle: function() { 
+			if (u.$userControl.hasClass('active')) { this.hide(); } else { this.show(); } 
+			return this; 
+		},
 
-		show: function() {	u.$userControl.addClass('active'); return this; },
+		show: function() {	
+			u.$body.one('click', function(event) { User.pulldown.hide(); });
+			u.$userControl.addClass('active'); 
+			return this; 
+		},
 
-		hide: function() {	u.$userControl.removeClass('active'); return this; }
+		hide: function() {	
+			u.$userControl.removeClass('active'); return this; 
+		}
 
 	}
 

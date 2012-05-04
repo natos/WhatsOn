@@ -12,8 +12,9 @@ define([
 // funtions
 
 	var facebookLoginStatus = function(response) {
-	
-		console.log(response);
+
+
+		console.log('Facebook Login Status: ', response.status);
 	
 		if (response && response.status === 'connected') {
 			// the user is logged in and connected to your
