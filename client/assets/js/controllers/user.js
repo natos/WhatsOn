@@ -12,13 +12,19 @@ var SCOPE = 'email, user_interests, user_likes, user_online_presence, friends_on
 
 // events
 
-	STATUS_CHANGED = 'user:status-changed',
+	STATUS_CHANGED = 'user:status_changed',
+
+// messages
+
+	NOT_AUTHORIZED = 'user:not_authorized',
+
+	NOT_LOGGED = 'user:not_logged',
+
+	LOGGED = 'user:logged',
 
 // funtions
 
 	facebookLoginStatus = function(response) {
-
-		console.log(response);
 
 		if (response && response.status === 'connected') {
 			// the user is logged in and connected to your
@@ -29,35 +35,35 @@ var SCOPE = 'email, user_interests, user_likes, user_online_presence, friends_on
 			var uid = response.authResponse.userID;
 			var accessToken = response.authResponse.accessToken;
 		
-			User.facebook = {
+			UserController.facebook = {
 				uid: uid
 			,	accessToken: accessToken
 			}
 		
 			// trigger an event, so the app knows the user state
-			upc.emit(STATUS_CHANGED, { message: 'logged' } );
+			upc.emit(STATUS_CHANGED, { message: LOGGED } );
 		
 		} else if (response && response.status === 'not_authorized') {
 			// the user is logged in to Facebook, 
 			// but not connected to the app
 		
 			// trigger an event, so the app knows the user state
-			upc.emit(STATUS_CHANGED, { message: 'not-authorized' } );
+			upc.emit(STATUS_CHANGED, { message: NOT_AUTHORIZED } );
 		
 		} else {
 			// the user isn't even logged in to Facebook.
 		
 			// trigger an event, so the app knows the user state
-			upc.emit(STATUS_CHANGED, { message: 'not-logged' } );
+			upc.emit(STATUS_CHANGED, { message: NOT_AUTHORIZED } );
 		}
 	
 	},
 
 /* @class User */
-	User = {};
+	UserController = {};
 
 	/* constructor */
-	User.initialize = function() {
+	UserController.initialize = function() {
 
 		// FB init
 		FB.init({
@@ -77,7 +83,7 @@ var SCOPE = 'email, user_interests, user_likes, user_online_presence, friends_on
 
 	};
 
-	User.login = function() {
+	UserController.login = function() {
 
 		FB.login(function(response) {
 
@@ -85,7 +91,7 @@ var SCOPE = 'email, user_interests, user_likes, user_online_presence, friends_on
 
 	};
 
-	User.logout = function() {
+	UserController.logout = function() {
 
 		FB.logout(function(response) {
 
@@ -93,6 +99,6 @@ var SCOPE = 'email, user_interests, user_likes, user_online_presence, friends_on
 
 	};
 
-	return User;
+	return UserController;
 
 });
