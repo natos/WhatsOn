@@ -51,6 +51,10 @@ var u = UserController,
 
 		upc.on(u.STATUS_CHANGED, manageLoginStatus);
 
+		upc.on('user:started', function(event) {
+			console.log('user:started', event);
+		});
+
 		console.log('user widget loaded, waiting for events');
 
 		$button.click(function(event) {
