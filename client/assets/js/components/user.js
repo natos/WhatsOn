@@ -67,7 +67,17 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 		
 		event.preventDefault();
 
-		console.log(this.className);
+		switch (this.className) {
+
+			case "settings":
+				console.log('settings');
+				break;
+
+			case "logout":
+				UserController.logout();
+				break;
+
+		}
 
 	},
 
