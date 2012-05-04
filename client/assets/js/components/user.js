@@ -19,7 +19,7 @@ define([
 		switch (event.message) {
 
 			case u.LOGGED:
-				u.$button.html('<img class="picture" src="https://graph.facebook.com/' + UserController.facebook.uid + '/picture" />');
+				u.$button.html('<img class="picture" src="https://graph.facebook.com/' + UserModel.facebook.uid + '/picture" />');
 				break;
 
 			case u.NOT_LOGGED: break;	
