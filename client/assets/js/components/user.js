@@ -46,14 +46,12 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 	// handle a.login behavior
 	handleLoginButtonClick = function(event) {
 
-		console.log(event);
-		console.log(CURRENT_STATUS);
-
 		event.preventDefault();
 
 		switch (CURRENT_STATUS) {
 
 			case u.LOGGED:
+				console.log('toggle menu');
 				User.pulldown.toggle();
 				break;
 
