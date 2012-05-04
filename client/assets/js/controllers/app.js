@@ -17,6 +17,13 @@ define([
 		// cutting the mustard
 		this.mustard = ('querySelector' in document && 'localStorage' in window && 'addEventListener' in window);
 
+		// setup components
+		this.components = {
+			grid: Grid.initialize(),
+			search: Search.initialize(),
+			user: User.initialize()
+		};
+
 		// controllers instances
 		this.controllers = {
 			user: UserController.initialize()
@@ -24,13 +31,6 @@ define([
 
 		// views instances
 		this.views = {};
-
-		// setup components
-		this.components = {
-			grid: Grid.initialize(),
-			search: Search.initialize(),
-			user: User.initialize()
-		};
 
 		// start navigation
 		navigation();
