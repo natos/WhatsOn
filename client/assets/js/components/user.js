@@ -80,7 +80,7 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 
 	User.pulldown = {
 
-		toggle: function() { u.$userControl.togleClass('active'); return this; },
+		toggle: function() { u.$userControl.toggleClass('active'); return this; },
 
 		show: function() {	u.$userControl.addClass('active'); return this; },
 
