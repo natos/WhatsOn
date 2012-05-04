@@ -17,6 +17,8 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 
 	manageLoginStatus = function(event) {
 
+		console.log('Login Status has changed', event.message);
+
 		switch (event.message) {
 
 			case u.LOGGED:
