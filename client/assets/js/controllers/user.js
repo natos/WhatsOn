@@ -55,7 +55,7 @@ define([
 		});
 
 		// Check Facebook login status
-		FB.getLoginStatus(facebookLoginStatus);
+//		FB.getLoginStatus(facebookLoginStatus);
 
 		// Lisent for changes on Facebook login status
 		FB.Event.subscribe('auth.statusChange', facebookLoginStatus);
