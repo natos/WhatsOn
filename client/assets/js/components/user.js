@@ -20,13 +20,13 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 		switch (event.message) {
 
 			case u.LOGGED:
-				u.$button.html('<img class="picture" src="https://graph.facebook.com/' + UserModel.facebook.uid + '/picture" />');
+				u.$loginButton.html('<img class="picture" src="https://graph.facebook.com/' + UserModel.facebook.uid + '/picture" />');
 				break;
 
 			case u.NOT_LOGGED:
 			case u.NOT_AUTHORIZED:
 			default:
-				u.$button.html('<i class="icon-user"></i><b class="label">Login</b>');
+				u.$loginButton.html('<i class="icon-user"></i><b class="label">Login</b>');
 				break;
 		}
 
