@@ -15,10 +15,10 @@ ul.channels-list
 					#{laterText} 
 					span.icon-chevron-right
 			div.channels-list-channel__programmes(id="channels-list_channel_#{channelEventsCollection.channel.id}__programmes")
-				ul
+				ul.channel-event-list
 					each event in channelEventsCollection.channelEvents
-						li.channels-list-channel__programme
-							a(href="/programme/#{event.programme.id}")
+						li.programme
+							a.programme-link(href="/programme/#{event.programme.id}")
 								div.time #{event.startDateTime.slice(11,13) + ':' + event.startDateTime.slice(14,16) + '-' + event.endDateTime.slice(11,13) + ':' + event.endDateTime.slice(14,16)}
 								div.title #{event.programme.title}
 								div.desc #{event.programme.shortDescription}

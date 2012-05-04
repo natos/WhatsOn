@@ -1,6 +1,7 @@
 extends layout
 
 block styles
+	link(href="/assets/css/channel-event-list.css", rel="stylesheet")
 	link(href="/assets/css/nowandnext.css", rel="stylesheet")
 
 block scripts
@@ -11,9 +12,11 @@ block scripts
 block content
 	ul(class=["channels-list-types", "#{listType}"])
 		li.type
-			a.type-pop(href=popUrl) Popular
+			a.type-pop(href=popUrl) Popular channels
 		li.type
-			a.type-fav(href=favUrl) My likes
+			a.type-fav(href=favUrl)
+				img(src="/assets/images/f_logo.png", height="16", width="16", style="display:inline;vertical-align:top;margin-right:0.5em") 
+				span Liked channels
 		li.type
 			a.type-all(href=allUrl) All channels
 	#channels-list-container
