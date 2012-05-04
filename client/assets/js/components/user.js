@@ -88,21 +88,9 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 
 		},
 
-		show: function() {	
+		show: function() {	u.$userControl.addClass('active'); return this; },
 
-			$('.main').css('margin-top', '200px');
-
-			u.$userControl.addClass('active'); return this; 
-
-		},
-
-		hide: function() {	
-
-			$('.main').removeAttr('style');
-
-			u.$userControl.removeClass('active'); return this; 
-
-		}
+		hide: function() {	u.$userControl.removeClass('active'); return this; }
 
 	}
 
