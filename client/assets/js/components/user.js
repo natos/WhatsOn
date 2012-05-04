@@ -99,7 +99,7 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 		// UI Events
 		u.$button.on('click', handleButtonClick);
 		u.$userControl.on('click', 'a', handleUserControlClick);
-		y.$body.on('click', User.pulldown.hide());
+		u.$body.on('click', User.pulldown.hide());
 	};
 
 	User.pulldown = {
