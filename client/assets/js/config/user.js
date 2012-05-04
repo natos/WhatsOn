@@ -16,8 +16,10 @@ define([
 		SCOPE: 'email, user_interests, user_likes, user_location, friends_likes, publish_actions, user_activities, user_events, friends_events, friends_online_presence, read_friendlists, user_online_presence, status_update, publish_stream, share_item, create_event, rsvp_event',
 
 		// events
-	
-		STARTED: 'user:started',
+
+		LOGIN: 'user:login',
+
+		LOGOUT: 'user:logout',
 	
 		STATUS_CHANGED: 'user:status_changed',
 	

@@ -65,27 +65,19 @@ define([
 		// Lisent for changes on Facebook login status
 		FB.Event.subscribe('auth.statusChange', facebookLoginStatus);
 
-		upc.emit(u.STARTED, 'nothing, just the thing has started');
-
-		console.log('UserController initializated');
-
 		return this;
 
 	};
 
 	UserController.login = function() {
 
-		FB.login(function(response) {
-
-		}, {scope: u.SCOPE });
+		FB.login(function(response) { upc.emit(u.LOGIN); }, {scope: u.SCOPE });
 
 	};
 
 	UserController.logout = function() {
 
-		FB.logout(function(response) {
-
-		});
+		FB.logout(function(response) { upc.emit(u.LOGOUT); });
 
 	};
 

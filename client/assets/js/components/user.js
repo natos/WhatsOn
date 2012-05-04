@@ -14,16 +14,12 @@ define([
 
 	var	manageLoginStatus = function(event) {
 
-		console.log('manageLoginStatus');
-		console.log(event);
 		console.log(event.message);
-
-		console.log(u);
 
 		switch (event.message) {
 
 			case u.LOGGED:
-				$button.html('<img class="picture" src="https://graph.facebook.com/' + UserController.facebook.uid + '/picture" />');
+				u.$button.html('<img class="picture" src="https://graph.facebook.com/' + UserController.facebook.uid + '/picture" />');
 				break;
 
 			case u.NOT_LOGGED: break;	
@@ -43,13 +39,9 @@ define([
 
 		upc.on(u.STATUS_CHANGED, manageLoginStatus);
 
-		upc.on(u.STARTED, function(event) {
-			console.log('user:started', event);
-		});
-
 		console.log('user widget loaded, waiting for events');
 
-		$button.click(function(event) {
+		u.$button.click(function(event) {
 			event.preventDefault();
 			u.login();
 		});
