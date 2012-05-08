@@ -1,8 +1,9 @@
 define([
 
-	'controllers/App'
+	'config/app',
+	'controllers/app'
 
-], function(App) {
+], function(c, App) {
 
 /* private */
 
@@ -110,6 +111,8 @@ var $window = $(window),
 		$('.main').css({'margin-top': '95px'});
 		// Assign the query to the search box
 		$('#q').val(query);
+
+		upc.emit(c.VIEW_LOADED, this);
 
 		return this;
 

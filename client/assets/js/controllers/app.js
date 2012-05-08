@@ -1,12 +1,13 @@
 define([
 
 	'/assets/js/lib/event/event.js',
+	'config/app',
 	'controllers/user',
 	'components/user',
 	'components/grid',
 	'components/search'
 
-], function(EventEmitter, UserController, User, Grid, Search) {
+], function(EventEmitter, c, UserController, User, Grid, Search) {
 
 	/* global signature */
 	window.upc = App = new EventEmitter();
@@ -14,7 +15,7 @@ define([
 	/* constructor */
 	App.initialize = function() {
 
-		// cutting the mustard
+		// cutting the mustard TODO: move this to main.js, and load zepto for mustard and jquery for mayo
 		this.mustard = ('querySelector' in document && 'localStorage' in window && 'addEventListener' in window);
 
 		// setup components
@@ -34,6 +35,16 @@ define([
 
 		// start navigation
 		navigation();
+
+		// global events
+		// every view loaded, remove transition
+		var transition = $('#transition');
+		upc.on(c.VIEW_LOADED, function(event) {
+			transition.addClass('hide');
+			setTimeout(function() {
+				transition.remove();
+			}, 500);
+		});
 
 		return this;
 

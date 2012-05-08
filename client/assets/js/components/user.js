@@ -3,15 +3,17 @@ define([
 
 	'config/user',
 	'models/user',
-	'controllers/user'
+	'controllers/user',
+	'views/settings'
 
-], function(u, UserModel, UserController) {
+], function(u, UserModel, UserController, SettingsView) {
 
 /* private */
 
 // constants
 
-var	CURRENT_STATUS = u.NOT_LOGGED,
+//var	CURRENT_STATUS = u.NOT_LOGGED,
+var	CURRENT_STATUS = u.LOGGED,
 
 // functions
 
@@ -52,7 +54,6 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 		switch (CURRENT_STATUS) {
 
 			case u.LOGGED:
-				console.log('toggle menu');
 				User.pulldown.toggle();
 				break;
 
@@ -75,6 +76,7 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 
 			case "settings":
 				console.log('settings');
+				SettingsView.load();
 				break;
 
 			case "logout":
@@ -91,15 +93,19 @@ var	CURRENT_STATUS = u.NOT_LOGGED,
 	/* constructor */
 	User.initialize = function() {
 
+		// initialize settings view
+		this.settings = SettingsView.initialize();
+
 		// Handle when the login status change
 		upc.on(u.STATUS_CHANGED, manageLoginStatus);
 		// Handle when the user model change
-
 		upc.on(u.MODEL_CHANGED, manageModelChanges);
 
 		// UI Events
 		u.$userControl.on('click', 'a', handleUserControlClick);
 		u.$loginButton.on('click', handleLoginButtonClick);
+
+		return this;
 
 	};
 

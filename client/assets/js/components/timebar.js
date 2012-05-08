@@ -6,6 +6,11 @@ define([
 ], function(g, convert) {
 
 /* private */
+function modelChanged(obj) {
+	if (obj.position) {
+		$timelist.css({ left: obj.position.left });
+	}
+};
 
 var	$timelist = g.$timebar.find('ol'),
 
@@ -16,13 +21,16 @@ var	$timelist = g.$timebar.find('ol'),
 	TimeBar.initialize = function() {
 
 		// move with the grid
-		g.$body.on(g.GRID_MOVED, this.move);
+		upc.on(g.MODEL_CHANGED, modelChanged);
+
+		// add logo behavior, move to 'now'
+		$('.upc-logo').click(function(event){ TimeBar.goTo('now'); });
 
 		// initialize ticker
 		this.ticker();
 			
 		// scroll to now
-		this.goTo('now');
+		this.goTo();
 
 		return this;
 
@@ -36,27 +44,11 @@ var	$timelist = g.$timebar.find('ol'),
 			// center in the screen
 			left = left - ( document.body.clientWidth / 2 ) + g.CHANNEL_BAR_WIDTH;
 
-			// move the window
-			window.scroll(left, 0);
-			// move the timebar
-			TimeBar.move();
+			// move the window left, 
+			// but the same distance top
+			window.scroll(left, document.body.scrollTop);
 
 		return this;
-
-	};
-
-	TimeBar.getSelectedTime = function() {
-
-		// How many hours have been scrolled horizontally?
-		var hoursScrolledLeft = window.pageXOffset / g.HOUR_WIDTH,
-			// Calculate the left border time, and right border time
-			leftBorderTime = new Date(g.ZERO.valueOf() + (hoursScrolledLeft * g.MILLISECONDS_IN_HOUR) - (g.VIEWPORT_WIDTH_HOURS/4 * g.MILLISECONDS_IN_HOUR)),
-			rightBorderTime = new Date(g.ZERO.valueOf() + (hoursScrolledLeft * g.MILLISECONDS_IN_HOUR) + (g.VIEWPORT_WIDTH_HOURS * g.MILLISECONDS_IN_HOUR));
-
-		return {
-			startTime: leftBorderTime,
-			endTime: rightBorderTime
-		};
 
 	};
 
@@ -79,12 +71,6 @@ var	$timelist = g.$timebar.find('ol'),
 
 		// first tick
 		tick(); element.appendTo(g.$container);
-	};
-
-	TimeBar.move = function(event) {
-
-		$timelist.css({ 'left': window.pageXOffset * -1 });
-
 	};
 
 	return TimeBar;

@@ -2,12 +2,22 @@
 define([
 
 	'config/user',
-	'models/user',
-	'//connect.facebook.net/en_US/all.js'
+	'models/user'//,
+//	'//connect.facebook.net/en_US/all.js'
 
 ], function(u, UserModel) {
 
 /* private */
+
+	// fb mock
+	window.FB = {
+		init: function() {},
+		login: function() {},
+		logout: function(){},
+		Event: {
+			subscribe: function() {}
+		}
+	}
 
 // funtions
 

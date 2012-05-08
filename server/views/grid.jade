@@ -25,4 +25,4 @@ block content
 block scripts
 	script
 		var channels = !{JSON.stringify(channels)};
-		require(['views/grid'], function(grid, timebar) { grid.initialize(); });
+		require(['controllers/grid'], function(grid) { grid.initialize(); });

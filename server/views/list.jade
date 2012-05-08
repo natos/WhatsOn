@@ -6,6 +6,7 @@ block styles
 block scripts
 	script
 		var channels = !{JSON.stringify(channels)};
+		setTimeout(function() { upc.emit('app:view_loaded') }, 300);
 
 
 block content

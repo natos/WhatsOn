@@ -1,6 +1,8 @@
 define([
 
-], function() {
+	'controllers/app'
+
+], function(App) {
 
 	'use strict';
 
@@ -8,7 +10,7 @@ define([
 		ESTIMATED_AVERAGE_EVENTS_PER_HOUR = 4,
 		EVENTS_PER_SLICE = ESTIMATED_AVERAGE_EVENTS_PER_HOUR * HOURS_PER_SLICE,
 		API_PREFIX = $('head').attr('data-api'),
-		$CUSTOM_EVENT_ROOT = $(document.body),
+		$CUSTOM_EVENT_ROOT = App,
 		CHANNEL_EVENTS_RECEIVED_EVENT = 'eventsReceived',
 		SEARCH_RESULTS_RECEIVED_EVENT = 'searchResultsReceived';
 
@@ -104,7 +106,7 @@ define([
 			channelId = channelIds[i]; 
 			cacheKey = getCacheKey(channelId, timeSlice);
 			if (_eventsForChannelCache[cacheKey]) {
-				$CUSTOM_EVENT_ROOT.trigger(CHANNEL_EVENTS_RECEIVED_EVENT, [_eventsForChannelCache[cacheKey]]);
+				$CUSTOM_EVENT_ROOT.emit(CHANNEL_EVENTS_RECEIVED_EVENT, [_eventsForChannelCache[cacheKey]]);
 			} else {
 				channelIdsToFetchFromApi.push(channelId);
 			}
@@ -155,6 +157,7 @@ define([
 	 * @async
 	 * @return void
 	 */
+
 	var handleApiResponse_EventsForSliceFromApi = function(apiResponse, timeSlice) {
 		var eventsForChannelCollection = [],
 			cacheKey,
@@ -183,7 +186,7 @@ define([
 
 			_eventsForChannelCache[cacheKey] = eventsForChannel;
 
-			$CUSTOM_EVENT_ROOT.trigger(CHANNEL_EVENTS_RECEIVED_EVENT, [eventsForChannel]);
+			$CUSTOM_EVENT_ROOT.emit(CHANNEL_EVENTS_RECEIVED_EVENT, [eventsForChannel]);
 		});
 
 	};
@@ -244,7 +247,7 @@ define([
 		// Use "&order=startDateTime" to get results in order
 		var request = API_PREFIX + 'Event.json?query=' + escape(q) + '&callback=?';
 		$.getJSON(request, function(apiResponse) {
-			$CUSTOM_EVENT_ROOT.trigger(SEARCH_RESULTS_RECEIVED_EVENT, [apiResponse]);
+			$CUSTOM_EVENT_ROOT.emit(SEARCH_RESULTS_RECEIVED_EVENT, [apiResponse]);
 		});
 	}
 

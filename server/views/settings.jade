@@ -1,0 +1,30 @@
+extends layout
+
+block content
+	#settings
+		h1 Settings
+		
+		h2 Social
+		form
+			ul
+				li
+					input(type="checkbox") 
+					label Post my actions into my facebook wall
+				li
+					input(type="checkbox") 
+					label Keep track of my favorites things
+		
+		h2 UPC account
+		ul
+			li
+				b.label oriontestuser1
+				i.icon-remove-sign
+		
+		form
+			button
+				i.icon-plus-sign
+				b.label Add a new account
+
+block scripts
+	script
+		require(['controllers/settings'], function(settings) { settings.initialize(); });

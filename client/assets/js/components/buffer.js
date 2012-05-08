@@ -1,9 +1,9 @@
 define([
 
 	'config/grid',
-	'components/channelbar'
+	'models/grid'
 
-], function(g, ChannelBar) {
+], function(g, GridModel) {
 
 /* private */
 
@@ -12,7 +12,7 @@ var clean = function() {
 
 	var events = $('.grid-event'), event, channel,
 
-	visibleChannels = ChannelBar.getSelectedChannels();
+	visibleChannels = GridModel.selectedChannels;
 
 	// to much elements out there
 	if ( events.length > g.MAX_DOM_ELEMENTS ) {
@@ -35,7 +35,7 @@ var clean = function() {
 	/* constructor */
 	Buffer.initialize = function() {
 
-		g.$body.on(g.GRID_RENDERED, this.grooming);
+		upc.on(g.GRID_RENDERED, this.grooming);
 
 		return this;
 

@@ -90,7 +90,7 @@
   }
 
   /* space for logo */
-  .nav, .main {
+  .nav {
 	left: 60px;
   }
 }
@@ -155,8 +155,7 @@
 	margin-left: -15px;
   }
 
-  .nav, .main {
-	left: 0;
+  .nav, #main {
 	margin: 0 auto;
   }
   .nav {
@@ -279,7 +278,7 @@
 	display: inline;
   }
 
-  .nav, .main {
+  .nav, #main {
 	min-width: 1200px;
 	max-width: 1600px;
   }	
@@ -314,7 +313,7 @@
 @media (min-width: 1600px) {
 
   /* navbar */
-  .nav, .main {
+  .nav, #main {
 	min-width: 1600px;
 	max-width: 2000px;
   }	

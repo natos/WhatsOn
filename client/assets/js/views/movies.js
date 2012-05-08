@@ -1,8 +1,9 @@
 define([
 
+	'config/app',
 	'controllers/app'
 
-], function(App) {
+], function(c, App) {
 
 /* private */
 
@@ -60,6 +61,8 @@ var $window = $(window),
 		$window.bind('resize orientationchange', sizeHandler);
 
 		resizeImages();
+
+		upc.emit(c.VIEW_LOADED, this);
 
 		return this;
 
