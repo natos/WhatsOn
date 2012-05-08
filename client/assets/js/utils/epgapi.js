@@ -1,6 +1,7 @@
 define([
 
-	'controllers/app'
+	'controllers/app',
+	'/assets/js/lib/lscache/lscache.js'
 
 ], function(App) {
 
@@ -12,11 +13,33 @@ define([
 		API_PREFIX = $('head').attr('data-api'),
 		$CUSTOM_EVENT_ROOT = App,
 		CHANNEL_EVENTS_RECEIVED_EVENT = 'eventsReceived',
-		SEARCH_RESULTS_RECEIVED_EVENT = 'searchResultsReceived';
+		SEARCH_RESULTS_RECEIVED_EVENT = 'searchResultsReceived',
+		CACHE_DURATION = 60 * 24, // 1 day
+		_eventsForChannelCache = {}; // Events cache for browsers without localstorage
 
-	// Special cache variable for holding events retrieved from the API.
-	// TODO: mechanism for flushing the cache?
-	var _eventsForChannelCache = {};
+	// Test for localstorage
+	var hasStorage = (function() {
+		try {
+			localStorage.setItem('monkey', 'fez');
+			localStorage.removeItem('monkey');
+			return true;
+		} catch(e) {
+			return false;
+		}
+	}());
+
+	// Define a facade for caching events
+	var getEventsForChannelFromCache;
+	var putEventsForChannelIntoCache;
+
+	if (hasStorage) {
+		getEventsForChannelFromCache = function(cacheKey) {return lscache.get(cacheKey);};
+		putEventsForChannelIntoCache = function(cacheKey, value) {lscache.set(cacheKey, value, CACHE_DURATION);};
+	} else {
+		getEventsForChannelFromCache = function(cacheKey) {return _eventsForChannelCache[cacheKey];};
+		putEventsForChannelIntoCache = function(cacheKey, value) {_eventsForChannelCache[cacheKey] = value;};
+	}
+
 
 	/**
 	 * Format a date as a string YYYY-MM-DDTHH:00Z
@@ -97,7 +120,8 @@ define([
 			channelIdsCount = channelIds.length,
 			i,
 			channelId,
-			cacheKey;
+			cacheKey,
+			cachedEventsForChannel;
 
 		// Iterate over the channels list to see if we have an events collection
 		// for this channel and time slice in cache. If not, add the channel to a list
@@ -105,8 +129,10 @@ define([
 		for (i = 0; i < channelIdsCount; i++) {
 			channelId = channelIds[i]; 
 			cacheKey = getCacheKey(channelId, timeSlice);
-			if (_eventsForChannelCache[cacheKey]) {
-				$CUSTOM_EVENT_ROOT.emit(CHANNEL_EVENTS_RECEIVED_EVENT, [_eventsForChannelCache[cacheKey]]);
+			cachedEventsForChannel = getEventsForChannelFromCache(cacheKey);
+
+			if (cachedEventsForChannel) {
+				$CUSTOM_EVENT_ROOT.emit(CHANNEL_EVENTS_RECEIVED_EVENT, [cachedEventsForChannel]);
 			} else {
 				channelIdsToFetchFromApi.push(channelId);
 			}
@@ -184,7 +210,7 @@ define([
 			channelId = eventsForChannel[0].channel.id;
 			cacheKey = getCacheKey(channelId, timeSlice);
 
-			_eventsForChannelCache[cacheKey] = eventsForChannel;
+			putEventsForChannelIntoCache(cacheKey, eventsForChannel);
 
 			$CUSTOM_EVENT_ROOT.emit(CHANNEL_EVENTS_RECEIVED_EVENT, [eventsForChannel]);
 		});
