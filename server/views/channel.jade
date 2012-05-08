@@ -1,22 +1,31 @@
-include layout
+extends layout
 
-section#content.channel
+block styles
+	link(href="/assets/css/channelpage.css", rel="stylesheet")
+	link(href="/assets/css/channel-event-list.css", rel="stylesheet")
 
-	header
-		p #{data.position} #{data.broadcastFormat}
-		.logo
-			img(src="http://www.upc.nl#{data.logoIMG}")
-		h1 #{title}
-		p #{data.description}
+block content
+	.channelpage
+		header.hd
+			.logo
+				img(src="http://www.upc.nl#{data.logoIMG}")
+			.like
+				.fb-like(data-href="/channel/#{data.id}", data-send="false", data-layout="box_count", data-width="80", data-show-faces="true")
+			h1 #{title}
+			p #{data.description}
 
-	section
-		if data
-			ul.event-list
-				each event in data.events
-					li
-						.hour 
-							| #{ event.prettyDate }, 
-							| #{ new Date(event.startDateTime).getHours() }hs
-						h3 
-							a(href="/programme/#{event.programme.id}") #{event.programme.title}	
-						p #{event.programme.shortDescription}
+		.bd
+			if data
+				each date in data.dates
+					h2.date-title
+						span.icon-calendar
+						#{date.dateText}
+					ul.channel-event-list
+						each event in date.events
+							- var startDate = Date.parse('#{event.startDateTime}');
+							- var endDate = new Date(Date.parse('#{event.endDateTime}'));
+							li.programme
+								a.programme-link(href="/programme/#{event.programme.id}")
+									.time #{event.timeRange}
+									h3.title #{event.programme.title}
+									p.desc #{event.programme.shortDescription}

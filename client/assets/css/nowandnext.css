@@ -1,0 +1,135 @@
+.channels-list-types {
+	display:table;
+	width:100%;
+}
+.channels-list-types .type {
+	display:table-cell;
+	list-style-type:none;
+	width:33.33333%;
+	border-left:1px solid #ccc;
+}
+.channels-list-types .type a {
+	display:block;
+	width:100%;
+	white-space:nowrap;
+	padding:0.7em 0 0.5em;
+	text-align:center;
+	background:#eee;
+	cursor:pointer;
+	color:inherit;
+	font-weight:bold;
+	text-shadow:1px 1px 1px #fff;
+}
+.channels-list-types .type a:hover,
+.channels-list-types .type a:active{
+	background:#ddd;
+}
+
+.channels-list-types.POP a.type-pop,
+.channels-list-types.FAV a.type-fav,
+.channels-list-types.ALL a.type-all {
+	background:#ccc;
+}
+@media screen and (min-width:640px) {
+	.channels-list-types {
+		border-bottom:1px solid #ccc;
+	}
+}
+
+
+
+.channels-list {
+	padding:0;
+}
+.channels-list-channel {
+	width:100%;
+	background:#fefefe;
+	margin-bottom:1em;
+	overflow:hidden;
+	border:1px solid #ccc;
+	list-style-type:none;
+	position:relative;
+}
+@media screen and (min-width:640px) {
+	.channels-list {
+		margin-top:10px;
+		overflow:hidden;
+	}
+	.channels-list-channel {
+	}
+	.channels-list-channel:nth-child(odd) {
+		float:left;
+		margin-left:10px;
+		width:48%;
+		height:23em;
+	}
+	.channels-list-channel:nth-child(even) {
+		float:right;
+		margin-right:10px;
+		width:48%;
+		height:23em;
+	}
+
+}
+
+.channels-list-channel .channelmarker {
+	position:absolute;
+	top:-60px;
+	left:0;
+}
+
+.channels-list-channel__controls {
+	display:block;
+	text-align:center;
+	padding:5px 10px 5px 80px;
+	border-bottom:1px solid #ccc;
+	position:relative;
+}
+	.channels-list-channel__controls .logo {
+		position:absolute;
+		top:5px;
+		left:10px;
+	}
+	.channels-list-channel__controls .now {
+		display:inline-block;
+		vertical-align:middle;
+	}
+		.channels-list-channel__controls .nowtime {
+			display:block;
+			font-weight:bold;
+		}
+		.channels-list-channel__controls .nowdate {
+			display:block;
+			font-size:10px;
+		}
+	.channels-list-channel__controls .earlier,
+	.channels-list-channel__controls .later {
+		display:inline-block;
+		border:1px solid #ccc;
+		border-radius:3px;
+		background:#eee;
+		color:#333;
+		text-shadow:1px 1px 1px #fff;
+		margin:0 0.5em;
+		vertical-align:middle;
+		padding:0.4em 0.5em;
+	}
+	.channels-list-channel__controls .earlier {
+		padding-left:0;
+	}
+	.channels-list-channel__controls .later {
+		padding-right:0;
+	}
+	.channels-list-channel__controls .earlier:hover,
+	.channels-list-channel__controls .later:hover,
+	.channels-list-channel__controls .earlier:active,
+	.channels-list-channel__controls .later:active {
+		background:#ccc;
+		border-color:#aaa;
+	}
+
+
+.channels-list-channel__programmes {
+	display:block;
+	padding:5px;
+}

@@ -47,9 +47,7 @@ function(Channel, Metadata) {
 
 	GridController.prototype.render = function(req, res) {
 
-		ChannelService.once('getChannels', function(error, response, body) {
-
-			var channels = JSON.parse(body);
+		ChannelService.once('getChannels', function(channels) {
 
 			res.render('grid.jade', {
 				metadata	: metadata.get(),

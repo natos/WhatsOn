@@ -11,9 +11,11 @@ define([
 	'events',
 	'request',
 
+	// utils
+	'utils/requestn',
+
 	// config
 	'config/global.config'
-
 ],
 
 
@@ -21,7 +23,7 @@ define([
 *	@class ChannelService
 */
 
-function(util, events, request, config) {
+function(util, events, request, requestN, config) {
 
 	/** @constructor */
 
@@ -40,11 +42,13 @@ function(util, events, request, config) {
 
 	/** @private */
 
-	var ALL_CHANNELS	= config.API_PREFIX + 'Channel.json?order=position',
+	var ALL_CHANNELS_0  = config.API_PREFIX + 'Channel.json?order=position&batch=0',
+		ALL_CHANNELS_1  = config.API_PREFIX + 'Channel.json?order=position&batch=1',
+		ALL_CHANNELS_2  = config.API_PREFIX + 'Channel.json?order=position&batch=2',
 		CHANNEL_DETAILS	= config.API_PREFIX + 'Channel/%%id%%.json',
 		CHANNEL_EVENTS	= config.API_PREFIX + 'Channel/%%id%%/events/NowAndNext.json?order=startDateTime';
 
-	var CACHE = {
+	var CHANNELS_CACHE = {
 		list		: [],
 		timestamp	: null,
 		duration	: 60 * 60 * 1000 // cache for 1 hour
@@ -55,13 +59,58 @@ function(util, events, request, config) {
 	/** Get list of all channels */
 	ChannelService.prototype.getChannels = function() {
 
-		var self = this;
+		var self = this,
+			allChannels = CHANNELS_CACHE.list,
+			allChannels_timestamp = CHANNELS_CACHE.timestamp,
+			now = new Date(),
+			cacheDurationMilliseconds = CHANNELS_CACHE.duration;
 
-		request(ALL_CHANNELS, function(error, response, body) {
+		// Return channels from cache, if available
+		if (allChannels && allChannels.length > 0 && allChannels_timestamp && typeof(allChannels_timestamp.valueOf)==='function' && (now.valueOf() - allChannels_timestamp.valueOf() < cacheDurationMilliseconds)) {
+			// from cache
+			self.emit('getChannels', allChannels);
+		} else {
 
-			self.emit('getChannels', error, response, body);
+			var requestUrls = [ALL_CHANNELS_0, ALL_CHANNELS_1, ALL_CHANNELS_2];
 
-		});
+			requestN(
+				requestUrls,
+				function(responses) {
+					var errorsCount = 0;
+					var channelsBatch;
+
+					try {
+						for (var i=0; i<requestUrls.length; i++) {
+							if (!responses[requestUrls[i]] || responses[requestUrls[i]].error) {
+								// TODO: Review this, because it crash when responses[thingy] is empty
+								console.log("Error requesting " + requestUrls[i] + ": " + responses[requestUrls[i]].error);
+								errorsCount++;
+							}
+						}
+
+						if (errorsCount===0) {
+							for (var i=0; i<requestUrls.length; i++) {
+								if (!responses[requestUrls[i]].error && responses[requestUrls[i]].response.statusCode == 200) {
+									channelsBatch = JSON.parse(responses[requestUrls[i]].body);
+									allChannels = allChannels.concat(channelsBatch);
+								}
+							}
+						}
+
+						// Cache the channels
+						CHANNELS_CACHE.list = allChannels;
+						CHANNELS_CACHE.timestamp = now;
+						self.emit('getChannels', allChannels);
+
+					} catch (e) {
+						console.log('Failed to retrieve channels');
+						console.log(e);
+					}
+				}
+
+			);
+
+		}
 
 		return this;
 

@@ -24,6 +24,7 @@
 		"timetrack": "0.0.1",
 		"hooks": "0.2.0",
 		"jasmine-node": "1.0.22",
-		"requirejs": "1.0.7"
+		"requirejs": "1.0.7",
+		"prettydate": "0.0.1"
   }
 }

@@ -53,16 +53,15 @@ function(Channel, Bookings, DateUtils, Metadata) {
 
 	DashboardController.prototype.render = function(req, res) {
 
-		var channels, topbookings, render = function() {
+		var topbookings, render = function() {
 
-			if (!channels||!topbookings) { return; }
+			if (!topbookings) { return; }
 
 			topbookings = dateUtils.prettifyCollection(topbookings, 'startDateTime');
 
 			res.render('dashboard.jade', {
 				metadata	: metadata.get(),
 				config		: _app.config,
-				channels	: channels,
 				topbookings : topbookings,
 				supports	: req.supports
 			});
@@ -80,14 +79,6 @@ function(Channel, Bookings, DateUtils, Metadata) {
 			render();
 
 		}).getTopBookings();
-
-		ChannelService.once('getChannels', function(error, response, body) {
-
-			channels = JSON.parse(body);
-
-			render();
-
-		}).getChannels();
 
 	};
 

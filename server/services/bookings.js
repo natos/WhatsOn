@@ -54,9 +54,11 @@ function(util, events, request, config, TOP_BOOKINGS_MOCK) {
 
 		var self = this;
 
-		request(TOP_BOOKINGS, function(error, response, body) {
+		self.emit('getTopBookings', '', '', TOP_BOOKINGS_MOCK);
 
-			/** API Error? Grab the mock */
+/*		request(TOP_BOOKINGS, function(error, response, body) {
+
+			// API Error? Grab the mock
 			if ( !body || /<title>Error<\/title>/.test(body) ) {
 
 				console.log(' Bookings Service >>> Error getting TopBookings: ', body);
@@ -68,7 +70,7 @@ function(util, events, request, config, TOP_BOOKINGS_MOCK) {
 
 			self.emit('getTopBookings', error, response, body);
 
-		});
+		});*/
 
 		return this;
 	};

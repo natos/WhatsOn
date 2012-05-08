@@ -12,8 +12,9 @@ define([
 	// utils
 	'utils/metadata',
 	'utils/dateutils',
-	'utils/requestn'
+	'utils/requestn',
 
+	'prettydate'
 ],
 
 
@@ -21,7 +22,7 @@ define([
  *	@class ChannelController
  */
 
-function(Channel, Metadata, DateUtils, Requestn) {
+function(Channel, Metadata, DateUtils, Requestn, PrettyDate) {
 
 	/** @constructor */
 
@@ -80,8 +81,28 @@ function(Channel, Metadata, DateUtils, Requestn) {
 				var _channel_details = JSON.parse( response[CHANNEL_DETAILS].body ),
 					_channel_events = JSON.parse( response[CHANNEL_EVENTS].body );
 
-				// add the events collection to the response body
-				_channel_details.events = _channel_events;
+				// Add date offset and formatted start-end time range to events.
+				// Group events by date.
+				var strftime = PrettyDate.strftime;
+				var now = new Date();
+				var dateGroups = [];
+				var previousDay = 0;
+				_channel_events.forEach(function(el, ix, arr){
+					var startDate = new Date(Date.parse(el.startDateTime));
+					var endDate = new Date(Date.parse(el.endDateTime));
+					el.timeRange = strftime(startDate, '%R') + ' - ' + strftime(endDate, '%R');
+
+					var day = startDate.getDay();
+					if (day !== previousDay) {
+						dateGroups.push({
+							dateText : strftime(startDate, '%A %e %B'),
+							events : []
+						});
+						previousDay = day;
+					}
+					dateGroups[dateGroups.length - 1].events.push(el);
+				});
+				_channel_details.dates = dateGroups;
 
 				// Meta data
 				var metadata = [
