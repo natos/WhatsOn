@@ -9,11 +9,6 @@ header.hd
 	h1 #{title}
 	p #{data.shortDescription}
 
-	if (data.subcategory.category.name.toLowerCase() == 'speelfilm')
-		#imdbPoster(data-programmetitle="#{title}")
-		script(src='/js/ahah.js')
-		script(src='/js/loadImdbPoster.js')
-
 	if !isAjax
 		#user-action
 			button.watch #{__i('Watch')}
