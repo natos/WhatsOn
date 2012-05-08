@@ -83,7 +83,10 @@ define([
 			event = events[0][i];
 
 			// Avoid rendering duplicate DOM elements
-			if ( $('#event-' + event.id)[0] ) { return; }
+			if ( $('#event-' + event.id)[0] ) {
+				// Don't render this event; skip to the next one.
+				continue;
+			}
 
 			// Data
 			startDateTime = convert.parseApiDate(event.startDateTime);
