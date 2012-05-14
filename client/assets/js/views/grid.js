@@ -20,6 +20,33 @@ define([
 
 	var executionTimer;
 
+	/* constructor */
+	function initialize() {
+
+		// set styles
+		g.$styles.text( defineStyles() );
+
+	/** 
+	*	Events handlers
+	*/
+
+		// UI event handlers
+		// every time user scrolls, we want to load new events
+		g.$window.on('resize scroll', handleReziseAndScroll);
+
+		// Data events
+		// First event received off modal
+		upc.once('eventsReceived', firstEvent);
+
+		// we want to render every new events when they are recieved
+//		upc.on('eventsReceived', renderEvents);
+
+		upc.on(g.MODEL_CHANGED, modelChanged);
+
+		return this;
+
+	}
+
 	function firstEvent() {
 
 		upc.emit(c.VIEW_LOADED, this);
@@ -167,40 +194,12 @@ define([
 
 	};
 
-	/* constructor */
-	function initialize() {
-
-		// set styles
-		g.$styles.text( defineStyles() );
-
-	/** 
-	*	Events handlers
-	*/
-
-		// UI event handlers
-		// every time user scrolls, we want to load new events
-		g.$window.on('resize scroll', handleReziseAndScroll);
-
-		// Data events
-		// First event received off modal
-		upc.once('eventsReceived', firstEvent);
-
-		// we want to render every new events when they are recieved
-//		upc.on('eventsReceived', renderEvents);
-
-		upc.on(g.MODEL_CHANGED, modelChanged);
-
-		return this;
-
-	}
-
-/* @class GridView */
-var GridView = {
+/* public */
+	return {
 		initialize: initialize,
 		getSelectedChannels: getSelectedChannels,
 		getSelectedTime: getSelectedTime
 	};
 
-	return GridView;
 
 });

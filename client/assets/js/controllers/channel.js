@@ -1,9 +1,6 @@
 /* 
-* SettingsController 
-* --------------
-*
-* Listen to the views
-* Updates the model
+* ChannelController
+* ------------------
 *
 */
 
@@ -11,16 +8,16 @@ define([
 
 	'config/app',
 	'controllers/app',
-	'views/settings'
+	'views/channel'
 
-], function SettingsController(c, App, SettingsView) {
+], function ChannelController(c, App, ChannelView) {
 
 /* private */
 
 	function initialize() {
 
 		// Let the App know your here
-		App.controllers.settings = this;
+		App.controllers.channel = this;
 	
 		return this;
 	
@@ -30,7 +27,7 @@ define([
 	return {
 		/* constructor */
 		initialize: initialize,
-		view: SettingsView.initialize()
+		view: ChannelView.initialize()
 	};
 
 });

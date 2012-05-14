@@ -1,25 +1,22 @@
+/*
+* ChannelBar
+* ----------
+* @class ChannelBar
+*/
+
 define([
 
 	'config/grid',
 	'models/grid'
 
-], function(g, GridModel) {
+], function ChannelBar(g, GridModel) {
 
 /* private */
 
-function modelChanged(obj) {
-	if (obj.position) {
-		$channellist.css({ top: obj.position.top });
-	}
-};
-
-var	$channellist = g.$channelsbar.find('ul'),
-
-/* @class ChannelBar */
-	ChannelBar = {};
+	var	$channellist = g.$channelsbar.find('ul')
 
 	/* constructor */
-	ChannelBar.initialize = function() {
+	function initialize() {
 
 		// move with the grid
 		upc.on(g.MODEL_CHANGED, modelChanged);
@@ -37,6 +34,16 @@ var	$channellist = g.$channelsbar.find('ul'),
 
 	};
 
-	return ChannelBar;
+	function modelChanged(obj) {
+		if (obj.position) {
+			$channellist.css({ top: obj.position.top });
+		}
+	};
+
+
+/* public */
+	return {
+		initialize: initialize
+	};
 
 });

@@ -1,5 +1,11 @@
 extends layout
 
+block styles
+	link(href="/assets/css/dashboard.css", rel="stylesheet")
+
+block scripts
+	script(data-load="controllers/dashboard")
+
 block content
 	#featured
 		ul.show
@@ -130,7 +136,3 @@ block content
 				li
 					i.icon-chevron-right
 					a(href="/programme/19345437") Top Gear
-
-block scripts
-	script
-		require(['views/dashboard'], function(dashboard) { dashboard.initialize(); });

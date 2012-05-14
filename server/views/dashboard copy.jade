@@ -30,5 +30,4 @@ block content
 			&shy;
 
 block scripts
-	script
-		require(['controllers/dashboard'], function(dashboard) { dashboard.initialize(); });
+	script(data-load="controllers/dashboard")

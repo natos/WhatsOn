@@ -1,11 +1,17 @@
 extends layout
 
+block styles
+	link(href="/assets/css/settings.css", rel="stylesheet")
+
+block scripts
+	script(data-load="controllers/settings")
+
 block content
 	#settings
-		h1 Settings
-		
-		h2 Social
 		form
+			h1 Settings
+			
+			h2 Personal
 			ul
 				li
 					input(type="checkbox") 
@@ -13,18 +19,36 @@ block content
 				li
 					input(type="checkbox") 
 					label Keep track of my favorites things
-		
-		h2 UPC account
-		ul
-			li
-				b.label oriontestuser1
-				i.icon-remove-sign
-		
-		form
-			button
-				i.icon-plus-sign
-				b.label Add a new account
 
-block scripts
-	script
-		require(['controllers/settings'], function(settings) { settings.initialize(); });
+			h2 Social
+			ul
+
+				li
+					i.icon-facebook-sign
+					button
+						i.icon-remove-sign
+						b.label Disconnect from Facebook
+				li
+					i.icon-twitter-sign
+					button
+						i.icon-ok-sign
+						b.label Link your Twitter account
+				hr
+				li
+					input(type="checkbox") 
+					label Post my actions into my Facebook Wall
+				li
+					input(type="checkbox") 
+					label Post my actions into my Twitter Stream
+			
+			h2 Manage your UPC credentials
+			p So you can book events and watch it later on your TV at home.
+			ul
+				li
+					b.label oriontestuser1
+					i.icon-remove-sign
+			
+			form
+				button
+					i.icon-plus-sign
+					b.label Add a new account

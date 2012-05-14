@@ -3,6 +3,9 @@ extends layout
 block styles
 	link(href="/assets/css/programmepage.css", rel="stylesheet")
 
+block scripts
+	script(data-load="controllers/programme")
+
 block content
 	.programmepage
 		include programme-ajax.jade

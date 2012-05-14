@@ -32,6 +32,9 @@ define([
 	var getEventsForChannelFromCache;
 	var putEventsForChannelIntoCache;
 
+	// disable local Storage
+	hasStorage = false;
+
 	if (hasStorage) {
 		getEventsForChannelFromCache = function(cacheKey) {return lscache.get(cacheKey);};
 		putEventsForChannelIntoCache = function(cacheKey, value) {lscache.set(cacheKey, value, CACHE_DURATION);};

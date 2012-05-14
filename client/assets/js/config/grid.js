@@ -1,17 +1,19 @@
 /* 
 * GridConfig
+* --------------
+*
+* Constants and configurations for Grid
+*
 */
 
-define([
-
-], function() {
+define([], function GridConfig() {
 
 /* private */
 
+/* public */
 
-/* Grid Config */
-
-	var config = {
+/* @class GridConfig */
+	return {
 
 		// constants
 
@@ -68,16 +70,8 @@ define([
 	
 		$navbar: $('.navbar'),
 	
-		$styles: $('#grid-styles'),
-
-		initialize: function() {
-
-			return this;
-
-		}
+		$styles: $('#grid-styles')
 
 	};
-
-	return config;
 
 });

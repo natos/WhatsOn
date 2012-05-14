@@ -1,9 +1,6 @@
 /* 
-* SettingsController 
-* --------------
-*
-* Listen to the views
-* Updates the model
+* ProgrammeController
+* ------------------
 *
 */
 
@@ -11,16 +8,16 @@ define([
 
 	'config/app',
 	'controllers/app',
-	'views/settings'
+	'views/programme'
 
-], function SettingsController(c, App, SettingsView) {
+], function ProgrammeController(c, App, ProgrammeView) {
 
 /* private */
 
 	function initialize() {
 
 		// Let the App know your here
-		App.controllers.settings = this;
+		App.controllers.programme = this;
 	
 		return this;
 	
@@ -30,7 +27,7 @@ define([
 	return {
 		/* constructor */
 		initialize: initialize,
-		view: SettingsView.initialize()
+		view: ProgrammeView.initialize()
 	};
 
 });

@@ -1,103 +1,47 @@
-/* UserComponent */
+/*
+* UserControl
+* -----------
+* @class UserControl
+*/
+
 define([
 
 	'config/user',
-	'models/user',
-	'controllers/user',
-	'views/settings'
+	'models/user'
 
-], function(u, UserModel, UserController, SettingsView) {
+], function UserControl(u, UserModel) {
 
 /* private */
 
 // constants
 
-//var	CURRENT_STATUS = u.NOT_LOGGED,
-var	CURRENT_STATUS = u.LOGGED,
+	var	CURRENT_STATUS = u.UNKNOWN,
+
+	// pulldown
+	pulldown = {
+
+		toggle: function() { 
+			if (u.$userControl.hasClass('active')) { this.hide(); } else { this.show(); } 
+			return this; 
+		},
+
+		show: function() {	
+			u.$body.one('click', function(event) { pulldown.hide(); });
+			u.$userControl.addClass('active'); 
+			return this; 
+		},
+
+		hide: function() {	
+			u.$userControl.removeClass('active'); return this; 
+		}
+
+	};
 
 // functions
 
-	manageLoginStatus = function(event) {
-
-		console.log('Login Status has changed', event.message);
-
-		switch (event.message) {
-
-			case u.LOGGED:
-				u.$loginButton.html('<img class="picture" src="https://graph.facebook.com/' + UserModel.facebook.uid + '/picture" />');
-				break;
-
-			case u.NOT_LOGGED:
-			case u.NOT_AUTHORIZED:
-			default:
-				u.$loginButton.html('<i class="icon-user"></i><b class="label">Login</b>');
-				break;
-		}
-
-		// save current status
-		CURRENT_STATUS = event.message;
-
-	},
-
-	manageModelChanges = function(event) {
-
-		console.log('User Model has changed: ', event);
-
-	},
-
-	// handle a.login behavior
-	handleLoginButtonClick = function(event) {
-
-		event.preventDefault();
-		event.stopPropagation();
-
-		switch (CURRENT_STATUS) {
-
-			case u.LOGGED:
-				User.pulldown.toggle();
-				break;
-
-			case u.NOT_LOGGED:
-			case u.NOT_AUTHORIZED:
-			default: 
-				UserController.login();
-				break;
-
-		}
-
-	},
-
-	// handle usercontrol behavior
-	handleUserControlClick = function(event) {
-		
-		event.preventDefault();
-
-		switch (this.className) {
-
-			case "settings":
-				console.log('settings');
-				SettingsView.load();
-				break;
-
-			case "logout":
-				UserController.logout();
-				break;
-
-		}
-
-	},
-
-/* @class User */
-	User = {};
-
 	/* constructor */
-	User.initialize = function() {
+	function initialize() {
 
-		// initialize settings view
-		this.settings = SettingsView.initialize();
-
-		// Handle when the login status change
-		upc.on(u.STATUS_CHANGED, manageLoginStatus);
 		// Handle when the user model change
 		upc.on(u.MODEL_CHANGED, manageModelChanges);
 
@@ -109,25 +53,80 @@ var	CURRENT_STATUS = u.LOGGED,
 
 	};
 
-	User.pulldown = {
+	function manageModelChanges(event) {
 
-		toggle: function() { 
-			if (u.$userControl.hasClass('active')) { this.hide(); } else { this.show(); } 
-			return this; 
-		},
-
-		show: function() {	
-			u.$body.one('click', function(event) { User.pulldown.hide(); });
-			u.$userControl.addClass('active'); 
-			return this; 
-		},
-
-		hide: function() {	
-			u.$userControl.removeClass('active'); return this; 
+		// Login Status has changed
+		if (event['facebook-status']) {
+			manageLoginStatus(event['facebook-status']);
 		}
 
-	}
+	};
 
-	return User;
+	function manageLoginStatus(event) {
+
+		switch (event.status) {
+
+			case u.CONNECTED:
+				u.$loginButton.html('<img class="picture" src="https://graph.facebook.com/' + event.authResponse.userID + '/picture" />');
+				break;
+
+			case u.NOT_AUTHORIZED:
+			case u.UNKNOWN:
+			default:
+				u.$loginButton.html('<i class="icon-user"></i><b class="label">Login</b>');
+				break;
+		}
+
+		// save current status
+		CURRENT_STATUS = event.status;
+
+	};
+
+	// handle a.login behavior
+	function handleLoginButtonClick(event) {
+
+		event.preventDefault();
+		event.stopPropagation();
+
+		switch (CURRENT_STATUS) {
+
+			case u.CONNECTED:
+				pulldown.toggle();
+				break;
+
+			case u.NOT_AUTHORIZED:
+			case u.UNKNOWN:
+			default: 
+				upc.emit(u.LOG_IN);
+				break;
+
+		}
+
+	};
+
+	// handle usercontrol behavior
+	function handleUserControlClick(event) {
+
+		switch (this.className) {
+
+			case "settings":
+				console.log('settings');
+				break;
+
+			case "logout":
+				event.preventDefault();
+				upc.emit(u.LOG_OUT);
+				// TODO: Redirect to homepage
+//				UserController.logout();
+				break;
+
+		}
+
+	};
+
+/* public */
+	return {
+		initialize: initialize
+	};
 
 });

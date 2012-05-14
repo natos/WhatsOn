@@ -128,8 +128,12 @@ function(config) {
 		if ( _isArray(data) ) {
 
 			this.children.forEach(function(child, i) {
-				data.forEach(function(newChild, e){
+				data.forEach(function(newChild, e) {
 					if (child[key] === newChild[key]) {
+						console.log(child[key], '===', newChild[key]);
+						console.log(child[key] === newChild[key]);
+						console.log(newChild);
+						console.log(child);
 						self.remove(child[key]);
 						_children.push(newChild);
 					}

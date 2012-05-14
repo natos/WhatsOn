@@ -10,29 +10,31 @@ define([
 
 	'config/grid'
 
-], function(g) {
+], function GridModel(g) {
 
 /* private */
 
-
-/* @class GridModel */
-var GridModel = {
-
-};
-
-	/* constructor */
-	GridModel.initialize = function() { return this; };
-
-	/* global setter */
-	GridModel.set = function(key, value) {
-
+	function initialize() { 
+		return this; 
+	};
+	
+	function set(key, value) {
+	
 		var obj = {};
 		obj[key] = value;
 		this[key] = value;
-
+	
 		upc.emit(g.MODEL_CHANGED, obj );
+	}
 
+/* public */
+
+/* @class GridModel */
+	return {
+		/* constructor */
+		initialize: initialize,
+		/* global setter */
+		set: set
 	};
-	return GridModel;
 
 });

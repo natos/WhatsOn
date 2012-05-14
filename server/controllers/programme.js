@@ -88,11 +88,10 @@ function(Programme, Metadata, DateUtils, Requestn) {
 
 				// Meta data
 				var _metadata = [
-					{ property: "og:type"			, content: (isMovie) ? "upc-whatson:movie" : "upc-whatson:tv_show" },
-					{ property: "og:url"			, content: "http://upcwhatson.herokuapp.com/programme/" + _programme_details.id + ".html" },
+					{ property: "og:type"			, content: (isMovie) ? "video.movie" : "video.tv_show" },
+					{ property: "og:url"			, content: "http://upcsocial.herokuapp.com/programme/" + _programme_details.id },
 					{ property: "og:title"			, content: _programme_details.title },
-					{ property: "og:description"	, content: _programme_details.description },
-					{ property: "og:image"			, content: "http://upcwhatson.herokuapp.com/assets/upclogo.jpg" }
+					{ property: "og:description"	, content: _programme_details.shortDescription }
 				];
 
 				var template = req.xhr ? 'programme-ajax.jade' : 'programme.jade'

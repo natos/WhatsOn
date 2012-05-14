@@ -1,42 +1,46 @@
+/*
+* TimeBar
+* -------
+* @class TimeBar
+*/
+
 define([
 
-	'config/grid',
+	'config/grid', 
 	'utils/convert'
 
-], function(g, convert) {
+], function TimeBar(g, convert) {
 
 /* private */
-function modelChanged(obj) {
-	if (obj.position) {
-		$timelist.css({ left: obj.position.left });
-	}
-};
 
-var	$timelist = g.$timebar.find('ol'),
+	var	$timelist = g.$timebar.find('ol');
 
-/* @class TimeBar */
-	TimeBar = {};
-	
 	/* constructor */
-	TimeBar.initialize = function() {
+	function initialize() {
 
 		// move with the grid
 		upc.on(g.MODEL_CHANGED, modelChanged);
 
 		// add logo behavior, move to 'now'
-		$('.upc-logo').click(function(event){ TimeBar.goTo('now'); });
+		$('.upc-logo').click(function(event){ goTo('now'); });
 
 		// initialize ticker
-		this.ticker();
+		ticker();
 			
 		// scroll to now
-		this.goTo();
+		goTo();
 
 		return this;
 
 	};
 
-	TimeBar.goTo = function(data) {
+	function modelChanged(obj) {
+		if (obj.position) {
+			$timelist.css({ left: obj.position.left });
+		}
+	};
+
+	function goTo(data) {
 
 		// TODO: Evaluate 'data' to move to other times
 
@@ -52,7 +56,7 @@ var	$timelist = g.$timebar.find('ol'),
 
 	};
 
-	TimeBar.ticker = function() {
+	function ticker() {
 
 		var timer,
 
@@ -73,6 +77,13 @@ var	$timelist = g.$timebar.find('ol'),
 		tick(); element.appendTo(g.$container);
 	};
 
-	return TimeBar;
+
+/* public */
+
+	return {
+		initialize: initialize,
+		goTo: goTo,
+		ticker: ticker
+	};
 
 });

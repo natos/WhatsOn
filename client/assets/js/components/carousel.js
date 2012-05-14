@@ -1,3 +1,9 @@
+/*
+* CarouselComponent
+* -----------------
+* @class Carousel
+*/
+
 define([
 
 ], function() {

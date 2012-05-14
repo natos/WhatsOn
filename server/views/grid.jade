@@ -23,6 +23,5 @@ block content
 						img(title="#{channel.name}", src="http://www.upc.nl#{channel.logoIMG}", id="channelImg#{channel.id}")
 
 block scripts
-	script
+	script(data-load="controllers/grid")
 		var channels = !{JSON.stringify(channels)};
-		require(['controllers/grid'], function(grid) { grid.initialize(); });

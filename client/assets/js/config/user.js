@@ -1,14 +1,18 @@
-/* UserConfig */
-define([
+/* 
+* UserConfig
+* --------------
+*
+* Constants and configurations for User
+*
+*/
 
-], function() {
+define([], function UserConfig() {
 
 /* private */
 
-
-/* User Config */
-
-	var config = {
+/* public */
+/* @class UserConfig */
+	return {
 
 		// constants
 
@@ -18,21 +22,25 @@ define([
 
 		// events
 
-		LOGIN: 'user:login',
+		LOG_IN: 'user:log_in',
 
-		LOGOUT: 'user:logout',
+		LOG_OUT: 'user:log_out',
+
+		LOGGED_IN: 'user:logged_in',
+
+		LOGGED_OUT: 'user:logged_out',
 	
 		STATUS_CHANGED: 'user:status_changed',
 
 		MODEL_CHANGED: 'user:model_changed',
 	
 		// messages
-	
-		NOT_AUTHORIZED: 'user:not_authorized',
-	
-		NOT_LOGGED: 'user:not_logged',
-	
-		LOGGED: 'user:logged',
+
+		NOT_AUTHORIZED: 'not_authorized',
+
+		CONNECTED: 'connected',
+
+		UNKNOWN: 'unknown',
 
 		// DOM Access
 
@@ -45,7 +53,5 @@ define([
 		$userControl: $('.user-control')
 
 	};
-
-	return config;
 
 });

@@ -1,30 +1,40 @@
-/* UserModel */
+/* 
+* UserModel
+* ---------
+*
+* Emit events every time data changes
+*
+*/
+
 define([
 
 	'config/user'
 
-], function(u) {
+], function UserMode(u) {
 
 /* private */
 
-
-/* @class GridModel */
-var UserModel = {};
-
-	/* constructor */
-	UserModel.initialize = function() {
-
+	function initialize() { 
+		return this; 
 	};
-
-	/* global setter */
-	UserModel.set = function(key, value) {
-
+	
+	function set(key, value) {
+	
+		var obj = {};
+		obj[key] = value;
 		this[key] = value;
+	
+		upc.emit(u.MODEL_CHANGED, obj );
+	}
 
-		upc.emit(u.MODEL_CHANGED, this[key]);
+/* public */
 
+/* @class UserMode */
+	return {
+		/* constructor */
+		initialize: initialize,
+		/* global setter */
+		set: set
 	};
-
-	return UserModel;
 
 });

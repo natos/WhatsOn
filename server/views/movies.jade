@@ -1,5 +1,11 @@
 extends layout
 
+block styles
+	link(href="/assets/css/movies.css", rel="stylesheet")
+
+block scripts
+	script(data-load="controllers/movies")
+
 block content
 	#featured
 		ul.movies
@@ -123,7 +129,3 @@ block content
 				li
 					i.icon-chevron-right
 					a(href="/programme/19345437") Top Gear
-
-block scripts
-	script
-		require(['views/movies'], function(movies) { movies.initialize(); });

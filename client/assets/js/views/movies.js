@@ -1,46 +1,25 @@
+/* 
+* MoviesView
+* ----------
+*
+* Emitting events, UI changes
+* Listen to the model for data changes
+*
+*/
+
 define([
 
 	'config/app',
 	'controllers/app'
 
-], function(c, App) {
+], function MoviesView(c, App) {
 
 /* private */
 
-var $window = $(window),
-
-	resizeImages = function() {
-
-		var maxScreenWidth = Math.max($window.width(), $window.height()),
-			imgSize, oldSrc, newSrc, $item;
-	
-		if (maxScreenWidth <= 865) {
-			imgSize = 's';
-		} else if (maxScreenWidth <= 1200) {
-			imgSize = 'm';
-		} else  {
-			imgSize = 'l';
-		}/* else {
-			imgSize = 'xl'
-		}*/
-	
-		$('.poster img').each(function(index, item) {
-			$item = $(item);
-			oldSrc = $item.attr('src');
-			newSrc = oldSrc.replace('/s/', '/' + imgSize + '/');
-			if (oldSrc === newSrc) { return; }
-			$item.attr('src', newSrc);
-		});
-	},
-
-	/* @class Movies */
-	Movies = {};
+	var $window = $(window);
 
 	/* constructor */
-	Movies.initialize = function() {
-
-		// Let the App know your here
-		App.views.movies = this;
+	function initialize() {
 
 		var executionTimer;
 
@@ -62,12 +41,39 @@ var $window = $(window),
 
 		resizeImages();
 
-		upc.emit(c.VIEW_LOADED, this);
+		App.emit(c.VIEW_LOADED, this);
 
 		return this;
 
 	};
 
-	return Movies;
+	function resizeImages() {
+
+		var maxScreenWidth = Math.max($window.width(), $window.height()),
+			imgSize, oldSrc, newSrc, $item;
+	
+		if (maxScreenWidth <= 865) {
+			imgSize = 's';
+		} else if (maxScreenWidth <= 1200) {
+			imgSize = 'm';
+		} else  {
+			imgSize = 'l';
+		}/* else {
+			imgSize = 'xl'
+		}*/
+	
+		$('.poster img').each(function(index, item) {
+			$item = $(item);
+			oldSrc = $item.attr('src');
+			newSrc = oldSrc.replace('/s/', '/' + imgSize + '/');
+			if (oldSrc === newSrc) { return; }
+			$item.attr('src', newSrc);
+		});
+	};
+
+/* public */
+	return {
+		initialize: initialize
+	};
 
 });

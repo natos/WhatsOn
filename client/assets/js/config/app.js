@@ -1,14 +1,17 @@
-/* AppConfig */
-define([
-
-], function() {
+/* 
+* AppConfig
+* --------------
+*
+* Constants and configurations for App
+*
+*/
+define([], function AppConfig() {
 
 /* private */
 
-
-/* User Config */
-
-	var config = {
+/* public */
+/* @class AppConfig */
+	return {
 
 		// constants
 
@@ -23,7 +26,5 @@ define([
 		$body: $(document.body)
 
 	};
-
-	return config;
 
 });

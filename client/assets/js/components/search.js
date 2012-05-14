@@ -1,20 +1,23 @@
-define([
+/*
+* Search Button
+* ----------
+* @class SearchButton
+*/
 
-], function() {
+define([], function SearchButton() {
 
-	$window = $(window);
+/* private */
 
-	$box = $('.search-box');
+	var $window = $(window),
 
-	$button = $('<a href="/search"></a>');
+	$box = $('.search-box'),
+
+	$button = $('<a href="/search"></a>'),
 
 	$close = $('<i>');
 
-/* class */
-var Search = {};
-
-/* constructor */
-	Search.initialize = function(el) {
+	/* constructor */
+	function initialize(el) {
 
 		var self = this;
 
@@ -47,6 +50,9 @@ var Search = {};
 		return this;
 	};
 
-	return Search;
+/* public */
+	return {
+		initialize: initialize
+	};
 
 });

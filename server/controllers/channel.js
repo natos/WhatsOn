@@ -105,26 +105,22 @@ function(Channel, Metadata, DateUtils, Requestn, PrettyDate) {
 				_channel_details.dates = dateGroups;
 
 				// Meta data
-				var metadata = [
-					{ property: "og:type"			, content: "upc-whatson:tv_channel" },
-					{ property: "og:url"			, content: "http://upcwhatson.herokuapp.com/channel/" + _channel_details.id + ".html" },
+				var _metadata = [
+					{ property: "og:type"			, content: "upcsocial:tv_channel" },
+					{ property: "og:url"			, content: "http://upcsocial.herokuapp.com/channel/" + _channel_details.id },
 					{ property: "og:title"			, content: _channel_details.name },
-					{ property: "og:description"	, content: _channel_details.description },
-					{ property: "og:image"			, content: "http://upcwhatson.herokuapp.com/assets/upclogo.jpg" }
+					{ property: "og:description"	, content: _channel_details.description }
 				];
 
-				var _metadata = new Metadata();
-					_metadata.override(metadata, 'property');
-
-					res.render('channel.jade', {
-						metadata	: _metadata.get(),
-						config		: _app.config,
-						data		: _channel_details,
-						title		: _channel_details.name,
-						prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-whatson: http://ogp.me/ns/fb/upc-whatson#',
-						supports	: req.supports,
-						TEST_MODE	: false
-					}); // HTML output	
+				res.render('channel.jade', {
+					metadata	: metadata.override(_metadata, 'property').get(),
+					config		: _app.config,
+					data		: _channel_details,
+					title		: _channel_details.name,
+					prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-whatson: http://ogp.me/ns/fb/upc-whatson#',
+					supports	: req.supports,
+					TEST_MODE	: false
+				}); // HTML output	
 		});
 
 	};

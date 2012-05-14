@@ -1,8 +1,9 @@
 /* 
-* SettingsView
-* --------------
+* LoginView
+* ----------
 *
-* Controlls settings page
+* Emitting events, UI changes
+* Listen to the model for data changes
 *
 */
 
@@ -11,16 +12,12 @@ define([
 	'config/app',
 	'controllers/app'
 
-], function SettingsView(c, App) {
+], function LoginView(c, App) {
 
 /* private */
 
 	/* constructor */
 	function initialize() {
-
-		/** 
-		*	Events handlers
-		*/
 
 		App.emit(c.VIEW_LOADED, this);
 
@@ -28,10 +25,9 @@ define([
 
 	};
 
-
-/* @class SettingsView */
+/* public */
 	return {
 		initialize: initialize
-	}
+	};
 
 });

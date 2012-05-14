@@ -1,16 +1,19 @@
-define([
+/*
+* GridButton
+* ----------
+* @class GridButton
+*/
 
-], function() {
+define([], function GridButton() {
 
-var $body = $('body'),
+/* private */
+
+	var $body = $('body'),
 
 	$button = $('<a href="/grid"></a>');
 
-/* class */
-var Grid = {};
-
-/* constructor */
-	Grid.initialize = function() {
+	/* constructor */
+	function initialize() {
 
 		if ($body.hasClass('fixed-top')) {
 			$button
@@ -22,6 +25,9 @@ var Grid = {};
 		return this;
 	};
 
-	return Grid;
+/* public */
+	return {
+		initialize: initialize
+	};
 
 });

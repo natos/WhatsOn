@@ -15,66 +15,62 @@ define([
 	'views/grid',
 	'components/Timebar',
 	'components/ChannelBar',
+	'components/Buffer',
 	'utils/epgapi'
 
-], function(g, App, GridModel, GridView, TimeBar, ChannelBar, EpgApi) {
+], function GridController(g, App, GridModel, GridView, TimeBar, ChannelBar, Buffer, EpgApi) {
 
 /* private */
 
-function gridMoved() {
-	// Update model UI data
-	GridModel.set('position', { 'top': window.pageYOffset * -1, 'left': window.pageXOffset * -1 });
-	GridModel.set('selectedChannels', GridView.getSelectedChannels(2));
-	GridModel.set('selectedTime', GridView.getSelectedTime());
+	function initialize() {
+	
+		App.controllers.grid = this;
 
-	return this;
-};
-
-function setEvents(events) {
-
-	GridModel.set('events', events);
-
-	return this;
-
-};
-
-
-function getEvents() {
-
-	EpgApi.getEventsForChannels(GridModel.selectedChannels, GridModel.selectedTime.startTime, GridModel.selectedTime.endTime);
-
-	return this;
-};
+		// Events Handlers
+		App.on(g.GRID_MOVED, gridMoved);
+		App.on(g.GRID_FETCH_EVENTS, getEvents);
+		App.on('eventsReceived', setEvents);
+	
+	}
+	
+	function gridMoved() {
+		// Update model UI data
+		GridModel.set('position', { 'top': window.pageYOffset * -1, 'left': window.pageXOffset * -1 });
+		GridModel.set('selectedChannels', GridView.getSelectedChannels(2));
+		GridModel.set('selectedTime', GridView.getSelectedTime());
+	
+		return this;
+	};
+	
+	function setEvents(events) {
+	
+		GridModel.set('events', events);
+	
+		return this;
+	
+	};
+	
+	
+	function getEvents() {
+	
+		EpgApi.getEventsForChannels(GridModel.selectedChannels, GridModel.selectedTime.startTime, GridModel.selectedTime.endTime);
+	
+		return this;
+	};
 
 
 /* @class GridController */
-var GridController = {};
-
-	/* constructor */
-	GridController.initialize = function() {
-
-		upc.views.grid = this;
-
-	/** 
-	*	Modules Setup
-	*/
-		this.model = GridModel.initialize();
-		this.view = GridView.initialize();
-
-		// setup components
-		this.components = {
+	return {
+		/* constructor */
+		initialize: initialize,
+		view: GridView.initialize(),
+		model: GridModel.initialize(),
+		/* setup components */
+		components: {
 			timebar		: TimeBar.initialize(),
 			channelbar	: ChannelBar.initialize(),
 			buffer		: Buffer.initialize()
-		};
-
-		// Events Handlers
-		upc.on(g.GRID_MOVED, gridMoved);
-		upc.on(g.GRID_FETCH_EVENTS, getEvents);
-		upc.on('eventsReceived', setEvents);
-
+		}
 	};
-
-	return GridController;
 
 });
