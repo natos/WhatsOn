@@ -51,29 +51,44 @@ define([
 		UserModel.set('facebook-status', response);
 
 		switch (response.status) {
-			case u.CONNECTED:
-				upc.emit(u.LOGGED_IN);
-				break;
+			case u.CONNECTED: connected(); break;
 
 			case u.NOT_AUTHORIZED:
-			case u.UNKNOWN:
-				upc.emit(u.LOGGED_OUT);
-				break;
+			case u.UNKNOWN: disconnected(); break;
 		}
 
 	};
 
 	function login() {
-
 		FB.login(function(response) { }, { scope: u.SCOPE });
-
 	};
 
 	function logout() {
-
 		FB.logout(function(response) { });
-
 	};
+
+	function getFavorites() {
+		FB.api('/me/upcsocial:favorite', function(response) { UserModel.set('favorites', response); });
+	};
+
+	function getRecorded() {
+		FB.api('/me/upcsocial:record', function(response) { UserModel.set('recorded', response); });
+	};
+
+	/* action when user is connected */
+	function connected() {
+
+		getFavorites();
+		getRecorded();
+
+		upc.emit(u.LOGGED_IN);
+	};
+
+	/* action when user is disconnected */
+	function disconnected() {
+		upc.emit(u.LOGGED_OUT);
+	};
+
 
 /* public */
 	return {

@@ -30,7 +30,7 @@ define([
 
 	function record(url) {
 
-		FB.api('/me/upcsocial:record', { tv_show: url }, function(response) {
+		FB.api('/me/upcsocial:record', 'post', { tv_show: url }, function(response) {
 
 			console.log('recorded');
 			console.log(response);
@@ -41,7 +41,7 @@ define([
 
 	function favorite(url) {
 
-		FB.api('/me/upcsocial:favorite', { tv_show: url }, function(response) {
+		FB.api('/me/upcsocial:favorite', 'post', { tv_show: url }, function(response) {
 
 			console.log('favoritered');
 			console.log(response);
