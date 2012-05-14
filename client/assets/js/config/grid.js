@@ -20,9 +20,10 @@ define([], function GridConfig() {
 		ZERO: (function(){
 
 			var _ZERO = new Date();
-				_ZERO.setHours(0);
-				_ZERO.setMinutes(0);
-				_ZERO.setSeconds(0);
+
+			_ZERO.setHours(0);
+			_ZERO.setMinutes(0);
+			_ZERO.setSeconds(0);
 
 			return _ZERO;
 
