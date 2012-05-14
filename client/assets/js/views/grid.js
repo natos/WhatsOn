@@ -23,8 +23,11 @@ define([
 	/* constructor */
 	function initialize() {
 
+		g.END = new Date(g.ZERO.valueOf() + 24*60*60*1000);
+
 		// set styles
 		g.$styles.text( defineStyles() );
+
 
 	/** 
 	*	Events handlers
@@ -103,7 +106,7 @@ define([
 	// Render events
 	function renderEvents(events) {
 
-		var link, description, i, event, width, left, startDateTime, endDateTime;
+		var link, description, i, event, width, left, startDateTime, endDateTime, right;
 
 		for (i = 0; i < events[0].length; i++) {
 
@@ -119,8 +122,18 @@ define([
 			startDateTime = convert.parseApiDate(event.startDateTime);
 			endDateTime = convert.parseApiDate(event.endDateTime);
 
+			// Avoid rendering events that end before 00:00 or start after 24:00
+			if ( (endDateTime <= g.ZERO) || (startDateTime >= g.END) ) {
+				continue;
+			}
+
 			width = convert.timeToPixels(endDateTime, startDateTime);
 			left = convert.timeToPixels(startDateTime, g.ZERO);
+			if (left < 0) {
+				right = left + width;
+				left = 0;
+				width = right;
+			}
 
 			// DOM
 			link = $('<a>')
