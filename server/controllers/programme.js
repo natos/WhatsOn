@@ -88,10 +88,11 @@ function(Programme, Metadata, DateUtils, Requestn) {
 
 				// Meta data
 				var _metadata = [
-					{ property: "og:type"			, content: (isMovie) ? "video.movie" : "video.tv_show" },
+//					{ property: "og:type"			, content: (isMovie) ? "video.movie" : "video.tv_show" },
+					{ property: "og:description"	, content: _programme_details.shortDescription },
+					{ property: "og:type"			, content: "video.tv_show" },
 					{ property: "og:url"			, content: "http://upcsocial.herokuapp.com/programme/" + _programme_details.id },
-					{ property: "og:title"			, content: _programme_details.title },
-					{ property: "og:description"	, content: _programme_details.shortDescription }
+					{ property: "og:title"			, content: _programme_details.title }
 				];
 
 				var template = req.xhr ? 'programme-ajax.jade' : 'programme.jade'
@@ -99,6 +100,7 @@ function(Programme, Metadata, DateUtils, Requestn) {
 				res.render(template, {
 					metadata	: metadata.override(_metadata, 'property').get(),
 					config		: _app.config,
+					url			: "http://upcsocial.herokuapp.com/programme/" + _programme_details.id,
 					data		: _programme_details,
 					title		: _programme_details.title,
 					prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-whatson: http://ogp.me/ns/fb/upc-whatson#',

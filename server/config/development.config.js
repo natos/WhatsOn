@@ -18,7 +18,7 @@ function() {
 	var config = {
 
 		'ENV'			: 'development',
-		'APP_NAME'		: 'WhatsOn!',
+		'APP_NAME'		: 'UPC Social',
 		'APP_URL'		: 'http://upcsocial.herokuapp.com/',
 		'APP_LOGO'		: 'http://upcsocial.herokuapp.com/assets/images/upclogo.jpg',
 		'API_PREFIX'	: 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/',

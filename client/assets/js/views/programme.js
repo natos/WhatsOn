@@ -8,24 +8,48 @@
 define([
 	
 	'config/app',
-	'controllers/app'
+	'config/programme',
+	'controllers/app',
+	'controllers/programme'
 
-], function ProgrammeView(c, App) {
+], function ProgrammeView(c, p, App, ProgrammeController) {
 
 /* private */
 
+	var url = $('meta[property="og:url"]').attr('content');
+
 	/* constructor */
 	function initialize() {
-	
-		App.emit(c.VIEW_LOADED);
 
-/*
-curl -F 'access_token=AAAEIbbLOBHEBAPIZCFEBFZBAEtgyyW64c4Y1lfncTdADM7xkojP7OfcxwoVZBxLPE5vfJIq48YH3mxGSQmDvySWAkRODGU0sOXlrEXRhQZDZD' \
-     -F 'movie=http://example.com' \
-        'https://graph.facebook.com/me/likes'
-*/
+		$('#user-action').on('click', userActionHandler);
+
+		App.emit(c.VIEW_LOADED);
 	
 	};
+
+	function userActionHandler(event) {
+
+		switch (event.target.className) {
+
+			case 'record': record(); break;
+
+			case 'favorite': favorite(); break;
+
+		}
+
+	};
+
+	function record() {
+
+		upc.emit(p.RECORD, url);
+
+	};
+
+	function favorite() {
+
+		upc.emit(p.FAVORITE, url);
+
+	}
 
 /* public */
 

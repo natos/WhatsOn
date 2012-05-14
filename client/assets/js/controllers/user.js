@@ -47,26 +47,38 @@ define([
 	};
 
 	function facebookLoginStatus(response) {
-	
+
 		UserModel.set('facebook-status', response);
+
+		switch (response.status) {
+			case u.CONNECTED:
+				upc.emit(u.LOGGED_IN);
+				break;
+
+			case u.NOT_AUTHORIZED:
+			case u.UNKNOWN:
+				upc.emit(u.LOGGED_OUT);
+				break;
+		}
 
 	};
 
 	function login() {
 
-		FB.login(function(response) { upc.emit(u.LOGGED_IN); }, { scope: u.SCOPE });
+		FB.login(function(response) { }, { scope: u.SCOPE });
 
 	};
 
 	function logout() {
 
-		FB.logout(function(response) { upc.emit(u.LOGGED_OUT); });
+		FB.logout(function(response) { });
 
 	};
 
 /* public */
 	return {
-		initialize: initialize
+		initialize: initialize,
+		model: UserModel
 	};
 
 });
