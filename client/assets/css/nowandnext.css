@@ -43,30 +43,33 @@
 }
 .channels-list-channel {
 	width:100%;
-	background:#fefefe;
-	margin-bottom:1em;
 	overflow:hidden;
-	border:1px solid #ccc;
 	list-style-type:none;
 	position:relative;
+}
+.channels-list-channel > .inner {
+	background:#fefefe;
+	box-shadow:0 0 5px #666;
 }
 @media screen and (min-width:640px) {
 	.channels-list {
 		margin-top:10px;
 		overflow:hidden;
 	}
-	.channels-list-channel {
-	}
 	.channels-list-channel:nth-child(odd) {
 		float:left;
-		margin-left:10px;
-		width:48%;
-		height:23em;
+		width:50%;
 	}
 	.channels-list-channel:nth-child(even) {
 		float:right;
-		margin-right:10px;
-		width:48%;
+		width:50%;
+	}
+	.channels-list-channel:nth-child(odd) > .inner {
+		margin:5px 5px 5px 10px;
+		height:23em;
+	}
+	.channels-list-channel:nth-child(even) > .inner {
+		margin:5px 10px 5px 5px;
 		height:23em;
 	}
 
