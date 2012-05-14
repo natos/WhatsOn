@@ -100,7 +100,7 @@ function(Programme, Metadata, DateUtils, Requestn) {
 				res.render(template, {
 					metadata	: metadata.override(_metadata, 'property').get(),
 					config		: _app.config,
-					url			: "http://upcsocial.herokuapp.com/programme/" + _programme_details.id,
+					url			: _app.config.APP_URL + 'programme/' + _programme_details.id,
 					data		: _programme_details,
 					title		: _programme_details.title,
 					prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-whatson: http://ogp.me/ns/fb/upc-whatson#',

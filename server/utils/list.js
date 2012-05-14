@@ -123,24 +123,35 @@ function(config) {
 		if (!key) { return; }
 
 		var self = this,
+			found = false,
 			_children = [];
 
 		if ( _isArray(data) ) {
 
-			this.children.forEach(function(child, i) {
-				data.forEach(function(newChild, e) {
+			// compare each new children with all actual children
+			data.forEach(function(newChild, e) {
+				self.children.forEach(function(child, i) {
+					// Erase repeated and add the new one
 					if (child[key] === newChild[key]) {
+						found = true;
 						self.remove(child[key]);
 						_children.push(newChild);
 					}
 				});
+				// If there's no match, just add the new one
+				if (!found) {
+					_children.push(newChild);
+				}
+
 			});
-			console.log(_children);
+
+			// merge the collection
 			this.add(_children);
 
 			return this;	
 		}
 
+		// for single adds
 		this.remove(data[key]);
 		this.add(data);
 
