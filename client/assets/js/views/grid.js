@@ -133,6 +133,7 @@ define([
 				right = left + width;
 				left = 0;
 				width = right;
+				event.programme.title = "←" + event.programme.title;
 			}
 
 			// DOM
