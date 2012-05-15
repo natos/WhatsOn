@@ -115,6 +115,7 @@ function(Channel, Metadata, DateUtils, Requestn, PrettyDate) {
 				res.render('channel.jade', {
 					metadata	: metadata.override(_metadata, 'property').get(),
 					config		: _app.config,
+					url			: _app.config.APP_URL + 'channel/' + _channel_details.id,
 					data		: _channel_details,
 					title		: _channel_details.name,
 					prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-whatson: http://ogp.me/ns/fb/upc-whatson#',

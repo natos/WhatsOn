@@ -26,7 +26,8 @@ define([
 	'controllers/movies',
 	'controllers/search',
 	'controllers/settings',
-	'controllers/nowandnext'
+	'controllers/nowandnext',
+	'controllers/facebook'
 ],
 
 
@@ -34,7 +35,7 @@ define([
  *	@class AppController
  */
 
-function(express, i18n, config, Supports, Login, Dashboard, Grid, Channel, Programme, Movies, Search, Settings, NowAndNext) {
+function(express, i18n, config, Supports, Login, Dashboard, Grid, Channel, Programme, Movies, Search, Settings, NowAndNext, Facebook) {
 
 	/** @constructor */
 
@@ -63,7 +64,8 @@ function(express, i18n, config, Supports, Login, Dashboard, Grid, Channel, Progr
 				movies		: new Movies(self),
 				search		: new Search(self),
 				settings	: new Settings(self),
-				nowandnext 	: new NowAndNext(self)
+				nowandnext 	: new NowAndNext(self),
+				facebook	: new Facebook(self)
 			};
 
 		return self;
