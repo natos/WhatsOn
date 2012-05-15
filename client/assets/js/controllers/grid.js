@@ -14,7 +14,7 @@ define([
 	'models/grid',
 	'views/grid',
 	'components/timebar',
-	'components/channelBar',
+	'components/channelbar',
 	'components/buffer',
 	'utils/epgapi'
 
