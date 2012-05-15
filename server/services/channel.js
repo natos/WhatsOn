@@ -97,6 +97,11 @@ function(util, events, request, requestN, config) {
 							}
 						}
 
+						// Remove the "links" property for channels. This property is not used, and only takes up space.
+						allChannels.forEach(function(element, index, array){
+							delete element.links;
+						});
+
 						// Cache the channels
 						CHANNELS_CACHE.list = allChannels;
 						CHANNELS_CACHE.timestamp = now;
