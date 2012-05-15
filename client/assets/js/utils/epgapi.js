@@ -1,14 +1,15 @@
 define([
 
 	'controllers/app',
+	'utils/convert',
 	'/assets/js/lib/lscache/lscache.js'
 
-], function(App) {
+], function(App, convert) {
 
 	'use strict';
 
 	var HOURS_PER_SLICE = 4, // Hours per slice must be: 1, 2, 3, 4, 6, 8, 12, 24.
-		ESTIMATED_AVERAGE_EVENTS_PER_HOUR = 4,
+		ESTIMATED_AVERAGE_EVENTS_PER_HOUR = 2,
 		EVENTS_PER_SLICE = ESTIMATED_AVERAGE_EVENTS_PER_HOUR * HOURS_PER_SLICE,
 		API_PREFIX = $('head').attr('data-api'),
 		$CUSTOM_EVENT_ROOT = App,
@@ -141,7 +142,7 @@ define([
 			}
 		}
 
-		getEventsForSliceFromApi(channelIdsToFetchFromApi, timeSlice);
+		getEventsForSliceFromApi(channelIdsToFetchFromApi, timeSlice, EVENTS_PER_SLICE);
 	};
 
 	/**
@@ -149,7 +150,7 @@ define([
 	 * @async
 	 * @return void
 	 */
-	var getEventsForSliceFromApi = function(channelIds, timeSlice) {
+	var getEventsForSliceFromApi = function(channelIds, timeSlice, eventsPerSlice) {
 		// Split channels to fetch into batches of 5. The API only handles max 5 channels at once.
 		var channelIdBatches = [],
 			batchSize = 5,
@@ -170,9 +171,9 @@ define([
 			channelIdBatch = channelIdBatches[i];
 
 			// Use "&order=startDateTime" to get results in order
-			request = API_PREFIX + 'Channel/' + channelIdBatch.join('|') + '/events/NowAndNext_' + formattedStartTime + '.json?batchSize=' + EVENTS_PER_SLICE + '&order=startDateTime&callback=?'; 
+			request = API_PREFIX + 'Channel/' + channelIdBatch.join('|') + '/events/NowAndNext_' + formattedStartTime + '.json?batchSize=' + eventsPerSlice + '&order=startDateTime&callback=?'; 
 			$.getJSON(request, function(apiResponse) {
-				handleApiResponse_EventsForSliceFromApi(apiResponse, timeSlice);
+				handleApiResponse_EventsForSliceFromApi(apiResponse, timeSlice, eventsPerSlice);
 			});
 		}
 	};
@@ -187,10 +188,12 @@ define([
 	 * @return void
 	 */
 
-	var handleApiResponse_EventsForSliceFromApi = function(apiResponse, timeSlice) {
+	var handleApiResponse_EventsForSliceFromApi = function(apiResponse, timeSlice, eventsPerSlice) {
 		var eventsForChannelCollection = [],
 			cacheKey,
-			channelId;
+			channelId,
+			lastEventEndDate,
+			repeatChannelIds = [];
 
 		if ($.isArray(apiResponse) && apiResponse.length > 0 && $.isArray(apiResponse[0])) {
 			// response is an array of channels; each channel contains an array of events
@@ -209,14 +212,29 @@ define([
 				return;
 			}
 
-			// Cache the event collection by channel ID and timeslice index
+			// Check if the API has returned enough events for us to "fill up"
+			// the cache for this channel's time slice
+			lastEventEndDate = convert.parseApiDate(eventsForChannel[eventsForChannel.length - 1].endDateTime);
 			channelId = eventsForChannel[0].channel.id;
-			cacheKey = getCacheKey(channelId, timeSlice);
+			if (lastEventEndDate > timeSlice[1]) {
+				// Cache the event collection by channel ID and timeslice index
+				cacheKey = getCacheKey(channelId, timeSlice);
 
-			putEventsForChannelIntoCache(cacheKey, eventsForChannel);
+				putEventsForChannelIntoCache(cacheKey, eventsForChannel);
 
-			$CUSTOM_EVENT_ROOT.emit(CHANNEL_EVENTS_RECEIVED_EVENT, [eventsForChannel]);
+				$CUSTOM_EVENT_ROOT.emit(CHANNEL_EVENTS_RECEIVED_EVENT, [eventsForChannel]);
+			} else {
+				// Not enough events for this channel and time slice.
+				// Add the channel to the repeatChannelIds array
+				repeatChannelIds.push(channelId);
+			}
+
 		});
+
+		// Re-request channels that were not fully populated
+		if (repeatChannelIds.length>0) {
+			getEventsForSliceFromApi(repeatChannelIds, timeSlice, 2*eventsPerSlice);
+		}
 
 	};
 
