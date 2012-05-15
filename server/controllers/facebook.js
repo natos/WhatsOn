@@ -26,8 +26,10 @@ function(FacebookService) {
 
 		// Routing
 
-		app.server.get('/channel_likes.json', this.renderChannelLikes);
+		// Get a list of all channels, sorted by like counts (descending)
+		app.server.get('/most_liked_channels.json', this.renderChannelLikes);
 
+		// Sample URL for testing purposes only
 		app.server.get('/og_test.json', this.ogTest);
 
 	};
@@ -47,8 +49,26 @@ function(FacebookService) {
 		// Get facebook open graph data for all channels
 		_facebookService.once('getGraphDataForAllChannels', function(graphData) {
 
+			// Turn the object hash into an array
+			var channels = [];
+			for (var channelUrl in graphData) {
+				if (graphData.hasOwnProperty(channelUrl)) {
+					channels.push(graphData[channelUrl])
+				}
+			}
+
+			// Sort the array by likes
+			var compareOpenGraphObjectsByLikeCountDesc = function(b,a){
+				if (!a.likes) {a.likes = 0};
+				if (!b.likes) {b.likes = 0};
+				if (a.likes < b.likes) {return -1};
+				if (a.likes > b.likes) {return 1};
+				return 0;
+			}
+			channels.sort(compareOpenGraphObjectsByLikeCountDesc);
+
 			// Render json data
-			res.send(graphData);
+			res.send(channels);
 
 		}).getGraphDataForAllChannels();
 
