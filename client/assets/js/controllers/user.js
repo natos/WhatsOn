@@ -51,10 +51,14 @@ define([
 		UserModel.set('facebook-status', response);
 
 		switch (response.status) {
-			case u.CONNECTED: connected(); break;
+			case u.CONNECTED: 
+				connected(); 
+				break;
 
 			case u.NOT_AUTHORIZED:
-			case u.UNKNOWN: disconnected(); break;
+			case u.UNKNOWN:
+				disconnected();
+				break;
 		}
 
 	};

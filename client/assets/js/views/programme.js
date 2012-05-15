@@ -8,26 +8,36 @@
 define([
 	
 	'config/app',
+	'config/user',
 	'config/programme',
 	'controllers/app',
 	'controllers/programme'
 
-], function ProgrammeView(c, p, App, ProgrammeController) {
+], function ProgrammeView(c, u, p, App, ProgrammeController) {
 
 /* private */
 
-	var url = $('meta[property="og:url"]').attr('content');
+	var url = $('meta[property="og:url"]').attr('content'),
+
+		$userAction = $('#user-action');
 
 	/* constructor */
 	function initialize() {
 
-		$('#user-action').on('click', userActionHandler);
+		$userAction.on('click', userActionHandler);
 
 		App.emit(c.VIEW_LOADED);
+
+		App.on(u.MODEL_CHANGED, handleUserModelChange);
 	
 	};
 
 	function userActionHandler(event) {
+
+		if ( /disable/.test(event.target.className) ) {
+			
+			return;
+		}
 
 		switch (event.target.className) {
 
@@ -49,7 +59,27 @@ define([
 
 		upc.emit(p.FAVORITE, url);
 
-	}
+	};
+
+	function handleUserModelChange(event) {
+
+		var favorites, t;
+
+		if (event['favorites']) {
+
+			favorites = event['favorites'].data;
+
+			t = favorites.length;
+
+			while (t--) {
+				if (favorites[t].data.tv_show.url === window.location.href) {
+					p.$favorite.addClass('disable');
+				}
+			}
+			
+		}
+
+	};
 
 /* public */
 

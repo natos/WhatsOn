@@ -13,9 +13,9 @@ define([
 	'controllers/app',
 	'models/grid',
 	'views/grid',
-	'components/Timebar',
-	'components/ChannelBar',
-	'components/Buffer',
+	'components/timebar',
+	'components/channelBar',
+	'components/buffer',
 	'utils/epgapi'
 
 ], function GridController(g, App, GridModel, GridView, TimeBar, ChannelBar, Buffer, EpgApi) {

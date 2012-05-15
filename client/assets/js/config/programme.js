@@ -27,7 +27,9 @@ define([], function ProgrammeConfig() {
 	
 		$body: $(document.body),
 		
-		$record: $('.record')
+		$record: $('.record'),
+
+		$favorite: $('.favorite')
 
 	};
 
