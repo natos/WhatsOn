@@ -59,7 +59,7 @@ function(util, events, request, config, TOP_BOOKINGS_MOCK) {
 		request(TOP_BOOKINGS, function(error, response, body) {
 
 			// API Error? Grab the mock
-			if ( !body || /error/.test(body) ) {
+			if ( !body || /\s(E|e)rror\s/.test(body) ) {
 
 				console.log(' Bookings Service >>> Error getting TopBookings: ', body);
 

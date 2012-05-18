@@ -1,8 +1,8 @@
 /* 
-* UserController
-* --------------
+* UserModule
+* ----------
 *
-* Controll user preferences
+* Control user preferences
 *
 */
 define([
@@ -11,7 +11,7 @@ define([
 	'models/user',
 	'components/user'
 
-], function UserController(u, UserModel, UserComponent) {
+], function UserModule(u, UserModel, UserComponent) {
 
 	// fb mock
 	if (!window.FB) { window.FB = { init: function() {}, login: function() {}, logout: function() {}, Event: { subscribe: function() {} } }; }
@@ -96,6 +96,7 @@ define([
 
 /* public */
 	return {
+		name: 'user',
 		initialize: initialize,
 		model: UserModel
 	};

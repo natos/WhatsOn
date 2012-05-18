@@ -9,4 +9,9 @@ block scripts
 		var channels = !{JSON.stringify(channels)};
 
 block content
-	include grid-content
+
+block templates
+	script(type="text/template", data-template="dashboard-layout")
+		include dashboard-content
+	script(type="text/template", data-template="grid-layout")
+		include grid-content

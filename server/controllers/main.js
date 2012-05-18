@@ -1,5 +1,5 @@
 /**
- *	DashboardController
+ *	MainController
  */
 
 define([
@@ -18,20 +18,20 @@ define([
 
 
 /**
- *	@class DashboardController
+ *	@class MainController
  */
 
 function(Channel, Bookings, DateUtils, Metadata) {
 
 	/** @constructor */
 
-	var DashboardController = function(app) {
+	var MainController = function(app) {
 
 		_app = app;
 
 		// Routing
 
-		app.server.get('/dashboard', this.render);
+		app.server.get('/', this.render);
 	};
 
 
@@ -50,22 +50,29 @@ function(Channel, Bookings, DateUtils, Metadata) {
 
 	/** @public */
 
-	DashboardController.prototype.render = function(req, res) {
+	MainController.prototype.render = function(req, res) {
 
-		var topbookings, render = function() {
+		var topbookings, channels, render = function() {
 
-			if (!topbookings) { return; }
+			if (!topbookings||!channels) { return; }
 
 			topbookings = dateUtils.prettifyCollection(topbookings, 'startDateTime');
 
-			res.render('dashboard.jade', {
+			res.render('main.jade', {
 				metadata	: metadata.get(),
+				supports	: req.supports,
 				config		: _app.config,
 				topbookings : topbookings,
-				supports	: req.supports
+				channels 	: channels,
+				timebar		: new Array(24),
 			});
 
 		};
+
+		ChannelService.once('getChannels', function(_channels) {
+			channels = _channels;
+			render();
+		}).getChannels();
 
 		BookingsService.once('getTopBookings', function(error, response, body) {
 
@@ -84,6 +91,6 @@ function(Channel, Bookings, DateUtils, Metadata) {
 
 	/** @return */
 
-	return DashboardController;
+	return MainController;
 
 });

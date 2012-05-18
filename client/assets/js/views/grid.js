@@ -11,22 +11,37 @@ define([
 
 	'config/app',
 	'config/grid',
+	'modules/app',
+	'components/timebar',
+	'components/channelbar',
 	'components/buffer',
 	'utils/convert'
 
-], function GridViewScope(c, g, Buffer, convert) {
+], function GridViewScope(a, g, App, TimeBar, ChannelBar, Buffer, convert) {
 
 /* private */
 
-	var executionTimer;
+	var executionTimer,
+
+		$template = $( $('#templates script[data-template="grid-layout"]').text() );
+
 
 	/* constructor */
 	function initialize() {
+
+		render();
 
 		g.END = new Date(g.ZERO.valueOf() + 24*60*60*1000);
 
 		// set styles
 		g.$styles.text( defineStyles() );
+
+		/* setup components */
+		this.components = {
+			timebar		: TimeBar.initialize(),
+			channelbar	: ChannelBar.initialize(),
+			buffer		: Buffer.initialize()
+		};
 
 
 	/** 
@@ -39,34 +54,50 @@ define([
 
 		// Data events
 		// First event received off modal
-		upc.once('eventsReceived', firstEvent);
+		App.once('eventsReceived', firstEvent);
 
 		// we want to render every new events when they are recieved
-//		upc.on('eventsReceived', renderEvents);
+ 		App.on('eventsReceived', renderEvents);
 
-		upc.on(g.MODEL_CHANGED, modelChanged);
+		App.on(g.MODEL_CHANGED, modelChanged);
 
 		return this;
 
-	}
+	};
+
+	function finalize() {
+
+		g.$window.off('resize scroll', handleReziseAndScroll);
+
+		App.off(g.MODEL_CHANGED, modelChanged);
+
+	};
+
+	function render() {
+
+		a.$content.html($template);
+
+		App.emit(a.VIEW_RENDERED, this);
+
+	};
 
 	function firstEvent() {
 
-		upc.emit(c.VIEW_LOADED, this);
+		App.emit(a.VIEW_LOADED, this);
 
-	}
+	};
 
 	// scrolling handlers
 	function handleReziseAndScroll(e) {
 
-		upc.emit(g.GRID_MOVED);
+		App.emit(g.GRID_MOVED);
 
 		if (executionTimer) {
 			clearTimeout(executionTimer);
 		}
 
 		executionTimer = setTimeout(function() {
-			upc.emit(g.GRID_FETCH_EVENTS);
+			App.emit(g.GRID_FETCH_EVENTS);
 		}, 200);
 
 	};
@@ -161,7 +192,7 @@ define([
 		}
 
 		// triggers GRID_RENDERED
-		upc.emit(g.GRID_RENDERED);
+		App.emit(g.GRID_RENDERED);
 
 	};
 

@@ -7,7 +7,7 @@
 define([
 
 	'config/app',
-	'controllers/app',
+	'modules/app',
 	'views/channel'
 
 ], function ChannelController(c, App, ChannelView) {
@@ -15,9 +15,6 @@ define([
 /* private */
 
 	function initialize() {
-
-		// Let the App know your here
-		App.controllers.channel = this;
 	
 		return this;
 	
@@ -25,9 +22,10 @@ define([
 
 /* public */
 	return {
+		name: 'channel',
 		/* constructor */
 		initialize: initialize,
-		view: ChannelView.initialize()
+		view: ChannelView
 	};
 
 });

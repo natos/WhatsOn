@@ -10,7 +10,7 @@
 define([
 
 	'config/app',
-	'controllers/app'
+	'modules/app'
 
 ], function LoginView(c, App) {
 

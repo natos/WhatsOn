@@ -9,7 +9,7 @@
 define([
 
 	'config/app',
-	'controllers/app'
+	'modules/app'
 
 ], function(c, App) {
 

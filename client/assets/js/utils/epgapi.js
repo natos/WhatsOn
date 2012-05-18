@@ -1,6 +1,6 @@
 define([
 
-	'controllers/app',
+	'modules/app',
 	'/assets/js/lib/lscache/lscache.js'
 
 ], function(App) {

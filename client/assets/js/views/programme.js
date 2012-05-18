@@ -10,7 +10,7 @@ define([
 	'config/app',
 	'config/user',
 	'config/programme',
-	'controllers/app',
+	'modules/app',
 	'controllers/programme'
 
 ], function ProgrammeView(c, u, p, App, ProgrammeController) {

@@ -7,7 +7,7 @@
 define([
 
 	'config/app',
-	'controllers/app',
+	'modules/app',
 	'views/movies'
 
 ], function MoviesController(c, App, MoviesView) {
@@ -17,17 +17,15 @@ define([
 	/* constructor */
 	function initialize() {
 
-		// Let the App know your here
-		App.controllers.movies = this;
-
 		return this;
 
 	};
 
 /* public */
 	return {
+		name: 'movies',
 		initialize: initialize,
-		view: MoviesView.initialize()
+		view: MoviesView
 	};
 
 });

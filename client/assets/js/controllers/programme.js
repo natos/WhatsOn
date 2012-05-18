@@ -8,7 +8,7 @@ define([
 
 	'config/app',
 	'config/programme',
-	'controllers/app',
+	'modules/app',
 	'views/programme'
 
 ], function ProgrammeController(c, p, App, ProgrammeView) {
@@ -16,9 +16,6 @@ define([
 /* private */
 
 	function initialize() {
-
-		// Let the App know your here
-		App.controllers.programme = this;
 
 		upc.on(p.RECORD, record);
 		upc.on(p.FAVORITE, favorite);
@@ -52,9 +49,10 @@ define([
 
 /* public */
 	return {
+		name: 'programme',
 		/* constructor */
 		initialize: initialize,
-		view: ProgrammeView.initialize()
+		view: ProgrammeView
 	};
 
 });

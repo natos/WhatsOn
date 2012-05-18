@@ -10,28 +10,35 @@
 define([
 
 	'config/grid',
-	'controllers/app',
+	'modules/app',
 	'models/grid',
 	'views/grid',
-	'components/timebar',
-	'components/channelbar',
-	'components/buffer',
 	'utils/epgapi'
 
-], function GridController(g, App, GridModel, GridView, TimeBar, ChannelBar, Buffer, EpgApi) {
+], function GridController(g, App, GridModel, GridView, EpgApi) {
 
 /* private */
 
 	function initialize() {
-	
-		App.controllers.grid = this;
 
 		// Events Handlers
 		App.on(g.GRID_MOVED, gridMoved);
 		App.on(g.GRID_FETCH_EVENTS, getEvents);
 		App.on('eventsReceived', setEvents);
+
+		GridView.initialize();
 	
-	}
+	};
+
+	function finalize() {
+
+		App.off(g.GRID_MOVED, gridMoved);
+		App.off(g.GRID_FETCH_EVENTS, getEvents);
+		App.off('eventsReceived', setEvents);
+
+		GridView.finalize();
+
+	};
 	
 	function gridMoved() {
 		// Update model UI data
@@ -61,16 +68,11 @@ define([
 
 /* @class GridController */
 	return {
+		name: 'grid',
 		/* constructor */
 		initialize: initialize,
-		view: GridView.initialize(),
-		model: GridModel.initialize(),
-		/* setup components */
-		components: {
-			timebar		: TimeBar.initialize(),
-			channelbar	: ChannelBar.initialize(),
-			buffer		: Buffer.initialize()
-		}
+		view: GridView,
+		model: GridModel
 	};
 
 });

@@ -1,0 +1,138 @@
+extends layout
+
+block styles
+	link(href="/assets/css/dashboard.css", rel="stylesheet")
+
+block scripts
+	script(data-load="controllers/dashboard")
+
+block content
+	#featured
+		ul.show
+			each event in topbookings
+				li.programme
+					img.programme-bg(src="/assets/programmes/s/8ad586a135af96b70135afe916940151.jpg")
+					div.programme-details
+						h1
+							a(href="/programme/#{event.programme.id}") #{event.programme.title}
+
+						button.btn.primary
+							i.icon-time
+							b.label #{__i('Record')}
+						button.btn.primary.skin
+							i.icon-play-circle
+							b.label #{__i('Play')}
+						p
+							| #{event.prettyDate} 
+							| on
+							a(href="/channel/#{event.channel.id}") #{event.channel.name} 
+
+
+	#dashboard.fluid
+		.top-favorites.span4
+			h3.btn
+				i.icon-star
+				| #{__i('Top favorites')} 
+			ul
+				li 
+					i.icon-chevron-right
+					a(href="/programme/19106430") Holland's Got Talent
+				li
+					i.icon-chevron-right
+					a(href="/programme/19345320") Flikken Antwerpen
+				li
+					i.icon-chevron-right
+					a(href="/programme/19253716") Lord of War
+				li
+					i.icon-chevron-right
+					a(href="/programme/19345424") Schat van de Oranje
+				li
+					i.icon-chevron-right
+					a(href="/programme/19106570") Voetbal International
+				li
+					i.icon-chevron-right
+					a(href="/programme/18614672") 24
+				li
+					i.icon-chevron-right
+					a(href="/programme/19106467") Big Fat Gypsy Weddings
+				li
+					i.icon-chevron-right
+					a(href="/programme/19253597") Doomsday
+				li
+					i.icon-chevron-right
+					a(href="/programme/19253599") The Mummy: Tomb of the Dragon Emperor
+				li
+					i.icon-chevron-right
+					a(href="/programme/19345437") Top Gear
+
+		.top-among-friends.span4
+			h3.btn
+				i.icon-heart
+				| #{__i('Top shows among friends')} 
+			ul
+				li 
+					i.icon-chevron-right
+					a(href="/programme/19106430") Holland's Got Talent
+				li
+					i.icon-chevron-right
+					a(href="/programme/19345320") Flikken Antwerpen
+				li
+					i.icon-chevron-right
+					a(href="/programme/19253716") Lord of War
+				li
+					i.icon-chevron-right
+					a(href="/programme/19345424") Schat van de Oranje
+				li
+					i.icon-chevron-right
+					a(href="/programme/19106570") Voetbal International
+				li
+					i.icon-chevron-right
+					a(href="/programme/18614672") 24
+				li
+					i.icon-chevron-right
+					a(href="/programme/19106467") Big Fat Gypsy Weddings
+				li
+					i.icon-chevron-right
+					a(href="/programme/19253597") Doomsday
+				li
+					i.icon-chevron-right
+					a(href="/programme/19253599") The Mummy: Tomb of the Dragon Emperor
+				li
+					i.icon-chevron-right
+					a(href="/programme/19345437") Top Gear
+
+		.top-bookings.span4
+			h3.btn
+				i.icon-bookmark
+				| #{__i('Top bookings')} 
+			ul
+				li 
+					i.icon-chevron-right
+					a(href="/programme/19106430") Holland's Got Talent
+				li
+					i.icon-chevron-right
+					a(href="/programme/19345320") Flikken Antwerpen
+				li
+					i.icon-chevron-right
+					a(href="/programme/19253716") Lord of War
+				li
+					i.icon-chevron-right
+					a(href="/programme/19345424") Schat van de Oranje
+				li
+					i.icon-chevron-right
+					a(href="/programme/19106570") Voetbal International
+				li
+					i.icon-chevron-right
+					a(href="/programme/18614672") 24
+				li
+					i.icon-chevron-right
+					a(href="/programme/19106467") Big Fat Gypsy Weddings
+				li
+					i.icon-chevron-right
+					a(href="/programme/19253597") Doomsday
+				li
+					i.icon-chevron-right
+					a(href="/programme/19253599") The Mummy: Tomb of the Dragon Emperor
+				li
+					i.icon-chevron-right
+					a(href="/programme/19345437") Top Gear

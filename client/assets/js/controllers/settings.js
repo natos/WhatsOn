@@ -10,7 +10,7 @@
 define([
 
 	'config/app',
-	'controllers/app',
+	'modules/app',
 	'views/settings'
 
 ], function SettingsController(c, App, SettingsView) {
@@ -18,9 +18,6 @@ define([
 /* private */
 
 	function initialize() {
-
-		// Let the App know your here
-		App.controllers.settings = this;
 	
 		return this;
 	
@@ -28,9 +25,10 @@ define([
 
 /* public */
 	return {
+		name: 'settings',
 		/* constructor */
 		initialize: initialize,
-		view: SettingsView.initialize()
+		view: SettingsView
 	};
 
 });

@@ -4,13 +4,12 @@ require.config({
 
 require([	
 
-	'controllers/app'
+	'modules/app'
 
 ], 
 function(App) {
 
-	App.initialize();
-
+	/* safe console */
 	if (!window.console || !window.console.log) {
 		window.console = {
 			assert : function(){},
@@ -22,5 +21,8 @@ function(App) {
 			info : function(){}
 		};
 	}
+
+	/* global signature */
+	window.upc = App.initialize();
 
 });

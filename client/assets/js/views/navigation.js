@@ -1,8 +1,8 @@
 /* 
-* SettingsView
+* NavigationView
 * --------------
 *
-* Controlls settings page
+* Controlls navigation
 *
 */
 
@@ -11,7 +11,7 @@ define([
 	'config/app',
 	'modules/app'
 
-], function SettingsView(c, App) {
+], function NavigationView(c, App) {
 
 /* private */
 
@@ -22,14 +22,14 @@ define([
 		*	Events handlers
 		*/
 
-		App.emit(c.VIEW_LOADED, this);
+		//App.emit(c.VIEW_LOADED, this);
 
 		return this;
 
 	};
 
 
-/* @class SettingsView */
+/* @class NavigationView */
 	return {
 		initialize: initialize
 	}

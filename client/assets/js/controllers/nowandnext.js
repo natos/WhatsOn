@@ -7,7 +7,7 @@
 define([
 
 	'config/app',
-	'controllers/app',
+	'modules/app',
 	'views/nowandnext'
 
 ], function NowAndNextController(c, App, NowAndNextView) {
@@ -17,17 +17,15 @@ define([
 	/* constructor */
 	function initialize() {
 
-		// Let the App know you're here
-		App.controllers.nowandnext = this;
-
 		return this;
 
 	};
 
 /* public */
 	return {
+		name: 'nowandnext',
 		initialize: initialize,
-		view: NowAndNextView.initialize()
+		view: NowAndNextView
 	};
 
 });

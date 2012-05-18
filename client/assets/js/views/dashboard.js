@@ -7,20 +7,42 @@
 define([
 
 	'config/app',
-	'controllers/app',
+	'modules/app',
 	'components/carousel'
 
-], function DashboardView(c, App, Carousel) {
+], function DashboardView(a, App, Carousel) {
 
 /* private */
 
-function initialize() {
+	var $template = $( $('#templates script[data-template="dashboard-layout"]').text() );
 
-	App.emit(c.VIEW_LOADED, this);
+	function initialize() {
+
+		render()	
+
+		// configure and run components
+		this.components = {
+			// dom query to select the carousel
+			carousel: Carousel.initialize('#featured')
+		};
+
+		App.emit(a.VIEW_LOADED, this);
 	
-	return this;
+		return this;
+	
+	};
 
-};
+	function finalize() {
+
+	};
+
+	function render() {
+
+		a.$content.html($template);
+
+		App.emit(a.VIEW_RENDERED, this);
+
+	};
 
 /* public */
 
