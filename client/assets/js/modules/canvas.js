@@ -1,8 +1,8 @@
 /* 
 * CanvasModule
 * ----------------
-*
-*
+* This module is responsible for dealing with the main area of the page (the "canvas").
+* When a client-side navigation event occurs, the correct view should be displayed.
 */
 
 define([

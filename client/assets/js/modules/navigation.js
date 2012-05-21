@@ -1,7 +1,8 @@
 /* 
 * NavigationModule
 * ----------------
-*
+* This module is responsible for dealing with the navigation bar at the top of the page.
+* When a client-side navigation event occurs, the correct icon should be made active.
 */
 
 define([

@@ -13,25 +13,21 @@ define([
 
 ], function AppModule(EventEmitter, c) {
 
-/* private */
+	/* private */
 
 	/* App extends EventEmitter */
 	var App = new EventEmitter();
-		/* Modules namespace */
-		App.modules = [];
+
+
+	/* Modules namespace */
+	App.modules = {};
 
 
 	/* constructor */
 	function initialize() {
-	
-		// cutting the mustard TODO: move this to main.js, and load zepto for mustard and jquery for mayo
-		this.mustard = ('querySelector' in document && 'localStorage' in window && 'addEventListener' in window);
 
-		if (!this.mustard) {
-			throw('Initialization aborted! Cutting the mustard. Get a new browser dude!');
-		}
-
-		// load modules
+		// Load the primary modules for the app.
+		// Each module must have an "initialize" method that returns the module itself.
 		lazyLoadModules(['modules/router', 'modules/canvas', 'modules/navigation', 'modules/user']);
 
 		return this;
@@ -41,7 +37,7 @@ define([
 	// initialize a collection of modules
 	function initializeModules() {
 		while (module = Array.prototype.shift.apply(arguments)) { 
-			App[module.name] = module.initialize();
+			App.modules[module.name] = module.initialize();
 		} 
 	};
 
@@ -50,9 +46,9 @@ define([
 		require(modules, initializeModules);
 	};
 
-/* public */
 
-	/* constructor */
+	/* public */
+
 	App.name = 'UPC Social';
 	App.initialize = initialize;
 
