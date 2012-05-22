@@ -3,21 +3,16 @@ require.config({
 });
 
 
-// Cutting the mustard: detect whether the user gets the rich client experience
+// Cutting the mustard: detect whether the user gets the rich client experience.
+// The actual detection is done *as early as possible* using inline script in the
+// <head> of the page. We do this to set a 'mustard' classname on the document element
+// (like Modernizr).
 // TODO: load zepto for mustard and jquery for mayo?
-var mustard = ('querySelector' in document && 'localStorage' in window && 'addEventListener' in window);
-
-// Allow mustard to be turned off for testing:
-// add a "?mustard=0" or "?mustard=false" querystring
-var href = location.href.toUpperCase();
-if (href.indexOf('MUSTARD=0')>0 || href.indexOf('MUSTARD=FALSE')>0) {
-	mustard = false;
-}
-
-console.log('mustard = ' + mustard);
+var mustard = (document.documentElement.className.indexOf('no-mustard') < 0) && (document.documentElement.className.indexOf('mustard') >= 0);
+if (console && console.log) {console.log('mustard = ' + mustard)};
 
 if (mustard) {
-	document.documentElement.className = document.documentElement.className.replace('no-mustard', 'mustard');
+	// Boot the rich client
 
 	require([
 
