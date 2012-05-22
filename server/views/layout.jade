@@ -1,5 +1,5 @@
 !!! 5
-html
+html.no-js.no-mustard
 	head(prefix="#{config.HTML_PREFIX}", data-api="#{config.API_PREFIX}", data-fixposition="#{supports.positionFixed}", data-test="false")
 
 		title #{config.APP_NAME}
@@ -12,10 +12,14 @@ html
 			each meta in metadata
 				meta(property='#{meta.property}', content='#{meta.content}')
 
+		script
+			document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+
 		link(href="/assets/css/font-awesome.css", rel="stylesheet")
 		link(href="/assets/css/normalize.css", rel="stylesheet")
 		link(href="/assets/css/global.css", rel="stylesheet")
 		link(href="/assets/css/mediaqueries.css", rel="stylesheet")
+		link(href="/assets/css/grid.css", rel="stylesheet")
 
 
 		block styles

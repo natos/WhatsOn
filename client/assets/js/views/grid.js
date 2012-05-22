@@ -4,6 +4,16 @@
 *
 * Emitting events, UI changes
 * Listen to the model for data changes
+* 
+* IMPORTANT: This component calculates the dimensions of the grid
+* based on the size of other elements on the page (e.g. the channel bar)
+* that are only sized correctly is the CSS is loaded already. If the CSS
+* is not yet loaded, the grid dimensions will be calculated incorrectly.
+*
+* Because of cross-browser loading issues, requireJS cannot reliably detect
+* when a CSS file has finished loading -- see http://requirejs.org/docs/faq-advanced.html#css
+* This means that the relevant CSS must be injected into the <head> of the
+* page when the original page is first rendered.
 *
 */
 
@@ -19,76 +29,105 @@ define([
 
 ], function GridViewScope(a, g, App, TimeBar, ChannelBar, Buffer, convert) {
 
-/* private */
+	var executionTimer;
+	var $window = $(window);
 
-	var executionTimer,
-
-		$template = $( $('#templates script[data-template="grid-layout"]').text() );
-
-
-	/* constructor */
+	/**
+	 * Load the content for the view. 
+	 * Activate associated components. 
+	 * Set up event handlers.
+	 * @public
+	 */
 	function initialize() {
 
-		render();
+		if ($('#content').find('#grid-container').length>0) {
+			// Grid container is already loaded
+			initializeComponents();
+		} else {
+			// Get grid container from server
+			a.$content.load('/grid #content', function(data, status, xhr){
+				initializeComponents();
+			});
+		}
 
 		g.END = new Date(g.ZERO.valueOf() + 24*60*60*1000);
 
-		// set styles
-		g.$styles.text( defineStyles() );
+		// UI event handlers
+		// every time user scrolls, we want to load new events
+		$window.on('resize scroll', handleResizeAndScroll);
 
-		/* setup components */
+		// Data events
+		// we want to render every new events when they are recieved
+ 		App.on('eventsReceived', renderEvents);
+		App.on(g.MODEL_CHANGED, modelChanged);
+
+		App.emit(a.VIEW_LOADED, this);
+
+		return this;
+
+	};
+
+	/**
+	 * Activate sub-components of the view
+	 * @private
+	 */
+	function initializeComponents() {
 		this.components = {
 			timebar		: TimeBar.initialize(),
 			channelbar	: ChannelBar.initialize(),
 			buffer		: Buffer.initialize()
 		};
 
+		// Grid styles depend on the components being initialized.
+		// todo: bad dependency - try to remove.
+		appendCSSBlock('grid-styles', defineStyles());
 
-	/** 
-	*	Events handlers
-	*/
-
-		// UI event handlers
-		// every time user scrolls, we want to load new events
-		g.$window.on('resize scroll', handleReziseAndScroll);
-
-		// Data events
-		// First event received off modal
-		App.once('eventsReceived', firstEvent);
-
-		// we want to render every new events when they are recieved
- 		App.on('eventsReceived', renderEvents);
-
-		App.on(g.MODEL_CHANGED, modelChanged);
-
-		return this;
-
+		// Start the first data load
+		App.emit(g.GRID_MOVED);
+		App.emit(g.GRID_FETCH_EVENTS);
 	};
 
+
+	/**
+	 * If necessary, remove the content for the view from the DOM.
+	 * Deactivate associated components. 
+	 * Clean up event handlers.
+	 * @public
+	 */
 	function finalize() {
 
-		g.$window.off('resize scroll', handleReziseAndScroll);
+		finalizeComponents();
 
+		$window.off('resize scroll', handleResizeAndScroll);
+		App.off('eventsReceived', renderEvents);
 		App.off(g.MODEL_CHANGED, modelChanged);
 
 	};
 
-	function render() {
+	/**
+	 * Deactivate associated components.
+	 * @private
+	 */
+	function finalizeComponents() {
+		var componentName, component;
+		var components = this.components;
 
-		a.$content.html($template);
-
-		App.emit(a.VIEW_RENDERED, this);
-
+		for (componentName in components) {
+			if (components.hasOwnProperty(componentName)) {
+				component = components[componentName];
+				if (typeof(components.finalize)==='function') {
+					component.finalize();
+				}
+			}
+		}
 	};
 
-	function firstEvent() {
-
-		App.emit(a.VIEW_LOADED, this);
-
-	};
-
-	// scrolling handlers
-	function handleReziseAndScroll(e) {
+	/**
+	 * Handler for scrolling and resizing events.
+	 * Uses an execution timer for throttling.
+	 * @private
+	 */
+	function handleResizeAndScroll(e) {
 
 		App.emit(g.GRID_MOVED);
 
@@ -102,20 +141,28 @@ define([
 
 	};
 
-	// model changes handlers
+	/**
+	 * Handler for model data changes.
+	 * @private
+	 */
 	function modelChanged(obj) {
 		if (obj.events) {
 			renderEvents(obj.events);
 		}
 	};
 
-	// Viewport styling
+	/**
+	 * Generate a block of CSS to adapt the grid to the current viewport dimensions.
+	 * @private
+	 */
 	function defineStyles() {
 
 		// define constants
-		g.TIMEBAR_HEIGHT = g.$timebar.height();
-		g.CHANNELS_COUNT = g.$channelsbar.find('li').length;
-		g.CHANNEL_BAR_WIDTH = g.$channelsbar.width();
+		var $channelsbar = $('#channels-bar');
+		var $timebar = $('#time-bar');
+		g.TIMEBAR_HEIGHT = $timebar.height();
+		g.CHANNELS_COUNT = $channelsbar.find('li').length;
+		g.CHANNEL_BAR_WIDTH = $channelsbar.width();
 		g.VIEWPORT_WIDTH_HOURS = (document.body.clientWidth - g.CHANNEL_BAR_WIDTH) / g.HOUR_WIDTH;
 		// Size the grid
 		g.GRID_HEIGHT = g.ROW_HEIGHT * g.CHANNELS_COUNT;
@@ -134,7 +181,10 @@ define([
 
 	};
 
-	// Render events
+	/**
+	 * Render a set of EPG events into the grid.
+	 * @private
+	 */
 	function renderEvents(events) {
 
 		var link, description, i, event, width, left, startDateTime, endDateTime, right;
@@ -196,6 +246,10 @@ define([
 
 	};
 
+	/**
+	 * Determine what time window is visible in the viewport.
+	 * @public
+	 */
 	function getSelectedTime() {
 
 		// How many hours have been scrolled horizontally?
@@ -211,6 +265,12 @@ define([
 
 	};
 
+	/**
+	 * Determine what channels are visible in the viewport.
+	 * Optionally, return some channels above and below the visible
+	 * channel range, for pre-loading.
+	 * @public
+	 */
 	function getSelectedChannels(extraAboveAndBelow) {
 
 		// How many channels have been scrolled vertically?
@@ -227,24 +287,41 @@ define([
 			extraAboveAndBelow = 0;
 		}
 
-		// Return 2 channels above and below the visible window 
+		// Return N channels above and below the visible window 
 		for (i = (0 - extraAboveAndBelow); i < (channelsTall + extraAboveAndBelow); i++) {
-			if ( (firstChannel + i) < 0 || (firstChannel + i) >= channels.length ) {
+			if ( (firstChannel + i) < 0 || (firstChannel + i) >= App.channels.length ) {
 				continue;
 			}
-			channelIds.push(channels[firstChannel + i].id);
+			channelIds.push(App.channels[firstChannel + i].id);
 		}
 
 		return channelIds;
 
 	};
 
-/* public */
+	/**
+	 * Add or update a named <style> element to the DOM.
+	 * @private
+	 */
+	function appendCSSBlock(blockId, cssText) {
+		var el = document.getElementById(blockId);
+		if (el) {
+			el.innerHTML = cssText;
+		} else {
+			el = document.createElement('style');
+			el.id = blockId;
+			el.innerHTML = cssText;
+			document.getElementsByTagName('HEAD')[0].appendChild(el);
+		}
+	};
+
+
+	/* @class GridView */
 	return {
 		initialize: initialize,
+		finalize: finalize,
 		getSelectedChannels: getSelectedChannels,
 		getSelectedTime: getSelectedTime
 	};
-
 
 });

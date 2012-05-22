@@ -34,6 +34,8 @@ function(Channel, Metadata, DateUtils, Requestn, PrettyDate) {
 
 		app.server.get('/channel/:id', this.render);
 
+		app.server.get('/channels.json', this.renderChannels);
+
 		app.server.get('/channel/:id/details.json', this.renderDetails);
 
 		app.server.get('/channel/:id/events.json', this.renderEvents);
@@ -123,6 +125,19 @@ function(Channel, Metadata, DateUtils, Requestn, PrettyDate) {
 					TEST_MODE	: false
 				}); // HTML output	
 		});
+
+	};
+
+	/** Render a JSON response of all channels */
+	ChannelController.prototype.renderChannels = function(req, res) {
+
+		var id = req.params.id;
+
+		ChannelService.once('getChannels', function(channels) {
+
+			res.send(channels); // JSON output
+
+		}).getChannels();
 
 	};
 

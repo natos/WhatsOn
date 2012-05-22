@@ -301,6 +301,11 @@ img {
 *	transition
 */
 
+/* For the no-mustard case, don't display the transition overlay at all */
+.no-mustard #transition {
+	display:none;
+}
+
 #transition {
 	position: absolute;
 	position: fixed;

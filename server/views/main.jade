@@ -1,9 +1,5 @@
 extends layout
 
-block styles
-	link(href="/assets/css/grid.css", rel="stylesheet")
-	style(id="grid-styles")
-
 block scripts
 	script(data-load="controllers/grid")
 		var channels = !{JSON.stringify(channels)};

@@ -17,19 +17,26 @@ define([
 
 ], function GridController(g, App, GridModel, GridView, EpgApi) {
 
-/* private */
 
+	/**
+	 * Activate the associated view, and set up event handlers
+	 */
 	function initialize() {
 
-		// Events Handlers
-		App.on(g.GRID_MOVED, gridMoved);
-		App.on(g.GRID_FETCH_EVENTS, getEvents);
-		App.on('eventsReceived', setEvents);
+		App.populateChannels(function(){
+			// Events Handlers
+			App.on(g.GRID_MOVED, gridMoved);
+			App.on(g.GRID_FETCH_EVENTS, getEvents);
+			App.on('eventsReceived', setEvents);
 
-		GridView.initialize();
-	
+			GridView.initialize();
+		});
+
 	};
 
+	/**
+	 * Deactivate the associated view, and clean up event handlers
+	 */
 	function finalize() {
 
 		App.off(g.GRID_MOVED, gridMoved);
@@ -40,6 +47,11 @@ define([
 
 	};
 	
+	/**
+	 * Handler for the GRID_MOVED event.
+	 * GRID_MOVED is raised by the grid view whenever the visible channel range
+	 * or time window changes.
+	 */
 	function gridMoved() {
 		// Update model UI data
 		GridModel.set('position', { 'top': window.pageYOffset * -1, 'left': window.pageXOffset * -1 });
@@ -49,6 +61,11 @@ define([
 		return this;
 	};
 	
+	/**
+	 * Handler for the "eventsReceived" event.
+	 * "eventsReceived" is raised by the EpgApi.js object whenever a batch of EPG data
+	 * has been retrieved from the API, or from cache.
+	 */
 	function setEvents(events) {
 	
 		GridModel.set('events', events);
@@ -57,7 +74,12 @@ define([
 	
 	};
 	
-	
+	/**
+	 * Handler for the GRID_FETCH_EVENTS event.
+	 * GRID_FETCH_EVENTS is raised by the grid view at the *end* of a resize or scroll
+	 * action, to indicate that the user has finished their immediate interaction,
+	 * and we should now retrieve grid data.
+	 */
 	function getEvents() {
 	
 		EpgApi.getEventsForChannels(GridModel.selectedChannels, GridModel.selectedTime.startTime, GridModel.selectedTime.endTime);
@@ -66,11 +88,11 @@ define([
 	};
 
 
-/* @class GridController */
+	/* @class GridController */
 	return {
 		name: 'grid',
-		/* constructor */
 		initialize: initialize,
+		finalize: finalize,
 		view: GridView,
 		model: GridModel
 	};

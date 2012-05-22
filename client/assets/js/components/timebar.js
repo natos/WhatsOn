@@ -13,7 +13,7 @@ define([
 
 /* private */
 
-	var	$timelist = g.$timebar.find('ol');
+	var	$timelist = $('#time-bar').find('ol');
 
 	/* constructor */
 	function initialize() {
@@ -74,7 +74,7 @@ define([
 		}
 
 		// first tick
-		tick(); element.appendTo(g.$container);
+		tick(); element.appendTo('#grid-container');
 	};
 
 

@@ -17,6 +17,7 @@ if (href.indexOf('MUSTARD=0')>0 || href.indexOf('MUSTARD=FALSE')>0) {
 console.log('mustard = ' + mustard);
 
 if (mustard) {
+	document.documentElement.className = document.documentElement.className.replace('no-mustard', 'mustard');
 
 	require([
 

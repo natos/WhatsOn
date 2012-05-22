@@ -13,8 +13,9 @@ define([
 
 ], function DashboardController(a, u, App, DashboardView) {
 
-/* private */
-	
+	/**
+	 * Activate the associated view, and set up event handlers
+	 */
 	function initialize(arguments) {
 
 		upc.on(u.LOGGED_IN, userLoggedIn);
@@ -26,6 +27,9 @@ define([
 	
 	};
 
+	/**
+	 * Deactivate the associated view, and clean up event handlers
+	 */
 	function finalize() {
 	
 		upc.off(u.LOGGED_IN, userLoggedIn);
@@ -37,6 +41,9 @@ define([
 	
 	};
 
+	/**
+	 * Handler for the LOGGED_IN event.
+	 */
 	function userLoggedIn() {
 
 		FB.api({
@@ -50,6 +57,9 @@ define([
 
 	};
 
+	/**
+	 * Handler for the LOGGED_OUT event.
+	 */
 	function userLoggedOut() {
 
 		FB.api({
@@ -62,13 +72,12 @@ define([
 
 	};
 
-/* public */
 
-/* @class Dashboard */
+	/* @class Dashboard */
 	return {
 		name: 'dashboard',
-		/* constructor */
 		initialize: initialize,
+		finalize: finalize,
 		view: DashboardView
 	};
 

@@ -22,13 +22,16 @@ define([
 	/* Modules namespace */
 	App.modules = {};
 
+	/* The app holds an array of channels */
+	App.channels = [];
+
 
 	/* constructor */
 	function initialize() {
 
 		// Load the primary modules for the app.
 		// Each module must have an "initialize" method that returns the module itself.
-		lazyLoadModules(['modules/router', 'modules/canvas', 'modules/navigation', 'modules/user']);
+		loadModules(['modules/router', 'modules/canvas', 'modules/navigation', 'modules/user']);
 
 		return this;
 	
@@ -42,15 +45,31 @@ define([
 	};
 
 	// require and load modules
-	function lazyLoadModules(modules) {
+	function loadModules(modules) {
 		require(modules, initializeModules);
 	};
+
+	/**
+	 * Populate the list of channels, and call a callback when they're ready
+	 * @public
+	 */
+	function populateChannels(callback) {
+		if (this.channels && this.channels.length > 0) {
+			callback();
+		} else {
+			$.getJSON('/channels.json', function(data, status, xhr){
+				App.channels = data;
+				callback();
+			});
+		}
+	}
 
 
 	/* public */
 
 	App.name = 'UPC Social';
 	App.initialize = initialize;
+	App.populateChannels = populateChannels;
 
 	return App;
 

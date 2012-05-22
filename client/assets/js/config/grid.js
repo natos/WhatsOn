@@ -55,24 +55,8 @@ define([], function GridConfig() {
 
 		GRID_MOVED: 'grid:moved',
 
-		GRID_RENDERED: 'grid:rendered',
-
-		// DOM Access
-
-		$window: $(window),
+		GRID_RENDERED: 'grid:rendered'
 	
-		$body: $(document.body),
-	
-		$container: $('#grid-container'),
-	
-		$timebar: $('#time-bar'),
-	
-		$channelsbar: $('#channels-bar'),
-	
-		$navbar: $('.navbar'),
-	
-		$styles: $('#grid-styles')
-
 	};
 
 });

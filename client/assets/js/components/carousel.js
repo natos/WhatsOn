@@ -10,7 +10,7 @@ define([
 
 	$window = $(window);
 
-var Carousel = {};
+	var Carousel = {};
 
 	Carousel.map = {};
 

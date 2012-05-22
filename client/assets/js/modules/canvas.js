@@ -27,13 +27,14 @@ define([
 			
 			unload(CURRENT);
 			load(arguments);
+			CURRENT = arguments[0];
 
 		});
 
 		// global events, every view loaded, remove transition
 		upc.on(a.VIEW_LOADED, endTransition);
 
-		lazyLoadControllers([
+		loadControllers([
 			'controllers/channel', 
 			'controllers/dashboard',
 			'controllers/grid',
@@ -54,10 +55,10 @@ define([
 	};
 
 	/* Pre Load Controllers */
-	// lazy require controllers
-	function lazyLoadControllers(controllers) {
+	function loadControllers(controllers) {
 		require(controllers, mapControllers);
 	};
+
 	// map controllers
 	function map(controller) {
 		// local refernece
@@ -65,10 +66,12 @@ define([
 		// add a routing control
 		Router.add(controller.name, load);
 	};
+
 	// iterate controllers
 	function mapControllers() {
 		while (controller = Array.prototype.shift.apply(arguments)) { map(controller); }
 	};
+
 	// handle Routings
 	function handleRouting() {
 		
@@ -82,21 +85,27 @@ define([
 	};
 
 
-	/* Public functions */
-	// load
+	/**
+	 * Load a controller for the canvas
+	 * @private
+	 */
 	function load() {
 		// first argument is the module name
-		var controller = Array.prototype.shift.apply(arguments)[0];
+		var controllerName = Array.prototype.shift.apply(arguments)[0];
+
 		// intialize module and send all arguments
-		if (controllers[controller]) {
-			controllers[controller].initialize(arguments);
+		if (controllerName && controllers[controllerName]) {
+			controllers[controllerName].initialize(arguments);
 		}
 	};
 
-	// unload
-	function unload(controller) {
-		if (controller && map[controller]) {
-			map[controller].finalize();
+	/**
+	 * Unload a controller for the canvas
+	 * @private
+	 */
+	function unload(controllerName) {
+		if (controllerName && controllers[controllerName]) {
+			controllers[controllerName].finalize();
 		}
 	};
 

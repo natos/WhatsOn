@@ -21,8 +21,6 @@ define([], function AppConfig() {
 
 		VIEW_LOADED: 'app:view_loaded',
 
-		VIEW_RENDERED: 'app:view_rendered',
-	
 		// DOM Access
 
 		$window: $(window),

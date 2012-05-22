@@ -7,13 +7,14 @@
 define([
 
 	'config/grid',
-	'models/grid'
+	'models/grid',
+	'modules/app'
 
-], function ChannelBar(g, GridModel) {
+], function ChannelBar(g, GridModel, App) {
 
 /* private */
 
-	var	$channellist = g.$channelsbar.find('ul')
+	var	$channellist = $('#channels-bar').find('ul')
 
 	/* constructor */
 	function initialize() {
@@ -22,12 +23,13 @@ define([
 		upc.on(g.MODEL_CHANGED, modelChanged);
 
 		// Map Channel ID / OffsetTop
+		var channels = App.channels;
 		for (var i = 0; i < channels.length; i++) {
 			$('<div>')
 				.attr({ 'id': 'cc_' + channels[i].id })
 				.addClass('channel-container')
 				.css({ 'height': g.ROW_HEIGHT + 'px', 'top': i * g.ROW_HEIGHT + 'px' })
-				.appendTo(g.$container);
+				.appendTo('#grid-container');
 		}
 
 		return this;

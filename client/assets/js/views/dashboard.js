@@ -12,44 +12,65 @@ define([
 
 ], function DashboardView(a, App, Carousel) {
 
-/* private */
-
-	var $template = $( $('#templates script[data-template="dashboard-layout"]').text() );
-
+	/**
+	 * Load the content for the view. 
+	 * Activate associated components. 
+	 * Set up event handlers.
+	 * @public
+	 */
 	function initialize() {
-
-		render()	
-
-		// configure and run components
-		this.components = {
-			// dom query to select the carousel
-			carousel: Carousel.initialize('#featured')
-		};
+		if ($('#content').find('#dashboard-content').length>0) {
+			// Dashboard content is already loaded
+			initializeComponents();
+		} else {
+			// Get dashboard content from server
+			a.$content.load('/dashboard #content', function(data, status, xhr){
+				initializeComponents();
+			});
+		}
 
 		App.emit(a.VIEW_LOADED, this);
-	
+
 		return this;
 	
 	};
 
+	/**
+	 * Activate sub-components of the view
+	 * @private
+	 */
+	function initializeComponents() {
+		this.components = {
+			carousel: Carousel.initialize('#featured')
+		};
+	};
+
+	/**
+	 * If necessary, remove the content for the view from the DOM.
+	 * Deactivate associated components. 
+	 * Clean up event handlers.
+	 * @public
+	 */
 	function finalize() {
-
+		finalizeComponents();
 	};
 
-	function render() {
-
-		a.$content.html($template);
-
-		App.emit(a.VIEW_RENDERED, this);
-
+	/**
+	 * Deactivate associated components. 
+	 * @private
+	 */
+	function finalizeComponents() {
+		var carousel = this.components.carousel;
+		if (carousel && typeof(carousel.finalize)==='function') {
+			carousel.finalize();
+		}
 	};
 
-/* public */
 
-/* @class Dashboard */
+	/* @class DashboardView */
 	return {
-		/* constructor */
-		initialize: initialize
+		initialize: initialize,
+		finalize: finalize
 	};
 
 });
