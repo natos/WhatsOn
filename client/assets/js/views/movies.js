@@ -24,7 +24,6 @@ define([
 	 * @public
 	 */
 	function initialize() {
-console.log('moviesController.initialize');
 
 		if ($('#content').find('#content-movies').length==0) {
 			// Get grid container from server

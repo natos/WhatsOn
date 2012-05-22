@@ -14,9 +14,10 @@ define([
 
 	/**
 	 * Activate the associated view, and set up event handlers
+	 * @public
 	 */
 	function initialize() {
-console.log('moviesController.initialize');
+
 		MoviesView.initialize();
 
 		return this;
@@ -25,6 +26,7 @@ console.log('moviesController.initialize');
 
 	/**
 	 * Deactivate the associated view, and clean up event handlers
+	 * @public
 	 */
 	function finalize() {
 

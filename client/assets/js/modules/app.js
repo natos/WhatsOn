@@ -64,12 +64,21 @@ define([
 		}
 	}
 
+	function loadCss(url) {
+		var link = document.createElement("link");
+		link.type = "text/css";
+		link.rel = "stylesheet";
+		link.href = url;
+		document.getElementsByTagName("head")[0].appendChild(link);
+	}
+
 
 	/* public */
 
 	App.name = 'UPC Social';
 	App.initialize = initialize;
 	App.populateChannels = populateChannels;
+	App.loadCss = loadCss;
 
 	return App;
 

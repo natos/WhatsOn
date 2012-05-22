@@ -12,19 +12,33 @@ define([
 
 ], function NowAndNextController(c, App, NowAndNextView) {
 
-/* private */
-
-	/* constructor */
+	/**
+	 * Activate the associated view, and set up event handlers
+	 * @public
+	 */
 	function initialize() {
+
+		NowAndNextView.initialize();
 
 		return this;
 
 	};
 
-/* public */
+	/**
+	 * Deactivate the associated view, and clean up event handlers
+	 * @public
+	 */
+	function finalize() {
+
+		NowAndNextView.finalize();
+
+	}
+
+	/* public */
 	return {
 		name: 'nowandnext',
 		initialize: initialize,
+		finalize: finalize,
 		view: NowAndNextView
 	};
 
