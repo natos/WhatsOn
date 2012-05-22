@@ -31,6 +31,8 @@ define([
 			}
 		});
 
+		addGridButton();
+
 		App.on(appConfig.VIEW_LOADED, updateNavigation);
 
 		// initial navigation
@@ -65,6 +67,14 @@ define([
 		});	
 	};
 
+
+	/**
+	 * The Programme Grid is only available in the HTML5 rich app:
+	 * this is where we create the navigation link for it.
+	 */
+	function addGridButton() {
+		$('.nav').append('<a href="#grid" data-appurl="#grid" class="grid"><i class="icon-th"></i><b class="label">TV Gids</b></a>');
+	}
 
 	/* @class NavigationView */
 	return {

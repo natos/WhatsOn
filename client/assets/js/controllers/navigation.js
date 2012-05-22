@@ -7,11 +7,10 @@ define([
 
 	'config/app',
 	'modules/app',
-	'components/grid',
 	'components/search',
 	'views/navigation'
 
-], function NavigationModule(appConfig, App, Grid, Search, NavigationView) {
+], function NavigationModule(appConfig, App, Search, NavigationView) {
 
 	/**
 	 * Load the content for the view.
@@ -22,7 +21,6 @@ define([
 	function initialize() {
 
 		NavigationView.initialize();
-		Grid.initialize();
 		Search.initialize();
 
 		return this;
