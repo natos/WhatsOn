@@ -11,46 +11,65 @@ define([
 
 ], function TimeBar(g, convert) {
 
-/* private */
+	var	$timelist;
 
-	var	$timelist = $('#time-bar').find('ol');
-
-	/* constructor */
+	/**
+	 * Load the content for the component
+	 * Set up event handlers.
+	 * @public
+	 */
 	function initialize() {
+
+		$timelist = $('#time-bar').find('ol');
 
 		// move with the grid
 		upc.on(g.MODEL_CHANGED, modelChanged);
 
 		// add logo behavior, move to 'now'
-		$('.upc-logo').click(function(event){ goTo('now'); });
+		$('.upc-logo').on('click', centerTimebar);
 
 		// initialize ticker
 		ticker();
 			
 		// scroll to now
-		goTo();
+		centerTimebar();
 
 		return this;
 
 	};
 
+	/**
+	 * If necessary, remove the content for the component from the DOM.
+	 * Clean up event handlers.
+	 * @public
+	 */
+	function finalize() {
+		upc.off(g.MODEL_CHANGED, modelChanged);
+		$('.upc-logo').off('click', centerTimebar);
+	};
+
+	/**
+	 * Handler for model data changes.
+	 * @private
+	 */
 	function modelChanged(obj) {
 		if (obj.position) {
 			$timelist.css({ left: obj.position.left });
 		}
 	};
 
-	function goTo(data) {
-
-		// TODO: Evaluate 'data' to move to other times
-
+	/**
+	 * Scroll to get the timebar in the middle of the screen.
+	 * @private
+	 */
+	function centerTimebar() {
 		var left = convert.timeToPixels( new Date() );
-			// center in the screen
-			left = left - ( document.body.clientWidth / 2 ) + g.CHANNEL_BAR_WIDTH;
 
-			// move the window left, 
-			// but the same distance top
-			window.scroll(left, document.body.scrollTop);
+		// center in the screen
+		left = left - ( document.body.clientWidth / 2 ) + g.CHANNEL_BAR_WIDTH;
+
+		// move the window left, but the same distance top
+		window.scroll(left, document.body.scrollTop);
 
 		return this;
 
@@ -74,15 +93,16 @@ define([
 		}
 
 		// first tick
-		tick(); element.appendTo('#grid-container');
+		tick(); 
+
+		element.appendTo('#grid-container');
 	};
 
 
-/* public */
-
+	/* public */
 	return {
 		initialize: initialize,
-		goTo: goTo,
+		finalize: finalize,
 		ticker: ticker
 	};
 

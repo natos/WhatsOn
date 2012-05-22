@@ -11,15 +11,26 @@ define([
 
 ], function Buffer(g, GridModel) {
 
-/* private */
-
-	/* constructor */
+	/**
+	 * Load the content for the component
+	 * Set up event handlers.
+	 * @public
+	 */
 	function initialize() {
 
 		upc.on(g.GRID_RENDERED, grooming);
 
 		return this;
 
+	};
+
+	/**
+	 * If necessary, remove the content for the component from the DOM.
+	 * Clean up event handlers.
+	 * @public
+	 */
+	function finalize() {
+		upc.off(g.GRID_RENDERED, grooming);
 	};
 
 	function grooming() {
@@ -51,9 +62,10 @@ define([
 		}
 	};
 
-/* public */
+	/* public */
 	return {
-		initialize: initialize
+		initialize: initialize,
+		finalize: finalize
 	};
 
 });

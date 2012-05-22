@@ -33,8 +33,8 @@ define([
 	var $window = $(window);
 
 	/**
-	 * Load the content for the view. 
-	 * Activate associated components. 
+	 * Load the content for the view.
+	 * Activate associated components.
 	 * Set up event handlers.
 	 * @public
 	 */

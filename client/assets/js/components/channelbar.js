@@ -12,12 +12,16 @@ define([
 
 ], function ChannelBar(g, GridModel, App) {
 
-/* private */
+	var	$channellist;
 
-	var	$channellist = $('#channels-bar').find('ul')
-
-	/* constructor */
+	/**
+	 * Load the content for the component
+	 * Set up event handlers.
+	 * @public
+	 */
 	function initialize() {
+
+		$channellist = $('#channels-bar').find('ul')
 
 		// move with the grid
 		upc.on(g.MODEL_CHANGED, modelChanged);
@@ -36,6 +40,19 @@ define([
 
 	};
 
+	/**
+	 * If necessary, remove the content for the component from the DOM.
+	 * Clean up event handlers.
+	 * @public
+	 */
+	function finalize() {
+		upc.off(g.MODEL_CHANGED, modelChanged);
+	};
+
+	/**
+	 * Handler for model data changes.
+	 * @private
+	 */
 	function modelChanged(obj) {
 		if (obj.position) {
 			$channellist.css({ top: obj.position.top });
@@ -43,9 +60,10 @@ define([
 	};
 
 
-/* public */
+	/* public */
 	return {
-		initialize: initialize
+		initialize: initialize,
+		finalize: finalize
 	};
 
 });
