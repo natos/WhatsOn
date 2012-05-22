@@ -12,19 +12,32 @@ define([
 
 ], function MoviesController(c, App, MoviesView) {
 
-/* private */
-
-	/* constructor */
+	/**
+	 * Activate the associated view, and set up event handlers
+	 */
 	function initialize() {
+console.log('moviesController.initialize');
+		MoviesView.initialize();
 
 		return this;
 
 	};
 
-/* public */
+	/**
+	 * Deactivate the associated view, and clean up event handlers
+	 */
+	function finalize() {
+
+		MoviesView.finalize();
+
+	};
+
+
+	/* public */
 	return {
 		name: 'movies',
 		initialize: initialize,
+		finalize: finalize,
 		view: MoviesView
 	};
 

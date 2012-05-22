@@ -90,12 +90,18 @@ define([
 	 * @private
 	 */
 	function load() {
+console.log('canvas.load');
 		// first argument is the module name
 		var controllerName = Array.prototype.shift.apply(arguments)[0];
 
 		// intialize module and send all arguments
-		if (controllerName && controllers[controllerName]) {
-			controllers[controllerName].initialize(arguments);
+		var controller;
+console.log('controllerName = ' + controllerName);
+		if (controllerName) {
+			controller = controllers[controllerName]
+			if (controller && typeof(controller.initialize)==='function') {
+				controller.initialize(arguments);
+			}
 		}
 	};
 
@@ -104,13 +110,17 @@ define([
 	 * @private
 	 */
 	function unload(controllerName) {
-		if (controllerName && controllers[controllerName]) {
-			controllers[controllerName].finalize();
+		var controller;
+		if (controllerName) {
+			controller = controllers[controllerName];
+			if (controller && typeof(controller.finalize)==='function') {
+				controller.finalize();
+			}
 		}
 	};
 
 
-/* public */
+	/* public */
 
 	return {
 		name: 'canvas',

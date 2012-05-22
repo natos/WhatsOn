@@ -45,7 +45,7 @@ define([
 			initializeComponents();
 		} else {
 			// Get grid container from server
-			a.$content.load('/grid #content', function(data, status, xhr){
+			$('#content').load('/grid #content', function(data, status, xhr){
 				initializeComponents();
 			});
 		}

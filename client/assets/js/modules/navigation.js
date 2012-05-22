@@ -24,8 +24,10 @@ define([
 		navigation();
 
 		$('.navbar').find('a').each(function() {
-			this.href = '#' + this.href;
-			console.log(window.location.host)
+			var appUrl = this.getAttribute('data-appurl');
+			if (appUrl) {
+				this.href = appUrl;
+			}
 		});
 
 		return this;

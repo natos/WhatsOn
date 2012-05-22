@@ -14,30 +14,24 @@ define([
 
 ], function MoviesView(c, App) {
 
-/* private */
-
+	var executionTimer;
 	var $window = $(window);
 
-	/* constructor */
+	/**
+	 * Load the content for the view.
+	 * Activate associated components.
+	 * Set up event handlers.
+	 * @public
+	 */
 	function initialize() {
+console.log('moviesController.initialize');
 
-		var executionTimer;
+		if ($('#content').find('#content-movies').length==0) {
+			// Get grid container from server
+			$('#content').load('/movies #content');
+		}
 
-		var sizeHandler = function(e) {
-
-			if (executionTimer) {
-				clearTimeout(executionTimer);
-			}
-
-			executionTimer = setTimeout(function() {
-
-				resizeImages();
-
-			}, 200);
-
-		};
-
-		$window.bind('resize orientationchange', sizeHandler);
+		$window.on('resize orientationchange', handleResize);
 
 		resizeImages();
 
@@ -47,6 +41,37 @@ define([
 
 	};
 
+	/**
+	 * If necessary, remove the content for the view from the DOM.
+	 * Deactivate associated components. 
+	 * Clean up event handlers.
+	 * @public
+	 */
+	function finalize() {
+
+		$window.off('resize orientationchange', handleResize);
+
+	}
+
+	/**
+	 * Handler for resizing & orientationchange events.
+	 * Uses an execution timer for throttling.
+	 * @private
+	 */
+	function handleResize() {
+		if (executionTimer) {
+			clearTimeout(executionTimer);
+		}
+
+		executionTimer = setTimeout(function() {
+			resizeImages();
+		}, 200);
+	}
+
+	/**
+	 * Resize content images for current screen dimensions 
+	 * @private
+	 */
 	function resizeImages() {
 
 		var maxScreenWidth = Math.max($window.width(), $window.height()),
@@ -71,9 +96,11 @@ define([
 		});
 	};
 
-/* public */
+
+	/* public */
 	return {
-		initialize: initialize
+		initialize: initialize,
+		finalize: finalize
 	};
 
 });

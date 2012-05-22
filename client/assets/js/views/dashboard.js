@@ -19,12 +19,12 @@ define([
 	 * @public
 	 */
 	function initialize() {
-		if ($('#content').find('#dashboard-content').length>0) {
+		if ($('#content').find('#content-dashboard').length>0) {
 			// Dashboard content is already loaded
 			initializeComponents();
 		} else {
 			// Get dashboard content from server
-			a.$content.load('/dashboard #content', function(data, status, xhr){
+			$('#content').load('/dashboard #content', function(data, status, xhr){
 				initializeComponents();
 			});
 		}
