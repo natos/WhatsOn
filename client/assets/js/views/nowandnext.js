@@ -25,6 +25,7 @@ define([
 
 		App.loadCss('/assets/css/nowandnext.css');
 		App.loadCss('/assets/css/channel-event-list.css');
+		var that = this;
 
 		if ($('#content').find('#content-nowandnext').length>0) {
 			// Now-and-next container is already loaded
@@ -55,7 +56,7 @@ define([
 			channelsListContainer.load(e.target.href + ' #channels-list-container');
 		});
 
-		App.emit(c.VIEW_LOADED, this);
+		App.emit(c.VIEW_LOADED, 'nowandnext');
 
 	}
 

@@ -90,13 +90,11 @@ define([
 	 * @private
 	 */
 	function load() {
-console.log('canvas.load');
 		// first argument is the module name
 		var controllerName = Array.prototype.shift.apply(arguments)[0];
 
 		// intialize module and send all arguments
 		var controller;
-console.log('controllerName = ' + controllerName);
 		if (controllerName) {
 			controller = controllers[controllerName]
 			if (controller && typeof(controller.initialize)==='function') {

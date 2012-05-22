@@ -4,11 +4,6 @@ block styles
 	link(href="/assets/css/channel-event-list.css", rel="stylesheet")
 	link(href="/assets/css/nowandnext.css", rel="stylesheet")
 
-block scripts
-	script
-		var channels = !{JSON.stringify(channels)};
-		require(['views/nowandnext'], function(list) { list.initialize(); });
-
 block content
 	#content-nowandnext
 		include nowandnext-ajax

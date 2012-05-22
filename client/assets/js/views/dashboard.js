@@ -29,7 +29,7 @@ define([
 			});
 		}
 
-		App.emit(a.VIEW_LOADED, this);
+		App.emit(a.VIEW_LOADED, 'dashboard');
 
 		return this;
 	

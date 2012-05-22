@@ -34,7 +34,7 @@ define([
 
 		resizeImages();
 
-		App.emit(c.VIEW_LOADED, this);
+		App.emit(c.VIEW_LOADED, 'movies');
 
 		return this;
 

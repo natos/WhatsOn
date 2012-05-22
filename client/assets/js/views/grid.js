@@ -61,7 +61,7 @@ define([
  		App.on('eventsReceived', renderEvents);
 		App.on(g.MODEL_CHANGED, modelChanged);
 
-		App.emit(a.VIEW_LOADED, this);
+		App.emit(a.VIEW_LOADED, 'grid');
 
 		return this;
 

@@ -3,11 +3,11 @@
 * ------
 * This module is responsible for handling client-side routing.
 *
+* The router observes the window.onhashchange event, and takes action whenever the
+* location hash is updated
+*
 * The map object holds a hash of modules and associated handler functions.
 * Items are added to the routing map object by calling the .add() method on the router.
-*
-* The router observes the window.popstate event, and takes action whenever the
-* window's navigation history is changed.
 *
 * Using HTML5 pushState API
 * TODO: degrade try History.js (http://balupton.github.com/history.js/demo/)

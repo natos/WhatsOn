@@ -10,7 +10,7 @@ define([], function GridButton() {
 
 	var $body = $('body'),
 
-	$button = $('<a href="#grid"></a>');
+	$button = $('<a href="#grid" data-appurl="#grid"></a>');
 
 	/* constructor */
 	function initialize() {
