@@ -18,7 +18,6 @@ define([
 	'utils/supports',
 
 	// controllers
-	'controllers/main',
 	'controllers/login',
 	'controllers/dashboard',
 	'controllers/grid',
@@ -36,7 +35,7 @@ define([
  *	@class AppController
  */
 
-function(express, i18n, config, Supports, Main, Login, Dashboard, Grid, Channel, Programme, Movies, Search, Settings, NowAndNext, Facebook) {
+function(express, i18n, config, Supports, Login, Dashboard, Grid, Channel, Programme, Movies, Search, Settings, NowAndNext, Facebook) {
 
 	/** @constructor */
 
@@ -57,7 +56,6 @@ function(express, i18n, config, Supports, Main, Login, Dashboard, Grid, Channel,
 
 			//	setup app controllers
 			self.controllers = {
-				login		: new Main(self),
 				login		: new Login(self),
 				dashboard	: new Dashboard(self),
 				grid		: new Grid(self),

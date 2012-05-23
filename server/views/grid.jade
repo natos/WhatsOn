@@ -1,8 +1,4 @@
 extends layout
 
-block scripts
-	script(data-load="controllers/grid")
-		var channels = !{JSON.stringify(channels)};
-
 block content
 	include grid-content
