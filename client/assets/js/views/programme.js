@@ -13,23 +13,45 @@ define([
 	'modules/app',
 	'controllers/programme'
 
-], function ProgrammeView(c, u, p, App, ProgrammeController) {
+], function ProgrammeView(appConfig, u, p, App, ProgrammeController) {
 
-/* private */
+	/* private */
 
 	var url = $('meta[property="og:url"]').attr('content'),
 
 		$userAction = $('#user-action');
 
-	/* constructor */
-	function initialize() {
+	/**
+	 * Load the content for the view.
+	 * Activate associated components.
+	 * Set up event handlers.
+	 * @public
+	 */
+	function initialize(params) {
+		var programmeId = params.programmeId;
+
+		App.loadCss('/assets/css/programmepage.css');
+
+		$('#content').load('/programme/' + programmeId + ' #content', function(data, status, xhr){
+			App.emit(appConfig.VIEW_LOADED);
+		});
 
 		$userAction.on('click', userActionHandler);
 
-		App.emit(c.VIEW_LOADED);
+		App.emit(appConfig.VIEW_LOADED);
 
 		App.on(u.MODEL_CHANGED, handleUserModelChange);
 	
+	};
+
+	/**
+	 * If necessary, remove the content for the view from the DOM.
+	 * Deactivate associated components. 
+	 * Clean up event handlers.
+	 * @public
+	 */
+	function finalize() {
+
 	};
 
 	function userActionHandler(event) {
@@ -81,10 +103,10 @@ define([
 
 	};
 
-/* public */
 
-/* @class ProgrammeView */
+	/* @class ProgrammeView */
 	return {
-		initialize: initialize
+		initialize: initialize,
+		finalize: finalize
 	}
 });

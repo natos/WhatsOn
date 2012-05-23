@@ -15,6 +15,7 @@ define([
 
 	/**
 	 * Activate the associated view, and set up event handlers
+	 * @public
 	 */
 	function initialize(arguments) {
 
@@ -29,6 +30,7 @@ define([
 
 	/**
 	 * Deactivate the associated view, and clean up event handlers
+	 * @public
 	 */
 	function finalize() {
 	

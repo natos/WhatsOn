@@ -13,9 +13,14 @@ define([
 
 ], function ProgrammeController(c, p, App, ProgrammeView) {
 
-/* private */
 
-	function initialize() {
+	/**
+	 * Activate the associated view, and set up event handlers
+	 * @public
+	 */
+	function initialize(params) {
+
+		ProgrammeView.initialize(params);
 
 		upc.on(p.RECORD, record);
 		upc.on(p.FAVORITE, favorite);
@@ -24,6 +29,15 @@ define([
 	
 	};
 
+	/**
+	 * Deactivate the associated view, and clean up event handlers
+	 * @public
+	 */
+	function finalize() {
+
+		ProgrammeView.finalize();
+
+	}
 
 	function record(url) {
 
@@ -47,11 +61,11 @@ define([
 	};
 
 
-/* public */
+	/* public */
 	return {
 		name: 'programme',
-		/* constructor */
 		initialize: initialize,
+		finalize: finalize,
 		view: ProgrammeView
 	};
 

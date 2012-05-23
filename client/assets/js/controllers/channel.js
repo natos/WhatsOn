@@ -12,19 +12,34 @@ define([
 
 ], function ChannelController(c, App, ChannelView) {
 
-/* private */
+	/**
+	 * Activate the associated view, and set up event handlers
+	 * @public
+	 */
+	function initialize(params) {
 
-	function initialize() {
-	
+		ChannelView.initialize(params);
+
 		return this;
 	
 	};
 
-/* public */
+	/**
+	 * Deactivate the associated view, and clean up event handlers
+	 * @public
+	 */
+	function finalize() {
+
+		ChannelView.finalize(params);
+
+	};
+
+
+	/* public */
 	return {
 		name: 'channel',
-		/* constructor */
 		initialize: initialize,
+		finalize: finalize,
 		view: ChannelView
 	};
 

@@ -114,7 +114,6 @@ define([
 	 * @public
 	 */
 	function evaluateLocation() {
-
 		var hash = getHash(),
 			parts = hash.split('?'),
 			moduleName = parts[0],
@@ -165,7 +164,7 @@ define([
 		name: 'router',
 		initialize: initialize,
 		finalize: finalize,
-		navigate: navigateTo,
+		navigateTo: navigateTo,
 		evaluateLocation: evaluateLocation
 	};
 

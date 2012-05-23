@@ -15,7 +15,7 @@ ul(class=["channels-list-types", "#{listType}"])
 				div.inner
 					span.channelmarker(id="channelmarker-#{channelEventsCollection.channel.id}") mark
 					div.channels-list-channel__controls
-						a.logo(href="/channel/#{channelEventsCollection.channel.id}")
+						a.logo(href="/channel/#{channelEventsCollection.channel.id}", class="channel", data-channelid="#{channelEventsCollection.channel.id}")
 							img(title="#{channelEventsCollection.channel.name}", src="http://www.upc.nl#{channelEventsCollection.channel.logoIMG}", data-src="http://www.upc.nl#{channelEventsCollection.channel.logoIMG}", id="channelImg#{channelEventsCollection.channel.id}")
 						a.earlier(href=earlierUrl + "#channelmarker-#{channelEventsCollection.channel.id}")
 							span.icon-chevron-left
@@ -30,7 +30,7 @@ ul(class=["channels-list-types", "#{listType}"])
 						ul.channel-event-list
 							each event in channelEventsCollection.channelEvents
 								li.programme
-									a.programme-link(href="/programme/#{event.programme.id}")
+									a.programme.programme-link(href="/programme/#{event.programme.id}", data-programmeid="#{event.programme.id}")
 										div.time #{event.startDateTime.slice(11,13) + ':' + event.startDateTime.slice(14,16) + '-' + event.endDateTime.slice(11,13) + ':' + event.endDateTime.slice(14,16)}
 										div.title #{event.programme.title}
 										div.desc #{event.programme.shortDescription}

@@ -19,6 +19,7 @@ define([
 
 	/**
 	 * Set up event handlers.
+	 * Load controllers
 	 * @public
 	 */
 	function initialize() {
@@ -26,6 +27,9 @@ define([
 		upc.on(appConfig.NAVIGATE, activateController);
 
 		upc.on(appConfig.VIEW_LOADED, hideLoading);
+
+		$('#content').on('click', 'a.programme', navigateToProgramme)
+					.on('click', 'a.channel', navigateToChannel);
 
 		loadControllers ([
 			'controllers/channel', 
@@ -51,6 +55,9 @@ define([
 		_currentController = null;
 		upc.off(appConfig.VIEW_LOADED, hideLoading);
 		upc.off(appConfig.NAVIGATE, activateController);
+
+		$('#content').off('click', 'a.programme', navigateToProgramme)
+			.off('click', 'a.channel', navigateToChannel);
 
 	};
 
@@ -110,6 +117,22 @@ define([
 	function deactivateController(controller) {
 		if (controller && typeof(controller.finalize)==='function') {
 			controller.finalize();
+		}
+	};
+
+	function navigateToChannel(e) {
+		var channelId = this.getAttribute('data-channelid');
+		if (channelId) {
+			Router.navigateTo('channel', {'channelId':channelId});
+			e.preventDefault();
+		}
+	};
+
+	function navigateToProgramme(e) {
+		var programmeId = this.getAttribute('data-programmeid');
+		if (programmeId) {
+			Router.navigateTo('programme', {'programmeId':programmeId});
+			e.preventDefault();
 		}
 	};
 
