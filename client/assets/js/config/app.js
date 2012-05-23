@@ -25,11 +25,7 @@ define([], function AppConfig() {
 
 		$window: $(window),
 	
-		$body: $(document.body),
-
-		$content: $('#content'),
-
-		$transition: $('#transition')
+		$body: $(document.body)
 
 	};
 

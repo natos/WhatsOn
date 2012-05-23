@@ -18,7 +18,6 @@ define([
 	/* App extends EventEmitter */
 	var App = new EventEmitter();
 
-
 	/* Modules namespace */
 	App.modules = {};
 

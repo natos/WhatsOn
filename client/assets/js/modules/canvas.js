@@ -10,31 +10,24 @@ define([
 	'config/app',
 	'modules/router'
 
-], function CanvasModule(a, Router) {
+], function CanvasModule(appConfig, Router) {
 
-/* private */
+	/* private */
 
-	// current controller
-	var CURRENT,
+	var _controllers = {},
+		_currentController;
 
-		// controllers map
-		controllers = {};
-
-	/* constructor */
+	/**
+	 * Set up event handlers.
+	 * @public
+	 */
 	function initialize() {
 
-		upc.on(a.NAVIGATE, function() {
-			
-			unload(CURRENT);
-			load(arguments);
-			CURRENT = arguments[0];
+		upc.on(appConfig.NAVIGATE, activateController);
 
-		});
+		upc.on(appConfig.VIEW_LOADED, hideLoading);
 
-		// global events, every view loaded, remove transition
-		upc.on(a.VIEW_LOADED, endTransition);
-
-		loadControllers([
+		loadControllers ([
 			'controllers/channel', 
 			'controllers/dashboard',
 			'controllers/grid',
@@ -47,83 +40,85 @@ define([
 		return this;
 	};
 
-	/* destructor */
+	/**
+	 * Clean up event handlers.
+	 * Reset the list of controllers.
+	 * @public
+	 */
 	function finalize() {
 
-		upc.off(a.VIEW_LOADED, endTransition);
+		_controllers = {};
+		_currentController = null;
+		upc.off(appConfig.VIEW_LOADED, hideLoading);
+		upc.off(appConfig.NAVIGATE, activateController);
 
 	};
 
-	/* Pre Load Controllers */
+	/**
+	 * Load the code for all controllers.
+	 * @private
+	 */
 	function loadControllers(controllers) {
-		require(controllers, mapControllers);
+		require(controllers, function(){
+			var controller,
+				i,
+				controllersCount = arguments.length;
+			for (i=0; i< controllersCount; i++) {
+				controller = arguments[i];
+				if (controller && typeof(controller.name)==='string' && typeof(controller.initialize)==='function') {
+					_controllers[controller.name] = controller;
+				}
+			}
+
+			Router.evaluateLocation();
+
+		});
 	};
-
-	// map controllers
-	function map(controller) {
-		// local refernece
-		controllers[controller.name] = controller;
-		// add a routing control
-		Router.add(controller.name, load);
-	};
-
-	// iterate controllers
-	function mapControllers() {
-		while (controller = Array.prototype.shift.apply(arguments)) { map(controller); }
-	};
-
-	// handle Routings
-	function handleRouting() {
-		
-	};
-
-
-	/* Transition */
-	function endTransition() {
-		a.$transition.addClass('hide');
-		setTimeout(function() { a.$transition.remove(); }, 500);
-	};
-
 
 	/**
-	 * Load a controller for the canvas
+	 * Hide the "loading" message.
 	 * @private
 	 */
-	function load() {
-		// first argument is the module name
-		var controllerName = Array.prototype.shift.apply(arguments)[0];
+	function hideLoading() {
+		$('#transition').hide();
+	};
 
-		// intialize module and send all arguments
-		var controller;
-		if (controllerName) {
-			controller = controllers[controllerName]
-			if (controller && typeof(controller.initialize)==='function') {
-				controller.initialize(arguments);
-			}
+	/**
+	 * Activate a controller for the canvas
+	 * @private
+	 */
+	function activateController(controllerName, params) {
+		// Default controller
+		if (controllerName==='') {
+			controllerName = 'dashboard';
 		}
+
+		var controller = _controllers[controllerName];
+		if (controller && typeof(controller.initialize)==='function') {
+			$('#transition').show();
+			deactivateController(_currentController);
+			controller.initialize(params);
+			_currentController = controller;
+		}
+
 	};
 
 	/**
-	 * Unload a controller for the canvas
+	 * Deactivate a controller for the canvas
 	 * @private
 	 */
-	function unload(controllerName) {
-		var controller;
-		if (controllerName) {
-			controller = controllers[controllerName];
-			if (controller && typeof(controller.finalize)==='function') {
-				controller.finalize();
-			}
+	function deactivateController(controller) {
+		if (controller && typeof(controller.finalize)==='function') {
+			controller.finalize();
 		}
 	};
 
 
 	/* public */
-
 	return {
 		name: 'canvas',
 		initialize: initialize,
-		controllers: controllers
+		finalize: finalize
 	};
 
 });
