@@ -118,7 +118,14 @@ function(Programme, Metadata, DateUtils, Requestn) {
 
 		ProgrammeService.once('getDetails', function(error, response, body) {
 
-			var programme_details = JSON.parse(body);
+			var programme_details = {};
+
+			try {
+				programme_details = JSON.parse(body);
+			} catch(err) {
+				console.log(err);
+				// todo: better error logging
+			}
 
 			res.send(programme_details); // JSON output
 
@@ -133,10 +140,16 @@ function(Programme, Metadata, DateUtils, Requestn) {
 		var id = req.params.id;
 
 		ProgrammeService.once('getEvents', function(error, response, body) {
+			var programme_events = [];
 
-			var programme_events = JSON.parse(body);
+			try {
+				programme_events = JSON.parse(body);
+			} catch(err) {
+				console.log(err);
+				// todo: better error logging
+			}
 
-				programme_events = dateUtils.prettifyCollection(programme_events, 'startDateTime');
+			programme_events = dateUtils.prettifyCollection(programme_events, 'startDateTime');
 
 			res.send(programme_events); // JSON output
 
