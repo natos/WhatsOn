@@ -20,6 +20,13 @@ define([
 	 */
 	function initialize(params) {
 
+		// If no programmeId, look to the URL pathname
+		if (!params.programmeId) {
+			var pathParts = window.location.pathname.split('/');
+			if (pathParts.length>=2 && pathParts[1].toUpperCase()==='PROGRAMME') {
+				params.programmeId = pathParts[2];
+			}
+		}
 		ProgrammeView.initialize(params);
 
 		upc.on(p.RECORD, record);

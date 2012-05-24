@@ -30,7 +30,7 @@ define([
 	 */
 	function finalize() {
 
-		ChannelView.finalize(params);
+		ChannelView.finalize();
 
 	};
 

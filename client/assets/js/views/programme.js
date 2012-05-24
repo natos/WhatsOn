@@ -32,7 +32,7 @@ define([
 
 		App.loadCss('/assets/css/programmepage.css');
 
-		$('#content').load('/programme/' + programmeId + ' #content', function(data, status, xhr){
+		$('#content').load('/programme/' + programmeId, function(data, status, xhr){
 			App.emit(appConfig.VIEW_LOADED);
 		});
 
