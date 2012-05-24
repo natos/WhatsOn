@@ -220,7 +220,7 @@ define([
 			// DOM
 			link = $('<a>')
 				.addClass('programme')
-				.attr({ 'id': event.programme.id, 'href': '/programme/' + event.programme.id, 'title': event.programme.title })
+				.attr({ 'id': event.programme.id, 'href': '/programme/' + event.programme.id, 'title': event.programme.title, 'data-programmeid': event.programme.id })
 				.text(event.programme.title);
 
 			description = $('<p>')

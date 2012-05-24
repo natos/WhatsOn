@@ -28,5 +28,5 @@
 						span #{event.prettyDate} 
 						span 
 							| on 
-							a(href="/channel/#{event.channel.id}") #{event.channel.name}
+							a.channel(href="/channel/#{event.channel.id}", data-channelid="#{event.channel.id}") #{event.channel.name}
 							|  (#{event.channel.id})

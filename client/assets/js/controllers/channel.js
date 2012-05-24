@@ -18,6 +18,13 @@ define([
 	 */
 	function initialize(params) {
 
+		// If no channelId, look to the URL pathname
+		if (!params.channelId) {
+			var pathParts = window.location.pathname.split('/');
+			if (pathParts.length>=2 && pathParts[1].toUpperCase()==='CHANNEL') {
+				params.channelId = pathParts[2];
+			}
+		}
 		ChannelView.initialize(params);
 
 		return this;
