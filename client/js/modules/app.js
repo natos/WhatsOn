@@ -8,7 +8,7 @@
 
 define([
 
-	'/assets/js/lib/event/event.js',
+	'/js/lib/event/event.js',
 	'config/app'
 
 ], function AppModule(EventEmitter, c) {

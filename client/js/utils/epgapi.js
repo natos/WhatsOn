@@ -2,7 +2,7 @@ define([
 
 	'modules/app',
 	'utils/convert',
-	'/assets/js/lib/lscache/lscache.js'
+	'/js/lib/lscache/lscache.js'
 
 ], function(App, convert) {
 
