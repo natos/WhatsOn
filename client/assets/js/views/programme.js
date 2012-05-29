@@ -13,7 +13,7 @@ define([
 	'modules/app',
 	'controllers/programme'
 
-], function ProgrammeView(appConfig, u, p, App, ProgrammeController) {
+], function ProgrammeView(a, u, p, App, ProgrammeController) {
 
 	/* private */
 
@@ -28,17 +28,19 @@ define([
 	 * @public
 	 */
 	function initialize(params) {
+
 		var programmeId = params.programmeId;
 
+		// And if is already loaded?
 		App.loadCss('/assets/css/programmepage.css');
 
 		$('#content').load('/programme/' + programmeId, function(data, status, xhr){
-			App.emit(appConfig.VIEW_LOADED);
+			App.emit(a.VIEW_LOADED);
 		});
 
 		$userAction.on('click', userActionHandler);
 
-		App.emit(appConfig.VIEW_LOADED);
+		App.emit(a.VIEW_LOADED);
 
 		App.on(u.MODEL_CHANGED, handleUserModelChange);
 	

@@ -84,7 +84,7 @@ function(Programme, Metadata, DateUtils, Requestn) {
 				_programme_details.events = _programme_events;
 
 				// Is a film, I need to change the og:type 
-				var isMovie = (_programme_details.subcategory.category.name.toLowerCase() == 'speelfilm');
+				//var isMovie = (_programme_details.subcategory.category.name.toLowerCase() == 'speelfilm');
 
 				// Meta data
 				var _metadata = [

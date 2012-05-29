@@ -561,32 +561,32 @@ footer {
 
 
 /**
-*	dashboard top lists
+*	top lists
 */
 
-#dashboard {
+#top-lists {
 	-webkit-transition: font-size ease-in-out .3s;
 	background: transparent url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
 }
 
-#dashboard ul li i {
+#top-lists ul li i {
 	float: right;
 }
 
-#dashboard h3 {
+#top-lists h3 {
 	margin: 0;
 	font-size: 1.3em;
 }
 
-#dashboard h3 i {
+#top-lists h3 i {
 	margin: 0 5px 0 0;
 }
 
-#dashboard ul {
+#top-lists ul {
 	margin-top: 5px;
 }
 
-#dashboard li {
+#top-lists li {
 	margin: 0;
 	padding: 10px 20px;
 	background: -moz-linear-gradient(

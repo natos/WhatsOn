@@ -10,13 +10,12 @@
 		h1 #{title}
 		p #{data.shortDescription}
 
-		if !isAjax
-			#user-action
-				button.favorite #{__i('Favorite')}
-				button.record #{__i('Record')}
-				button.remind #{__i('Set Reminder')}
-				button.share #{__i('Share')}
-				//div.fb-like(data-send="true", data-width="450", data-show-faces="true")
+		#user-action
+			button.favorite #{__i('Favorite')}
+			button.record #{__i('Record')}
+			button.remind #{__i('Set Reminder')}
+			button.share #{__i('Share')}
+			//div.fb-like(data-send="true", data-width="450", data-show-faces="true")
 
 	section.bd
 		if data.events

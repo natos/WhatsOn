@@ -27,6 +27,7 @@ define([
 				params.programmeId = pathParts[2];
 			}
 		}
+
 		ProgrammeView.initialize(params);
 
 		upc.on(p.RECORD, record);

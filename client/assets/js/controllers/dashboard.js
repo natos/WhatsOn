@@ -51,7 +51,7 @@ define([
 		FB.api({
 			method: 'fql.query',
 			query: 'SELECT uid, name, pic_square FROM user WHERE is_app_user AND uid IN (SELECT uid2 FROM friend WHERE uid1 = me())',
-			accessToken: upc.user.model['facebook-status'].authResponse.accessToken
+			accessToken: upc.modules.user.model['facebook-status'].authResponse.accessToken
 		},
 		function(response) {
 			console.log(response);

@@ -32,7 +32,7 @@ define([
 
 		$window.on('resize orientationchange', handleResize);
 
-		resizeImages();
+		handleResize();
 
 		App.emit(c.VIEW_LOADED, 'movies');
 

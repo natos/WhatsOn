@@ -10,7 +10,7 @@ define([
 
 	'config/user'
 
-], function UserMode(u) {
+], function UserModel(u) {
 
 /* private */
 
