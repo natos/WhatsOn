@@ -76,6 +76,8 @@ function(express, i18n, config, Supports, Login, Dashboard, Grid, Channel, Progr
 
 	var globalHandler = function(req, res, next) {
 
+		res.isJsonp = req.query.callback || null;
+
 		req.isAjax = req.headers['x-requested-with'] === 'XMLHttpRequest';
 
 		req.supports = new Supports(req);

@@ -77,6 +77,22 @@ function(Programme, Metadata, DateUtils, Requestn) {
 					}
 				}
 
+				if (response[PROGRAMME_DETAILS].body === '{}') {
+					// empty response
+					console.log('Empty response');
+					res.render(req.xhr ? '404-content.jade' : '404.jade', {
+						metadata	: metadata.get(),
+						config		: _app.config,
+						url			: _app.config.APP_URL + '404/',
+						title		: '404',
+						prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-whatson: http://ogp.me/ns/fb/upc-whatson#',
+						supports	: req.supports,
+						isAjax		: req.isAjax
+
+					});
+					return;
+				}
+
 				var _programme_details = JSON.parse( response[PROGRAMME_DETAILS].body ),
 					_programme_events = JSON.parse( response[PROGRAMME_EVENTS].body );
 
@@ -127,7 +143,17 @@ function(Programme, Metadata, DateUtils, Requestn) {
 				// todo: better error logging
 			}
 
+			// JSONP support
+			if (res.isJsonp) {
+				res.contentType('json');
+				res.send( res.isJsonp + '(' + JSON.stringify(programme_details) + ');' );
+				res.end();
+				return;
+			}
+
+			// normal response
 			res.send(programme_details); // JSON output
+			res.end();
 
 		}).getDetails(id);
 
@@ -140,6 +166,7 @@ function(Programme, Metadata, DateUtils, Requestn) {
 		var id = req.params.id;
 
 		ProgrammeService.once('getEvents', function(error, response, body) {
+
 			var programme_events = [];
 
 			try {
@@ -151,7 +178,17 @@ function(Programme, Metadata, DateUtils, Requestn) {
 
 			programme_events = dateUtils.prettifyCollection(programme_events, 'startDateTime');
 
+			// JSONP support
+			if (res.isJsonp) {
+				res.contentType('json');
+				res.send( res.isJsonp + '(' + JSON.stringify(programme_events) + ');' );
+				res.end();
+				return;
+			}
+
+			// normal response
 			res.send(programme_events); // JSON output
+			res.end();
 
 		}).getEvents(id);
 

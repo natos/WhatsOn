@@ -54,14 +54,10 @@ function(util, events, request, config, TOP_BOOKINGS_MOCK) {
 
 		var self = this;
 
-//		self.emit('getTopBookings', '', '', TOP_BOOKINGS_MOCK);
-
 		request(TOP_BOOKINGS, function(error, response, body) {
 
 			// API Error? Grab the mock
-			if ( !body || /\s(E|e)rror\s/.test(body) ) {
-
-				console.log(' Bookings Service >>> Error getting TopBookings: ', body);
+			if ( !body || /404|500/.test(response.statusCode) ) {
 
 				self.emit('getTopBookings', error, response, TOP_BOOKINGS_MOCK);
 

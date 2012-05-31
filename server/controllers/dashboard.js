@@ -32,7 +32,9 @@ function(Channel, Bookings, DateUtils, Metadata) {
 		// Routing
 
 		app.server.get('/', this.render);
+
 		app.server.get('/dashboard', this.render);
+
 	};
 
 
