@@ -20,7 +20,7 @@ define([
  *	@class MoviesController
  */
 
-function(Movies, DateUtils, Metadata) {
+function(MoviesService, DateUtils, Metadata) {
 
 	/** @constructor */
 
@@ -39,10 +39,7 @@ function(Movies, DateUtils, Metadata) {
 
 	var _app,
 
-		metadata = new Metadata(),
-
-		MoviesService = new Movies();
-
+		metadata = new Metadata();
 
 	/** @public */
 
@@ -59,7 +56,7 @@ function(Movies, DateUtils, Metadata) {
 
 		};
 
-		MoviesService.once('getTopMovies', function(error, response, body) {
+		new MoviesService().once('getTopMovies', function(error, response, body) {
 
 			topmovies = JSON.parse(body);
 

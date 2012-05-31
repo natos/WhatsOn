@@ -21,7 +21,7 @@ define([
  *	@class ChannelController
  */
 
-function(Programme, Metadata, DateUtils, Requestn) {
+function(ProgrammeService, Metadata, DateUtils, Requestn) {
 
 	/** @constructor */
 
@@ -45,8 +45,6 @@ function(Programme, Metadata, DateUtils, Requestn) {
 	var _app,
 
 		metadata = new Metadata(),
-
-		ProgrammeService = new Programme(),
 
 		dateUtils = new DateUtils();
 
@@ -85,7 +83,7 @@ function(Programme, Metadata, DateUtils, Requestn) {
 						config		: _app.config,
 						url			: _app.config.APP_URL + '404/',
 						title		: '404',
-						prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-whatson: http://ogp.me/ns/fb/upc-whatson#',
+						prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-social: http://ogp.me/ns/fb/upc-social#',
 						supports	: req.supports,
 						isAjax		: req.isAjax
 
@@ -119,7 +117,7 @@ function(Programme, Metadata, DateUtils, Requestn) {
 					url			: _app.config.APP_URL + 'programme/' + _programme_details.id,
 					data		: _programme_details,
 					title		: _programme_details.title,
-					prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-whatson: http://ogp.me/ns/fb/upc-whatson#',
+					prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-social: http://ogp.me/ns/fb/upc-whatson#',
 					supports	: req.supports,
 					isAjax		: req.isAjax
 				}); // HTML output	
@@ -132,16 +130,18 @@ function(Programme, Metadata, DateUtils, Requestn) {
 
 		var id = req.params.id;
 
-		ProgrammeService.once('getDetails', function(error, response, body) {
+		new ProgrammeService().once('getDetails', function(error, response, body) {
 
 			var programme_details = {};
 
-			try {
+			if ( /500|404/.test(response.statusCode) ) {
+				programme_details = [{ "statusCode" : "404" }];
+			} else {
 				programme_details = JSON.parse(body);
-			} catch(err) {
-				console.log(err);
-				// todo: better error logging
+				programme_details = dateUtils.prettifyCollection(programme_details, 'startDateTime');
 			}
+
+			/* response */
 
 			// JSONP support
 			if (res.isJsonp) {
@@ -165,18 +165,18 @@ function(Programme, Metadata, DateUtils, Requestn) {
 
 		var id = req.params.id;
 
-		ProgrammeService.once('getEvents', function(error, response, body) {
+		new ProgrammeService().once('getEvents', function(error, response, body) {
 
 			var programme_events = [];
 
-			try {
+			if ( /500|404/.test(response.statusCode) ) {
+				programme_events = [{ "statusCode" : "404" }];
+			} else {
 				programme_events = JSON.parse(body);
-			} catch(err) {
-				console.log(err);
-				// todo: better error logging
+				programme_events = dateUtils.prettifyCollection(programme_events, 'startDateTime');
 			}
 
-			programme_events = dateUtils.prettifyCollection(programme_events, 'startDateTime');
+			/* response */
 
 			// JSONP support
 			if (res.isJsonp) {

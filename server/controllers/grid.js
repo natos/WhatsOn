@@ -19,7 +19,7 @@ define([
  *	@class GridController
  */
 
-function(Channel, Metadata) {
+function(ChannelService, Metadata) {
 
 	/** @constructor */
 
@@ -38,16 +38,14 @@ function(Channel, Metadata) {
 
 	var _app,
 
-		metadata = new Metadata(),
-
-		ChannelService = new Channel();
+		metadata = new Metadata();
 
 
 	/** @public */
 
 	GridController.prototype.render = function(req, res) {
 
-		ChannelService.once('getChannels', function(channels) {
+		new ChannelService().once('getChannels', function(channels) {
 
 			res.render('grid.jade', {
 				metadata	: metadata.get(),

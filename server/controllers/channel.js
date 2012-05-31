@@ -22,7 +22,7 @@ define([
  *	@class ChannelController
  */
 
-function(Channel, Metadata, DateUtils, Requestn, PrettyDate) {
+function(ChannelService, Metadata, DateUtils, Requestn, PrettyDate) {
 
 	/** @constructor */
 
@@ -48,8 +48,6 @@ function(Channel, Metadata, DateUtils, Requestn, PrettyDate) {
 	var _app,
 
 		metadata = new Metadata(),
-
-		ChannelService = new Channel(),
 
 		dateUtils = new DateUtils();
 
@@ -133,7 +131,7 @@ function(Channel, Metadata, DateUtils, Requestn, PrettyDate) {
 
 		var id = req.params.id;
 
-		ChannelService.once('getChannels', function(channels) {
+		new ChannelService().once('getChannels', function(channels) {
 
 			res.send(channels); // JSON output
 
@@ -146,7 +144,7 @@ function(Channel, Metadata, DateUtils, Requestn, PrettyDate) {
 
 		var id = req.params.id;
 
-		ChannelService.once('getDetails', function(error, response, body) {
+		new ChannelService().once('getDetails', function(error, response, body) {
 
 			var channel_details = JSON.parse(body);
 
@@ -162,7 +160,7 @@ function(Channel, Metadata, DateUtils, Requestn, PrettyDate) {
 
 		var id = req.params.id;
 
-		ChannelService.once('getEvents', function(error, response, body) {
+		new ChannelService().once('getEvents', function(error, response, body) {
 
 			var channel_events = JSON.parse(body);
 

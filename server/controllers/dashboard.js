@@ -21,7 +21,7 @@ define([
  *	@class DashboardController
  */
 
-function(Channel, Bookings, DateUtils, Metadata) {
+function(ChannelService, BookingsService, DateUtils, Metadata) {
 
 	/** @constructor */
 
@@ -44,18 +44,14 @@ function(Channel, Bookings, DateUtils, Metadata) {
 
 		metadata = new Metadata(),
 
-		dateUtils = new DateUtils(),
-
-		ChannelService = new Channel(),
-
-		BookingsService = new Bookings();
+		dateUtils = new DateUtils();
 
 
 	/** @public */
 
 	DashboardController.prototype.render = function(req, res) {
 
-		var topbookings, render = function() {
+		var topbookings, channels, render = function() {
 
 			if (!topbookings) { return; }
 
@@ -70,7 +66,7 @@ function(Channel, Bookings, DateUtils, Metadata) {
 
 		};
 
-		BookingsService.once('getTopBookings', function(error, response, body) {
+		new BookingsService().once('getTopBookings', function(error, response, body) {
 
 			topbookings = JSON.parse(body);
 

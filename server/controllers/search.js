@@ -23,7 +23,7 @@ define([
 *	@class SearchController
 */
 
-function(querystring, Search, Metadata, DateUtils) {
+function(querystring, SearchService, Metadata, DateUtils) {
 
 	/** @constructor */
 
@@ -44,8 +44,6 @@ function(querystring, Search, Metadata, DateUtils) {
 
 		metadata = new Metadata(),
 
-		SearchService = new Search(),
-
 		dateUtils = new DateUtils();
 
 
@@ -58,7 +56,7 @@ function(querystring, Search, Metadata, DateUtils) {
 		// avoid empty query
 		if (!query) { res.end(); return; }
 
-		SearchService.once('search', function(error, response, body) {
+		new SearchService().once('search', function(error, response, body) {
 
 			var results = JSON.parse(body);
 
