@@ -78,7 +78,7 @@ function(ProgrammeService, Metadata, DateUtils, Requestn) {
 				if (response[PROGRAMME_DETAILS].body === '{}') {
 					// empty response
 					console.log('Empty response');
-					res.render(req.xhr ? '404-content.jade' : '404.jade', {
+					res.render(req.xhr ? 'contents/404.jade' : 'layouts/404.jade', {
 						metadata	: metadata.get(),
 						config		: _app.config,
 						url			: _app.config.APP_URL + '404/',
@@ -103,13 +103,13 @@ function(ProgrammeService, Metadata, DateUtils, Requestn) {
 				// Meta data
 				var _metadata = [
 //					{ property: "og:type"			, content: (isMovie) ? "video.movie" : "video.tv_show" },
-					{ property: "og:description"	, content: _programme_details.shortDescription },
 					{ property: "og:type"			, content: "video.tv_show" },
+					{ property: "og:description"	, content: _programme_details.shortDescription },
 					{ property: "og:url"			, content: "http://upcsocial.herokuapp.com/programme/" + _programme_details.id },
 					{ property: "og:title"			, content: _programme_details.title }
 				];
 
-				var template = req.xhr ? 'programme-ajax.jade' : 'programme.jade'
+				var template = req.xhr ? 'contents/programme.jade' : 'layouts/programme.jade'
 
 				res.render(template, {
 					metadata	: metadata.override(_metadata, 'property').get(),
@@ -134,12 +134,12 @@ function(ProgrammeService, Metadata, DateUtils, Requestn) {
 
 			var programme_details = {};
 
-			if ( /500|404/.test(response.statusCode) ) {
+			if ( !response || /500|404/.test(response.statusCode) ) {
 				programme_details = [{ "statusCode" : "404" }];
 			} else {
 				programme_details = JSON.parse(body);
-				programme_details = dateUtils.prettifyCollection(programme_details, 'startDateTime');
 			}
+
 
 			/* response */
 
@@ -169,7 +169,7 @@ function(ProgrammeService, Metadata, DateUtils, Requestn) {
 
 			var programme_events = [];
 
-			if ( /500|404/.test(response.statusCode) ) {
+			if ( !response || /500|404/.test(response.statusCode) ) {
 				programme_events = [{ "statusCode" : "404" }];
 			} else {
 				programme_events = JSON.parse(body);

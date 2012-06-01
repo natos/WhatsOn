@@ -95,7 +95,9 @@ function(querystring, SearchService, Metadata, DateUtils) {
 
 			}
 
-			res.render('search-results.jade', {
+			var template = req.xhr ? 'contents/search.jade' : 'layouts/search.jade';
+
+			res.render(template, {
 				metadata		: metadata.get(),
 				config			: _app.config,
 				query			: query,

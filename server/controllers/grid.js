@@ -47,7 +47,9 @@ function(ChannelService, Metadata) {
 
 		new ChannelService().once('getChannels', function(channels) {
 
-			res.render('grid.jade', {
+			var template = req.xhr ? 'contents/grid.jade' : 'layouts/grid.jade'
+
+			res.render(template, {
 				metadata	: metadata.get(),
 				config		: _app.config,
 				channels	: channels,

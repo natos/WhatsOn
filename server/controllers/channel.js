@@ -112,7 +112,7 @@ function(ChannelService, Metadata, DateUtils, Requestn, PrettyDate) {
 					{ property: "og:description"	, content: _channel_details.description }
 				];
 
-				res.render('channel.jade', {
+				res.render('layouts/channel.jade', {
 					metadata	: metadata.override(_metadata, 'property').get(),
 					config		: _app.config,
 					url			: _app.config.APP_URL + 'channel/' + _channel_details.id,

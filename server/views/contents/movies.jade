@@ -1,26 +1,19 @@
-#content-dashboard
+#content-movies
 	#featured
-		ul.show
-			each event in topbookings
-				li.programme
-					img.programme-bg(src="/assets/programmes/s/8ad586a135af96b70135afe916940151.jpg")
-					div.programme-details
-						h1
-							a(href="/programme/#{event.programme.id}") #{event.programme.title}
-
-						button.btn.primary
-							i.icon-time
-							b.label #{__i('Record')}
-						button.btn.primary.skin
-							i.icon-play-circle
-							b.label #{__i('Play')}
-						p
-							| #{event.prettyDate} 
-							| on
-							a(href="/channel/#{event.channel.id}") #{event.channel.name} 
+		ul.movies
+			each movie in topmovies
+				li.movie
+					p 
+						strong #{movie.title} 
+						| (#{movie.year})
+					.poster
+						.score
+							i.icon-star
+							| #{movie.score}
+						img(src="/assets/posters/s/#{movie.poster}")
 
 
-	#top-lists.fluid
+	#dashboard.fluid
 		.top-favorites.span4
 			h3.btn
 				i.icon-star
@@ -60,7 +53,7 @@
 		.top-among-friends.span4
 			h3.btn
 				i.icon-heart
-				| #{__i('Top shows among friends')} 
+				| #{__i('Top movies among friends')} 
 			ul
 				li 
 					i.icon-chevron-right

@@ -1,0 +1,18 @@
+ul.show
+	each event in topbookings
+		li.programme
+			img.programme-bg(src="/assets/programmes/s/#{event.picture}.jpg")
+			div.programme-details
+				h1
+					a(href="/programme/#{event.programme.id}") #{event.programme.title}
+
+				button.btn.primary
+					i.icon-time
+					b.label #{__i('Record')}
+				button.btn.primary.skin
+					i.icon-play-circle
+					b.label #{__i('Play')}
+				p
+					| #{event.prettyDate} 
+					| on
+					a(href="/channel/#{event.channel.id}") #{event.channel.name} 

@@ -40,7 +40,7 @@ function(Metadata) {
 
 	LoginController.prototype.render = function(req, res) {
 
-		res.render('login.jade', {
+		res.render('layouts/login.jade', {
 			metadata	: metadata.get(),
 			config		: _app.config,
 			supports	: req.supports

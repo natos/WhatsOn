@@ -40,7 +40,9 @@ function(Metadata) {
 
 	SettingsController.prototype.render = function(req, res) {
 
-		res.render('settings.jade', {
+		var template = req.xhr ? 'contents/settings.jade' : 'layouts/settings.jade';
+
+		res.render(template, {
 			metadata	: metadata.get(),
 			config		: _app.config,
 			supports	: req.supports

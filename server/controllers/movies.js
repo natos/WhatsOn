@@ -47,7 +47,9 @@ function(MoviesService, DateUtils, Metadata) {
 
 		var topmovies, render = function() {
 
-			res.render('movies.jade', {
+			var template = req.xhr ? 'contents/movies.jade' : 'layouts/movies.jade'
+
+			res.render(template, {
 				metadata	: metadata.get(),
 				config		: _app.config,
 				topmovies 	: topmovies,
