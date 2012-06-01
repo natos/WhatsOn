@@ -14,11 +14,11 @@ define([
 
 	Carousel.map = {};
 
-	Carousel.initialize = function(el) {
+	Carousel.initialize = function() {
 
 		var self = this;
 
-		this.el = $(el).addClass('carousel');
+		this.el = $('#featured').addClass('carousel');
 
 		this.list = this.el.find('.show').addClass('slide');
 
