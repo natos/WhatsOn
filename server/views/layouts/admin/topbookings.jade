@@ -10,8 +10,19 @@ if topbookings
 				|  #{event.prettyDate}
 				p #{event.programme.shortDescription}
 				p Programme ID: #{event.programme.id}
-				p Images: 
-					img(src="#{baseImageUrl}/s/#{event.programme.id}.jpg")
-					img(src="#{baseImageUrl}/m/#{event.programme.id}.jpg")
-					img(src="#{baseImageUrl}/l/#{event.programme.id}.jpg")
-					img(src="#{baseImageUrl}/xl/#{event.programme.id}.jpg")
+				table
+					tr
+						th s
+						th m
+						th l
+						th xl
+					tr
+						td
+							img(src="#{baseImageUrl}/s/#{event.programme.id}.jpg", style="height:45px")
+						td
+							img(src="#{baseImageUrl}/m/#{event.programme.id}.jpg", style="height:45px")
+						td
+							img(src="#{baseImageUrl}/l/#{event.programme.id}.jpg", style="height:45px")
+						td
+							img(src="#{baseImageUrl}/xl/#{event.programme.id}.jpg", style="height:45px")
+				br

@@ -1,7 +1,7 @@
 ul.show
 	each event in topbookings
 		li.programme
-			img.programme-bg(src="/assets/programmes/s/#{event.picture}.jpg")
+			img.programme-bg(src="http://localhost/clients/upc/programme-images/s/#{event.programme.id}.jpg")
 			div.programme-details
 				h1
 					a(href="/programme/#{event.programme.id}") #{event.programme.title}

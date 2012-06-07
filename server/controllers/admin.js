@@ -29,7 +29,7 @@ function(Bookings, DateUtils) {
 
 		// Routing
 
-		app.server.get('/admin/topbookings', this.render);
+		app.server.get('/admin/topbookings', this.renderTopBookings);
 	};
 
 
@@ -44,7 +44,7 @@ function(Bookings, DateUtils) {
 
 	/** @public */
 
-	AdminController.prototype.render = function(req, res) {
+	AdminController.prototype.renderTopBookings = function(req, res) {
 
 		var topbookings;
 
