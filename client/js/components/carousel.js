@@ -12,7 +12,46 @@ define([
 
 /* private */
 
-	$window = $(window);
+	var $window = $(window),
+
+	el, 
+
+	list,
+
+	timer = {
+		clock: void 0,
+		time: 5000, // time to slide
+		status: false,
+		start: function() {
+			timer.status = true;
+			timer.clock = setTimeout(timer.tick, timer.time);
+		},
+		tick: function() {
+
+			if (!timer.status) { return; }
+
+			console.log(timer, timer.clock);
+
+			var disc = $('.disc.selected').next();
+
+			if (!disc[0]) {
+				$('.disc').first().trigger('click');
+			} else {
+				disc.trigger('click');
+			}
+
+			timer.restart();
+
+		},
+		restart: function() {
+			timer.stop();
+			timer.start();
+		},
+		stop: function() {
+			timer.status = false;
+			timer.clock = clearTimeout(timer.clock);
+		}
+	};
 
 	function sizeHandler() {
 		// The images are in 16:9 aspect ratio. Limit height to no more than 400px.
@@ -21,10 +60,18 @@ define([
 		list.css({'height': ($window.width() * 0.5625) + 'px' });
 	};
 
-	function loadButtons() {
+	function discHandler(event) {
+		var $this = $(this);
+		event.stopPropagation();
+		list.css('left', $this.data('index') * -100 + '%' );
+		$('.disc').removeClass('selected');
+		$this.addClass('selected');
+	};
 
-		var buttons = $('<div>').addClass('navigator').appendTo(el),
-			button = $('<i>').addClass('disc').addClass('icon-stop'),
+	function addButtons() {
+
+		var navigator = $('<div>').addClass('navigator').appendTo(el),
+			disc = $('<i>').addClass('disc').addClass('icon-stop'),
 			maxScreenWidth = Math.max($window.width(), $window.height()),
 			programme,
 			imgSize,
@@ -55,16 +102,11 @@ define([
 				src = src.replace('/s/', '/' + imgSize + '/');
 				$bg.attr('src', src);
 
-			map['disc-' + i] = button
+			map['disc-' + i] = disc
 				.clone()
 				.data('index', i)
-				.click(function(event) {
-					event.stopPropagation();
-					list.css('left', $(this).data('index') * -100 + '%' );
-					$('.disc').removeClass('selected');
-					$(this).addClass('selected');
-				})
-				.appendTo(buttons);
+				.click(discHandler)
+				.appendTo(navigator);
 		});		
 
 		// select first
@@ -76,31 +118,6 @@ define([
 		// restart timer every disc click
 		$('.disc').bind('click', timer.restart );
 		
-	};
-
-	var timer = {
-		clock: '',
-		time: 5000, // time to slide
-		start: function() {
-			this.clock = setInterval(timer.tick, timer.time);
-		},
-		tick: function() {
-			console.log(timer.clock);
-			var disc = $('.disc.selected').next();
-			if (!disc[0]) {
-				$('.disc').first().trigger('click');
-			} else {
-				disc.trigger('click');
-			}
-			timer.restart();
-		},
-		restart: function() {
-			timer.stop();
-			timer.start();
-		},
-		stop: function() {
-			clearInterval(timer.clock);
-		}
 	};
 
 	// swipe handler
@@ -168,7 +185,7 @@ define([
 
 		sizeHandler();
 
-		loadButtons();
+		addButtons();
 
 		// start timer
 		timer.start();
@@ -179,7 +196,7 @@ define([
 	function finalize() {
 
 		// stop timer
-		timer.stop();
+		console.log(timer.stop());
 
 		$window.off('resize orientationchange', sizeHandler);
 
