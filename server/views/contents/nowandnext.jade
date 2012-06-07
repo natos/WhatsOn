@@ -1,36 +1,37 @@
-ul(class=["channels-list-types", "#{listType}"])
-	li.type
-		a.type-pop(href=popUrl) Popular channels
-	li.type
-		a.type-fav(href=favUrl)
-			img(src="/assets/images/f_logo.png", height="16", width="16", style="display:inline;vertical-align:top;margin-right:0.5em") 
-			span Liked channels
-	li.type
-		a.type-all(href=allUrl) All channels
-
-#channels-list-container
-	ul.channels-list
-		each channelEventsCollection in channelEventsCollections
-			li.channels-list-channel
-				div.inner
-					span.channelmarker(id="channelmarker-#{channelEventsCollection.channel.id}") mark
-					div.channels-list-channel__controls
-						a.logo(href="/channel/#{channelEventsCollection.channel.id}", class="channel", data-channelid="#{channelEventsCollection.channel.id}")
-							img(title="#{channelEventsCollection.channel.name}", src="http://www.upc.nl#{channelEventsCollection.channel.logoIMG}", data-src="http://www.upc.nl#{channelEventsCollection.channel.logoIMG}", id="channelImg#{channelEventsCollection.channel.id}")
-						a.earlier(href=earlierUrl + "#channelmarker-#{channelEventsCollection.channel.id}")
-							span.icon-chevron-left
-							#{earlierText}
-						span.now
-							span.nowtime #{nowTime}
-							span.nowdate #{nowDate}
-						a.later(href=laterUrl + "#channelmarker-#{channelEventsCollection.channel.id}")
-							#{laterText}
-							span.icon-chevron-right
-					div.channels-list-channel__programmes(id="channels-list_channel_#{channelEventsCollection.channel.id}__programmes")
-						ul.channel-event-list
-							each event in channelEventsCollection.channelEvents
-								li.programme
-									a.programme.programme-link(href="/programme/#{event.programme.id}", data-programmeid="#{event.programme.id}")
-										div.time #{event.startDateTime.slice(11,13) + ':' + event.startDateTime.slice(14,16) + '-' + event.endDateTime.slice(11,13) + ':' + event.endDateTime.slice(14,16)}
-										div.title #{event.programme.title}
-										div.desc #{event.programme.shortDescription}
+#nowandnext-content
+	ul(class=["channels-list-types", "#{listType}"])
+		li.type
+			a.type-pop(href=popUrl) Popular channels
+		li.type
+			a.type-fav(href=favUrl)
+				img(src="/assets/images/f_logo.png", height="16", width="16", style="display:inline;vertical-align:top;margin-right:0.5em") 
+				span Liked channels
+		li.type
+			a.type-all(href=allUrl) All channels
+	
+	#channels-list-container
+		ul.channels-list
+			each channelEventsCollection in channelEventsCollections
+				li.channels-list-channel
+					div.inner
+						span.channelmarker(id="channelmarker-#{channelEventsCollection.channel.id}") mark
+						div.channels-list-channel__controls
+							a.logo(href="/channel/#{channelEventsCollection.channel.id}", class="channel", data-channelid="#{channelEventsCollection.channel.id}")
+								img(title="#{channelEventsCollection.channel.name}", src="http://www.upc.nl#{channelEventsCollection.channel.logoIMG}", data-src="http://www.upc.nl#{channelEventsCollection.channel.logoIMG}", id="channelImg#{channelEventsCollection.channel.id}")
+							a.earlier(href=earlierUrl + "#channelmarker-#{channelEventsCollection.channel.id}")
+								span.icon-chevron-left
+								#{earlierText}
+							span.now
+								span.nowtime #{nowTime}
+								span.nowdate #{nowDate}
+							a.later(href=laterUrl + "#channelmarker-#{channelEventsCollection.channel.id}")
+								#{laterText}
+								span.icon-chevron-right
+						div.channels-list-channel__programmes(id="channels-list_channel_#{channelEventsCollection.channel.id}__programmes")
+							ul.channel-event-list
+								each event in channelEventsCollection.channelEvents
+									li.programme
+										a.programme.programme-link(href="/programme/#{event.programme.id}", data-programmeid="#{event.programme.id}")
+											div.time #{event.startDateTime.slice(11,13) + ':' + event.startDateTime.slice(14,16) + '-' + event.endDateTime.slice(11,13) + ':' + event.endDateTime.slice(14,16)}
+											div.title #{event.programme.title}
+											div.desc #{event.programme.shortDescription}
