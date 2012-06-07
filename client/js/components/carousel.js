@@ -30,8 +30,6 @@ define([
 
 			if (!timer.status) { return; }
 
-			console.log(timer, timer.clock);
-
 			var disc = $('.disc.selected').next();
 
 			if (!disc[0]) {
