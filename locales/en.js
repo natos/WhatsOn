@@ -46,5 +46,6 @@
 	"That 70's show": "That 70's show",
 	"Your search begins here...": "Your search begins here...",
 	"Log Out": "Log Out",
-	"Favorite": "Favorite"
+	"Favorite": "Favorite",
+	"ViewView": "ViewView"
 }

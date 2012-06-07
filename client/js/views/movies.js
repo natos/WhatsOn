@@ -10,47 +10,16 @@
 define([
 
 	'config/app',
-	'modules/app'
+	'modules/app',
+	'lib/flaco/view'
 
-], function MoviesView(c, App) {
+], function MoviesView(a, App, View) {
+
+	var name = "movies";
+
+/* private */
 
 	var executionTimer;
-	var $window = $(window);
-
-	/**
-	 * Load the content for the view.
-	 * Activate associated components.
-	 * Set up event handlers.
-	 * @public
-	 */
-	function initialize() {
-
-		if ($('#content').find('#content-movies').length==0) {
-			// Get grid container from server
-			$('#content').load('/movies #content');
-		}
-
-		$window.on('resize orientationchange', handleResize);
-
-		handleResize();
-
-		App.emit(c.VIEW_LOADED, 'movies');
-
-		return this;
-
-	};
-
-	/**
-	 * If necessary, remove the content for the view from the DOM.
-	 * Deactivate associated components. 
-	 * Clean up event handlers.
-	 * @public
-	 */
-	function finalize() {
-
-		$window.off('resize orientationchange', handleResize);
-
-	}
 
 	/**
 	 * Handler for resizing & orientationchange events.
@@ -73,7 +42,7 @@ define([
 	 */
 	function resizeImages() {
 
-		var maxScreenWidth = Math.max($window.width(), $window.height()),
+		var maxScreenWidth = Math.max(a.$window.width(), a.$window.height()),
 			imgSize, oldSrc, newSrc, $item;
 	
 		if (maxScreenWidth <= 865) {
@@ -96,10 +65,39 @@ define([
 	};
 
 
-	/* public */
-	return {
-		initialize: initialize,
-		finalize: finalize
+/* public */
+
+	function initialize() {
+
+		a.$window.on('resize orientationchange', handleResize);
+
+		handleResize();
+
+		return this;
+	
 	};
+
+	function render() {
+
+		return this;
+
+	};
+
+	function finalize() {
+
+		a.$window.off('resize orientationchange', handleResize);
+
+		return this;
+
+	};
+
+/* export */
+
+	return new View({
+		name: name,
+		render: render,
+		finalize: finalize,
+		initialize: initialize
+	});
 
 });

@@ -3,24 +3,24 @@
 	.navbar-inner
 		.upc-logo #{config.APP_NAME}
 		.nav
-			a.home(href="/", title="#{__i('Home')}", data-appurl="#dashboard")
+			a.dashboard(href="/dashboard", title="#{__i('Dashboard')}")
 				i.icon-home
 				b.label #{__i('Home')}
-			a.movies(href="/movies", title="#{__i('Movies')}", data-appurl="#movies")
+			a.movies(href="/movies", title="#{__i('Movies')}",)
 				i.icon-film
 				b.label #{__i('Movies')}
-			a.nowandnext(href="/nowandnext", title="#{__i('Now &amp; Next')}", data-appurl="#nowandnext")
+			a.nowandnext(href="/nowandnext", title="#{__i('Now &amp; Next')}")
 				i.icon-time
 				b.label #{__i('Now &amp; Next')}
-			a.login(href="/login", title="#{__i('Login')}", data-appurl="#login")
+			a.login(href="/login", title="#{__i('Login')}")
 				i.icon-user
 				b.label #{__i('Login')}
 
 .user-control
-	a.settings(href="/settings", data-appurl="#settings")
+	a.settings(href="/settings")
 		i.icon-cog
 		b.label #{__i('Settings')}
-	a.logout(href="/logout", data-appurl="#logout")
+	a.logout(href="/logout")
 		i.icon-signout
 		b.label #{__i('Log Out')}
 

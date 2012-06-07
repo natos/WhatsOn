@@ -11,55 +11,42 @@ define([
 	'config/user',
 	'config/programme',
 	'modules/app',
+	'lib/flaco/view',
 	'controllers/programme'
 
-], function ProgrammeView(a, u, p, App, ProgrammeController) {
+], function ProgrammeView(a, u, p, App, View, ProgrammeController) {
 
-	/* private */
+	var name = 'programme';
 
-	var url = $('meta[property="og:url"]').attr('content'),
+/* private */
 
-		$userAction = $('#user-action');
+	var url = $('meta[property="og:url"]').attr('content');
 
-	/**
-	 * Load the content for the view.
-	 * Activate associated components.
-	 * Set up event handlers.
-	 * @public
-	 */
-	function initialize(params) {
+	function handleUserModelChanges(event) {
 
-		var programmeId = params.programmeId;
+		var favorites, t, id;
 
-		// And if is already loaded?
-		App.loadCss('/assets/css/programmepage.css');
+		if (event['favorites']) {
 
-		$('#content').load('/programme/' + programmeId, function(data, status, xhr){
-			App.emit(a.VIEW_LOADED);
-		});
+			favorites = event['favorites'].data;
 
-		$userAction.on('click', userActionHandler);
+			t = favorites.length;
 
-		App.emit(a.VIEW_LOADED);
-
-		App.on(u.MODEL_CHANGED, handleUserModelChange);
-	
-	};
-
-	/**
-	 * If necessary, remove the content for the view from the DOM.
-	 * Deactivate associated components. 
-	 * Clean up event handlers.
-	 * @public
-	 */
-	function finalize() {
+			while (t--) {
+				// if the ID of the show is in my favorite list, disable the favorite button;
+				if (favorites[t].data.tv_show.url === url) {
+					$('#user-action').find('.favorite').attr('disable','disable').addClass('disable');
+				}
+			}
+			
+		}
 
 	};
 
 	function userActionHandler(event) {
 
-		if ( /disable/.test(event.target.className) ) {
-			
+		if ( /disable/.test(event.target.className) ) {			
+			console.log('disable');
 			return;
 		}
 
@@ -73,42 +60,72 @@ define([
 
 	};
 
+	/* ACTIONS */
+
 	function record() {
 
-		upc.emit(p.RECORD, url);
+		App.emit(p.RECORD, url);
 
 	};
 
 	function favorite() {
 
-		upc.emit(p.FAVORITE, url);
+		App.emit(p.FAVORITE, url);
 
 	};
 
-	function handleUserModelChange(event) {
+/* public */
 
-		var favorites, t;
+	/**
+	 * Load the content for the view.
+	 * Activate associated components.
+	 * Set up event handlers.
+	 * @public
+	 */
+	function initialize() {
 
-		if (event['favorites']) {
 
-			favorites = event['favorites'].data;
+		// And if is already loaded?
+		App.loadCss('/assets/css/programmepage.css');
+/*
+		$('#content').load('/programme/' + programmeId, function(data, status, xhr){
 
-			t = favorites.length;
+			p.$userAction = $('#user-action').on('click', userActionHandler);
 
-			while (t--) {
-				if (favorites[t].data.tv_show.url === window.location.href) {
-					p.$favorite.addClass('disable');
-				}
-			}
-			
-		}
+			App.emit(a.VIEW_RENDERED);
+
+		});
+*/
+		App.on(u.MODEL_CHANGED, handleUserModelChanges);
+	
+	};
+
+	function render() {
+
+		p.$userAction = $('#user-action').on('click', userActionHandler);
 
 	};
 
+	/**
+	 * If necessary, remove the content for the view from the DOM.
+	 * Deactivate associated components. 
+	 * Clean up event handlers.
+	 * @public
+	 */
+	function finalize() {
 
-	/* @class ProgrammeView */
-	return {
+		p.$userAction.off('click', userActionHandler);
+
+		App.off(u.MODEL_CHANGED, handleUserModelChanges);
+
+	};
+
+/* export */
+	
+	return new View({
+		name: name,
 		initialize: initialize,
-		finalize: finalize
-	}
+		finalize: finalize,
+		render: render
+	});
 });

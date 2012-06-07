@@ -1,6 +1,6 @@
 !!! 5
 html.no-js.no-mustard
-	head(prefix="#{config.HTML_PREFIX}", data-api="#{config.API_PREFIX}", data-fixposition="#{supports.positionFixed}", data-test="false")
+	head(prefix="#{config.HTML_PREFIX}", data-api="#{config.API_PREFIX}", data-fixposition="#{supports.positionFixed}")
 
 		title #{config.APP_NAME}
 
@@ -24,14 +24,9 @@ html.no-js.no-mustard
 			if (window.mustard) {
 				document.documentElement.className = document.documentElement.className.replace('no-mustard', 'mustard');
 			}
+			var channels = !{JSON.stringify(channels)};
 
-		link(href="/assets/css/font-awesome.css", rel="stylesheet")
-		link(href="/assets/css/normalize.css", rel="stylesheet")
-		link(href="/assets/css/global.css", rel="stylesheet")
-		link(href="/assets/css/mediaqueries.css", rel="stylesheet")
-		link(href="/assets/css/grid.css", rel="stylesheet")
-
-
+		include ../assets/styles
 		block styles
 
 	body(class="#{(supports.positionFixed)?'fixed-top':''}")
@@ -42,22 +37,14 @@ html.no-js.no-mustard
 			.loading
 
 		#main
-			include navigation
+			include ../assets/navigation
 			#content
 				block content
 
-		script(src="/js/lib/zepto/zepto.min.js")
-		script(src="/js/lib/require/1.0.8/require.min.js", data-main="/js/main")
-		script
-			(function(d, s, id) {
-				var js, fjs = d.getElementsByTagName(s)[0];
-				if (d.getElementById(id)) return;
-				js = d.createElement(s); js.id = id;
-				js.src = "//connect.facebook.net/en_US/all.js";
-				fjs.parentNode.insertBefore(js, fjs);
-			}(document, 'script', 'facebook-jssdk'));
-
+		include ../assets/scripts
 		block scripts
 
 		#templates
+
+			include ../assets/templates
 			block templates

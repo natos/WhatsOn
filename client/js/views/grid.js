@@ -22,132 +22,42 @@ define([
 	'config/app',
 	'config/grid',
 	'modules/app',
+	'lib/flaco/view',
 	'components/timebar',
 	'components/channelbar',
 	'components/buffer',
 	'utils/convert'
 
-], function GridViewScope(a, g, App, TimeBar, ChannelBar, Buffer, convert) {
+], function GridViewScope(a, g, App, View, TimeBar, ChannelBar, Buffer, convert) {
 
-	var executionTimer;
-	var $window = $(window);
+	var name = "grid";
 
-	/**
-	 * Load the content for the view.
-	 * Activate associated components.
-	 * Set up event handlers.
-	 * @public
-	 */
-	function initialize() {
+/* private */
 
-		if ($('#content').find('#grid-container').length>0) {
-			// Grid container is already loaded
-			initializeComponents();
-		} else {
-			// Get grid container from server
-			$('#content').load('/grid #content', function(data, status, xhr){
-				initializeComponents();
-			});
-		}
-
-		g.END = new Date(g.ZERO.valueOf() + 24*60*60*1000);
-
-		// UI event handlers
-		// every time user scrolls, we want to load new events
-		$window.on('resize scroll', handleResizeAndScroll);
-
-		// Data events
-		// we want to render every new events when they are recieved
- 		App.on('eventsReceived', renderEvents);
-		App.on(g.MODEL_CHANGED, modelChanged);
-
-		App.emit(a.VIEW_LOADED, 'grid');
-
-		return this;
-
-	};
-
-	/**
-	 * Activate sub-components of the view
-	 * @private
-	 */
-	function initializeComponents() {
-		this.components = {
-			timebar		: TimeBar.initialize(),
-			channelbar	: ChannelBar.initialize(),
-			buffer		: Buffer.initialize()
-		};
-
-		// Grid styles depend on the components being initialized.
-		// todo: bad dependency - try to remove.
-		appendCSSBlock('grid-styles', defineStyles());
-
-		// Start the first data load
-		App.emit(g.GRID_MOVED);
-		App.emit(g.GRID_FETCH_EVENTS);
-	};
-
-
-	/**
-	 * If necessary, remove the content for the view from the DOM.
-	 * Deactivate associated components. 
-	 * Clean up event handlers.
-	 * @public
-	 */
-	function finalize() {
-
-		finalizeComponents();
-
-		$window.off('resize scroll', handleResizeAndScroll);
-		App.off('eventsReceived', renderEvents);
-		App.off(g.MODEL_CHANGED, modelChanged);
-
-	};
-
-	/**
-	 * Deactivate associated components.
-	 * @private
-	 */
-	function finalizeComponents() {
-		var componentName, component;
-		var components = this.components;
-
-		for (componentName in components) {
-			if (components.hasOwnProperty(componentName)) {
-				component = components[componentName];
-				if (typeof(components.finalize)==='function') {
-					component.finalize();
-				}
-			}
-		}
-	};
+	var executionTimer,
+		executionDelay = 250;
 
 	/**
 	 * Handler for scrolling and resizing events.
 	 * Uses an execution timer for throttling.
 	 * @private
 	 */
-	function handleResizeAndScroll(e) {
-
+	function handleResizeAndScroll() {
+		// the grid has moved
 		App.emit(g.GRID_MOVED);
-
-		if (executionTimer) {
-			clearTimeout(executionTimer);
-		}
-
-		executionTimer = setTimeout(function() {
-			App.emit(g.GRID_FETCH_EVENTS);
-		}, 200);
-
+		// erase the previous timer
+		if (executionTimer) { clearTimeout(executionTimer);	}
+		// set a delay of 200ms to fetch events
+		executionTimer = setTimeout(function() { App.emit(g.GRID_FETCH_EVENTS); }, executionDelay);
 	};
 
 	/**
 	 * Handler for model data changes.
 	 * @private
 	 */
-	function modelChanged(obj) {
-		if (obj.events) {
-			renderEvents(obj.events);
+	function modelChanged(changes) {
+		if (changes.events) {
+			renderEvents(changes.events);
 		}
 	};
 
@@ -160,6 +70,7 @@ define([
 		// define constants
 		var $channelsbar = $('#channels-bar');
 		var $timebar = $('#time-bar');
+
 		g.TIMEBAR_HEIGHT = $timebar.height();
 		g.CHANNELS_COUNT = $channelsbar.find('li').length;
 		g.CHANNEL_BAR_WIDTH = $channelsbar.width();
@@ -247,6 +158,80 @@ define([
 	};
 
 	/**
+	 * Add or update a named <style> element to the DOM.
+	 * @private
+	 */
+	function appendCSSBlock(blockId, cssText) {
+		var el = document.getElementById(blockId);
+		if (el) {
+			el.innerHTML = cssText;
+		} else {
+			el = document.createElement('style');
+			el.id = blockId;
+			el.innerHTML = cssText;
+			document.getElementsByTagName('HEAD')[0].appendChild(el);
+		}
+	};
+
+/* public */
+
+	var components = {
+		timebar		: TimeBar,
+		channelbar	: ChannelBar,
+		buffer		: Buffer
+	};
+
+	/**
+	 * Load the content for the view.
+	 * Activate associated components.
+	 * Set up event handlers.
+	 * @public
+	 */
+	function initialize() {
+
+		g.END = new Date(g.ZERO.valueOf() + 24*60*60*1000);
+
+		// UI event handlers
+		// every time user scrolls, we want to load new events
+		a.$window.on('resize scroll', handleResizeAndScroll);
+
+		// The model recieves events
+		// we are listening to render new events
+		App.on(g.MODEL_CHANGED, modelChanged);
+
+		return this;
+
+	};
+
+	function render() {
+		// Grid styles depend on the components being initialized.
+		// TODO: bad dependency - try to remove.
+		appendCSSBlock(name + '-styles', defineStyles());
+
+		// Start the first data load
+		App.emit(g.GRID_MOVED);
+		App.emit(g.GRID_FETCH_EVENTS);
+
+	};
+
+	/**
+	 * If necessary, remove the content for the view from the DOM.
+	 * Deactivate associated components. 
+	 * Clean up event handlers.
+	 * @public
+	 */
+	function finalize() {
+
+		a.$window.off('resize scroll', handleResizeAndScroll);
+
+		App.off(g.MODEL_CHANGED, modelChanged);
+
+		return this;
+
+	};
+
+
+	/**
 	 * Determine what time window is visible in the viewport.
 	 * @public
 	 */
@@ -299,29 +284,16 @@ define([
 
 	};
 
-	/**
-	 * Add or update a named <style> element to the DOM.
-	 * @private
-	 */
-	function appendCSSBlock(blockId, cssText) {
-		var el = document.getElementById(blockId);
-		if (el) {
-			el.innerHTML = cssText;
-		} else {
-			el = document.createElement('style');
-			el.id = blockId;
-			el.innerHTML = cssText;
-			document.getElementsByTagName('HEAD')[0].appendChild(el);
-		}
-	};
+/* export */
 
-
-	/* @class GridView */
-	return {
+	return new View({
+		name: name,
 		initialize: initialize,
 		finalize: finalize,
+		render: render,
 		getSelectedChannels: getSelectedChannels,
-		getSelectedTime: getSelectedTime
-	};
+		getSelectedTime: getSelectedTime,
+		components: components
+	});
 
 });

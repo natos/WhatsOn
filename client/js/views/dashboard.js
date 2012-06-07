@@ -6,114 +6,49 @@
 
 define([
 
-	'config/app',
-	'config/user',
 	'modules/app',
-	'models/user',
-	'components/carousel'
+	'lib/flaco/view',
+	'components/carousel',
+	'components/favorites'
 
-], function DashboardView(a, u, App, UserModel, Carousel) {
+], function DashboardView(App, View, Carousel, Favorites) {
 
-	/**
-	 * Load the content for the view. 
-	 * Activate associated components. 
-	 * Set up event handlers.
-	 * @public
-	 */
+	var name = "dashboard";
+
+/* private */
+
+
+/* public */
+
 	function initialize() {
-
-		if ($('#content').find('#content-dashboard').length>0) {
-			// Dashboard content is already loaded
-			initializeComponents();
-		} else {
-			// Get dashboard content from server
-			$('#content').load('/dashboard #content', function(data, status, xhr){
-				initializeComponents();
-			});
-		}
-
-		App.emit(a.VIEW_LOADED, 'dashboard');
 
 		return this;
 	
 	};
 
-	function renderFavorites() {
+	function render() {
 
-		if (UserModel.favorites) {
-			render();
-		}
-
-		App.on(u.MODEL_CHANGED, function(changes) {
-
-			if (changes.favorites) {
-				render();
-			}
-	
-		});
-
-		function render() {
-
-			var favorites = UserModel.favorites,
-				list = $('.top-favorites ul').empty(),
-				item = $('<li><i class="icon-chevron-right"></li>'),
-				link = $('<a class="programme">');
-
-			$(favorites.data).each(function(i, e) {
-				var id = e.data.tv_show.url.match(/\d+/);
-
-				link
-					.clone()
-					.attr('href', '/programme/' + id)
-					.data('programmeid', id)
-					.html(e.data.tv_show.title)
-					.appendTo(
-						item.clone().appendTo(list)
-					);				
-			});
-
-		}
+		return this;
 
 	};
 
-	/**
-	 * Activate sub-components of the view
-	 * @private
-	 */
-	function initializeComponents() {
-		this.components = {
-			carousel: Carousel.initialize('#featured')
-		};
-		renderFavorites();
-
-	};
-
-	/**
-	 * If necessary, remove the content for the view from the DOM.
-	 * Deactivate associated components. 
-	 * Clean up event handlers.
-	 * @public
-	 */
 	function finalize() {
-		finalizeComponents();
+
+		return this;
+
 	};
 
-	/**
-	 * Deactivate associated components. 
-	 * @private
-	 */
-	function finalizeComponents() {
-		var carousel = this.components.carousel;
-		if (carousel && typeof(carousel.finalize)==='function') {
-			carousel.finalize();
-		}
-	};
+/* export */
 
-
-	/* @class DashboardView */
-	return {
+	return new View({
+		name: name,
+		render: render,
+		finalize: finalize,
 		initialize: initialize,
-		finalize: finalize
-	};
+		components: {
+			carousel: Carousel,
+			favorites: Favorites
+		}
+	});
 
 });

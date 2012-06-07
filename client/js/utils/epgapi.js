@@ -2,11 +2,26 @@ define([
 
 	'modules/app',
 	'utils/convert',
-	'/js/lib/lscache/lscache.js'
+	'/js/lib/lscache/lscache.js',
+	'/js/lib/timetrack/timetrack.js'
 
 ], function(App, convert) {
 
 	'use strict';
+
+/*
+* Average time tool
+*/
+	var average_time = 0,
+		average_count = 0;
+
+	function average(time) {
+		average_time += time; average_count += 1;
+		return Math.ceil(average_time / average_count);
+	};
+/*
+* Average time tool
+*/
 
 	var HOURS_PER_SLICE = 4, // Hours per slice must be: 1, 2, 3, 4, 6, 8, 12, 24.
 		ESTIMATED_AVERAGE_EVENTS_PER_HOUR = 2,
@@ -170,10 +185,14 @@ define([
 		for (i=0; i<channelIdBatchesCount; i++) {
 			channelIdBatch = channelIdBatches[i];
 
+/* for performance tests */
+var timer = new Timer('getEventsForSliceFromApi Time Track').off();
+/* for performance tests */
+
 			// Use "&order=startDateTime" to get results in order
 			request = API_PREFIX + 'Channel/' + channelIdBatch.join('|') + '/events/NowAndNext_' + formattedStartTime + '.json?batchSize=' + eventsPerSlice + '&order=startDateTime&callback=?'; 
 			$.getJSON(request, function(apiResponse) {
-				handleApiResponse_EventsForSliceFromApi(apiResponse, timeSlice, eventsPerSlice);
+				handleApiResponse_EventsForSliceFromApi(apiResponse, timeSlice, eventsPerSlice, timer);
 			});
 		}
 	};
@@ -188,7 +207,15 @@ define([
 	 * @return void
 	 */
 
-	var handleApiResponse_EventsForSliceFromApi = function(apiResponse, timeSlice, eventsPerSlice) {
+	var handleApiResponse_EventsForSliceFromApi = function(apiResponse, timeSlice, eventsPerSlice, timer) {
+
+/* for performance tests */
+timer.track('API Response');
+// Average time to test Jedrzej API performance
+// API RAT > API Average Response Time
+// UNCOMMENT THIS FOR LOG THE AVERAGE TIME > console.log('API-ART <', average(timer.timeDiff), 'ms>' );
+/* for performance tests */
+
 		var eventsForChannelCollection = [],
 			cacheKey,
 			channelId,

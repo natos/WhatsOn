@@ -10,7 +10,10 @@ define([
 	'services/channel',
 
 	// utils
-	'utils/metadata'
+	'utils/metadata',
+
+	// mocks
+	'mocks/channels'
 
 ],
 
@@ -19,7 +22,7 @@ define([
  *	@class GridController
  */
 
-function(Channel, Metadata) {
+function(ChannelService, Metadata, Channels) {
 
 	/** @constructor */
 
@@ -38,22 +41,23 @@ function(Channel, Metadata) {
 
 	var _app,
 
-		metadata = new Metadata(),
-
-		ChannelService = new Channel();
+		metadata = new Metadata();
 
 
 	/** @public */
 
 	GridController.prototype.render = function(req, res) {
 
-		ChannelService.once('getChannels', function(channels) {
+		new ChannelService().once('getChannels', function(channels) {
 
-			res.render('grid.jade', {
+			var template = req.xhr ? 'contents/grid.jade' : 'layouts/grid.jade'
+
+			res.render(template, {
 				metadata	: metadata.get(),
 				config		: _app.config,
 				channels	: channels,
 				timebar		: new Array(24),
+				channels	: Channels,
 				supports	: req.supports
 			});
 

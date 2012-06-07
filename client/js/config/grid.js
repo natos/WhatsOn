@@ -55,7 +55,9 @@ define([], function GridConfig() {
 
 		GRID_MOVED: 'grid:moved',
 
-		GRID_RENDERED: 'grid:rendered'
+		GRID_RENDERED: 'grid:rendered',
+
+		GRID_EVENTS_RECIEVED: 'grid:events_received'
 	
 	};
 

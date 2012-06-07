@@ -22,7 +22,8 @@ define([
 	App.modules = {};
 
 	/* The app holds an array of channels */
-	App.channels = [];
+	//App.channels = [];
+	App.channels = channels;
 
 
 	/* constructor */
@@ -30,7 +31,7 @@ define([
 
 		// Load the primary modules for the app.
 		// Each module must have an "initialize" method that returns the module itself.
-		loadModules(['modules/router', 'modules/canvas', 'modules/user', 'controllers/navigation']);
+		loadModules(['modules/user', 'modules/canvas', 'modules/router', 'controllers/navigation']);
 
 		return this;
 	

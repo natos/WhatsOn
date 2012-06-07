@@ -9,9 +9,12 @@
 define([
 
 	'config/app',
-	'modules/app'
+	'modules/app',
+	'lib/flaco/view'
 
-], function(c, App) {
+], function(a, App, View) {
+
+	var name = 'search';
 
 /* private */
 
@@ -21,48 +24,6 @@ define([
 	$filters = $('#filters'),
 
 	$results = $('#search-results');
-
-	var filters = {};
-
-	/* constructor */
-	function initialize() {
-
-		// Let the App know your here
-		App.views.search = this;
-
-		// scan all the possible filters
-		$filters.find('input').each(function(index, item) {
-
-			var klass = $(item).parents('li').attr('class'),
-				value = item.value;
-
-			if (!filters[klass]){
-				filters[klass] = {};
-			}
-			
-			filters[klass][value] = false;
-
-		});
-
-		// filtrable
-		$filters.on('click', filterHandler);
-
-
-		// layout quirks
-		// min-heigth for results
-		$results.css('min-height', $filters.height());
-		// static positioning on the search box
-		$('.search-box').css({'top': '50px'});
-		$('.main').css({'margin-top': '95px'});
-		// Assign the query to the search box
-		$('#q').val(query);
-
-		App.emit(c.VIEW_LOADED, this);
-
-		return this;
-
-	};
-
 
 	function filterHandler(event) {
 
@@ -125,12 +86,69 @@ define([
 		});
 	};
 
-
 /* public */
 
-/* @class Search */
+	var filters = {};
+
+
+	function initialize() {
+
+		// TODO: we need to find a much better way to do this
+		if ($('#content').find('#search-container').length>0) {
+			// Grid container is already loaded
+
+		} else {
+			// Get search container from server
+			$('#content').load('/search', function(data, status, xhr){
+
+			});
+		}
+
+		// scan all the possible filters
+		$filters.find('input').each(function(index, item) {
+
+			var klass = $(item).parents('li').attr('class'),
+				value = item.value;
+
+			if (!filters[klass]){
+				filters[klass] = {};
+			}
+			
+			filters[klass][value] = false;
+
+		});
+
+		// filtrable
+		$filters.on('click', filterHandler);
+
+		// layout quirks
+		// min-heigth for results
+		$results.css('min-height', $filters.height());
+		// static positioning on the search box
+		$('.search-box').css({'top': '50px'});
+		$('.main').css({'margin-top': '95px'});
+		// Assign the query to the search box
+		$('#q').val(query);
+
+		App.emit(a.VIEW_RENDERED, this);
+
+		return this;
+
+	};
+
+	function finalize() {
+
+		$filters.off('click', filterHandler);
+
+	};
+
+
+/* export */
+
 	return {
+		name: name,
 		initialize: initialize,
+		finalize: finalize,
 		filters: filters
 	};
 

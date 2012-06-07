@@ -1,9 +1,4 @@
-extends layout
-
-block styles
-	link(href="/assets/css/search.css", rel="stylesheet")
-
-block content
+#search-content
 	#filters
 		#datetimes
 			h4 Date Times
@@ -12,7 +7,7 @@ block content
 					li.datetime
 						input(type="checkbox", id="#{startDateTime}", value="#{prettyDate}") 
 						label(for="#{startDateTime}") #{prettyDate}
-
+	
 		#channels
 			h4 Channels
 			ul.selectable
@@ -20,9 +15,9 @@ block content
 					li.channel
 						input(type="checkbox", id="#{channel.id}", value="#{channel.id}") 
 						label(for="#{channel.id}") #{channel.name}
-
-
-
+	
+	
+	
 	#search-results
 		ul
 			each group in programmes
@@ -41,7 +36,3 @@ block content
 									|  on
 									span.channel
 										a(href="/channel/#{event.channel.id}") #{event.channel.name}
-
-block scripts
-	script(data-load="views/search")
-		var query = "#{query}";

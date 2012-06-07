@@ -14,8 +14,10 @@ define([
 
 	// utils
 	'utils/metadata',
-	'utils/dateutils'
+	'utils/dateutils',
 
+	// mocks
+	'mocks/channels'
 ],
 
 
@@ -23,7 +25,7 @@ define([
 *	@class SearchController
 */
 
-function(querystring, Search, Metadata, DateUtils) {
+function(querystring, SearchService, Metadata, DateUtils, Channels) {
 
 	/** @constructor */
 
@@ -44,8 +46,6 @@ function(querystring, Search, Metadata, DateUtils) {
 
 		metadata = new Metadata(),
 
-		SearchService = new Search(),
-
 		dateUtils = new DateUtils();
 
 
@@ -53,12 +53,28 @@ function(querystring, Search, Metadata, DateUtils) {
 
 	SearchController.prototype.render = function(req, res) {
 
-		var query = querystring.escape(req.query.q);
+		var query = querystring.escape(req.query.q),
+			template = req.xhr ? 'contents/search.jade' : 'layouts/search.jade';
 
-		// avoid empty query
-		if (!query) { res.end(); return; }
+		// empty query
+		// just render a search box
+		if (!query) {
 
-		SearchService.once('search', function(error, response, body) {
+			res.render(template, {
+				metadata		: metadata.get(),
+				config			: _app.config,
+				query			: query,
+				used_channels	: {},
+				used_datetimes	: {},
+				programmes		: {},
+				channels		: Channels,
+				supports		: req.supports
+			});
+
+			return; 
+		}
+
+		new SearchService().once('search', function(error, response, body) {
 
 			var results = JSON.parse(body);
 
@@ -97,7 +113,9 @@ function(querystring, Search, Metadata, DateUtils) {
 
 			}
 
-			res.render('search-results.jade', {
+			var template = req.xhr ? 'contents/search.jade' : 'layouts/search.jade';
+
+			res.render(template, {
 				metadata		: metadata.get(),
 				config			: _app.config,
 				query			: query,

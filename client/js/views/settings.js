@@ -9,9 +9,10 @@
 define([
 
 	'config/app',
-	'modules/app'
+	'modules/app',
+	'lib/flaco/view'
 
-], function SettingsView(c, App) {
+], function SettingsView(a, App, View) {
 
 /* private */
 
@@ -22,7 +23,7 @@ define([
 		*	Events handlers
 		*/
 
-		App.emit(c.VIEW_LOADED, this);
+		App.emit(a.VIEW_RENDERED, this);
 
 		return this;
 
