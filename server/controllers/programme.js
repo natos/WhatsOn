@@ -12,16 +12,19 @@ define([
 	// utils
 	'utils/metadata',
 	'utils/dateutils',
-	'utils/requestn'
+	'utils/requestn',
+
+	// mocks
+	'mocks/channels'
 
 ],
 
 
 /**
- *	@class ChannelController
+ *	@class ProgrammeController
  */
 
-function(Programme, Metadata, DateUtils, Requestn) {
+function(ProgrammeService, Metadata, DateUtils, Requestn, Channels) {
 
 	/** @constructor */
 
@@ -45,8 +48,6 @@ function(Programme, Metadata, DateUtils, Requestn) {
 	var _app,
 
 		metadata = new Metadata(),
-
-		ProgrammeService = new Programme(),
 
 		dateUtils = new DateUtils();
 
@@ -77,6 +78,22 @@ function(Programme, Metadata, DateUtils, Requestn) {
 					}
 				}
 
+				if (response[PROGRAMME_DETAILS].body === '{}') {
+					// empty response
+					console.log('Empty response');
+					res.render(req.xhr ? 'contents/404.jade' : 'layouts/404.jade', {
+						metadata	: metadata.get(),
+						config		: _app.config,
+						url			: _app.config.APP_URL + '404/',
+						title		: '404',
+						prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-social: http://ogp.me/ns/fb/upc-social#',
+						supports	: req.supports,
+						isAjax		: req.xhr
+
+					});
+					return;
+				}
+
 				var _programme_details = JSON.parse( response[PROGRAMME_DETAILS].body ),
 					_programme_events = JSON.parse( response[PROGRAMME_EVENTS].body );
 
@@ -89,13 +106,13 @@ function(Programme, Metadata, DateUtils, Requestn) {
 				// Meta data
 				var _metadata = [
 //					{ property: "og:type"			, content: (isMovie) ? "video.movie" : "video.tv_show" },
-					{ property: "og:description"	, content: _programme_details.shortDescription },
 					{ property: "og:type"			, content: "video.tv_show" },
+					{ property: "og:description"	, content: _programme_details.shortDescription },
 					{ property: "og:url"			, content: "http://upcsocial.herokuapp.com/programme/" + _programme_details.id },
 					{ property: "og:title"			, content: _programme_details.title }
 				];
 
-				var template = req.xhr ? 'programme-ajax.jade' : 'programme.jade'
+				var template = req.xhr ? 'contents/programme.jade' : 'layouts/programme.jade'
 
 				res.render(template, {
 					metadata	: metadata.override(_metadata, 'property').get(),
@@ -103,9 +120,9 @@ function(Programme, Metadata, DateUtils, Requestn) {
 					url			: _app.config.APP_URL + 'programme/' + _programme_details.id,
 					data		: _programme_details,
 					title		: _programme_details.title,
-					prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-whatson: http://ogp.me/ns/fb/upc-whatson#',
-					supports	: req.supports,
-					isAjax		: req.isAjax
+					prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upcsocial: http://ogp.me/ns/fb/upcsocial#',
+					channels	: Channels,
+					supports	: req.supports
 				}); // HTML output	
 		});
 
@@ -116,18 +133,30 @@ function(Programme, Metadata, DateUtils, Requestn) {
 
 		var id = req.params.id;
 
-		ProgrammeService.once('getDetails', function(error, response, body) {
+		new ProgrammeService().once('getDetails', function(error, response, body) {
 
 			var programme_details = {};
 
-			try {
+			if ( !response || /500|404/.test(response.statusCode) ) {
+				programme_details = [{ "statusCode" : "404" }];
+			} else {
 				programme_details = JSON.parse(body);
-			} catch(err) {
-				console.log(err);
-				// todo: better error logging
 			}
 
+
+			/* response */
+
+			// JSONP support
+			if (res.isJsonp) {
+				res.contentType('json');
+				res.send( res.isJsonp + '(' + JSON.stringify(programme_details) + ');' );
+				res.end();
+				return;
+			}
+
+			// normal response
 			res.send(programme_details); // JSON output
+			res.end();
 
 		}).getDetails(id);
 
@@ -139,19 +168,30 @@ function(Programme, Metadata, DateUtils, Requestn) {
 
 		var id = req.params.id;
 
-		ProgrammeService.once('getEvents', function(error, response, body) {
+		new ProgrammeService().once('getEvents', function(error, response, body) {
+
 			var programme_events = [];
 
-			try {
+			if ( !response || /500|404/.test(response.statusCode) ) {
+				programme_events = [{ "statusCode" : "404" }];
+			} else {
 				programme_events = JSON.parse(body);
-			} catch(err) {
-				console.log(err);
-				// todo: better error logging
+				programme_events = dateUtils.prettifyCollection(programme_events, 'startDateTime');
 			}
 
-			programme_events = dateUtils.prettifyCollection(programme_events, 'startDateTime');
+			/* response */
 
+			// JSONP support
+			if (res.isJsonp) {
+				res.contentType('json');
+				res.send( res.isJsonp + '(' + JSON.stringify(programme_events) + ');' );
+				res.end();
+				return;
+			}
+
+			// normal response
 			res.send(programme_events); // JSON output
+			res.end();
 
 		}).getEvents(id);
 

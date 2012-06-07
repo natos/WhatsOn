@@ -7,9 +7,12 @@
 define([
 
 	'config/grid', 
+	'modules/app',
 	'utils/convert'
 
-], function TimeBar(g, convert) {
+], function TimeBar(g, App, convert) {
+
+	var name = 'timebar';
 
 	var	$timelist;
 
@@ -23,10 +26,16 @@ define([
 		$timelist = $('#time-bar').find('ol');
 
 		// move with the grid
-		upc.on(g.MODEL_CHANGED, modelChanged);
+		App.on(g.MODEL_CHANGED, modelChanged);
 
 		// add logo behavior, move to 'now'
 		$('.upc-logo').on('click', centerTimebar);
+
+		return this;
+
+	};
+
+	function render() {
 
 		// initialize ticker
 		ticker();
@@ -44,8 +53,12 @@ define([
 	 * @public
 	 */
 	function finalize() {
-		upc.off(g.MODEL_CHANGED, modelChanged);
+
+		App.off(g.MODEL_CHANGED, modelChanged);
+
 		$('.upc-logo').off('click', centerTimebar);
+
+		return this;
 	};
 
 	/**
@@ -54,7 +67,7 @@ define([
 	 */
 	function modelChanged(obj) {
 		if (obj.position) {
-			$timelist.css({ left: obj.position.left });
+			$timelist && $timelist.css({ left: obj.position.left });
 		}
 	};
 
@@ -63,6 +76,7 @@ define([
 	 * @private
 	 */
 	function centerTimebar() {
+
 		var left = convert.timeToPixels( new Date() );
 
 		// center in the screen
@@ -101,8 +115,10 @@ define([
 
 	/* public */
 	return {
+		name: name,
 		initialize: initialize,
 		finalize: finalize,
+		render: render,
 		ticker: ticker
 	};
 

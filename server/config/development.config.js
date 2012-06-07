@@ -21,7 +21,10 @@ function() {
 		'APP_NAME'		: 'UPC Social',
 		'APP_URL'		: 'http://upcsocial.herokuapp.com/',
 		'APP_LOGO'		: 'http://upcsocial.herokuapp.com/assets/images/upclogo.jpg',
+		// production
 		'API_PREFIX'	: 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/',
+		// neo4j on vaca
+		//'API_PREFIX'	: 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi-Neo4J.woa/api/',
 		'HTML_PREFIX'	: '',
 		'facebook'		: {
 			'app-id'		: '290742221014129',

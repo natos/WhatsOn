@@ -1,13 +1,4 @@
-extends layout
-
-block styles
-	link(href="/assets/css/channelpage.css", rel="stylesheet")
-	link(href="/assets/css/channel-event-list.css", rel="stylesheet")
-
-block scripts
-	script(data-load="controllers/channel")
-
-block content
+#channel-content
 	.channelpage
 		header.hd
 			.logo
@@ -16,7 +7,7 @@ block content
 				.fb-like(data-href="#{url}", data-send="false", data-layout="box_count", data-width="80", data-show-faces="true")
 			h1 #{title}
 			p #{data.description}
-
+	
 		.bd
 			if data
 				each date in data.dates

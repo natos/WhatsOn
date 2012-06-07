@@ -154,7 +154,7 @@ function(NowAndNextService, Metadata, QS, config) {
 
 		nowAndNextService.once('getNowAndNext', function(channels, channelEventsCollections){
 
-			var template = req.xhr ? 'nowandnext-ajax.jade' : 'nowandnext.jade'
+			var template = req.xhr ? 'contents/nowandnext.jade' : 'layouts/nowandnext.jade'
 
 			res.render(template, {
 				metadata	: metadata.get(),

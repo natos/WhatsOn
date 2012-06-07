@@ -1,0 +1,11 @@
+extends layout
+
+block styles
+	link(href="/assets/css/search.css", rel="stylesheet")
+
+block scripts
+	script(data-load="views/search")
+		var query = "#{query}";
+
+block content
+	include ../contents/search

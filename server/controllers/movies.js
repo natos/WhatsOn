@@ -11,7 +11,10 @@ define([
 
 	// utils
 	'utils/dateutils',
-	'utils/metadata'
+	'utils/metadata',
+
+	// mocks
+	'mocks/channels'
 
 ],
 
@@ -20,7 +23,7 @@ define([
  *	@class MoviesController
  */
 
-function(Movies, DateUtils, Metadata) {
+function(MoviesService, DateUtils, Metadata, Channels) {
 
 	/** @constructor */
 
@@ -39,10 +42,7 @@ function(Movies, DateUtils, Metadata) {
 
 	var _app,
 
-		metadata = new Metadata(),
-
-		MoviesService = new Movies();
-
+		metadata = new Metadata();
 
 	/** @public */
 
@@ -50,16 +50,19 @@ function(Movies, DateUtils, Metadata) {
 
 		var topmovies, render = function() {
 
-			res.render('movies.jade', {
+			var template = req.xhr ? 'contents/movies.jade' : 'layouts/movies.jade'
+
+			res.render(template, {
 				metadata	: metadata.get(),
 				config		: _app.config,
 				topmovies 	: topmovies,
+				channels	: Channels,
 				supports	: req.supports
 			});
 
 		};
 
-		MoviesService.once('getTopMovies', function(error, response, body) {
+		new MoviesService().once('getTopMovies', function(error, response, body) {
 
 			topmovies = JSON.parse(body);
 

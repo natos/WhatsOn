@@ -33,6 +33,10 @@ define([], function UserConfig() {
 		STATUS_CHANGED: 'user:status_changed',
 
 		MODEL_CHANGED: 'user:model_changed',
+
+		FETCH_FAVORITES: 'user:fetch_favorites',
+
+		FETCH_RECORDINGS: 'user:fetch_recordings',
 	
 		// messages
 
