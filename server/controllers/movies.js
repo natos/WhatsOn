@@ -11,7 +11,10 @@ define([
 
 	// utils
 	'utils/dateutils',
-	'utils/metadata'
+	'utils/metadata',
+
+	// mocks
+	'mocks/channels'
 
 ],
 
@@ -20,7 +23,7 @@ define([
  *	@class MoviesController
  */
 
-function(MoviesService, DateUtils, Metadata) {
+function(MoviesService, DateUtils, Metadata, Channels) {
 
 	/** @constructor */
 
@@ -53,6 +56,7 @@ function(MoviesService, DateUtils, Metadata) {
 				metadata	: metadata.get(),
 				config		: _app.config,
 				topmovies 	: topmovies,
+				channels	: Channels,
 				supports	: req.supports
 			});
 

@@ -54,6 +54,12 @@ function(express, i18n, config, Supports, Login, Dashboard, Grid, Channel, Progr
 			// for root and .html files
 			self.server.get('*', globalHandler);
 
+			// Redirect to dashboard
+			// for requests from root "/"
+			self.server.get('/', function(req, res, next) {
+				res.redirect('/dashboard');
+			});
+
 			//	setup app controllers
 			self.controllers = {
 				login		: new Login(self),
@@ -77,8 +83,6 @@ function(express, i18n, config, Supports, Login, Dashboard, Grid, Channel, Progr
 	var globalHandler = function(req, res, next) {
 
 		res.isJsonp = req.query.callback || null;
-
-		req.isAjax = req.headers['x-requested-with'] === 'XMLHttpRequest';
 
 		req.supports = new Supports(req);
 

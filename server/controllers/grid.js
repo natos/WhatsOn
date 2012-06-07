@@ -10,7 +10,10 @@ define([
 	'services/channel',
 
 	// utils
-	'utils/metadata'
+	'utils/metadata',
+
+	// mocks
+	'mocks/channels'
 
 ],
 
@@ -19,7 +22,7 @@ define([
  *	@class GridController
  */
 
-function(ChannelService, Metadata) {
+function(ChannelService, Metadata, Channels) {
 
 	/** @constructor */
 
@@ -54,6 +57,7 @@ function(ChannelService, Metadata) {
 				config		: _app.config,
 				channels	: channels,
 				timebar		: new Array(24),
+				channels	: Channels,
 				supports	: req.supports
 			});
 

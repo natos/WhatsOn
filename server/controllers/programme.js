@@ -12,16 +12,19 @@ define([
 	// utils
 	'utils/metadata',
 	'utils/dateutils',
-	'utils/requestn'
+	'utils/requestn',
+
+	// mocks
+	'mocks/channels'
 
 ],
 
 
 /**
- *	@class ChannelController
+ *	@class ProgrammeController
  */
 
-function(ProgrammeService, Metadata, DateUtils, Requestn) {
+function(ProgrammeService, Metadata, DateUtils, Requestn, Channels) {
 
 	/** @constructor */
 
@@ -85,7 +88,7 @@ function(ProgrammeService, Metadata, DateUtils, Requestn) {
 						title		: '404',
 						prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-social: http://ogp.me/ns/fb/upc-social#',
 						supports	: req.supports,
-						isAjax		: req.isAjax
+						isAjax		: req.xhr
 
 					});
 					return;
@@ -117,9 +120,9 @@ function(ProgrammeService, Metadata, DateUtils, Requestn) {
 					url			: _app.config.APP_URL + 'programme/' + _programme_details.id,
 					data		: _programme_details,
 					title		: _programme_details.title,
-					prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-social: http://ogp.me/ns/fb/upc-whatson#',
-					supports	: req.supports,
-					isAjax		: req.isAjax
+					prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upcsocial: http://ogp.me/ns/fb/upcsocial#',
+					channels	: Channels,
+					supports	: req.supports
 				}); // HTML output	
 		});
 

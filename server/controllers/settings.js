@@ -7,7 +7,10 @@ define([
 	/** @require */
 
 	// utils
-	'utils/metadata'
+	'utils/metadata',
+
+	// mocks
+	'mocks/channels'
 
 ],
 
@@ -16,7 +19,7 @@ define([
  *	@class SettingsController
  */
 
-function(Metadata) {
+function(Metadata, Channels) {
 
 	/** @constructor */
 
@@ -45,6 +48,7 @@ function(Metadata) {
 		res.render(template, {
 			metadata	: metadata.get(),
 			config		: _app.config,
+			channels	: Channels,
 			supports	: req.supports
 		});
 

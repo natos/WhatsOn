@@ -14,7 +14,10 @@ define([
 	'utils/dateutils',
 	'utils/requestn',
 
-	'prettydate'
+	'prettydate',
+
+	// mocks
+	'mocks/channels'
 ],
 
 
@@ -22,7 +25,7 @@ define([
  *	@class ChannelController
  */
 
-function(ChannelService, Metadata, DateUtils, Requestn, PrettyDate) {
+function(ChannelService, Metadata, DateUtils, Requestn, PrettyDate, Channels) {
 
 	/** @constructor */
 
@@ -112,15 +115,17 @@ function(ChannelService, Metadata, DateUtils, Requestn, PrettyDate) {
 					{ property: "og:description"	, content: _channel_details.description }
 				];
 
-				res.render('layouts/channel.jade', {
+				var template = req.xhr ? 'contents/channel.jade' : 'layouts/channel.jade'
+
+				res.render(template, {
 					metadata	: metadata.override(_metadata, 'property').get(),
 					config		: _app.config,
 					url			: _app.config.APP_URL + 'channel/' + _channel_details.id,
 					data		: _channel_details,
 					title		: _channel_details.name,
-					prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-whatson: http://ogp.me/ns/fb/upc-whatson#',
-					supports	: req.supports,
-					TEST_MODE	: false
+					prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upcsocial: http://ogp.me/ns/fb/upcsocial#',
+					channels	: Channels,
+					supports	: req.supports
 				}); // HTML output	
 		});
 

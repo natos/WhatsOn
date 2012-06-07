@@ -7,7 +7,10 @@ define([
 	/** @require */
 
 	// utils
-	'utils/metadata'
+	'utils/metadata',
+
+	// mocks
+	'mocks/channels'
 
 ],
 
@@ -16,7 +19,7 @@ define([
  *	@class LoginController
  */
 
-function(Metadata) {
+function(Metadata, Channels) {
 
 	/** @constructor */
 
@@ -40,9 +43,12 @@ function(Metadata) {
 
 	LoginController.prototype.render = function(req, res) {
 
-		res.render('layouts/login.jade', {
+		var template = req.xhr ? 'contents/login.jade' : 'layouts/login.jade';
+
+		res.render(template, {
 			metadata	: metadata.get(),
 			config		: _app.config,
+			channels	: Channels,
 			supports	: req.supports
 		});
 
