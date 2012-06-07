@@ -6,16 +6,17 @@
 *
 */
 
-define([], function GridConfig() {
+define([], function GridConfigContext() {
 
 /* private */
 
 /* public */
 
-/* @class GridConfig */
+/* export */
+
 	return {
 
-		// constants
+		/* constants */
 
 		ZERO: (function(){
 
@@ -47,7 +48,7 @@ define([], function GridConfig() {
 
 		MAX_DOM_ELEMENTS: 500,
 
-		// Events
+		/* events */
 
 		MODEL_CHANGED: 'grid:model_changed',
 

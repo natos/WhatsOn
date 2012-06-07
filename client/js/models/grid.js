@@ -8,33 +8,22 @@
 
 define([
 
-	'config/grid'
+	'config/grid',
+	'lib/flaco/model'
 
-], function GridModel(g) {
+], function GridModelContext(g, Model) {
+
+	var name = 'grid';
 
 /* private */
 
-	function initialize() { 
-		return this; 
-	};
-	
-	function set(key, value) {
-	
-		var obj = {};
-		obj[key] = value;
-		this[key] = value;
-	
-		upc.emit(g.MODEL_CHANGED, obj );
-	}
-
 /* public */
 
-/* @class GridModel */
-	return {
-		/* constructor */
-		initialize: initialize,
-		/* global setter */
-		set: set
-	};
+/* export */
+
+	return new Model({
+		name	: name,
+		event	: g.MODEL_CHANGED
+	});
 
 });

@@ -6,21 +6,23 @@
 *
 */
 
-define([], function UserConfig() {
+define([], function UserConfigContext() {
 
 /* private */
 
 /* public */
-/* @class UserConfig */
+
+/* exports */
+
 	return {
 
-		// constants
+		/* constants */
 
 		APP_ID: 290742221014129,
 
 		SCOPE: 'email, user_interests, user_likes, user_location, friends_likes, publish_actions, user_activities, user_events, friends_events, friends_online_presence, read_friendlists, user_online_presence, status_update, publish_stream, share_item, create_event, rsvp_event',
 
-		// events
+		/* events */
 
 		LOG_IN: 'user:log_in',
 
@@ -38,7 +40,7 @@ define([], function UserConfig() {
 
 		FETCH_RECORDINGS: 'user:fetch_recordings',
 	
-		// messages
+		/* message */
 
 		NOT_AUTHORIZED: 'not_authorized',
 
@@ -46,7 +48,7 @@ define([], function UserConfig() {
 
 		UNKNOWN: 'unknown',
 
-		// DOM Access
+		/* DOM Access */
 
 		$window: $(window),
 	

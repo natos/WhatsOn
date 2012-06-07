@@ -5,19 +5,23 @@
 * Constants and configurations for App
 *
 */
-define([], function AppConfig() {
+define([], function AppConfigContext() {
 
 /* private */
 
 /* public */
-/* @class AppConfig */
+
+/* export */
+
 	return {
 
-		// constants
+		/* constants */ 
 
-		// events
+		/* events */
 
 		NAVIGATE: 'app:navigate',
+
+		// controllers
 
 		CONTROLLER_INITIALIZING: 'app:controller_initializing',
 
@@ -26,6 +30,8 @@ define([], function AppConfig() {
 		CONTROLLER_FINALIZING: 'app:controller_finalizing',
 
 		CONTROLLER_FINALIZED: 'app:controller_finalized',
+
+		// views
 
 		VIEW_INITIALIZING: 'app:view_initializing',
 
@@ -39,7 +45,7 @@ define([], function AppConfig() {
 
 		VIEW_RENDERED: 'app:view_rendered',
 
-		// DOM Access
+		/* DOM access */
 
 		$window: $(window),
 	

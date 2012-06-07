@@ -97,6 +97,7 @@ define([
 		name: name,
 		initialize: initialize,
 		finalize: finalize,
+		model: GridModel,
 		view: GridView
 	});
 

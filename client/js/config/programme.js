@@ -6,22 +6,23 @@
 *
 */
 
-define([], function ProgrammeConfig() {
+define([], function ProgrammeConfigContext() {
 
 /* private */
 
 /* public */
 
-/* @class ProgrammeConfig */
+/* export */
+
 	return {
 
-		// Events
+		/* Events */
 
 		RECORD: 'programme:record',
 
 		FAVORITE: 'programme:favorite',
 
-		// DOM Access
+		/* DOM Access */
 
 		$window: $(window),
 	

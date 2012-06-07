@@ -13,6 +13,7 @@ define([
 
 /* private */
 
+	var slice = Array.prototype.slice;
 
 /* public */
 
@@ -24,10 +25,10 @@ define([
 
 	/* protected */
 
-		var view = o.view || 'view';
+		var view = o.view;
 
 		// helper to find reserved words
-		function isInherited(member) { return ['render', 'initialize', 'finalize'].indexOf(member) >= 0; };
+		function isInherited(member) { return ['initialize', 'finalize'].indexOf(member) >= 0; };
 
 		// define public members
 		function definePublicMember(member) { if (!isInherited(member)) { Controller[member] = o[member]; } };
@@ -43,7 +44,7 @@ define([
 			// define a method inside subclass
 			Controller[method['name']] = function() {
 				// grab the arguments
-		        var args = Array.prototype.slice.call(arguments, 0);
+		        var args = slice.call(arguments, 0)[0];
 				// emit 'first' event
 				first_event && App.emit(first_event, Controller, args);
 				// apply the method

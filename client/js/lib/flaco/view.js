@@ -20,14 +20,10 @@ define([
 	*/
 
 	// returns template name
-	function templateName(view) {
-		return '#' + view.name + '-template';
-	};
+	function templateName(view) { return '#' + view.name + '-template'; };
 
 	// returns if the template DOM element exists
-	function templateExists(view) {
-		return $( templateName(view) )[0];
-	};
+	function templateExists(view) { return $( templateName(view) )[0]; };
 
 	// renders the template
 	function setTemplate(view) {
@@ -95,7 +91,6 @@ define([
 				if (components.hasOwnProperty(name)) {
 					component = components[name];
 					if (typeof(component[method])==='function') {
-						console.log(name, method);
 						component[method].apply(arguments);
 					}
 				}
