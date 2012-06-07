@@ -88,7 +88,7 @@ define([
 		// Listen to every click on #main, 
 		// to override its default behavior
 		// and use our own Router to navigate
-		//a.$main.on('click', routeAnchors);
+		a.$main.on('click', routeAnchors);
 
 		return this;
 
