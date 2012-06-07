@@ -11,42 +11,17 @@ define([
 
 	'config/grid',
 	'modules/app',
+	'lib/flaco/controller',
 	'models/grid',
 	'views/grid',
 	'utils/epgapi'
 
-], function GridController(g, App, GridModel, GridView, EpgApi) {
+], function GridController(g, App, Controller, GridModel, GridView, EpgApi) {
 
+	var name = 'grid';
 
-	/**
-	 * Activate the associated view, and set up event handlers
-	 */
-	function initialize() {
+/* private */
 
-		App.populateChannels(function(){
-			// Events Handlers
-			App.on(g.GRID_MOVED, gridMoved);
-			App.on(g.GRID_FETCH_EVENTS, getEvents);
-			App.on('eventsReceived', setEvents);
-
-			GridView.initialize();
-		});
-
-	};
-
-	/**
-	 * Deactivate the associated view, and clean up event handlers
-	 */
-	function finalize() {
-
-		App.off(g.GRID_MOVED, gridMoved);
-		App.off(g.GRID_FETCH_EVENTS, getEvents);
-		App.off('eventsReceived', setEvents);
-
-		GridView.finalize();
-
-	};
-	
 	/**
 	 * Handler for the GRID_MOVED event.
 	 * GRID_MOVED is raised by the grid view whenever the visible channel range
@@ -81,20 +56,48 @@ define([
 	 * and we should now retrieve grid data.
 	 */
 	function getEvents() {
-	
+
 		EpgApi.getEventsForChannels(GridModel.selectedChannels, GridModel.selectedTime.startTime, GridModel.selectedTime.endTime);
 	
 		return this;
 	};
 
+/* public */
 
-	/* @class GridController */
-	return {
-		name: 'grid',
+	/**
+	 * Activate the associated view, and set up event handlers
+	 */
+	function initialize() {
+
+		// Events Handlers
+		App.on(g.GRID_MOVED, gridMoved);
+		App.on(g.GRID_FETCH_EVENTS, getEvents);
+		App.on('eventsReceived', setEvents);
+
+		return this;
+
+	};
+
+	/**
+	 * Deactivate the associated view, and clean up event handlers
+	 */
+	function finalize() {
+
+		App.off(g.GRID_MOVED, gridMoved);
+		App.off(g.GRID_FETCH_EVENTS, getEvents);
+		App.off('eventsReceived', setEvents);
+
+		return this;
+
+	};
+
+/* export */
+
+	return new Controller({
+		name: name,
 		initialize: initialize,
 		finalize: finalize,
-		view: GridView,
-		model: GridModel
-	};
+		view: GridView
+	});
 
 });

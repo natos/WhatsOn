@@ -7,45 +7,18 @@
 define([
 
 	'config/app',
+	'config/user',
 	'config/programme',
 	'modules/app',
+	'lib/flaco/controller',
 	'views/programme'
 
-], function ProgrammeController(c, p, App, ProgrammeView) {
+], function ProgrammeController(a, u, p, App, Controller, ProgrammeView) {
 
 
-	/**
-	 * Activate the associated view, and set up event handlers
-	 * @public
-	 */
-	function initialize(params) {
+	var name = 'programme';
 
-		// If no programmeId, look to the URL pathname
-		if (!params.programmeId) {
-			var pathParts = window.location.pathname.split('/');
-			if (pathParts.length>=2 && pathParts[1].toUpperCase()==='PROGRAMME') {
-				params.programmeId = pathParts[2];
-			}
-		}
-
-		ProgrammeView.initialize(params);
-
-		upc.on(p.RECORD, record);
-		upc.on(p.FAVORITE, favorite);
-		
-		return this;
-	
-	};
-
-	/**
-	 * Deactivate the associated view, and clean up event handlers
-	 * @public
-	 */
-	function finalize() {
-
-		ProgrammeView.finalize();
-
-	}
+/* private */
 
 	function record(url) {
 
@@ -53,6 +26,8 @@ define([
 
 			console.log('recorded');
 			console.log(response);
+
+			App.emit(u.FETCH_RECORDINGS);
 
 		});
 
@@ -64,17 +39,34 @@ define([
 
 			console.log('favoritered');
 			console.log(response);
+			App.emit(u.FETCH_FAVORITES);
 
 		});
 	};
 
 
-	/* public */
-	return {
-		name: 'programme',
+/* public */
+
+	function initialize() {
+
+		App.on(p.RECORD, record);
+		App.on(p.FAVORITE, favorite);
+		
+		return this;
+	
+	};
+
+	function finalize() {
+
+	};
+
+/* export */
+
+	return new Controller({
+		name: name,
 		initialize: initialize,
 		finalize: finalize,
 		view: ProgrammeView
-	};
+	});
 
 });

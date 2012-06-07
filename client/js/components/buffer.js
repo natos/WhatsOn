@@ -7,40 +7,23 @@
 define([
 
 	'config/grid',
-	'models/grid'
+	'models/grid',
+	'modules/app'
 
-], function Buffer(g, GridModel) {
+], function Buffer(g, GridModel, App) {
 
-	/**
-	 * Load the content for the component
-	 * Set up event handlers.
-	 * @public
-	 */
-	function initialize() {
+	var name = 'buffer';
 
-		upc.on(g.GRID_RENDERED, grooming);
-
-		return this;
-
-	};
-
-	/**
-	 * If necessary, remove the content for the component from the DOM.
-	 * Clean up event handlers.
-	 * @public
-	 */
-	function finalize() {
-		upc.off(g.GRID_RENDERED, grooming);
-	};
+/* private */
 
 	function grooming() {
 
 		if (this.timer) { clearTimeout(this.timer); }
 
-		this.timer = setTimeout(clean, 300);
+		this.timer = setTimeout(clean, 250);
+
 	};
 
-	// TODO: this should be refactor with the new Grid Model
 	function clean() {
 	
 		var events = $('.grid-event'), event, channel,
@@ -49,23 +32,50 @@ define([
 	
 		// to much elements out there
 		if ( events.length > g.MAX_DOM_ELEMENTS ) {
-	
+
 			// each event in the dom
 			events.each(function(i, e) {
 				event = $(e);
 				channel = event.parent().attr('id').split('cc_').join('');
 				// is the channel not visible? remove the element
-				if ( $.inArray(channel, visibleChannels) === -1 ) {
-					event.remove();
-				}
+				if ( $.inArray(channel, visibleChannels) === -1 ) { event.remove(); }
 			});
 		}
 	};
 
-	/* public */
+/* public */
+
+	function initialize() {
+
+		App.on(g.GRID_RENDERED, grooming);
+
+		return this;
+
+	};
+
+	function render() {
+
+		// nothing to do here...
+
+		return this;
+
+	};
+
+	function finalize() {
+
+		App.off(g.GRID_RENDERED, grooming);
+
+		return this;
+
+	};
+
+/* export */
+
 	return {
+		name: name,
 		initialize: initialize,
-		finalize: finalize
+		finalize: finalize,
+		render: render
 	};
 
 });

@@ -8,17 +8,22 @@ define([
 
 	'config/app',
 	'modules/app',
+	'lib/flaco/controller',
 	'views/movies'
 
-], function MoviesController(c, App, MoviesView) {
+], function MoviesController(c, App, Controller, MoviesView) {
+
+	var name = 'movies';
+
+/* private */
+
+/* public */
 
 	/**
 	 * Activate the associated view, and set up event handlers
 	 * @public
 	 */
 	function initialize() {
-
-		MoviesView.initialize();
 
 		return this;
 
@@ -30,17 +35,16 @@ define([
 	 */
 	function finalize() {
 
-		MoviesView.finalize();
-
 	};
 
 
-	/* public */
-	return {
+/* export */
+
+	return new Controller({
 		name: 'movies',
 		initialize: initialize,
 		finalize: finalize,
 		view: MoviesView
-	};
+	});
 
 });

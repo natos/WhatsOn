@@ -7,9 +7,12 @@
 define([
 
 	'config/app',
-	'modules/app'
+	'modules/app',
+	'lib/flaco/view'
 
-], function NowAndNextView(c, App) {
+], function NowAndNextViewContext(a, App, View) {
+
+	var name = 'nowandnext';
 
 /* private */
 
@@ -25,17 +28,6 @@ define([
 
 		App.loadCss('/assets/css/nowandnext.css');
 		App.loadCss('/assets/css/channel-event-list.css');
-		var that = this;
-
-		if ($('#content').find('#content-nowandnext').length>0) {
-			// Now-and-next container is already loaded
-			initEvents();
-		} else {
-			// Get now-and-next container from server
-			$('#content').load('/nowandnext', function(data, status, xhr){
-				initEvents();
-			});
-		}
 
 		return this;
 
@@ -45,7 +37,8 @@ define([
 	 * Set up event handlers.
 	 * @private
 	 */
-	function initEvents() {
+	function render() {
+
 		channelsListContainer = $('#channels-list-container');
 
 		// Observe clicks on 'earlier' and 'later' links,
@@ -55,8 +48,6 @@ define([
 			e.stopPropagation();
 			channelsListContainer.load(e.target.href + ' #channels-list-container');
 		});
-
-		App.emit(c.VIEW_LOADED, 'nowandnext');
 
 	}
 
@@ -74,9 +65,11 @@ define([
 
 
 	/* public */
-	return {
+	return new View({
+		name: name,
 		initialize: initialize,
-		finalize: finalize
-	};
+		finalize: finalize,
+		render: render,
+	});
 
 });

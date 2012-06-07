@@ -1,6 +1,6 @@
 /* 
-* ChannelController
-* ------------------
+* SearchController 
+* --------------
 *
 */
 
@@ -9,11 +9,11 @@ define([
 	'config/app',
 	'modules/app',
 	'lib/flaco/controller',
-	'views/channel'
+	'views/search'
 
-], function ChannelController(c, App, Controller, ChannelView) {
+], function SearchController(a, App, Controller, SearchView) {
 
-	var name = 'channel';
+	var name = 'search';
 
 /* private */
 
@@ -22,7 +22,7 @@ define([
 	function initialize() {
 
 		return this;
-	
+
 	};
 
 	function finalize() {
@@ -31,14 +31,13 @@ define([
 
 	};
 
-
 /* export */
 
-	return new Controller({
+	return {
 		name: name,
 		initialize: initialize,
 		finalize: finalize,
-		view: ChannelView
-	});
+		view: SearchView
+	};
 
 });

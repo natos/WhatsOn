@@ -12,6 +12,8 @@ define([
 
 ], function ChannelBar(g, GridModel, App) {
 
+	var name = 'channelbar';
+
 	var	$channellist;
 
 	/**
@@ -24,10 +26,15 @@ define([
 		$channellist = $('#channels-bar').find('ul')
 
 		// move with the grid
-		upc.on(g.MODEL_CHANGED, modelChanged);
+		App.on(g.MODEL_CHANGED, modelChanged);
+
+		return this;
+
+	};
+
+	function render() {
 
 		// Map Channel ID / OffsetTop
-		var channels = App.channels;
 		for (var i = 0; i < channels.length; i++) {
 			$('<div>')
 				.attr({ 'id': 'cc_' + channels[i].id })
@@ -37,7 +44,6 @@ define([
 		}
 
 		return this;
-
 	};
 
 	/**
@@ -46,7 +52,7 @@ define([
 	 * @public
 	 */
 	function finalize() {
-		upc.off(g.MODEL_CHANGED, modelChanged);
+		App.off(g.MODEL_CHANGED, modelChanged);
 	};
 
 	/**
@@ -62,8 +68,10 @@ define([
 
 	/* public */
 	return {
+		name: name,
 		initialize: initialize,
-		finalize: finalize
+		finalize: finalize,
+		render: render
 	};
 
 });

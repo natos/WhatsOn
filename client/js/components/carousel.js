@@ -8,78 +8,22 @@ define([
 
 ], function() {
 
+	var name = 'carousel';
+
+/* private */
+
 	$window = $(window);
 
-	var Carousel = {};
-
-	Carousel.map = {};
-
-	Carousel.initialize = function() {
-
-		var self = this;
-
-		this.el = $('#featured').addClass('carousel');
-
-		this.list = this.el.find('.show').addClass('slide');
-
-		var sizeHandler = function() {
-			// The images are in 16:9 aspect ratio. Limit height to no more than 400px.
-			// (Height limit is just so that the channel list remains visible even on very
-			// wide screens.)
-			self.list.css({'height': ($window.width() * 0.5625) + 'px' });
-		};
-
-		$window.bind('resize orientationchange', sizeHandler);
-
-		sizeHandler();
-
-		loadButtons();
-
-		return this;
+	function sizeHandler() {
+		// The images are in 16:9 aspect ratio. Limit height to no more than 400px.
+		// (Height limit is just so that the channel list remains visible even on very
+		// wide screens.)
+		list.css({'height': ($window.width() * 0.5625) + 'px' });
 	};
 
-	var coolPics = [
-		'8ad586a135af96b70135afe916940151',
-		'8ad586a135af96b70135afead6ef0166',
-		'8ad586a135c83fb50135e242d4720a75',
-		'8ad586a135af96b70135c381691a0a27',
-		'8ad586a135af96b70135aff20fb801b2',
-		'8ad586a135af96b70135c3910b330a31',
-		'8ad586a135af96b70135afece649017b',
-		'8ad586a135af96b70135aff4c1ae01db',
-		'8ad586a135af96b70135aff6b58a01f0',
-		'8ad586a135af96b70135aff825040205',
-		'8ad586a135af96b70135b0254f4e0341',
-		'8ad586a135af96b70135b033bc610391',
-		'8ad586a135af96b70135b03b20bc03e2',
-		'8ad586a135af96b70135b0397b5903cb',
-		'8ad586a135af96b70135bf64939309ea',
-		'8ad586a135af96b70135b03cce4703f5',
-		'8ad586a135af96b70135bf41ffe609d3',
-		'8ad586a135af96b70135be79610005ee',
-		'8ad586a135af96b70135be6725af05b7',
-		'8ad586a135af96b70135bf45fd6709da',
-		'8ad586a135af96b70135bf50c0b809e1',
-		'8ad586a135af96b70135c3cf710e0a6b',
-		'8ad586a135af96b70135c3d2edf90a6f',
-		'8ad586a135c83fb50135c869800b0001',
-		'8ad586a135af96b70135bed29b9f078c',
-		'8ad586a135af96b70135bec8927d0730',
-		'8ad587a135e838d50135ee54544f075c',
-		'8ad587a135c42a2c0135c4fcb2980053',
-		'8ad586a135c83fb50135c87e4ace0011',
-		'8ad586a135c83fb50135c87d21f9000c',
-		'8ad586a135c83fb50135c8795ab80008',
-		'8ad586a135af96b70135c3e20a470a7c',
-		'8ad586a135af96b70135bf7cd35a09f7'
-	];
+	function loadButtons() {
 
-	// randomize pictures
-	coolPics.sort(function() { return 0.5 - Math.random(); });
-
-	var loadButtons = function() {
-
-		var buttons = $('<div>').addClass('navigator').appendTo(Carousel.el),
+		var buttons = $('<div>').addClass('navigator').appendTo(el),
 			button = $('<i>').addClass('disc').addClass('icon-stop'),
 			maxScreenWidth = Math.max($window.width(), $window.height()),
 			programme,
@@ -96,7 +40,7 @@ define([
 				imgSize = 'xl';
 			}
 
-		Carousel.list.find('.programme').each(function(i, e) {
+		list.find('.programme').each(function(i, e) {
 
 			programme = $(e);
 
@@ -105,15 +49,18 @@ define([
 			});
 
 			//programme.prepend('<img class="programme-bg" src="/assets/programmes/' + imgSize + '/' + coolPics[i] + '.jpg" />');
-			src = "/assets/programmes/" + imgSize + "/" + coolPics[i] + ".jpg";
-			programme.find('.programme-bg').attr('src', src);
 
-			Carousel.map['disc-' + i] = button
+			var $bg = programme.find('.programme-bg'),
+				src = $bg.attr('src');
+				src = src.replace('/s/', '/' + imgSize + '/');
+				$bg.attr('src', src);
+
+			map['disc-' + i] = button
 				.clone()
 				.data('index', i)
 				.click(function(event) {
 					event.stopPropagation();
-					Carousel.list.css('left', $(this).data('index') * -100 + '%' );
+					list.css('left', $(this).data('index') * -100 + '%' );
 					$('.disc').removeClass('selected');
 					$(this).addClass('selected');
 				})
@@ -124,10 +71,8 @@ define([
 		$('.disc').first().addClass('selected');
 
 		// add touch events
-		Carousel.el.bind('swipeRight swipeLeft', swipe);
+		el.on('swipeRight swipeLeft', swipe);
 
-		// start timer
-		timer.start();
 		// restart timer every disc click
 		$('.disc').bind('click', timer.restart );
 		
@@ -140,6 +85,7 @@ define([
 			this.clock = setInterval(timer.tick, timer.time);
 		},
 		tick: function() {
+			console.log(timer.clock);
 			var disc = $('.disc.selected').next();
 			if (!disc[0]) {
 				$('.disc').first().trigger('click');
@@ -158,7 +104,7 @@ define([
 	};
 
 	// swipe handler
-	var swipe = function(event) {
+	function swipe(event) {
 
 		var bounce, disc = $('.disc.selected');
 
@@ -187,20 +133,68 @@ define([
 
 	// bounce when the limit is reached
 	// for the rightswipe
-	var bounceRight = function() {
-		Carousel.list.css('left', '5%');
+	function bounceRight() {
+		list.css('left', '5%');
 		setTimeout(function(){
-		Carousel.list.css('left', '0%');
+		list.css('left', '0%');
 		},300);
 	};
 	// for the leftswipe
-	var bounceLeft = function() {
-		Carousel.list.css('left', '-905%');
+	function bounceLeft() {
+		list.css('left', '-905%');
 		setTimeout(function(){
-		Carousel.list.css('left', '-900%');
+		list.css('left', '-900%');
 		},300);
 	};
 
-	return Carousel;
+/* public */ 
+
+	var el, list, map = {};
+
+	function initialize() {
+
+		$window.on('resize orientationchange', sizeHandler);
+
+		return this;
+	};
+
+	function render() {
+
+		console.log('RENDERING CAROUSEL');
+
+		el = $('#featured').addClass('carousel');
+
+		list = el.find('.show').addClass('slide');
+
+		sizeHandler();
+
+		loadButtons();
+
+		// start timer
+		timer.start();
+
+		return this;
+	};
+
+	function finalize() {
+
+		// stop timer
+		timer.stop();
+
+		$window.off('resize orientationchange', sizeHandler);
+
+		return this;
+
+	};
+
+/* export */ 
+
+	return {
+		name: name,
+		initialize: initialize,
+		finalize: finalize,
+		render: render,
+		map: map
+	}
 
 });

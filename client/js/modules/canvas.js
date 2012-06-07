@@ -1,147 +1,170 @@
 /* 
 * CanvasModule
 * ----------------
-* This module is responsible for dealing with the main area of the page (the "canvas").
-* When a client-side navigation event occurs, the correct view should be displayed.
+*
+*
 */
 
 define([
 
 	'config/app',
+	'modules/app',
 	'modules/router'
 
-], function CanvasModule(appConfig, Router) {
+], function(a, App, Router) {
 
-	/* private */
+/* private */
 
-	var _controllers = {},
-		_currentController;
+	// shift
+	var shift = Array.prototype.shift,
+		// current state
+		CURRENT_STATE = false,
+		// current state
+		LAZY_STATE = false;
 
-	/**
-	 * Set up event handlers.
-	 * Load controllers
-	 * @public
-	 */
+	/*
+	*	Fetch Controllers 
+	*/
+
+	// lazy require controllers
+	function fetchControllers(controllers) {
+		require(controllers, mapControllers);
+	};
+
+	// map controllers
+	function map(controller) {
+		// save the controller in a local refernece
+		controllers[controller.name] = controller;
+	};
+
+	// iterate controllers
+	function mapControllers() {
+		while (controller = shift.apply(arguments)) { map(controller); }
+		// LAZY_STATE represet a controller wainting to be loaded
+		if (LAZY_STATE) { load(LAZY_STATE) };
+	};
+
+	/* 
+	*	Transition 
+	*/
+	function startTransition() { a.$transition.appendTo(a.$body).removeClass('hide'); };
+
+	function endTransition() { a.$transition.addClass('hide'); setTimeout(function() { a.$transition.remove(); }, 500); };
+
+
+	/* 
+	*	Load controllers
+	*/
+	function load(State) {
+		// If there's a controller available, intialize(State)
+		if (State && controllers[State.controller]) {
+			controllers[State.controller].initialize(State);
+			CURRENT_STATE = State;
+			LAZY_STATE = false;
+		} else {
+			// The controller is not available
+			// save the State to load after the
+			// controllers are ready to use
+			LAZY_STATE = State;
+		}
+	};
+
+	// unload a controller
+	function unload(State) {
+		if (State && controllers[State.controller]) {
+			controllers[State.controller].finalize();
+		}
+	};
+
+	/* 
+	*	Navigate
+	*/
+	function navigate(State) {
+
+		if (State === CURRENT_STATE) {
+			console.log('View ' + State.name + ' already loaded.');
+			return;
+		}
+
+		startTransition();
+		unload(CURRENT_STATE);
+		load(State);
+
+	};
+
+
+/* public */
+
+	// controllers map
+	var controllers = {};
+
+	/* constructor */
 	function initialize() {
-
-		upc.on(appConfig.NAVIGATE, activateController);
-
-		upc.on(appConfig.VIEW_LOADED, hideLoading);
-
-		$('#content').on('click', 'a.programme', navigateToProgramme)
-					.on('click', 'a.channel', navigateToChannel);
-
-		loadControllers ([
+		
+		// fetch controllers
+		fetchControllers([
 			'controllers/channel', 
 			'controllers/dashboard',
 			'controllers/grid',
 			'controllers/movies',
 			'controllers/nowandnext',
 			'controllers/programme',
-			'controllers/settings'
+			'controllers/settings',
+			'controllers/search'
 		]);
+
+		/* 
+		*	View live cycle 
+		*/ 
+		// When a Views start initializating triggers an event
+		App.on(a.VIEW_INITIALIZING, function(view) { console.log('Canvas Module: VIEW_INITIALIZING', view.name); });
+		// When a Views finish initializating triggers an event
+		App.on(a.VIEW_INITIALIZED, function(view) { console.log('Canvas Module: VIEW_INITIALIZED', view.name); });
+		// When a Views start rendering triggers an event
+		App.on(a.VIEW_RENDERING, function(view) { console.log('Canvas Module: VIEW_RENDERING', view.name); });
+		// When a Views finish rendering triggers an event
+		App.on(a.VIEW_RENDERED, function(view) { console.log('Canvas Module: VIEW_RENDERED', view.name); });
+		// When a Views start finalizing triggers an event
+		App.on(a.VIEW_FINALIZING, function(view) { console.log('Canvas Module: VIEW_FINALIZING', view.name); });
+		// When a Views finish finalizing triggers an event
+		App.on(a.VIEW_FINALIZED, function(view) { console.log('Canvas Module: VIEW_FINALIZED', view.name); });
+
+		App.on(a.CONTROLLER_INITIALIZING, function(view) { console.log('Canvas Module: CONTROLLER_INITIALIZATING', view.name); });
+		App.on(a.CONTROLLER_INITIALIZED, function(view) { console.log('Canvas Module: CONTROLLER_INITIALIZATED', view.name); });
+		App.on(a.CONTROLLER_FINALIZING, function(view) { console.log('Canvas Module: CONTROLLER_FINALIZATING', view.name); });
+		App.on(a.CONTROLLER_FINALIZED, function(view) { console.log('Canvas Module: CONTROLLER_FINALIZED', view.name); });
+
+		// listening the router
+		App.on(a.NAVIGATE, navigate);
+		// when any view is rendered,
+		// remove transition
+		App.on(a.VIEW_RENDERED, endTransition);
 
 		return this;
 	};
 
-	/**
-	 * Clean up event handlers.
-	 * Reset the list of controllers.
-	 * @public
-	 */
+	/* destructor */
 	function finalize() {
 
-		_controllers = {};
-		_currentController = null;
-		upc.off(appConfig.VIEW_LOADED, hideLoading);
-		upc.off(appConfig.NAVIGATE, activateController);
+		App.off(a.NAVIGATE, navigate);
+		App.off(a.VIEW_RENDERED, endTransition);
 
-		$('#content').off('click', 'a.programme', navigateToProgramme)
-			.off('click', 'a.channel', navigateToChannel);
-
-	};
-
-	/**
-	 * Load the code for all controllers.
-	 * @private
-	 */
-	function loadControllers(controllers) {
-		require(controllers, function(){
-			var controller,
-				i,
-				controllersCount = arguments.length;
-			for (i=0; i< controllersCount; i++) {
-				controller = arguments[i];
-				if (controller && typeof(controller.name)==='string' && typeof(controller.initialize)==='function') {
-					_controllers[controller.name] = controller;
-				}
-			}
-
-			Router.evaluateLocation();
-
-		});
-	};
-
-	/**
-	 * Hide the "loading" message.
-	 * @private
-	 */
-	function hideLoading() {
-		$('#transition').hide();
-	};
-
-	/**
-	 * Activate a controller for the canvas
-	 * @private
-	 */
-	function activateController(controllerName, params) {
-		// Default controller
-		if (controllerName==='') {
-			controllerName = 'dashboard';
-		}
-
-		var controller = _controllers[controllerName];
-		if (controller && typeof(controller.initialize)==='function') {
-			$('#transition').show();
-			deactivateController(_currentController);
-			controller.initialize(params);
-			_currentController = controller;
-		}
+		App.off(a.VIEW_INITIALIZING, function(view) { console.log('Canvas Module: VIEW_INITIALIZING', view.name); });
+		App.off(a.VIEW_INITIALIZED, function(view) { console.log('Canvas Module: VIEW_INITIALIZED', view.name); });
+		App.off(a.VIEW_RENDERING, function(view) { console.log('Canvas Module: VIEW_RENDERING', view.name); });
+		App.off(a.VIEW_RENDERED, function(view) { console.log('Canvas Module: VIEW_RENDERED', view.name); });
+		App.off(a.VIEW_FINALIZING, function(view) { console.log('Canvas Module: VIEW_FINALIZING', view.name); });
+		App.off(a.VIEW_FINALIZED, function(view) { console.log('Canvas Module: VIEW_FINALIZED', view.name); });
 
 	};
 
-	/**
-	 * Deactivate a controller for the canvas
-	 * @private
-	 */
-	function deactivateController(controller) {
-		if (controller && typeof(controller.finalize)==='function') {
-			controller.finalize();
-		}
-	};
+/* export */
 
-	function navigateToChannel(e) {
-		var channelId = this.getAttribute('data-channelid');
-		if (channelId) {
-			Router.navigateTo('channel', {'channelId':channelId});
-			e.preventDefault();
-		}
-	};
-
-	function navigateToProgramme(e) {
-		var programmeId = this.getAttribute('data-programmeid');
-		if (programmeId) {
-			Router.navigateTo('programme', {'programmeId':programmeId});
-			e.preventDefault();
-		}
-	};
-
-
-	/* public */
 	return {
 		name: 'canvas',
 		initialize: initialize,
-		finalize: finalize
+		finalize: finalize,
+		controllers: controllers
 	};
 
 });

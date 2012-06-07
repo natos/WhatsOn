@@ -8,41 +8,46 @@
 define([
 	
 	'config/app',
-	'modules/app'
+	'modules/app',
+	'lib/flaco/view'
 
-], function ChannelView(appConfig, App) {
+], function ChannelView(a, App, View) {
 
-	/**
-	 * Load the content for the view.
-	 * Activate associated components.
-	 * Set up event handlers.
-	 * @public
-	 */
-	function initialize(params) {
-		var channelId = params.channelId;
+	var name = 'channel';
 
-		App.loadCss('/assets/css/channelpage.css');
+/* public */
+
+	function initialize() {
+
+/*		App.loadCss('/assets/css/channelpage.css');
 		App.loadCss('/assets/css/channel-event-list.css');
 
-		$('#content').load('/channel/' + channelId + ' #content', function(data, status, xhr){
-			App.emit(appConfig.VIEW_LOADED);
-		});
+		$('#content').load('/channel/' + channelId, function(data, status, xhr){
+			App.emit(a.VIEW_RENDERED);
+		});*/
+
+		return this;
 	
 	};
 
-	/**
-	 * If necessary, remove the content for the view from the DOM.
-	 * Deactivate associated components. 
-	 * Clean up event handlers.
-	 * @public
-	 */
-	function finalize() {
+	function render() {
+
+		return this;
 
 	};
 
-	/* public */
-	return {
-		initialize: initialize,
-		finalize: finalize
-	}
+	function finalize() {
+
+		return this;
+
+	};
+
+/* export */
+
+	return new View({
+		name: name,
+		render: render,
+		finalize: finalize,
+		initialize: initialize
+	});
 });

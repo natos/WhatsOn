@@ -11,11 +11,16 @@ define([
 
 	'config/app',
 	'modules/app',
+	'lib/flaco/controller',
 	'views/settings'
 
-], function SettingsController(c, App, SettingsView) {
+], function SettingsController(c, App, Controller, SettingsView) {
+
+	var name = 'settings';
 
 /* private */
+
+/* public */
 
 	function initialize() {
 	
@@ -23,11 +28,18 @@ define([
 	
 	};
 
-/* public */
+	function finalize() {
+
+		return this;
+
+	};
+
+/* export */
+
 	return {
-		name: 'settings',
-		/* constructor */
+		name: name,
 		initialize: initialize,
+		finalize: finalize,
 		view: SettingsView
 	};
 

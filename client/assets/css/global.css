@@ -1,9 +1,14 @@
-	/* reset lists */
+/* reset lists */
 ul, ol, li {
+	list-style: none;
 	margin: 0;
 	padding: 0;
 }
 
+html {
+	/* Avoids flickers on fonts when animations occur */
+	-webkit-font-smoothing: antialiased;
+}
 
 /**
 *	body
@@ -505,17 +510,21 @@ footer {
 	-webkit-animation-timing-function: linear;
 }
 
-.show {
+.carousel .show {
 	display: block;
 	position: relative;
 	height: 100%; /* 100% of #featured parent container */
 	max-height: 400px;
 	overflow:visible;
-
 	-webkit-transition: 	left .3s ease-in-out;
 	-moz-transition: 		left .3s ease-in-out;
 	-o-transition: 			left .3s ease-in-out;
 	transition: 			left .3s ease-in-out;
+
+}
+
+.show {
+
 }
 
 .show .btn {
@@ -523,6 +532,11 @@ footer {
 }
 
 	.show .programme {
+		position: relative;
+		clear: both;
+	}
+
+	.carousel .show .programme {
 		display:block;
 		position: absolute;
 		left: 0;
@@ -530,12 +544,27 @@ footer {
 		width:100%;
 	}
 
+		.show .programme button {
+			display: none;
+		}
+
+		.carousel .show .programme button {
+			display: inline;
+		}
+
 		.show .programme-bg {
+			float: left;
+		}
+
+		.carousel .show .programme-bg {
 			position: absolute;
 			width:100%;
 		}
 
 		.show .programme-details {
+		}
+
+		.carousel .show .programme-details {
 			position: absolute;
 			padding: 10px 20px;
 			-webkit-transition: font-size ease-in-out .3s;
@@ -601,6 +630,12 @@ footer {
 		color-stop(0.50, #efefef),
 		color-stop(0.50, #ededed),
 		to(#dddddd));
+}
+
+#top-lists li p {
+	font-size: .8em;
+	float: right;
+	margin: 0;
 }
 
 /**
