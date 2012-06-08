@@ -1,7 +1,6 @@
 /*
 * ChannelBar
 * ----------
-* @class ChannelBar
 */
 
 define([
@@ -14,13 +13,20 @@ define([
 
 	var name = 'channelbar';
 
+/* private */
+
 	var	$channellist;
 
-	/**
-	 * Load the content for the component
-	 * Set up event handlers.
-	 * @public
-	 */
+	function move(position) {
+		$channellist && $channellist.css({ top: position.top });
+	};
+
+	function modelChanged(obj) {
+		obj && obj.position && move(obj.position);
+	};
+
+/* public */
+
 	function initialize() {
 
 		$channellist = $('#channels-bar').find('ul')
@@ -34,7 +40,8 @@ define([
 
 	function render() {
 
-		// Map Channel ID / OffsetTop
+		// Create channel containers
+		// as rows in the grid
 		for (var i = 0; i < channels.length; i++) {
 			$('<div>')
 				.attr({ 'id': 'cc_' + channels[i].id })
@@ -46,27 +53,16 @@ define([
 		return this;
 	};
 
-	/**
-	 * If necessary, remove the content for the component from the DOM.
-	 * Clean up event handlers.
-	 * @public
-	 */
 	function finalize() {
+
 		App.off(g.MODEL_CHANGED, modelChanged);
+
+		return this;
+
 	};
 
-	/**
-	 * Handler for model data changes.
-	 * @private
-	 */
-	function modelChanged(obj) {
-		if (obj.position) {
-			$channellist.css({ top: obj.position.top });
-		}
-	};
+/* export */
 
-
-	/* public */
 	return {
 		name: name,
 		initialize: initialize,

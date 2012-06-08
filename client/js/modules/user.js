@@ -12,7 +12,7 @@ define([
 	'models/user',
 	'components/user'
 
-], function UserModule(u, App, UserModel, UserComponent) {
+], function UserModuleScope(u, App, UserModel, UserComponent) {
 
 	var name = 'user';
 
@@ -48,12 +48,30 @@ define([
 		FB.logout(function(response) { });
 	};
 
+	/* FAVORITES */
+
 	function fetchFavorites() {
-		FB.api('/me/upcsocial:favorite', function(response) { UserModel.set('favorites', response); });
+		FB.api('/me/upcsocial:favorite', setFavorites);
 	};
 
+	function setFavorites(response) {
+
+		if (!response) { console.log('User Model','Error while trying to process Favorites > Empty response from facebook'); return; }
+
+		UserModel.set('favorites', response);
+	};
+
+	/* RECORDINGS */
+
 	function fetchRecordings() {
-		FB.api('/me/upcsocial:record', function(response) { UserModel.set('recorded', response); });
+		FB.api('/me/upcsocial:record', setRecordings);
+	};
+
+	function setRecordings(response) {
+
+		if (!response) { console.log('User Model','Error while trying to process Favorites > Empty response from facebook'); return; }
+
+		UserModel.set('recorded', response); 
 	};
 
 	/* actions when user is connected */

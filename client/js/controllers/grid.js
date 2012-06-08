@@ -29,6 +29,7 @@ define([
 	 */
 	function gridMoved() {
 		// Update model UI data
+		console.log("GRID MOVED MOVED")
 		GridModel.set('position', { 'top': window.pageYOffset * -1, 'left': window.pageXOffset * -1 });
 		GridModel.set('selectedChannels', GridView.getSelectedChannels(2));
 		GridModel.set('selectedTime', GridView.getSelectedTime());

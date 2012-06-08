@@ -25,6 +25,17 @@ define([
 		}
 	};
 
+	function find_me_a_logo(name) {
+		var logo = false;
+		for (var i = 0; i < channels.length; i++) {
+			var _channel = channels[i];
+			if (_channel.name, _channel.name === name) {
+				logo = _channel.logoIMG; break;
+			}
+		}
+		return '<img src="http://www.upc.nl/' + logo + '">';
+	};
+
 /* public */
 
 	function initialize() {
@@ -36,41 +47,55 @@ define([
 
 	function render(model) {
 
-		if (!model) {
-			if (!UserModel.favorites) {
-				console.log('Favorites: No model, skip rendering');
-				return;
-			} else {
-				model = UserModel;
-			}
+		// grab the model
+		if (!model) { model = UserModel; }
+		// check for collections
+		if (!model[name]) {
+			console.log('Favorites: No model, skip rendering');
+			return;
 		}
 
-		console.log('Favorites: Rendering');
-
+		// load template
 		$('#top-lists').html( $(template_name).text() );
 
 		// the argument 'model' is a reference to the UserModel
 		// to ways to get here, one is trought the handleModelChanges function
 		// other is directly 
-		var favorites = model.favorites,
-			// detach list from DOM
-			list = $('.favorites ul').empty().remove(),
-			item = $('<li></li>'),
-			link = $('<a class="programme">');
+		var favorites = model[name],
+			// DOM elements
+			$favorites = $('.' + name),
+			// detach lists from DOM
+			$lists = {
+				'programme'	: $favorites.find('.programmes'),
+				'channel'	: $favorites.find('.channels')
+			},
+			$listitem = $('<li></li>'),
+			$link = $('<a>');
 
 		$(favorites.data).each(function(i, e) {
 
-			var id = e.data.tv_show.url.match(/\d+/),
-				req = '/programme/' + id + '/events.json?callback=?';
+			// defining the type of favorite
+			var listname = (typeof e.data['tv_show']==='undefined') ? 'channel' : 'programme',
+				type = (typeof e.data['tv_show']==='undefined') ? 'tv_channel' : 'tv_show',
+				item = e.data[type];
+console.log(listname, type, item);
+			var id = item.url.match(/\d+/),
+				req = '/' + listname + '/' + id + '/events.json?callback=?',
+				content = item.title;
+
+			if (listname === 'channel') {
+				content = find_me_a_logo(item.title) || item.title;
+			};
 
 			// render item inside list
-			var fav = link
+			var fav = $link
 				.clone() // new link
-				.attr('href', '/programme/' + id)
-				.data('programmeid', id)
-				.html(e.data.tv_show.title)
+				.attr('href', '/' + listname + '/' + id)
+				.attr('class', listname)
+//				.data('programmeid', id)
+				.html(content)
 				.appendTo(
-					item.clone().appendTo(list)
+					$listitem.clone().appendTo($lists[listname])
 				);
 
 			// get NowAndNext for the favorites
@@ -82,9 +107,10 @@ define([
 			});
 		});
 
-		// attach list to DOM
-		list.appendTo('.favorites');
-
+		// attach lists to DOM
+		for (var list in $lists) { 
+			$lists[list].appendTo($favorites);	
+		}
 	};
 
 	function finalize() {

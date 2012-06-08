@@ -13,7 +13,7 @@ define([
 	'lib/flaco/controller',
 	'views/programme'
 
-], function ProgrammeController(a, u, p, App, Controller, ProgrammeView) {
+], function ProgrammeControllerScope(a, u, p, App, Controller, ProgrammeView) {
 
 
 	var name = 'programme';
@@ -48,8 +48,6 @@ define([
 /* public */
 
 	function initialize(State) {
-
-		console.log('Programme Controller init State: ', State)
 
 		App.on(p.RECORD, record);
 		App.on(p.FAVORITE, favorite);

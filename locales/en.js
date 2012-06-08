@@ -47,5 +47,7 @@
 	"Your search begins here...": "Your search begins here...",
 	"Log Out": "Log Out",
 	"Favorite": "Favorite",
-	"ViewView": "ViewView"
+	"ViewView": "ViewView",
+	"Programmes": "Programmes",
+	"Channels": "Channels"
 }

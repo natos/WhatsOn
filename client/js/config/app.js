@@ -17,6 +17,8 @@ define([], function AppConfigContext() {
 
 		/* constants */ 
 
+		NAMESPACE: 'upsocial',
+
 		/* events */
 
 		NAVIGATE: 'app:navigate',

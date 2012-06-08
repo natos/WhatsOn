@@ -48,6 +48,12 @@ define([], function UserConfigContext() {
 
 		UNKNOWN: 'unknown',
 
+		/* favorite collection names */
+
+		FAVORITE_PROGRAMMES: 'favorite_programmes',
+
+		FAVORITE_CHANNELS: 'favorite_channels',
+
 		/* DOM Access */
 
 		$window: $(window),

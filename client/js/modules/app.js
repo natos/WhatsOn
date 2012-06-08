@@ -11,7 +11,7 @@ define([
 	'/js/lib/event/event.js',
 	'config/app'
 
-], function AppModule(EventEmitter, c) {
+], function AppModuleScope(EventEmitter, c) {
 
 	/* private */
 

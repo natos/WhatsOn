@@ -14,7 +14,7 @@ define([
 	'modules/app',
 	'lib/flaco/view'
 
-], function NavigationView(a, App, View) {
+], function NavigationViewContext(a, App, View) {
 
 	var name = 'navigation';
 
@@ -69,6 +69,7 @@ define([
 /* export */
 	return new View({
 		name: name,
+		render: render,
 		finalize: finalize,
 		initialize: initialize
 	})

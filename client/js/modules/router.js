@@ -10,7 +10,7 @@ define([
 	'modules/app',
 	'/js/lib/history/history.native.js'
 
-], function(a, App) {
+], function RouterModuleScope(a, App) {
 
 	var name = 'router';
 

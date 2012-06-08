@@ -11,7 +11,9 @@ define([
 	'modules/app',
 	'modules/router'
 
-], function(a, App, Router) {
+], function CanvasModuleScope(a, App, Router) {
+
+	var name = 'canvas';
 
 /* private */
 
@@ -47,9 +49,15 @@ define([
 	/* 
 	*	Transition 
 	*/
-	function startTransition() { a.$transition.appendTo(a.$body).removeClass('hide'); };
+	function startTransition() {
+		console.log('Canvas Module','Adding transition;');
+		a.$transition.appendTo(a.$body).removeClass('hide'); 
+	};
 
-	function endTransition() { a.$transition.addClass('hide'); setTimeout(function() { a.$transition.remove(); }, 500); };
+	function endTransition() { 
+		console.log('Canvas Module','Removing transition;');
+		a.$transition.addClass('hide'); setTimeout(function() { a.$transition.remove(); }, 500); 
+	};
 
 
 	/* 
@@ -81,17 +89,16 @@ define([
 	*/
 	function navigate(State) {
 
-		if (!State) {
-			console.log('Canvas: State object is empty. Stop navigation.');
+		if (typeof State === 'undefined') {
+			console.log('Canvas Module', 'State object is empty. Stop navigation.');
 			return;
 		}
 
 		if (State === CURRENT_STATE) {
-			console.log('Canvas: ' + State.name + ' controller already loaded.');
+			console.log('Canvas Module', State.name + ' controller already loaded.');
 			return;
 		}
 
-		startTransition();
 		unload(CURRENT_STATE);
 		load(State);
 
@@ -118,32 +125,29 @@ define([
 			'controllers/search'
 		]);
 
-		/* 
-		*	View live cycle 
-		*/ 
-		// When a Views start initializating triggers an event
-		App.on(a.VIEW_INITIALIZING, function(view) { console.log('Canvas Module: VIEW_INITIALIZING', view.name); });
-		// When a Views finish initializating triggers an event
-		App.on(a.VIEW_INITIALIZED, function(view) { console.log('Canvas Module: VIEW_INITIALIZED', view.name); });
-		// When a Views start rendering triggers an event
-		App.on(a.VIEW_RENDERING, function(view) { console.log('Canvas Module: VIEW_RENDERING', view.name); });
-		// When a Views finish rendering triggers an event
-		App.on(a.VIEW_RENDERED, function(view) { console.log('Canvas Module: VIEW_RENDERED', view.name); });
-		// When a Views start finalizing triggers an event
-		App.on(a.VIEW_FINALIZING, function(view) { console.log('Canvas Module: VIEW_FINALIZING', view.name); });
-		// When a Views finish finalizing triggers an event
-		App.on(a.VIEW_FINALIZED, function(view) { console.log('Canvas Module: VIEW_FINALIZED', view.name); });
-
-		App.on(a.CONTROLLER_INITIALIZING, function(view) { console.log('Canvas Module: CONTROLLER_INITIALIZATING', view.name); });
-		App.on(a.CONTROLLER_INITIALIZED, function(view) { console.log('Canvas Module: CONTROLLER_INITIALIZATED', view.name); });
-		App.on(a.CONTROLLER_FINALIZING, function(view) { console.log('Canvas Module: CONTROLLER_FINALIZATING', view.name); });
-		App.on(a.CONTROLLER_FINALIZED, function(view) { console.log('Canvas Module: CONTROLLER_FINALIZED', view.name); });
-
 		// listening the router
 		App.on(a.NAVIGATE, navigate);
-		// when any view is rendered,
+		// when any view is being initialized
+		// add a transition state
+		App.on(a.VIEW_INITIALIZING, startTransition);
+		// and when finish rendereding,
 		// remove transition
 		App.on(a.VIEW_RENDERED, endTransition);
+
+		// DEBUGGING Handlers
+
+		/* View live cycle 	*/ 
+		App.on(a.VIEW_INITIALIZING, function(view) { console.log('Canvas Module', view.name, 'VIEW_INITIALIZING'); });
+		App.on(a.VIEW_INITIALIZED, function(view) { console.log('Canvas Module', view.name, 'VIEW_INITIALIZED'); });
+		App.on(a.VIEW_RENDERING, function(view) { console.log('Canvas Module', view.name, 'VIEW_RENDERING'); });
+		App.on(a.VIEW_RENDERED, function(view) { console.log('Canvas Module', view.name, 'VIEW_RENDERED'); });
+		App.on(a.VIEW_FINALIZING, function(view) { console.log('Canvas Module', view.name, 'VIEW_FINALIZING'); });
+		App.on(a.VIEW_FINALIZED, function(view) { console.log('Canvas Module', view.name, 'VIEW_FINALIZED'); });
+		/* Controller live cycle */
+		App.on(a.CONTROLLER_INITIALIZING, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_INITIALIZATING'); });
+		App.on(a.CONTROLLER_INITIALIZED, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_INITIALIZATED'); });
+		App.on(a.CONTROLLER_FINALIZING, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_FINALIZATING'); });
+		App.on(a.CONTROLLER_FINALIZED, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_FINALIZED'); });
 
 		return this;
 	};
@@ -154,22 +158,15 @@ define([
 		App.off(a.NAVIGATE, navigate);
 		App.off(a.VIEW_RENDERED, endTransition);
 
-		App.off(a.VIEW_INITIALIZING, function(view) { console.log('Canvas Module: VIEW_INITIALIZING', view.name); });
-		App.off(a.VIEW_INITIALIZED, function(view) { console.log('Canvas Module: VIEW_INITIALIZED', view.name); });
-		App.off(a.VIEW_RENDERING, function(view) { console.log('Canvas Module: VIEW_RENDERING', view.name); });
-		App.off(a.VIEW_RENDERED, function(view) { console.log('Canvas Module: VIEW_RENDERED', view.name); });
-		App.off(a.VIEW_FINALIZING, function(view) { console.log('Canvas Module: VIEW_FINALIZING', view.name); });
-		App.off(a.VIEW_FINALIZED, function(view) { console.log('Canvas Module: VIEW_FINALIZED', view.name); });
-
 	};
 
 /* export */
 
 	return {
-		name: 'canvas',
+		name: name,
+		controllers: controllers,
 		initialize: initialize,
 		finalize: finalize,
-		controllers: controllers
 	};
 
 });

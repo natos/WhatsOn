@@ -14,7 +14,7 @@ define([
 	'lib/flaco/view',
 	'controllers/programme'
 
-], function ProgrammeView(a, u, p, App, View, ProgrammeController) {
+], function ProgrammeViewScope(a, u, p, App, View, ProgrammeController) {
 
 	var name = 'programme';
 
@@ -31,16 +31,14 @@ define([
 			favorites = event['favorites'].data;
 
 			t = favorites.length;
-
+/*
 			while (t--) {
 				// if the ID of the show is in my favorite list, disable the favorite button;
 				if (favorites[t].data.tv_show.url === url) {
 					$('#user-action').find('.favorite').attr('disable','disable').addClass('disable');
 				}
-			}
-			
+			}*/
 		}
-
 	};
 
 	function userActionHandler(event) {
@@ -76,27 +74,11 @@ define([
 
 /* public */
 
-	/**
-	 * Load the content for the view.
-	 * Activate associated components.
-	 * Set up event handlers.
-	 * @public
-	 */
 	function initialize(State) {
-
-		console.log('Programme View init State: ', State)
 
 		// And if is already loaded?
 		App.loadCss('/assets/css/programmepage.css');
-/*
-		$('#content').load('/programme/' + programmeId, function(data, status, xhr){
 
-			p.$userAction = $('#user-action').on('click', userActionHandler);
-
-			App.emit(a.VIEW_RENDERED);
-
-		});
-*/
 		App.on(u.MODEL_CHANGED, handleUserModelChanges);
 	
 	};
@@ -107,12 +89,6 @@ define([
 
 	};
 
-	/**
-	 * If necessary, remove the content for the view from the DOM.
-	 * Deactivate associated components. 
-	 * Clean up event handlers.
-	 * @public
-	 */
 	function finalize() {
 
 		p.$userAction.off('click', userActionHandler);

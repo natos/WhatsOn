@@ -10,7 +10,7 @@ define([
 	'lib/flaco/controller',
 	'views/navigation'
 
-], function NavigationModule(a, App, Controller, NavigationView) {
+], function NavigationControllerContext(a, App, Controller, NavigationView) {
 
 	var name = 'navigation';
 
