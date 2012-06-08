@@ -23,6 +23,7 @@ define([
 	'controllers/grid',
 	'controllers/channel',
 	'controllers/programme',
+	'controllers/event',
 	'controllers/movies',
 	'controllers/search',
 	'controllers/settings',
@@ -36,7 +37,7 @@ define([
  *	@class AppController
  */
 
-function(express, i18n, config, Supports, Login, Dashboard, Grid, Channel, Programme, Movies, Search, Settings, NowAndNext, Facebook, Admin) {
+function(express, i18n, config, Supports, Login, Dashboard, Grid, Channel, Programme, Event, Movies, Search, Settings, NowAndNext, Facebook, Admin) {
 
 	/** @constructor */
 
@@ -68,6 +69,7 @@ function(express, i18n, config, Supports, Login, Dashboard, Grid, Channel, Progr
 				grid		: new Grid(self),
 				channel		: new Channel(self),
 				programme	: new Programme(self),
+				event		: new Event(self),
 				movies		: new Movies(self),
 				search		: new Search(self),
 				settings	: new Settings(self),

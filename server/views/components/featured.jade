@@ -1,10 +1,10 @@
 ul.show
-	each event in topbookings
+	each event in normalizedEvents
 		li.programme
-			img.programme-bg(src="#{config['FEATURED_PROGRAMMES_IMAGE_BASE_URL']}/s/#{event.programme.id}.jpg")
+			img.programme-bg(src="#{event.programme.imageUrl}")
 			div.programme-details
 				h1
-					a(href="/programme/#{event.programme.id}") #{event.programme.title}
+					a(href="/event/#{event.id}") #{event.programme.title}
 
 				button.btn.primary
 					i.icon-time
@@ -13,6 +13,6 @@ ul.show
 					i.icon-play-circle
 					b.label #{__i('Play')}
 				p
-					| #{event.prettyDate} 
+					| #{event.prettyStartTime} 
 					| on
 					a(href="/channel/#{event.channel.id}") #{event.channel.name} 

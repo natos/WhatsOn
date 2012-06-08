@@ -8,6 +8,7 @@ define([
 
 	// services
 	'services/bookings',
+	'services/tvtips',
 
 	// utils
 	'utils/dateutils'
@@ -19,7 +20,7 @@ define([
  *	@class AdminController
  */
 
-function(Bookings, DateUtils) {
+function(BookingsService, TVTipsService, DateUtils) {
 
 	/** @constructor */
 
@@ -30,6 +31,7 @@ function(Bookings, DateUtils) {
 		// Routing
 
 		app.server.get('/admin/topbookings', this.renderTopBookings);
+		app.server.get('/admin/tvtips', this.renderTVTips);
 	};
 
 
@@ -37,40 +39,43 @@ function(Bookings, DateUtils) {
 
 	var _app,
 
-		dateUtils = new DateUtils(),
-
-		BookingsService = new Bookings();
-
+		dateUtils = new DateUtils();
 
 	/** @public */
 
 	AdminController.prototype.renderTopBookings = function(req, res) {
 
-		var topbookings;
+		var render = function(topBookings) {
 
-		var render = function() {
-
-			if (!topbookings) { return; }
-
-			topbookings = dateUtils.prettifyCollection(topbookings, 'startDateTime');
+			if (!topBookings) { return; }
 
 			res.render('layouts/admin/topbookings.jade', {
-				topbookings : topbookings,
+				topBookings : topBookings,
 				baseImageUrl : 'http://aleona.eu/clients/upc/programme-images'
 			});
 
 		};
 
-		BookingsService.once('getTopBookings', function(error, response, body) {
+		new BookingsService().once('getTopBookings', function(topBookings) {
 
-			topbookings = JSON.parse(body);
-
-			// Every event is wrapped in an array: unwrap them
-			topbookings = (function() {	var events = []; topbookings.forEach(function(e, i) { events.push(e[0]); }); return events; }());
-
-			render();
+			render(topBookings);
 
 		}).getTopBookings();
+
+	};
+
+
+	AdminController.prototype.renderTVTips = function(req, res) {
+
+		var marketId = 'nl';
+
+		new TVTipsService().once('getTVTips', function(tvTips) {
+
+			res.render('layouts/admin/tvtips.jade', {
+				tvTips : tvTips
+			});
+
+		}).getTVTips(marketId);
 
 	};
 

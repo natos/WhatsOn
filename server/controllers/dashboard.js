@@ -9,9 +9,9 @@ define([
 	// services
 	'services/channel',
 	'services/bookings',
+	'services/tvtips',
 
 	// utils
-	'utils/dateutils',
 	'utils/metadata',
 
 	// mocks
@@ -24,7 +24,7 @@ define([
  *	@class DashboardController
  */
 
-function(ChannelService, BookingsService, DateUtils, Metadata, Channels) {
+function(ChannelService, BookingsService, TVTipsService, Metadata, Channels) {
 
 	/** @constructor */
 
@@ -43,46 +43,47 @@ function(ChannelService, BookingsService, DateUtils, Metadata, Channels) {
 
 	var _app,
 
-		metadata = new Metadata(),
-
-		dateUtils = new DateUtils();
+		metadata = new Metadata();
 
 	/** @public */
 
 	DashboardController.prototype.render = function(req, res) {
 
-		var topbookings, render = function() {
+		var render = function(normalizedEvents) {
 
-			if (!topbookings) { return; }
-
-			// Prettify dates
-			function prettifyCollection(event) { event.prettyDate = dateUtils.prettify(event['startDateTime']); };
-
-			topbookings.map(prettifyCollection);
+			if (!normalizedEvents) { return; }
 
 			var template = req.xhr ? 'contents/dashboard.jade' : 'layouts/dashboard.jade'
 
 			res.render(template, {
 				metadata	: metadata.get(),
 				config		: _app.config,
-				topbookings : topbookings,
+				normalizedEvents : normalizedEvents,
 				channels	: Channels,
 				supports	: req.supports
 			});
 
 		};
 
-		new BookingsService().once('getTopBookings', function(error, response, body) {
+		var featuredEventsType = 'tvtips'; // 'tvtips' | 'topbookings'
 
-			topbookings = JSON.parse(body);
+		switch(featuredEventsType) {
+			case 'tvtips':
+				new TVTipsService().once('getTVTips', function(normalizedEvents) {
 
-			// Weird, every event comes wrapped whitin an array (??)
-			// this is just for unwrap the event;
-			topbookings = (function() {	var events = []; topbookings.forEach(function(e, i) { events.push(e[0]); }); return events; }());
+					render(normalizedEvents);
 
-			render();
+				}).getTVTips('nl');
+				break;
 
-		}).getTopBookings();
+			case 'topbookings': 
+				new BookingsService().once('getTopBookings', function(normalizedEvents) {
+
+					render(normalizedEvents);
+
+				}).getTopBookings();
+				break;
+		}
 
 	};
 
