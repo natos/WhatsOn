@@ -1,0 +1,12 @@
+h1 Admin: TV Tips
+
+if tvTips
+	each event in tvTips.entry
+		h2 
+			a(href="/event/#{event['upcepc:eventid']}") #{event.title}
+		each link in event.link
+			if link['@']['type'] == 'image/jpeg'
+				img(src="http://tvgids.upc.nl#{link['@']['href']}")
+		p 
+			a(href="/channel/#{event['upcepg:channelid']}") #{event['upcepg:channel']}
+		!{event.content['#']}
