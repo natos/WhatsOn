@@ -10,6 +10,10 @@ if topbookings
 				|  #{event.prettyDate}
 				p #{event.programme.shortDescription}
 				p Programme ID: #{event.programme.id}
+				p
+					a(href="https://www.google.com/search?prmd=imvns&tbm=isch&q=#{event.programme.title}") Google image search
+					&nbsp;
+					a(href="http://www.imdb.com/find?q=#{event.programme.title}") IMDB title search
 				table
 					tr
 						th s
