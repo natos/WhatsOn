@@ -45,29 +45,20 @@ function(BookingsService, TVTipsService, DateUtils) {
 
 	AdminController.prototype.renderTopBookings = function(req, res) {
 
-		var topbookings;
+		var render = function(topBookings) {
 
-		var render = function() {
-
-			if (!topbookings) { return; }
-
-			topbookings = dateUtils.prettifyCollection(topbookings, 'startDateTime');
+			if (!topBookings) { return; }
 
 			res.render('layouts/admin/topbookings.jade', {
-				topbookings : topbookings,
+				topBookings : topBookings,
 				baseImageUrl : 'http://aleona.eu/clients/upc/programme-images'
 			});
 
 		};
 
-		new BookingsService().once('getTopBookings', function(error, response, body) {
+		new BookingsService().once('getTopBookings', function(topBookings) {
 
-			topbookings = JSON.parse(body);
-
-			// Every event is wrapped in an array: unwrap them
-			topbookings = (function() {	var events = []; topbookings.forEach(function(e, i) { events.push(e[0]); }); return events; }());
-
-			render();
+			render(topBookings);
 
 		}).getTopBookings();
 

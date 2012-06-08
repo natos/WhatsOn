@@ -12,7 +12,6 @@ define([
 	'services/tvtips',
 
 	// utils
-	'utils/dateutils',
 	'utils/metadata',
 
 	// mocks
@@ -25,7 +24,7 @@ define([
  *	@class DashboardController
  */
 
-function(ChannelService, BookingsService, TVTipsService, DateUtils, Metadata, Channels) {
+function(ChannelService, BookingsService, TVTipsService, Metadata, Channels) {
 
 	/** @constructor */
 
@@ -44,24 +43,15 @@ function(ChannelService, BookingsService, TVTipsService, DateUtils, Metadata, Ch
 
 	var _app,
 
-		metadata = new Metadata(),
-
-		dateUtils = new DateUtils();
+		metadata = new Metadata();
 
 	/** @public */
 
 	DashboardController.prototype.render = function(req, res) {
 
-		var topbookings;
-
 		var render = function(normalizedEvents) {
 
 			if (!normalizedEvents) { return; }
-
-			// Prettify dates
-//			function prettifyCollection(event) { event.prettyDate = dateUtils.prettify(event['startDateTime']); };
-
-//			topbookings.map(prettifyCollection);
 
 			var template = req.xhr ? 'contents/dashboard.jade' : 'layouts/dashboard.jade'
 
@@ -75,27 +65,25 @@ function(ChannelService, BookingsService, TVTipsService, DateUtils, Metadata, Ch
 
 		};
 
-/*
-		new BookingsService().once('getTopBookings', function(error, response, body) {
+		var featuredEventsType = 'tvtips'; // 'tvtips' | 'topbookings'
 
-			topbookings = JSON.parse(body);
+		switch(featuredEventsType) {
+			case 'tvtips':
+				new TVTipsService().once('getTVTips', function(normalizedEvents) {
 
-			// Weird, every event comes wrapped whitin an array (??)
-			// this is just for unwrap the event;
-			topbookings = (function() {	var events = []; topbookings.forEach(function(e, i) { events.push(e[0]); }); return events; }());
+					render(normalizedEvents);
 
-			render();
+				}).getTVTips('nl');
+				break;
 
-		}).getTopBookings();
-*/
-		var marketId = 'nl';
+			case 'topbookings': 
+				new BookingsService().once('getTopBookings', function(normalizedEvents) {
 
-		new TVTipsService().once('getTVTips', function(normalizedEvents) {
+					render(normalizedEvents);
 
-			render(normalizedEvents);
-
-		}).getTVTips(marketId);
-
+				}).getTopBookings();
+				break;
+		}
 
 	};
 

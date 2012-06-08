@@ -1,8 +1,8 @@
 h1 Admin: top bookings
 
-if topbookings
+if topBookings
 	ol#topbookings
-		each event in topbookings
+		each event in topBookings
 			li
 				a(href="/programme/#{event.programme.id}") #{event.programme.title}
 				|  on 

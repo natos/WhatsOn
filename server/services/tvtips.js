@@ -60,13 +60,21 @@ function(util, events, request, DateUtils, config) {
 			for (i=0; i<tvTipsCount; i++) {
 				entry = tvTips.entry[i];
 				normalizedEvent = {
-					'title' : entry.title,
-					'programmeId' : '',
-					'eventId' : entry['upcepg:eventid'],
-					'channelId' : entry['upcepg:channelid'],
-					'channelName' : entry['upcepg:channel'],
+					'id' : entry['upcepg:eventid'],
+					'startDateTime' : entry['upcepg:startdate'],
+					'endDateTime' : entry['upcepg:enddate'],
 					'prettyStartTime' : _dateUtils.prettify(entry['upcepg:startdate']),
-					'descriptionHtml' : entry.content['#']
+					'programme' : {
+						'title' : entry.title,
+						'id' : '',
+						'shortDescription' : entry['upcepg:synopsis'],
+						'descriptionHtml' : entry.content['#'],
+						'imageUrl' : ''
+					},
+					'channel' : {
+						'id' : entry['upcepg:channelid'],
+						'name' : entry['upcepg:channel']
+					}
 				};
 
 				// Find the image
@@ -75,7 +83,7 @@ function(util, events, request, DateUtils, config) {
 					for (j=0; j<entryLinksCount; j++) {
 						entryLink = entry.link[j];
 						if (entryLink['@']['type'] === 'image/jpeg') {
-							normalizedEvent.imageUrl = 'http://tvgids.upc.nl' + entryLink['@']['href'];				
+							normalizedEvent.programme.imageUrl = 'http://tvgids.upc.nl' + entryLink['@']['href'];				
 						}
 					}
 				}

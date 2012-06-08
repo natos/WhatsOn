@@ -1,11 +1,11 @@
 h1 Admin: TV Tips
 
 if tvTips
-	each normalizedEvent in tvTips
+	each event in tvTips
 		h2 
-			a(href="/event/#{normalizedEvent.eventId}") #{normalizedEvent.title}
-		img(src="#{normalizedEvent.imageUrl}")
-		p #{normalizedEvent.prettyStartTime}
-		p 
-			a(href="/channel/#{normalizedEvent.channelId}") #{normalizedEvent.channelName}
-		!{normalizedEvent.descriptionHtml}
+			a(href="/event/#{event.id}") #{event.programme.title}
+		img(src="#{event.programme.imageUrl}")
+		p #{event.prettyStartTime} 
+			|on 
+			a(href="/channel/#{event.channel.id}") #{event.channel.name}
+		p #{event.programme.shortDescription}
