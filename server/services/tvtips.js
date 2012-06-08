@@ -66,7 +66,7 @@ function(util, events, request, DateUtils, config) {
 					'prettyStartTime' : _dateUtils.prettify(entry['upcepg:startdate']),
 					'programme' : {
 						'title' : entry.title,
-						'id' : '',
+						'id' : '', // The TVTips feed does not give us the programme ID for an event!
 						'shortDescription' : entry['upcepg:synopsis'],
 						'descriptionHtml' : entry.content['#'],
 						'imageUrl' : ''
