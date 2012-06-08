@@ -44,13 +44,13 @@ define([
 			// define a method inside subclass
 			Controller[method['name']] = function() {
 				// grab the arguments
-		        var args = slice.call(arguments, 0)[0];
+		        var args = slice.call(arguments, 0);
 				// emit 'first' event
 				first_event && App.emit(first_event, Controller, args);
 				// apply the method
-				method && method.apply(Controller, args || []);
+				method && method.apply(Controller, args);
 				// run View method
-				view[method['name']] && view[method['name']].apply(Controller, args || []);
+				view[method['name']] && view[method['name']].apply(Controller, args);
 				// emit 'last' event
 				last_event && App.emit(last_event, Controller, args);
 				// return the Controller object

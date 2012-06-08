@@ -7,44 +7,36 @@ define([
 
 	'config/app',
 	'modules/app',
-	'components/search',
+	'lib/flaco/controller',
 	'views/navigation'
 
-], function NavigationModule(appConfig, App, Search, NavigationView) {
+], function NavigationModule(a, App, Controller, NavigationView) {
 
-	/**
-	 * Load the content for the view.
-	 * Activate associated components.
-	 * Set up event handlers.
-	 * @public
-	 */
+	var name = 'navigation';
+
+/* private */
+
+/* public */
+
 	function initialize() {
-
-		NavigationView.initialize();
-		Search.initialize();
 
 		return this;
 
 	};
 
-	/**
-	 * If necessary, remove the content for the view from the DOM.
-	 * Deactivate associated components. 
-	 * Clean up event handlers.
-	 * @public
-	 */
 	function finalize() {
 
-		NavigationView.finalize();
+		return this;
 
 	};
 
-	/* public */
-	return {
-		name: 'navigation',
+/* export */
+
+	return new Controller({
+		name: name,
 		initialize: initialize,
 		finalize: finalize,
 		view: NavigationView
-	};
+	});
 
 });

@@ -82,8 +82,9 @@ define([
 	 * Set up event handlers.
 	 * @public
 	 */
-	function initialize() {
+	function initialize(State) {
 
+		console.log('Programme View init State: ', State)
 
 		// And if is already loaded?
 		App.loadCss('/assets/css/programmepage.css');

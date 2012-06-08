@@ -47,7 +47,9 @@ define([
 
 /* public */
 
-	function initialize() {
+	function initialize(State) {
+
+		console.log('Programme Controller init State: ', State)
 
 		App.on(p.RECORD, record);
 		App.on(p.FAVORITE, favorite);
@@ -57,6 +59,8 @@ define([
 	};
 
 	function finalize() {
+
+		return this;
 
 	};
 

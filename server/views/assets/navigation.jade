@@ -1,6 +1,6 @@
-.navbar
-	.navbar-background
-	.navbar-inner
+#navigation
+	#navigation-background
+	#navigation-content
 		.upc-logo #{config.APP_NAME}
 		.nav
 			a.dashboard(href="/dashboard", title="#{__i('Dashboard')}")
@@ -23,7 +23,3 @@
 	a.logout(href="/logout")
 		i.icon-signout
 		b.label #{__i('Log Out')}
-
-.search-box
-	form(action="/search", method="GET")
-		input(id="q", name="q", type="search", results="5", placeholder="#{__i('Search')}")

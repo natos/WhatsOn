@@ -81,8 +81,13 @@ define([
 	*/
 	function navigate(State) {
 
+		if (!State) {
+			console.log('Canvas: State object is empty. Stop navigation.');
+			return;
+		}
+
 		if (State === CURRENT_STATE) {
-			console.log('View ' + State.name + ' already loaded.');
+			console.log('Canvas: ' + State.name + ' controller already loaded.');
 			return;
 		}
 

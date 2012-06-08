@@ -37,6 +37,7 @@ define([
 		var $template = $('<script type="text/template">').attr('id', templateName(view).replace('#','')).appendTo('#templates'),
 		// fetch from url
 		from_url = '/' + view.name + (view.State && view.State.parts ? '/' + view.State.parts.join('/') : '' );
+		console.log(from_url, view.State);
 		// fetch content from server
 		$.get(from_url, function(res) {
 			// save it in the DOM container
@@ -50,6 +51,7 @@ define([
 
 	// loads template, if not exists, it will fetch the template from server
 	function loadTemplate(view) {
+		console.log(view);
 		if ( !$('#' + view.name + '-content')[0] ) {
 			templateExists(view) ? setTemplate(view) : fetchTemplate(view);
 		}
@@ -114,18 +116,18 @@ define([
 			// define a method inside subclass
 			View[name] = function inherited() {
 				// grab the arguments
-		        var args = slice.call(arguments, 0)[0];
+		        var args = slice.call(arguments, 0);
 				// switch for specifics
 				switch (name) {
 				case 'initialize':
 					// save the current State for future reference
-					View.State = args;
+					View.State = args[0];
 				case 'render':
 				case 'finalize':
 					// emit 'first' event
 					first_event && App.emit(first_event, View, args);
 					// apply the method
-					method && method.apply(View, [args] || []);
+					method && method.apply(View, args);
 					// call the same method for all components views
 					// using 'call' here because uses an argument list
 					// instead of an array of arguments

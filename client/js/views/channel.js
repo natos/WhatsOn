@@ -19,12 +19,8 @@ define([
 
 	function initialize() {
 
-/*		App.loadCss('/assets/css/channelpage.css');
+		App.loadCss('/assets/css/channelpage.css');
 		App.loadCss('/assets/css/channel-event-list.css');
-
-		$('#content').load('/channel/' + channelId, function(data, status, xhr){
-			App.emit(a.VIEW_RENDERED);
-		});*/
 
 		return this;
 	

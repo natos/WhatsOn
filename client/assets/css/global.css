@@ -86,10 +86,10 @@ img {
 }
 
 /**
-*	navbar
+*	navigation
 */
 
-.navbar {
+#navigation {
 	display: block;
 	left: 0;
 	right: 0;
@@ -99,7 +99,7 @@ img {
 	z-index: 1000;
 }
 
-.navbar-background {
+#navigation-background {
 	position: absolute;
 	width: 100%;
 	height: 50px;
@@ -107,7 +107,7 @@ img {
 	z-index: 800;
 }
 
-.navbar-inner {
+#navigation-content {
 	position: absolute;
 	width: 100%;
 	height: 55px;
@@ -117,7 +117,7 @@ img {
 	z-index: 900;
 }
 
-.fixed-top .navbar {
+.fixed-top #navigation {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -149,10 +149,10 @@ img {
 
 /* navbar links */
 
-.navbar a, .user-control a,
-.navbar a:hover, .user-control a:hover,
-.navbar a:visited, .user-control a:visited,
-.navbar a:active, .user-control a:active {
+#navigation a, .user-control a,
+#navigation a:hover, .user-control a:hover,
+#navigation a:visited, .user-control a:visited,
+#navigation a:active, .user-control a:active {
 	color: #999;
 	display: inline-block;
 	height: 48px;
@@ -164,29 +164,29 @@ img {
 
 }
 
-.navbar a.active, .user-control a:active {
+#navigation a.active, .user-control a:active {
 	color: #ccc;
 	background: #333 url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
 	border-bottom: solid 1px #000;
 }
 
-.navbar a.active i, .user-control a.active i {
+#navigation a.active i, .user-control a.active i {
 	color: #ccc;
 }
 
-.navbar a.active b {
+#navigation a.active b {
 
 }
 
 /* icons */
 
-.navbar i {
+#navigation i {
 	color: #999;
 	font-size: 24px;
 	margin: 0 5px;
 }
 
-.navbar b {
+#navigation b {
 	font-weight: normal;
 	vertical-align: top;
 	display: none;
