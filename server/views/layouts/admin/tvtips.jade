@@ -4,8 +4,9 @@ if tvTips
 	each event in tvTips
 		h2 
 			a(href="/event/#{event.id}") #{event.programme.title}
-		img(src="#{event.programme.imageUrl}")
 		p #{event.prettyStartTime} 
 			|on 
 			a(href="/channel/#{event.channel.id}") #{event.channel.name}
 		p #{event.programme.shortDescription}
+		p
+			img(src="#{event.programme.imageUrl}")
