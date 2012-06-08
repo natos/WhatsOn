@@ -1,12 +1,10 @@
 ul.show
-	each event in tvTips.entry
+	each normalizedEvent in normalizedEvents
 		li.programme
-			each link in event.link
-				if link['@']['type'] == 'image/jpeg'
-					img.programme-bg(src="http://tvgids.upc.nl#{link['@']['href']}")
+			img.programme-bg(src="#{normalizedEvent.imageUrl}")
 			div.programme-details
 				h1
-					a(href="/event/#{event['upcepg:eventid']}", data-eventid="#{event['upcepg:eventid']}", data-seriesid="#{event['upcepg:seriesid']}") #{event.title}
+					a(href="/event/#{normalizedEvent.eventId}", data-eventid="#{normalizedEvent.eventId}", data-seriesid="#{normalizedEvent.seriesId}") #{normalizedEvent.title}
 
 				button.btn.primary
 					i.icon-time
@@ -15,6 +13,6 @@ ul.show
 					i.icon-play-circle
 					b.label #{__i('Play')}
 				p
-					| #{event['upcepg:startdate']} 
+					| #{normalizedEvent.prettyStartTime} 
 					| on
-					a(href="/channel/#{event['upcepg:channelid']}") #{event['upcepg:channel']} 
+					a(href="/channel/#{normalizedEvent.channelId}") #{normalizedEvent.channelName} 

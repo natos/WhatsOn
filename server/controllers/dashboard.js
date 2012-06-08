@@ -54,9 +54,9 @@ function(ChannelService, BookingsService, TVTipsService, DateUtils, Metadata, Ch
 
 		var topbookings;
 
-		var render = function(tvTips) {
+		var render = function(normalizedEvents) {
 
-			if (!tvTips) { return; }
+			if (!normalizedEvents) { return; }
 
 			// Prettify dates
 //			function prettifyCollection(event) { event.prettyDate = dateUtils.prettify(event['startDateTime']); };
@@ -68,8 +68,7 @@ function(ChannelService, BookingsService, TVTipsService, DateUtils, Metadata, Ch
 			res.render(template, {
 				metadata	: metadata.get(),
 				config		: _app.config,
-				topbookings : topbookings,
-				tvTips 		: tvTips,
+				normalizedEvents : normalizedEvents,
 				channels	: Channels,
 				supports	: req.supports
 			});
@@ -91,9 +90,9 @@ function(ChannelService, BookingsService, TVTipsService, DateUtils, Metadata, Ch
 */
 		var marketId = 'nl';
 
-		new TVTipsService().once('getTVTips', function(tvTips) {
-console.log(tvTips);
-			render(tvTips);
+		new TVTipsService().once('getTVTips', function(normalizedEvents) {
+
+			render(normalizedEvents);
 
 		}).getTVTips(marketId);
 

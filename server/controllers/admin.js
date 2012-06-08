@@ -79,8 +79,7 @@ function(BookingsService, TVTipsService, DateUtils) {
 		var marketId = 'nl';
 
 		new TVTipsService().once('getTVTips', function(tvTips) {
-//var inspect = require('eyes').inspector({maxLength:20000});
-//console.log(inspect(tvTips));
+
 			res.render('layouts/admin/tvtips.jade', {
 				tvTips : tvTips
 			});

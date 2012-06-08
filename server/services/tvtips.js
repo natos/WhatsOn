@@ -11,6 +11,9 @@ define([
 	'events',
 	'request',
 
+	// utils
+	'utils/dateutils',
+
 	// config
 	'config/global.config'
 ],
@@ -20,7 +23,7 @@ define([
  *	@class TVTipsService
  */
 
-function(util, events, request, config) {
+function(util, events, request, DateUtils, config) {
 	'use strict';
 
 	/** @constructor */
@@ -40,7 +43,49 @@ function(util, events, request, config) {
 
 	/** @private */
 
+	var _dateUtils = new DateUtils();
 
+	/**
+	 * The TVTips feed is XML. The xml2js parser turns this
+	 * into a simple object. Now we want to take that object,
+	 * and turn it into a flattened array of events.
+	 */
+	var normalizeTVTips = function(tvTips) {
+		var normalizedEvents = [],
+			normalizedEvent,
+			i, j, tvTipsCount, entry, entryLink, entryLinksCount;
+
+		if (tvTips && tvTips.entry && tvTips.entry.length) {
+			tvTipsCount = tvTips.entry.length;
+			for (i=0; i<tvTipsCount; i++) {
+				entry = tvTips.entry[i];
+				normalizedEvent = {
+					'title' : entry.title,
+					'programmeId' : '',
+					'eventId' : entry['upcepg:eventid'],
+					'channelId' : entry['upcepg:channelid'],
+					'channelName' : entry['upcepg:channel'],
+					'prettyStartTime' : _dateUtils.prettify(entry['upcepg:startdate']),
+					'descriptionHtml' : entry.content['#']
+				};
+
+				// Find the image
+				if (entry.link && entry.link.length) {
+					entryLinksCount = entry.link.length;
+					for (j=0; j<entryLinksCount; j++) {
+						entryLink = entry.link[j];
+						if (entryLink['@']['type'] === 'image/jpeg') {
+							normalizedEvent.imageUrl = 'http://tvgids.upc.nl' + entryLink['@']['href'];				
+						}
+					}
+				}
+
+				normalizedEvents.push(normalizedEvent);
+			}
+		}
+
+		return normalizedEvents;
+	};
 
 	/** @public */
 
@@ -67,7 +112,11 @@ function(util, events, request, config) {
 				var parser = new xml2js.Parser();
 
 				parser.parseString(body, function(err, result){
-					self.emit('getTVTips', result);
+
+//var inspect = require('eyes').inspector({maxLength:20000});
+//console.log(inspect(result));
+
+					self.emit('getTVTips', normalizeTVTips(result));
 				})
 
 			}
