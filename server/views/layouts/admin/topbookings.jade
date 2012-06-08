@@ -1,0 +1,32 @@
+h1 Admin: top bookings
+
+if topbookings
+	ol#topbookings
+		each event in topbookings
+			li
+				a(href="/programme/#{event.programme.id}") #{event.programme.title}
+				|  on 
+				a(href="/channel/#{event.channel.id}") #{event.channel.name}
+				|  #{event.prettyDate}
+				p #{event.programme.shortDescription}
+				p Programme ID: #{event.programme.id}
+				p
+					a(href="https://www.google.com/search?prmd=imvns&tbm=isch&q=#{event.programme.title}") Google image search
+					&nbsp;
+					a(href="http://www.imdb.com/find?q=#{event.programme.title}") IMDB title search
+				table
+					tr
+						th s
+						th m
+						th l
+						th xl
+					tr
+						td
+							img(src="#{baseImageUrl}/s/#{event.programme.id}.jpg", style="height:45px")
+						td
+							img(src="#{baseImageUrl}/m/#{event.programme.id}.jpg", style="height:45px")
+						td
+							img(src="#{baseImageUrl}/l/#{event.programme.id}.jpg", style="height:45px")
+						td
+							img(src="#{baseImageUrl}/xl/#{event.programme.id}.jpg", style="height:45px")
+				br

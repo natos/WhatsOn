@@ -30,7 +30,8 @@ function() {
 			'app-id'		: '290742221014129',
 			'app-secret'	: '80fc861d131b1dc7a2bed84df09ac32c'
 		},
-		'PORT'			: 3000
+		'PORT'			: 3000,
+		'FEATURED_PROGRAMMES_IMAGE_BASE_URL' : 'http://aleona.eu/clients/upc/programme-images'
 	};
 
 	/** @return */
