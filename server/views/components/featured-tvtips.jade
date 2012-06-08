@@ -1,0 +1,20 @@
+ul.show
+	each event in tvTips.entry
+		li.programme
+			each link in event.link
+				if link['@']['type'] == 'image/jpeg'
+					img.programme-bg(src="http://tvgids.upc.nl#{link['@']['href']}")
+			div.programme-details
+				h1
+					a(href="/event/#{event['upcepg:eventid']}", data-eventid="#{event['upcepg:eventid']}", data-seriesid="#{event['upcepg:seriesid']}") #{event.title}
+
+				button.btn.primary
+					i.icon-time
+					b.label #{__i('Record')}
+				button.btn.primary.skin
+					i.icon-play-circle
+					b.label #{__i('Play')}
+				p
+					| #{event['upcepg:startdate']} 
+					| on
+					a(href="/channel/#{event['upcepg:channelid']}") #{event['upcepg:channel']} 

@@ -9,6 +9,7 @@ define([
 	// services
 	'services/channel',
 	'services/bookings',
+	'services/tvtips',
 
 	// utils
 	'utils/dateutils',
@@ -24,7 +25,7 @@ define([
  *	@class DashboardController
  */
 
-function(ChannelService, BookingsService, DateUtils, Metadata, Channels) {
+function(ChannelService, BookingsService, TVTipsService, DateUtils, Metadata, Channels) {
 
 	/** @constructor */
 
@@ -51,14 +52,16 @@ function(ChannelService, BookingsService, DateUtils, Metadata, Channels) {
 
 	DashboardController.prototype.render = function(req, res) {
 
-		var topbookings, render = function() {
+		var topbookings;
 
-			if (!topbookings) { return; }
+		var render = function(tvTips) {
+
+			if (!tvTips) { return; }
 
 			// Prettify dates
-			function prettifyCollection(event) { event.prettyDate = dateUtils.prettify(event['startDateTime']); };
+//			function prettifyCollection(event) { event.prettyDate = dateUtils.prettify(event['startDateTime']); };
 
-			topbookings.map(prettifyCollection);
+//			topbookings.map(prettifyCollection);
 
 			var template = req.xhr ? 'contents/dashboard.jade' : 'layouts/dashboard.jade'
 
@@ -66,12 +69,14 @@ function(ChannelService, BookingsService, DateUtils, Metadata, Channels) {
 				metadata	: metadata.get(),
 				config		: _app.config,
 				topbookings : topbookings,
+				tvTips 		: tvTips,
 				channels	: Channels,
 				supports	: req.supports
 			});
 
 		};
 
+/*
 		new BookingsService().once('getTopBookings', function(error, response, body) {
 
 			topbookings = JSON.parse(body);
@@ -83,6 +88,15 @@ function(ChannelService, BookingsService, DateUtils, Metadata, Channels) {
 			render();
 
 		}).getTopBookings();
+*/
+		var marketId = 'nl';
+
+		new TVTipsService().once('getTVTips', function(tvTips) {
+console.log(tvTips);
+			render(tvTips);
+
+		}).getTVTips(marketId);
+
 
 	};
 

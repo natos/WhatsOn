@@ -20,7 +20,7 @@ define([
  *	@class AdminController
  */
 
-function(Bookings, TVTips, DateUtils) {
+function(BookingsService, TVTipsService, DateUtils) {
 
 	/** @constructor */
 
@@ -39,12 +39,7 @@ function(Bookings, TVTips, DateUtils) {
 
 	var _app,
 
-		dateUtils = new DateUtils(),
-
-		BookingsService = new Bookings(),
-
-		TVTipsService = new TVTips();
-
+		dateUtils = new DateUtils();
 
 	/** @public */
 
@@ -65,7 +60,7 @@ function(Bookings, TVTips, DateUtils) {
 
 		};
 
-		BookingsService.once('getTopBookings', function(error, response, body) {
+		new BookingsService().once('getTopBookings', function(error, response, body) {
 
 			topbookings = JSON.parse(body);
 
@@ -83,7 +78,7 @@ function(Bookings, TVTips, DateUtils) {
 
 		var marketId = 'nl';
 
-		TVTipsService.once('getTVTips', function(tvTips) {
+		new TVTipsService().once('getTVTips', function(tvTips) {
 //var inspect = require('eyes').inspector({maxLength:20000});
 //console.log(inspect(tvTips));
 			res.render('layouts/admin/tvtips.jade', {
