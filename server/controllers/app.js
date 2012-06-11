@@ -58,9 +58,8 @@ function(express, i18n, config, Supports, Login, Dashboard, Grid, Channel, Progr
 
 			// Redirect to dashboard
 			// for requests from root "/"
-			self.server.get('/', function(req, res, next) {
-				res.redirect('/dashboard');
-			});
+			self.server.get('/', redirectToDashboard);
+			self.server.get('/logout', redirectToDashboard);
 
 			//	setup app controllers
 			self.controllers = {
@@ -92,6 +91,10 @@ function(express, i18n, config, Supports, Login, Dashboard, Grid, Channel, Progr
 
 		next();
 
+	};
+
+	var redirectToDashboard = function(req, res, next) {
+		res.redirect('/dashboard');
 	};
 
 	var createServer = function() {

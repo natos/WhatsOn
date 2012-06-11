@@ -56,7 +56,13 @@ define([
 
 	function endTransition() { 
 		console.log('Canvas Module','Removing transition;');
-		a.$transition.addClass('hide'); setTimeout(function() { a.$transition.remove(); }, 500); 
+		// wait half a sec to remove transition
+		setTimeout(function() {
+			a.$transition.addClass('hide'); 
+			setTimeout(function() { 
+				a.$transition.remove(); 
+			}, 500); 
+		}, 500);
 	};
 
 
@@ -79,6 +85,7 @@ define([
 
 	// unload a controller
 	function unload(State) {
+		
 		if (State && controllers[State.controller]) {
 			controllers[State.controller].finalize();
 		}
@@ -135,7 +142,6 @@ define([
 		App.on(a.VIEW_RENDERED, endTransition);
 
 		// DEBUGGING Handlers
-
 		/* View live cycle 	*/ 
 		App.on(a.VIEW_INITIALIZING, function(view) { console.log('Canvas Module', view.name, 'VIEW_INITIALIZING'); });
 		App.on(a.VIEW_INITIALIZED, function(view) { console.log('Canvas Module', view.name, 'VIEW_INITIALIZED'); });
@@ -143,12 +149,12 @@ define([
 		App.on(a.VIEW_RENDERED, function(view) { console.log('Canvas Module', view.name, 'VIEW_RENDERED'); });
 		App.on(a.VIEW_FINALIZING, function(view) { console.log('Canvas Module', view.name, 'VIEW_FINALIZING'); });
 		App.on(a.VIEW_FINALIZED, function(view) { console.log('Canvas Module', view.name, 'VIEW_FINALIZED'); });
-		/* Controller live cycle */
+		/* Controller live cycle 
 		App.on(a.CONTROLLER_INITIALIZING, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_INITIALIZATING'); });
 		App.on(a.CONTROLLER_INITIALIZED, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_INITIALIZATED'); });
 		App.on(a.CONTROLLER_FINALIZING, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_FINALIZATING'); });
 		App.on(a.CONTROLLER_FINALIZED, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_FINALIZED'); });
-
+		*/
 		return this;
 	};
 

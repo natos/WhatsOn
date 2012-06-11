@@ -194,7 +194,7 @@ define([
 	function finalize() {
 
 		// stop timer
-		console.log(timer.stop());
+		timer.stop();
 
 		$window.off('resize orientationchange', sizeHandler);
 
