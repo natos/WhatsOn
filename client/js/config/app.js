@@ -39,7 +39,7 @@ define([], function AppConfigContext() {
 
 		VIEW_INITIALIZED: 'app:view_initialized',
 
-		VIEW_FINALIZING: 'app:view_fnalizing',
+		VIEW_FINALIZING: 'app:view_finalizing',
 
 		VIEW_FINALIZED:	'app:view_finalized',
 

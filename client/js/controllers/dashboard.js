@@ -51,10 +51,9 @@ define([
 
 /* public */
 
-	function initialize() {
+/* abstract */ 
 
-//		App.on(u.LOGGED_IN, userLoggedIn);
-//		App.on(u.LOGGED_OUT, userLoggedOut);
+	function initialize() {
 
 		return this;
 	
@@ -62,22 +61,17 @@ define([
 
 	function finalize() {
 
-//		App.off(u.LOGGED_IN, userLoggedIn);
-//		App.off(u.LOGGED_OUT, userLoggedOut);
-
 		return this;
-	
+
 	};
-
-
 
 /* export */
 
 	return new Controller({
-		name: name,
-		initialize: initialize,
-		finalize: finalize,
-		view: DashboardView
+		name		: name,
+		initialize	: initialize,
+		finalize	: finalize,
+		view		: DashboardView
 	});
 
 });

@@ -31,7 +31,7 @@ define([
 
 		// Load the primary modules for the app.
 		// Each module must have an "initialize" method that returns the module itself.
-		loadModules(['modules/user', 'modules/canvas', 'modules/router', 'controllers/navigation']);
+		loadModules(['modules/user', 'modules/canvas', 'modules/router']);
 
 		return this;
 	

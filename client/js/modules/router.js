@@ -16,18 +16,45 @@ define([
 
 /* private */
 
-	var History = window.History,
+	// consts
+
+	var STATECHANGE = 'statechange',
+
+	// shorcuts
+
+		History = window.History,
+
 		shift = Array.prototype.shift;
 
+	/**
+	 *	Add the grid just for HTML5 devices
+	 */
+	function addGridButton() {
+		$('.nav').append('<a href="/grid" class="grid"><i class="icon-th"></i><b class="label">TV Gids</b></a>');
+	};
+
+	/**
+	 *	Handle State Changes
+	 */
 	function handleStateChange() {
 
 		var State = History.getState(); // Note: We are using History.getState() instead of event.state
 			State.parts = History.getShortUrl(State.url).match(/[\w\d-?\w\d]+/gi);
-			State.controller = (State.parts) ? shift.apply(State.parts) : 'dashboard';
+			State.controller = (State.parts) ? shift.apply(State.parts) : '';
 
 		App.emit(a.NAVIGATE, State);
 	};
 
+	/**
+	 *	Activate anchors
+	 */
+	function activeAnchors(State) {
+		var anchor = $('.' + State.name);
+		if (anchor[0]) {
+			$('.nav a').removeClass('active');
+			anchor.addClass('active');
+		}
+	};
 
 	/**
 	 *	Listen to every click on #main, 
@@ -63,23 +90,26 @@ define([
 
 /* public */
 
-	/* constructor */
 	function initialize() {
 		// Bind to StateChange Event
-		History.Adapter.bind(window,'statechange', handleStateChange); 
+		History.Adapter.bind(window, STATECHANGE, handleStateChange); 
+		// Active links
+		App.on(a.VIEW_INITIALIZING, activeAnchors);
 		// Listen to every click on #main, 
 		// to override its default behavior
 		// and use our own Router to navigate
 		a.$main.on('click', handleAnchors);
 		// First load
 		handleStateChange();
+		addGridButton();
 		return this;
 	};
 
-	/* destructor */
 	function finalize() {
 		// Unbind to StateChange Event
-		History.Adapter.unbind(window,'statechange', handleStateChange); 
+		History.Adapter.unbind(window, STATECHANGE, handleStateChange);
+		// stop activating links
+		App.off(a.VIEW_INITIALIZING, activeAnchors);
 		return this;
 	};
 

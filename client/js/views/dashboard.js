@@ -20,13 +20,22 @@ define([
 
 /* public */
 
+	var components = {
+		carousel: Carousel,
+		favorites: Favorites
+	};
+
+/* abstract */ 
+
 	function initialize() {
 
 		return this;
-	
+
 	};
 
 	function render() {
+
+		console.log('RENDERING DASHBOARD !!!!!!!!!')
 
 		return this;
 
