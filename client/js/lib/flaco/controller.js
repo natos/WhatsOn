@@ -13,7 +13,19 @@ define([
 
 /* private */
 
-	var slice = Array.prototype.slice;
+	// consts
+
+	var CONTROLLER	= 'CONTROLLER',
+		NAME 		= 'name',
+		METHOD		= 'method',
+		PRESENT 	= 'present',
+		PAST	 	= 'past',
+		INITIALIZE 	= 'initialize',
+		FINALIZE 	= 'finalize',
+
+	// shorcuts
+
+	slice = Array.prototype.slice;
 
 /* public */
 
@@ -21,69 +33,74 @@ define([
 
 	/* subclass View */
 
-		var Controller = {};
+		var Controller = {},
+
+	/* private */
+
+			// common helpers		
+			to = {
+				present: function toPresent(member) { return member.replace(/^(\w+)(?:e)$/gi, '$1ing').toUpperCase(); },
+				past: function toPast(member) { return member.replace(/^(\w+)(?:e)$/gi, '$1ed').toUpperCase(); }
+			},
 
 	/* protected */
 
-		var view = o.view;
+			view = o.view;
 
-		// helper to find reserved words
-		function isInherited(member) { return ['initialize', 'finalize'].indexOf(member) >= 0; };
+		// define members
+		function defineMember(member) {
 
-		// define public members
-		function definePublicMember(member) { if (!isInherited(member)) { Controller[member] = o[member]; } };
+			// override method
+			var	method = o[member],
+				viewMethod = view[member],
+				// present and past event names
+				present = a[CONTROLLER + '_' + to.present(member)],
+				past = a[CONTROLLER + '_' + to.past(member)],
+				// helpers for named functions
+				inherit = {};
+				inherit[INITIALIZE] = function initialize() { return inherited.apply(Controller, arguments); };
+				inherit[FINALIZE] = function finalize() { return inherited.apply(Controller, arguments); };
 
-		// define inherited members
-		function defineInheritedMember(member) {
+			// helper to find reserved words
+			function isInherited(member) { return inherit[member]; };
 
-			var name = member['name'],
-				method = o[name],
-				first_event = member['first_event'],
-				last_event = member['last_event'];
-
-			// define a method inside subclass
-			Controller[method['name']] = function() {
+			// wapper for inherited methods
+			// automatically triggers events, call view methods…
+			function inherited() {
 				// grab the arguments
-		        var args = slice.call(arguments, 0);
+			    var args = slice.call(arguments, 0);
 				// emit 'first' event
-				first_event && App.emit(first_event, Controller, args);
+				present && App.emit(present, Controller, args);
 				// apply the method
 				method && method.apply(Controller, args);
 				// run View method
-				view[method['name']] && view[method['name']].apply(Controller, args);
+				viewMethod && viewMethod.apply(Controller, args);
 				// emit 'last' event
-				last_event && App.emit(last_event, Controller, args);
+				past && App.emit(past, Controller, args);
 				// return the Controller object
-				return Controller;
+				return this;
 			}
+
+			/* inherited * or * public member */
+			Controller[member] = isInherited(member) ? inherit[member] : o[member];
 		};
 
 	/* public */
 
-		// Controller inherited methods
-		[{
-			"name": "initialize",
-			"first_event": a.CONTROLLER_INITIALIZING,
-			"last_event": a.CONTROLLER_INITIALIZED
-		}, {
-			"name": "finalize",
-			"first_event": a.CONTROLLER_FINALIZING,
-			"last_event": a.CONTROLLER_FINALIZED
-		}]
-		.map(defineInheritedMember);
-
-		// process members, mark as public
-		for (member in o) { definePublicMember(member);	};
-
 	/* export subclass */
 
+		// define all members
+		for (member in o) { defineMember(member); };
+
+		// export class
 		return Controller;
 
 	}
 
-/* 
- *	Return constructor
- *	Use: new ControllerConstructor({ ..lots of properties and stuff.. });
+/* export */
+
+/*
+ * Use: new ControllerConstructor({ ..lots of properties and stuff.. }); 
  */
 
 	return ControllerConstructor;

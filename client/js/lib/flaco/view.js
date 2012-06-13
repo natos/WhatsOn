@@ -13,7 +13,19 @@ define([
 
 /* private */
 
-	var slice = Array.prototype.slice;
+	// consts
+	var VIEW		= 'VIEW'
+		NAME 		= 'name',
+		METHOD		= 'method',
+		PRESENT 	= 'present',
+		PAST	 	= 'past',
+		RENDER		= 'render',
+		INITIALIZE 	= 'initialize',
+		FINALIZE 	= 'finalize',
+		SCRIPT_TAG  = '<script type="text/template">',
+
+	// shorcuts
+		slice = Array.prototype.slice;
 
 	/**
 	*	Generic inner template functions
@@ -34,11 +46,12 @@ define([
 	// fetch template from server
 	function fetchTemplate(view) {
 		// create template container and append it to the DOM
-		var $template = $('<script type="text/template">').attr('id', templateName(view).replace('#','')).appendTo('#templates'),
+		var $template = $(SCRIPT_TAG).attr('id', templateName(view).replace('#','')).appendTo('#templates'),
 		// fetch from url
 		from_url = '/' + view.name + (view.State && view.State.parts ? '/' + view.State.parts.join('/') : '' );
 		// fetch content from server
 		$.get(from_url, function(res) {
+			console.log('Loading Template Response', res);
 			// save it in the DOM container
 			$template.text(res);
 			// set the template view
@@ -77,11 +90,28 @@ define([
 
 	/* subclass View */
 
-		var View = {}
+		var View = {},
+
+	/* private */
+
+			// common helpers		
+			to = (function() {
+
+				var expression = /^(\w+)(e|er)$/gi;
+
+				function presentProcess(t, p1, p2, a) { return /er$/.test(t) ? p1 + p2 + 'ing' : p1 + 'ing'; };
+				function pastProcess(t, p1, p2, a) { return /er$/.test(t) ? p1 + p2 + 'ed' : p1 + 'ed'; };
+
+				return {
+					present: function toPresent(member) { return member.replace(expression, presentProcess).toUpperCase(); },
+					past: function toPast(member) { return member.replace(expression, pastProcess).toUpperCase(); }
+				}
+
+			})(),
 
 	/* protected */
 
-		var components = o.components;
+			components = o.components;
 
 		// helper for each component
 		function forEachComponent(method, arguments) {
@@ -97,77 +127,65 @@ define([
 			}
 		};
 
-		// helper to find reserved words
-		function isInherited(member) { return ['render', 'initialize', 'finalize'].indexOf(member) >= 0; };
+		// define members
+		function defineMember(member) {
 
-		// define public members
-		function definePublicMember(member) { if (!isInherited(member)) { View[member] = o[member]; } };
+			// override method
+			var	method = o[member],
+				// present and past event names
+				present = a[VIEW + '_' + to.present(member)],
+				past = a[VIEW + '_' + to.past(member)],
+				// helpers for named functions
+				inherit = {};
+				inherit[INITIALIZE] = function initialize() { return inherited.apply(View, arguments); };
+				inherit[RENDER] = function render() { return inherited.apply(View, arguments); };
+				inherit[FINALIZE] = function finalize() { return inherited.apply(View, arguments); };
 
-		// define inherited members
-		function defineInheritedMember(member) {
+//			console.log(VIEW, member, present, past, to.present(member), to.past(member), a);
 
-			var name = member['name'],
-				method = o[name],
-				first_event = member['first_event'],
-				last_event = member['last_event'];
+			// helper to find reserved words
+			function isInherited(member) { return inherit[member]; };
 
-			// define a method inside subclass
-			View[name] = function inherited() {
+			// wapper for inherited methods
+			// automatically triggers events, call view methods…
+			function inherited() {
 				// grab the arguments
-		        var args = slice.call(arguments, 0);
-				// switch for specifics
-				switch (name) {
-				case 'initialize':
-					// save the current State for future reference
-					View.State = args[0];
-				case 'render':
-				case 'finalize':
-					// emit 'first' event
-					first_event && App.emit(first_event, View, args);
-					// apply the method
-					method && method.apply(View, args);
-					// call the same method for all components views
-					// using 'call' here because uses an argument list
-					// instead of an array of arguments
-					forEachComponent.call(View, name, args);
-					// emit 'last' event
-					last_event && App.emit(last_event, View, args);					
-				}
-
-				// return the subclass
-				return View;
+			    var args = slice.call(arguments, 0);
+				// save the current State for future reference
+				if (member === INITIALIZE) { View.State = args[0]; }
+				// emit 'first' event
+				present && App.emit(present, View, args);
+				// apply the method
+				method && method.apply(View, args);
+				// call the same method for all components views
+				// using 'call' here because uses an argument list
+				// instead of an array of arguments
+				forEachComponent.call(View, member, args);
+				// emit 'last' event
+				past && App.emit(past, View, args);
+				// return the View object
+				return this;
 			}
+
+			/* inherited * or * public member */
+			View[member] = isInherited(member) ? inherit[member] : o[member];
 		};
 
 	/* public */
 
-		// View inherited methods
-		[{
-			"name": "initialize",
-			"first_event": a.VIEW_INITIALIZING,
-			"last_event": a.VIEW_INITIALIZED
-		}, {
-			"name": "render",
-			"first_event": a.VIEW_RENDERING,
-			"last_event": a.VIEW_RENDERED
-		}, {
-			"name": "finalize",
-			"first_event": a.VIEW_FINALIZING,
-			"last_event": a.VIEW_FINALIZED
-		}]
-		.map(defineInheritedMember);
-
-		// process members, mark as public
-		for (member in o) { definePublicMember(member);	};
-
 	/* export subclass */
 
+		// define all members
+		for (member in o) { defineMember(member); };
+
+		// export class
 		return View;
 
 	}
 
+/* export */
+
 /* 
- *	Return constructor
  *	Use: new ViewContructor({ ..lots of properties and stuff.. });
  */
 
