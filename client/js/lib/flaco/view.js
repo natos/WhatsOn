@@ -37,7 +37,6 @@ define([
 		var $template = $('<script type="text/template">').attr('id', templateName(view).replace('#','')).appendTo('#templates'),
 		// fetch from url
 		from_url = '/' + view.name + (view.State && view.State.parts ? '/' + view.State.parts.join('/') : '' );
-		console.log(from_url, view.State);
 		// fetch content from server
 		$.get(from_url, function(res) {
 			// save it in the DOM container
@@ -51,7 +50,6 @@ define([
 
 	// loads template, if not exists, it will fetch the template from server
 	function loadTemplate(view) {
-		console.log(view);
 		if ( !$('#' + view.name + '-content')[0] ) {
 			templateExists(view) ? setTemplate(view) : fetchTemplate(view);
 		}
