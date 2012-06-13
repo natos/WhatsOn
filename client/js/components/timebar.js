@@ -119,7 +119,7 @@ define([
 
 		App.off(g.MODEL_CHANGED, modelChanged);
 
-		$('.upc-logo').off('click', centerTimebar);
+		$('.upc-logo').off('click', centerViewPort);
 
 		// stop ticking timer
 		timer.stop();
