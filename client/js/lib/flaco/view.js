@@ -51,7 +51,6 @@ define([
 		from_url = '/' + view.name + (view.State && view.State.parts ? '/' + view.State.parts.join('/') : '' );
 		// fetch content from server
 		$.get(from_url, function(res) {
-			console.log('Loading Template Response', res);
 			// save it in the DOM container
 			$template.text(res);
 			// set the template view
