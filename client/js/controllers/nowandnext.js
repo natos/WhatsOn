@@ -19,20 +19,14 @@ define([
 
 /* public */
 
-	/**
-	 * Activate the associated view, and set up event handlers
-	 * @public
-	 */
+/* abstract */
+
 	function initialize() {
 
 		return this;
 
-	};
+	}
 
-	/**
-	 * Deactivate the associated view, and clean up event handlers
-	 * @public
-	 */
 	function finalize() {
 
 		return this;
@@ -42,10 +36,10 @@ define([
 /* export */
 
 	return new Controller({
-		name: name,
-		initialize: initialize,
-		finalize: finalize,
-		view: NowAndNextView
+		name		: name,
+		initialize	: initialize,
+		finalize	: finalize,
+		view		: NowAndNextView
 	});
 
 });

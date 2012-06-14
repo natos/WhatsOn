@@ -16,12 +16,12 @@ define([
 	// consts
 
 	var CONTROLLER	= 'CONTROLLER',
-		NAME 		= 'name',
+		NAME		= 'name',
 		METHOD		= 'method',
-		PRESENT 	= 'present',
-		PAST	 	= 'past',
-		INITIALIZE 	= 'initialize',
-		FINALIZE 	= 'finalize',
+		PRESENT		= 'present',
+		PAST		= 'past',
+		INITIALIZE	= 'initialize',
+		FINALIZE	= 'finalize',
 
 	// shorcuts
 
@@ -36,6 +36,9 @@ define([
 		var Controller = {},
 
 	/* private */
+
+			// iterator
+			member,
 
 			// common helpers		
 			to = {
@@ -62,35 +65,35 @@ define([
 				inherit[FINALIZE] = function finalize() { return inherited.apply(Controller, arguments); };
 
 			// helper to find reserved words
-			function isInherited(member) { return inherit[member]; };
+			function isInherited(member) { return inherit[member]; }
 
 			// wapper for inherited methods
 			// automatically triggers events, call view methods…
 			function inherited() {
 				// grab the arguments
-			    var args = slice.call(arguments, 0);
+				var args = slice.call(arguments, 0);
 				// emit 'first' event
-				present && App.emit(present, Controller, args);
+				if (present) { App.emit(present, Controller, args); }
 				// apply the method
-				method && method.apply(Controller, args);
+				if (method) { method.apply(Controller, args); }
 				// run View method
-				viewMethod && viewMethod.apply(Controller, args);
+				if (viewMethod) { viewMethod.apply(Controller, args); }
 				// emit 'last' event
-				past && App.emit(past, Controller, args);
+				if (past) { App.emit(past, Controller, args); }
 				// return the Controller object
 				return this;
 			}
 
 			/* inherited * or * public member */
 			Controller[member] = isInherited(member) ? inherit[member] : o[member];
-		};
+		}
 
 	/* public */
 
 	/* export subclass */
 
 		// define all members
-		for (member in o) { defineMember(member); };
+		for (member in o) { defineMember(member); }
 
 		// export class
 		return Controller;

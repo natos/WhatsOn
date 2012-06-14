@@ -20,8 +20,7 @@ define([
 	function move(position) {
 		if (typeof $channellist === 'undefined') { $channellist = $('#channels-bar ul','#content'); }
 		$channellist.css({ top: position.top + 'px' });
-		return this;
-	};
+	}
 
 	function renderLogos(selectedChannels) {
 		var channelimg, 
@@ -32,16 +31,19 @@ define([
 			channelimg = $('#channelImg'+selectedChannels[t]);
 			channelimg.attr('src', channelimg.data('src'));
 		}
-	};
+	}
 
 	function modelChanged(changes) {
+		if (typeof changes === 'undefined') { return; }
 		// if there changes on the position object, move the bar
-		changes && changes.position && move(changes.position);
+		if (changes.position) {
+			move(changes.position);
+		}
 		// if there changes on selected channels, render logos
-		changes && changes.selectedChannels && renderLogos(changes.selectedChannels);
-
-		return this;
-	};
+		if (changes.selectedChannels) {
+			renderLogos(changes.selectedChannels);
+		}
+	}
 
 /* public */
 
@@ -52,12 +54,12 @@ define([
 
 		return this;
 
-	};
+	}
 
 	function render() {
 
 		var $channelrow = $('<div>')
-				.addClass('channel-container')
+				.addClass('channel-container');
 
 		// Create channel containers
 		// as rows in the grid
@@ -70,7 +72,7 @@ define([
 		}
 
 		return this;
-	};
+	}
 
 	function finalize() {
 
@@ -78,7 +80,7 @@ define([
 
 		return this;
 
-	};
+	}
 
 /* export */
 

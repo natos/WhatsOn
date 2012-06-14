@@ -11,7 +11,7 @@ define([
 	'config/user',
 	'config/channel',
 	'modules/app',
-	'lib/flaco/view',
+	'lib/flaco/view'
 
 ], function ChannelViewScope(a, u, c, App, View) {
 
@@ -25,9 +25,9 @@ define([
 
 		var channels, t, id;
 
-		if (event['channels']) {
+		if (event.channels) {
 
-			channels = event['channels'].data;
+			channels = event.channels.data;
 
 			t = channels.length;
 
@@ -40,7 +40,7 @@ define([
 			
 		}
 
-	};
+	}
 
 	function userActionHandler(event) {
 
@@ -49,13 +49,9 @@ define([
 			return;
 		}
 
-		switch (event.target.className) {
+		if (event.target.className === 'favorite') { favorite(); }
 
-			case 'favorite': favorite(); break;
-
-		}
-
-	};
+	}
 
 	/* ACTIONS */
 
@@ -63,7 +59,7 @@ define([
 
 		App.emit(c.FAVORITE, url);
 
-	};
+	}
 
 /* public */
 
@@ -76,7 +72,7 @@ define([
 
 		return this;
 	
-	};
+	}
 
 
 	function render() {
@@ -85,20 +81,21 @@ define([
 
 		return this;
 
-	};
+	}
 
 	function finalize() {
 
 		return this;
 
-	};
+	}
 
 /* export */
 
 	return new View({
-		name: name,
-		render: render,
-		finalize: finalize,
-		initialize: initialize
+		name		: name,
+		initialize	: initialize,
+		finalize	: finalize,
+		render		: render
 	});
+
 });

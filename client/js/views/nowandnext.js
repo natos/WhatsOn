@@ -16,14 +16,12 @@ define([
 
 /* private */
 
+/* public */
+
+/* abstract */
+
 	var channelsListContainer;
 
-	/**
-	 * Load the content for the view.
-	 * Activate associated components.
-	 * Set up event handlers.
-	 * @public
-	 */
 	function initialize() {
 
 		App.loadCss('/assets/css/nowandnext.css');
@@ -31,12 +29,8 @@ define([
 
 		return this;
 
-	};
+	}
 
-	/**
-	 * Set up event handlers.
-	 * @private
-	 */
 	function render() {
 
 		channelsListContainer = $('#channels-list-container');
@@ -49,27 +43,25 @@ define([
 			channelsListContainer.load(e.target.href + ' #channels-list-container');
 		});
 
+		return this;
+
 	}
 
-	/**
-	 * If necessary, remove the content for the view from the DOM.
-	 * Deactivate associated components. 
-	 * Clean up event handlers.
-	 * @public
-	 */
 	function finalize() {
 
 		channelsListContainer.off('click');
 
+		return this;
 	}
 
 
-	/* public */
+/* export */
+
 	return new View({
-		name: name,
-		initialize: initialize,
-		finalize: finalize,
-		render: render,
+		name		: name,
+		initialize	: initialize,
+		finalize	: finalize,
+		render		: render
 	});
 
 });

@@ -23,10 +23,10 @@ define([
 /* private */
 
 	/**
-	 * Handler for the GRID_MOVED event.
-	 * GRID_MOVED is raised by the grid view whenever the visible channel range
-	 * or time window changes.
-	 */
+	* Handler for the GRID_MOVED event.
+	* GRID_MOVED is raised by the grid view whenever the visible channel range
+	* or time window changes.
+	*/
 	function gridMoved() {
 		// Update model UI data
 		GridModel.set('position', { 'top': window.pageYOffset * -1, 'left': window.pageXOffset * -1 });
@@ -34,39 +34,38 @@ define([
 		GridModel.set('selectedTime', GridView.getSelectedTime());
 	
 		return this;
-	};
+	}
 	
 	/**
-	 * Handler for the "eventsReceived" event.
-	 * "eventsReceived" is raised by the EpgApi.js object whenever a batch of EPG data
-	 * has been retrieved from the API, or from cache.
-	 */
+	* Handler for the "eventsReceived" event.
+	* "eventsReceived" is raised by the EpgApi.js object whenever a batch of EPG data
+	* has been retrieved from the API, or from cache.
+	*/
 	function setEvents(events) {
 	
 		GridModel.set('events', events);
 	
 		return this;
 	
-	};
+	}
 	
 	/**
-	 * Handler for the GRID_FETCH_EVENTS event.
-	 * GRID_FETCH_EVENTS is raised by the grid view at the *end* of a resize or scroll
-	 * action, to indicate that the user has finished their immediate interaction,
-	 * and we should now retrieve grid data.
-	 */
+	* Handler for the GRID_FETCH_EVENTS event.
+	* GRID_FETCH_EVENTS is raised by the grid view at the *end* of a resize or scroll
+	* action, to indicate that the user has finished their immediate interaction,
+	* and we should now retrieve grid data.
+	*/
 	function getEvents() {
 
 		EpgApi.getEventsForChannels(GridModel.selectedChannels, GridModel.selectedTime.startTime, GridModel.selectedTime.endTime);
 	
 		return this;
-	};
+	}
 
 /* public */
 
-	/**
-	 * Activate the associated view, and set up event handlers
-	 */
+/* abstract */
+
 	function initialize() {
 
 		// Events Handlers
@@ -76,11 +75,8 @@ define([
 
 		return this;
 
-	};
+	}
 
-	/**
-	 * Deactivate the associated view, and clean up event handlers
-	 */
 	function finalize() {
 
 		App.off(g.GRID_MOVED, gridMoved);
@@ -89,16 +85,16 @@ define([
 
 		return this;
 
-	};
+	}
 
 /* export */
 
 	return new Controller({
-		name: name,
-		initialize: initialize,
-		finalize: finalize,
-		model: GridModel,
-		view: GridView
+		name		: name,
+		initialize	: initialize,
+		finalize	: finalize,
+		model		: GridModel,
+		view		: GridView
 	});
 
 });

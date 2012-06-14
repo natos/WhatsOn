@@ -23,18 +23,18 @@ define([
 		if (changes.favorites) {
 			render(changes); 
 		}
-	};
+	}
 
 	function find_me_a_logo(name) {
 		var logo = false;
 		for (var i = 0; i < channels.length; i++) {
 			var _channel = channels[i];
-			if (_channel.name, _channel.name === name) {
+			if (_channel.name === name) {
 				logo = _channel.logoIMG; break;
 			}
 		}
 		return '<img src="http://www.upc.nl/' + logo + '">';
-	};
+	}
 
 /* public */
 
@@ -43,7 +43,7 @@ define([
 		// subscribe to get re-render favorites
 		App.on(u.MODEL_CHANGED, handleModelChanges);
 
-	};
+	}
 
 	function render(model) {
 
@@ -75,8 +75,9 @@ define([
 		$(favorites.data).each(function(i, e) {
 
 			// defining the type of favorite
-			var listname = (typeof e.data['tv_show']==='undefined') ? 'channel' : 'programme',
-				type = (typeof e.data['tv_show']==='undefined') ? 'tv_channel' : 'tv_show',
+			var isTvShow = typeof e.data.tv_show === 'undefined',
+				listname = (isTvShow) ? 'channel' : 'programme',
+				type = (isTvShow) ? 'tv_channel' : 'tv_show',
 				item = e.data[type];
 
 			var id = item.url.match(/\d+/),
@@ -85,7 +86,7 @@ define([
 
 			if (listname === 'channel') {
 				content = find_me_a_logo(item.title) || item.title;
-			};
+			}
 
 			// render item inside list
 			var fav = $link
@@ -111,19 +112,19 @@ define([
 		for (var list in $lists) { 
 			$lists[list].appendTo($favorites);	
 		}
-	};
+	}
 
 	function finalize() {
 		App.off(u.MODEL_CHANGED, handleModelChanges);
-	};
+	}
 
 /* export */
 
 	return {
-		name: name,
-		initialize: initialize,
-		finalize: finalize,
-		render: render
+		name		: name,
+		initialize	: initialize,
+		finalize	: finalize,
+		render		: render
 	};
 
 });

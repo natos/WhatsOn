@@ -26,9 +26,9 @@ define([
 
 		var favorites, t, id;
 
-		if (event['favorites']) {
+		if (event.favorites) {
 
-			favorites = event['favorites'].data;
+			favorites = event.favorites.data;
 
 			t = favorites.length;
 /*
@@ -39,7 +39,7 @@ define([
 				}
 			}*/
 		}
-	};
+	}
 
 	function userActionHandler(event) {
 
@@ -56,7 +56,7 @@ define([
 
 		}
 
-	};
+	}
 
 	/* ACTIONS */
 
@@ -64,15 +64,17 @@ define([
 
 		App.emit(p.RECORD, url);
 
-	};
+	}
 
 	function favorite() {
 
 		App.emit(p.FAVORITE, url);
 
-	};
+	}
 
 /* public */
+
+/* abstract */
 
 	function initialize(State) {
 
@@ -81,13 +83,13 @@ define([
 
 		App.on(u.MODEL_CHANGED, handleUserModelChanges);
 	
-	};
+	}
 
 	function render() {
 
 		p.$userAction = $('#user-action').on('click', userActionHandler);
 
-	};
+	}
 
 	function finalize() {
 
@@ -95,14 +97,15 @@ define([
 
 		App.off(u.MODEL_CHANGED, handleUserModelChanges);
 
-	};
+	}
 
 /* export */
 	
 	return new View({
-		name: name,
-		initialize: initialize,
-		finalize: finalize,
-		render: render
+		name		: name,
+		initialize	: initialize,
+		finalize	: finalize,
+		render		: render
 	});
+
 });

@@ -31,7 +31,7 @@ define([
 
 		});
 
-	};
+	}
 
 	function favorite(url) {
 
@@ -42,10 +42,12 @@ define([
 			App.emit(u.FETCH_FAVORITES);
 
 		});
-	};
+	}
 
 
 /* public */
+
+/* abstract */ 
 
 	function initialize(State) {
 
@@ -54,21 +56,24 @@ define([
 		
 		return this;
 	
-	};
+	}
 
 	function finalize() {
 
+		App.off(p.RECORD, record);
+		App.off(p.FAVORITE, favorite);
+
 		return this;
 
-	};
+	}
 
 /* export */
 
 	return new Controller({
-		name: name,
-		initialize: initialize,
-		finalize: finalize,
-		view: ProgrammeView
+		name		: name,
+		initialize	: initialize,
+		finalize	: finalize,
+		view		: ProgrammeView
 	});
 
 });

@@ -19,8 +19,8 @@ define([
 /* private */
 
 	/**
-	 * Handler for the LOGGED_IN event.
-	 */
+	* Handler for the LOGGED_IN event.
+	*/
 	function userLoggedIn() {
 
 		FB.api({
@@ -32,11 +32,11 @@ define([
 			console.log(response);
 		});
 
-	};
+	}
 
 	/**
-	 * Handler for the LOGGED_OUT event.
-	 */
+	* Handler for the LOGGED_OUT event.
+	*/
 	function userLoggedOut() {
 
 		FB.api({
@@ -47,7 +47,7 @@ define([
 			console.log(response);
 		});
 
-	};
+	}
 
 /* public */
 
@@ -57,13 +57,13 @@ define([
 
 		return this;
 	
-	};
+	}
 
 	function finalize() {
 
 		return this;
 
-	};
+	}
 
 /* export */
 

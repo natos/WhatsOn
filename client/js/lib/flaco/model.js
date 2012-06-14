@@ -21,20 +21,23 @@ define([
 
 		var Model = {},
 
-			event = o['event'];
+			event = o.event,
+
+			// iterator
+			member;
 
 	/* protected */
 
 		// helper to find reserved words
-		function isInherited(member) { return ['set', 'event'].indexOf(member) >= 0; };
+		function isInherited(member) { return ['set', 'event'].indexOf(member) >= 0; }
 
 		// define public members
-		function definePublicMember(member) { if (!isInherited(member)) { Model[member] = o[member]; } };
+		function definePublicMember(member) { if (!isInherited(member)) { Model[member] = o[member]; } }
 
 	/* public */
 
 		// process members, mark as public
-		for (member in o) { definePublicMember(member);	};
+		for (member in o) { definePublicMember(member);	}
 
 		// sets new data on the model
 		// rises a event with a change object
@@ -49,10 +52,10 @@ define([
 				obj[key] = value;
 
 			// emit event
-			event && App.emit(event, obj);
+			if (event) { App.emit(event, obj); }
 
 			return obj;
-		}
+		};
 
 	/* export subclass */
 

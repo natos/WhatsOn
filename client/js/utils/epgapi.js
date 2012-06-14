@@ -18,12 +18,19 @@ define([
 	function average(time) {
 		average_time += time; average_count += 1;
 		return Math.ceil(average_time / average_count);
-	};
+	}
 /*
 * Average time tool
 */
-
-	var HOURS_PER_SLICE = 4, // Hours per slice must be: 1, 2, 3, 4, 6, 8, 12, 24.
+	// rescope
+	var $ = $,
+		Timer = Timer,
+		localStorage = localStorage,
+		lscache = lscache,
+		console = console,
+		escape = escape,
+	// constants
+		HOURS_PER_SLICE = 4, // Hours per slice must be: 1, 2, 3, 4, 6, 8, 12, 24.
 		ESTIMATED_AVERAGE_EVENTS_PER_HOUR = 2,
 		EVENTS_PER_SLICE = ESTIMATED_AVERAGE_EVENTS_PER_HOUR * HOURS_PER_SLICE,
 		API_PREFIX = $('head').attr('data-api'),
@@ -61,13 +68,13 @@ define([
 
 
 	/**
-	 * Format a date as a string YYYY-MM-DDTHH:00Z
-	 * Note that this ignores the minutes part of the date, and
-	 * always places the formatted date at the top of the hour.
-	 *
-	 * @private
-	 * @return  {string} YYYY-MM-DDTHH:00Z
-	 */
+	* Format a date as a string YYYY-MM-DDTHH:00Z
+	* Note that this ignores the minutes part of the date, and
+	* always places the formatted date at the top of the hour.
+	*
+	* @private
+	* @return  {string} YYYY-MM-DDTHH:00Z
+	*/
 	var formatTimeForApiRequest = function(dt) {
 		// TODO: take account of time zones?
 		var formattedTime = dt.getFullYear().toString() + '-' + ('00' + (dt.getMonth() + 1).toString()).slice(-2) + '-' + ('00' + dt.getDate().toString()).slice(-2) + 'T' + ('00' + dt.getHours().toString()).slice(-2) + ':00' + 'Z';
@@ -82,17 +89,17 @@ define([
 	};
 
 	/**
-	 * Given a start date time and end date time, return an array of time slices
-	 * that is sufficient to cover the entire time span.
-	 *
-	 * @private
-	 * @return  Array of time slices: [[slice1StartTime, slice1EndTime], [slice2StartTime, slice2EndTime], ...]
-	 */
+	* Given a start date time and end date time, return an array of time slices
+	* that is sufficient to cover the entire time span.
+	*
+	* @private
+	* @return  Array of time slices: [[slice1StartTime, slice1EndTime], [slice2StartTime, slice2EndTime], ...]
+	*/
 	var getTimeSlices = function(startDate, endDate) {
 		// Time slices: each slice is HOURS_PER_SLICE hours wide.
 		// If HOURS_PER_SLICE = 4, then the slices are:
 		// [
-		//   	00:00 - 04:00,
+		//		00:00 - 04:00,
 		//		04:00 - 08:00,
 		//		08:00 - 12:00,
 		//		...
@@ -125,14 +132,14 @@ define([
 	};
 
 	/**
-	 * For a list of channelIds and a single time slice, retrieve the events
-	 * for this time slice, either from the API, or from cache. Raise "eventsReceived"
-	 * messages when the events are available.
-	 *
-	 * @private
-	 * @async
-	 * @return void
-	 */
+	* For a list of channelIds and a single time slice, retrieve the events
+	* for this time slice, either from the API, or from cache. Raise "eventsReceived"
+	* messages when the events are available.
+	*
+	* @private
+	* @async
+	* @return void
+	*/
 	var getEventsForSlice = function(channelIds, timeSlice) {
 		var channelIdsToFetchFromApi = [],
 			channelIdsToFetchFromCache = [],
@@ -161,10 +168,10 @@ define([
 	};
 
 	/**
-	 * @private
-	 * @async
-	 * @return void
-	 */
+	* @private
+	* @async
+	* @return void
+	*/
 	var getEventsForSliceFromApi = function(channelIds, timeSlice, eventsPerSlice) {
 		// Split channels to fetch into batches of 5. The API only handles max 5 channels at once.
 		var channelIdBatches = [],
@@ -186,26 +193,26 @@ define([
 			channelIdBatch = channelIdBatches[i];
 
 /* for performance tests */
-var timer = new Timer('getEventsForSliceFromApi Time Track').off();
+var timer = new Timer('getEventsForSliceFromApi Time Track');//.off();
 /* for performance tests */
 
 			// Use "&order=startDateTime" to get results in order
 			request = API_PREFIX + 'Channel/' + channelIdBatch.join('|') + '/events/NowAndNext_' + formattedStartTime + '.json?batchSize=' + eventsPerSlice + '&order=startDateTime&callback=?'; 
+			// TODO: Don't create functions inside a loop! (JSHint)
 			$.getJSON(request, function(apiResponse) {
 				handleApiResponse_EventsForSliceFromApi(apiResponse, timeSlice, eventsPerSlice, timer);
 			});
 		}
 	};
 
-
 	/**
-	 * Process API responses from the calls initiated in getEventsForSliceFromApi.
-	 * Cache the responses, and raise messages.
-	 *
-	 * @private
-	 * @async
-	 * @return void
-	 */
+	* Process API responses from the calls initiated in getEventsForSliceFromApi.
+	* Cache the responses, and raise messages.
+	*
+	* @private
+	* @async
+	* @return void
+	*/
 
 	var handleApiResponse_EventsForSliceFromApi = function(apiResponse, timeSlice, eventsPerSlice, timer) {
 
@@ -213,7 +220,8 @@ var timer = new Timer('getEventsForSliceFromApi Time Track').off();
 timer.track('API Response');
 // Average time to test Jedrzej API performance
 // API RAT > API Average Response Time
-// UNCOMMENT THIS FOR LOG THE AVERAGE TIME > console.log('API-ART <', average(timer.timeDiff), 'ms>' );
+// UNCOMMENT THIS FOR LOG THE AVERAGE TIME > 
+console.log('API-ART <', average(timer.timeDiff), 'ms>' );
 /* for performance tests */
 
 		var eventsForChannelCollection = [],
@@ -267,13 +275,13 @@ timer.track('API Response');
 
 
 	/**
-	 * Retrieve events for the specified channel IDs and time range.
-	 * This function does not return the events immediately. Instead,
-	 * it will try to retrieve the events from cache or from the API.
-	 * Whenever results become available, an "eventsReceived" message will
-	 * be raised.
-	 * 
-	 * Usage:
+	* Retrieve events for the specified channel IDs and time range.
+	* This function does not return the events immediately. Instead,
+	* it will try to retrieve the events from cache or from the API.
+	* Whenever results become available, an "eventsReceived" message will
+	* be raised.
+	* 
+	* Usage:
 
 		// Start listening for eventsReceived event
 		$CUSTOM_EVENT_ROOT.bind('eventsReceived', function(e, data){
@@ -284,11 +292,11 @@ timer.track('API Response');
 		var startTime = new Date();
 		var endTime = new Date(startTime.valueOf() + (4 * 60 * 60 * 1000));
 		EpgApi.getEventsForChannels(channelIds, startTime, endTime);
-	 *
-	 * @public
-	 * @async
-	 * @return void
-	 */
+	*
+	* @public
+	* @async
+	* @return void
+	*/
 	var getEventsForChannels = function(channelIds, startTime, endTime) {
 
 		var timeSlices = getTimeSlices(startTime, endTime),
@@ -298,13 +306,13 @@ timer.track('API Response');
 		for (i=0; i<slicesCount; i++) {
 			getEventsForSlice(channelIds, timeSlices[i]);
 		}
-	}
+	};
 
 	/**
-	 * Perform an EPG search for events. Raises an "searchResultsReceived"
-	 * message when the eventsd have been returned.
-	 * 
-	 * Usage:
+	* Perform an EPG search for events. Raises an "searchResultsReceived"
+	* message when the eventsd have been returned.
+	* 
+	* Usage:
 
 		// Start listening for searchResultsReceived event
 		$CUSTOM_EVENT_ROOT.bind('searchResultsReceived', function(e, data){
@@ -312,22 +320,22 @@ timer.track('API Response');
 		});
 
 		EpgApi.searchForEvents('monkeys');
-	 *
-	 * @public
-	 * @async
-	 * @return void
-	 */
+	*
+	* @public
+	* @async
+	* @return void
+	*/
 	var searchForEvents = function(q) {
 		// Use "&order=startDateTime" to get results in order
 		var request = API_PREFIX + 'Event.json?query=' + escape(q) + '&callback=?';
 		$.getJSON(request, function(apiResponse) {
 			$CUSTOM_EVENT_ROOT.emit(SEARCH_RESULTS_RECEIVED_EVENT, [apiResponse]);
 		});
-	}
+	};
 
 	return {
-		getEventsForChannels: getEventsForChannels,
-		searchForEvents: searchForEvents
+		getEventsForChannels	: getEventsForChannels,
+		searchForEvents			: searchForEvents
 	};
 
 });

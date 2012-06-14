@@ -22,25 +22,27 @@ define([
 
 /* public */
 
+/* abstract */ 
+
 	function initialize() {
 	
 		return this;
 	
-	};
+	}
 
 	function finalize() {
 
 		return this;
 
-	};
+	}
 
 /* export */
 
 	return {
-		name: name,
-		initialize: initialize,
-		finalize: finalize,
-		view: SettingsView
+		name		: name,
+		initialize	: initialize,
+		finalize	: finalize,
+		view		: SettingsView
 	};
 
 });

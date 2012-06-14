@@ -1,10 +1,6 @@
 /* 
 * MoviesView
 * ----------
-*
-* Emitting events, UI changes
-* Listen to the model for data changes
-*
 */
 
 define([
@@ -22,10 +18,10 @@ define([
 	var executionTimer;
 
 	/**
-	 * Handler for resizing & orientationchange events.
-	 * Uses an execution timer for throttling.
-	 * @private
-	 */
+	* Handler for resizing & orientationchange events.
+	* Uses an execution timer for throttling.
+	* @private
+	*/
 	function handleResize() {
 		if (executionTimer) {
 			clearTimeout(executionTimer);
@@ -37,9 +33,9 @@ define([
 	}
 
 	/**
-	 * Resize content images for current screen dimensions 
-	 * @private
-	 */
+	* Resize content images for current screen dimensions 
+	* @private
+	*/
 	function resizeImages() {
 
 		var maxScreenWidth = Math.max(a.$window.width(), a.$window.height()),
@@ -62,7 +58,7 @@ define([
 			if (oldSrc === newSrc) { return; }
 			$item.attr('src', newSrc);
 		});
-	};
+	}
 
 
 /* public */
@@ -75,13 +71,13 @@ define([
 
 		return this;
 	
-	};
+	}
 
 	function render() {
 
 		return this;
 
-	};
+	}
 
 	function finalize() {
 
@@ -89,15 +85,15 @@ define([
 
 		return this;
 
-	};
+	}
 
 /* export */
 
 	return new View({
-		name: name,
-		render: render,
-		finalize: finalize,
-		initialize: initialize
+		name		: name,
+		initialize	: initialize,
+		finalize	: finalize,
+		render		: render
 	});
 
 });

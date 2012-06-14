@@ -16,23 +16,33 @@ define([
 
 /* private */
 
-	/* constructor */
+/* public */
+
+/* abstract */
+
 	function initialize() {
-
-		/** 
-		*	Events handlers
-		*/
-
-		App.emit(a.VIEW_RENDERED, this);
 
 		return this;
 
-	};
+	}
+
+	function render() {
+
+		return this;
+
+	}
+
+	function finalize() {
+
+		return this;
+
+	}
 
 
-/* @class SettingsView */
+/* export */
+
 	return {
 		initialize: initialize
-	}
+	};
 
 });

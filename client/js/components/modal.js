@@ -29,12 +29,12 @@ define([
 		$closeButton.on('click', hide);
 		$dimmer.on('click', hide);
 		$window.on('resize', setPosition);
-	};
+	}
 
 	function createLayout() {
 		$container.appendTo($body);
 		$dimmer.appendTo($body);
-	};
+	}
 
 	function remove() {
 		$container.appendTo($body);
@@ -51,7 +51,7 @@ define([
 		active = true;
 
 		setTimeout(setPosition(), 1);
-	};
+	}
 
 	function hide() {
 		$container.removeClass('on');
@@ -61,11 +61,11 @@ define([
 			$dimmer.removeClass('active');
 		}, 300);
 		active = false;
-	};
+	}
 
 	function setContent(content) {
 		$container.html(content).append($closeButton);
-	};
+	}
 
 	function setPosition() {
 		if (!active) { return; }
@@ -82,11 +82,11 @@ define([
 /* public */
 
 	return {
-		initialize: initialize,
-		setContent: setContent,
-		$container: $container,
-		show: show,
-		hide: hide
-	}
+		initialize	: initialize,
+		setContent	: setContent,
+		$container	: $container,
+		show		: show,
+		hide		: hide
+	};
 
 });

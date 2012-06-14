@@ -51,7 +51,7 @@ define([
 
 		return this;
 
-	};
+	}
 
 	function manageModelChanges(event) {
 
@@ -60,7 +60,7 @@ define([
 			manageLoginStatus(event['facebook-status']);
 		}
 
-	};
+	}
 
 	function manageLoginStatus(event) {
 
@@ -72,7 +72,6 @@ define([
 
 			case u.NOT_AUTHORIZED:
 			case u.UNKNOWN:
-			default:
 				u.$loginButton.html('<i class="icon-user"></i><b class="label">Login</b>');
 				break;
 		}
@@ -80,7 +79,7 @@ define([
 		// save current status
 		CURRENT_STATUS = event.status;
 
-	};
+	}
 
 	// handle a.login behavior
 	function handleLoginButtonClick(event) {
@@ -96,13 +95,12 @@ define([
 
 			case u.NOT_AUTHORIZED:
 			case u.UNKNOWN:
-			default: 
 				upc.emit(u.LOG_IN);
 				break;
 
 		}
 
-	};
+	}
 
 	// handle usercontrol behavior
 	function handleUserControlClick(event) {
@@ -122,7 +120,7 @@ define([
 
 		}
 
-	};
+	}
 
 /* public */
 	return {

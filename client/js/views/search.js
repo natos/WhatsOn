@@ -40,7 +40,7 @@ define([
 
 		applyFilters();
 
-	};
+	}
 
 	function isEmpty(klass) {
 		var empty_filters = true;
@@ -50,7 +50,7 @@ define([
 			}
 		}
 		return empty_filters;
-	};
+	}
 
 	function applyFilters() {
 
@@ -84,7 +84,7 @@ define([
 				}
 			}
 		});
-	};
+	}
 
 /* public */
 
@@ -92,6 +92,12 @@ define([
 
 
 	function initialize() {
+
+		return this;
+
+	}
+
+	function render() {
 
 		// TODO: we need to find a much better way to do this
 		if ($('#content').find('#search-container').length>0) {
@@ -130,26 +136,26 @@ define([
 		// Assign the query to the search box
 		$('#q').val(query);
 
-		App.emit(a.VIEW_RENDERED, this);
-
 		return this;
 
-	};
+	}
 
 	function finalize() {
 
 		$filters.off('click', filterHandler);
 
-	};
+		return this;
+
+	}
 
 
 /* export */
 
 	return {
-		name: name,
-		initialize: initialize,
-		finalize: finalize,
-		filters: filters
+		name		: name,
+		initialize	: initialize,
+		finalize	: finalize,
+		filters		: filters
 	};
 
 });

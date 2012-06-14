@@ -27,19 +27,19 @@ define([
 
 		return this;
 
-	};
+	}
 
 	function render() {
 
 		return this;
 
-	};
+	}
 
 	function finalize() {
 
 		return this;
 
-	};
+	}
 
 /* export */
 

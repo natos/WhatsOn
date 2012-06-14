@@ -38,41 +38,41 @@ define([
 				break;
 		}
 
-	};
+	}
 
 	function login() {
 		FB.login(function(response) { }, { scope: u.SCOPE });
-	};
+	}
 
 	function logout() {
 		FB.logout(function(response) { });
-	};
+	}
 
 	/* FAVORITES */
 
 	function fetchFavorites() {
 		FB.api('/me/upcsocial:favorite', setFavorites);
-	};
+	}
 
 	function setFavorites(response) {
 
 		if (!response) { console.log('User Model','Error while trying to process Favorites > Empty response from facebook'); return; }
 
 		UserModel.set('favorites', response);
-	};
+	}
 
 	/* RECORDINGS */
 
 	function fetchRecordings() {
 		FB.api('/me/upcsocial:record', setRecordings);
-	};
+	}
 
 	function setRecordings(response) {
 
 		if (!response) { console.log('User Model','Error while trying to process Favorites > Empty response from facebook'); return; }
 
 		UserModel.set('recorded', response); 
-	};
+	}
 
 	/* actions when user is connected */
 	function connected() {
@@ -83,13 +83,13 @@ define([
 		// let know eveyone
 		App.emit(u.LOGGED_IN);
 
-	};
+	}
 
 	/* actions when user is disconnected */
 	function disconnected() {
 		// let know eveyone
 		App.emit(u.LOGGED_OUT);
-	};
+	}
 
 
 /* public */
@@ -105,7 +105,7 @@ define([
 				console.log('User: facebook SDK ready!'); 
 			});
 			return;
-		};
+		}
 
 		// FB init
 		FB.init({
@@ -120,7 +120,7 @@ define([
 
 		this.components = {
 			user: UserComponent.initialize()
-		}
+		};
 
 		// Check Facebook login status
 		//FB.getLoginStatus(facebookLoginStatus);
@@ -132,7 +132,7 @@ define([
 
 		return this;
 
-	};
+	}
 
 	function finalize() {
 
@@ -154,9 +154,9 @@ define([
 /* export */
 
 	return {
-		name: name,
-		initialize: initialize,
-		model: UserModel
+		name		: name,
+		initialize	: initialize,
+		model		: UserModel
 	};
 
 });

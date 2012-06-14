@@ -19,17 +19,19 @@ define([
 
 /* public */
 
+/* abstract */ 
+
 	function initialize() {
 
 		return this;
 
-	};
+	}
 
 	function finalize() {
 
 		return this;
 
-	};
+	}
 
 /* export */
 

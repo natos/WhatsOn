@@ -14,10 +14,6 @@ define([
 
 	var $window = $(window),
 
-	el, 
-
-	list,
-
 	timer = {
 		clock: void 0,
 		time: 5000, // time to slide
@@ -56,7 +52,7 @@ define([
 		// (Height limit is just so that the channel list remains visible even on very
 		// wide screens.)
 		list.css({'height': ($window.width() * 0.5625) + 'px' });
-	};
+	}
 
 	function discHandler(event) {
 		var $this = $(this);
@@ -64,7 +60,7 @@ define([
 		list.css('left', $this.data('index') * -100 + '%' );
 		$('.disc').removeClass('selected');
 		$this.addClass('selected');
-	};
+	}
 
 	function addButtons() {
 
@@ -105,7 +101,7 @@ define([
 				.data('index', i)
 				.click(discHandler)
 				.appendTo(navigator);
-		});		
+		});	
 
 		// select first
 		$('.disc').first().addClass('selected');
@@ -116,7 +112,7 @@ define([
 		// restart timer every disc click
 		$('.disc').bind('click', timer.restart );
 		
-	};
+	}
 
 	// swipe handler
 	function swipe(event) {
@@ -144,23 +140,23 @@ define([
 			disc.trigger('click');
 		}
 
-	};
+	}
 
 	// bounce when the limit is reached
 	// for the rightswipe
 	function bounceRight() {
 		list.css('left', '5%');
-		setTimeout(function(){
+		setTimeout(function() {
 		list.css('left', '0%');
 		},300);
-	};
+	}
 	// for the leftswipe
 	function bounceLeft() {
 		list.css('left', '-905%');
-		setTimeout(function(){
+		setTimeout(function() {
 		list.css('left', '-900%');
 		},300);
-	};
+	}
 
 /* public */ 
 
@@ -171,7 +167,7 @@ define([
 		$window.on('resize orientationchange', sizeHandler);
 
 		return this;
-	};
+	}
 
 	function render() {
 
@@ -189,7 +185,7 @@ define([
 		timer.start();
 
 		return this;
-	};
+	}
 
 	function finalize() {
 
@@ -200,7 +196,7 @@ define([
 
 		return this;
 
-	};
+	}
 
 /* export */ 
 
@@ -210,6 +206,6 @@ define([
 		finalize: finalize,
 		render: render,
 		map: map
-	}
+	};
 
 });

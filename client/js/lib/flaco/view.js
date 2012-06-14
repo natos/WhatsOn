@@ -1,7 +1,6 @@
-/* 
+/*
 * GenericView
 * -----------
-*
 */
 
 define([
@@ -14,15 +13,15 @@ define([
 /* private */
 
 	// consts
-	var VIEW		= 'VIEW'
-		NAME 		= 'name',
+	var VIEW		= 'VIEW',
+		NAME		= 'name',
 		METHOD		= 'method',
-		PRESENT 	= 'present',
-		PAST	 	= 'past',
+		PRESENT		= 'present',
+		PAST		= 'past',
 		RENDER		= 'render',
-		INITIALIZE 	= 'initialize',
-		FINALIZE 	= 'finalize',
-		SCRIPT_TAG  = '<script type="text/template">',
+		INITIALIZE	= 'initialize',
+		FINALIZE	= 'finalize',
+		SCRIPT_TAG	= '<script type="text/template">',
 
 	// shorcuts
 		slice = Array.prototype.slice;
@@ -32,10 +31,10 @@ define([
 	*/
 
 	// returns template name for a given view
-	function templateName(view) { return '#' + view.name + '-template'; };
+	function templateName(view) { return '#' + view.name + '-template'; }
 
 	// returns if the template DOM element exists
-	function templateExists(view) { return $( templateName(view) )[0]; };
+	function templateExists(view) { return $( templateName(view) )[0]; }
 
 	// renders the template
 	function setTemplate(view) {
@@ -43,7 +42,7 @@ define([
 		a.$content.html( $( templateName(view) ).text() );
 		// render view :)
 		view.render();
-	};
+	}
 
 	// fetch template from server and save it to the DOM
 	function fetchTemplate(view) {
@@ -58,21 +57,25 @@ define([
 			// set the template view
 			setTemplate(view);
 		});
-	};
+	}
 
 	/* Main template functions */
 
 	// loads template, if not exists, it will fetch the template from server
 	function loadTemplate(view) {
-		templateExists(view) ? setTemplate(view) : fetchTemplate(view);
-	};
+		if (templateExists(view)) {
+			setTemplate(view);
+		} else {
+			fetchTemplate(view);
+		}
+	}
 
 	// well, nothing for now
 	function unloadTemplate(view) {
 		// ? not sure what to do here...
 		// ? because the loadTemplate function
 		// ? already steps on previews templates
-	};
+	}
 
 	/**
 	*	Generic inner template handling
@@ -94,18 +97,21 @@ define([
 
 	/* private */
 
+			// iterator
+			member,
+
 			// common helpers		
 			to = (function() {
 
 				var expression = /^(\w+)(e|er)$/gi;
 
-				function processPresent(t, p1, p2, a) { return /er$/.test(t) ? p1 + p2 + 'ing' : p1 + 'ing'; };
-				function processPast(t, p1, p2, a) { return /er$/.test(t) ? p1 + p2 + 'ed' : p1 + 'ed'; };
+				function processPresent(t, p1, p2, a) { return (/er$/.test(t)) ? p1 + p2 + 'ing' : p1 + 'ing'; }
+				function processPast(t, p1, p2, a) { return (/er$/.test(t)) ? p1 + p2 + 'ed' : p1 + 'ed'; }
 
 				return {
 					present: function toPresent(member) { return member.replace(expression, processPresent).toUpperCase(); },
 					past: function toPast(member) { return member.replace(expression, processPast).toUpperCase(); }
-				}
+				};
 
 			})(),
 
@@ -114,18 +120,18 @@ define([
 			components = o.components;
 
 		// helper for each component
-		function forEachComponent(method, arguments) {
+		function forEachComponent(method, args) {
 			if (!components) { return; }
 			var name, component;
 			for (name in components) {
 				if (components.hasOwnProperty(name)) {
 					component = components[name];
 					if (typeof(component[method])==='function') {
-						component[method].apply(arguments);
+						component[method].apply(args);
 					}
 				}
 			}
-		};
+		}
 
 		// define members
 		function defineMember(member) {
@@ -144,39 +150,39 @@ define([
 /* console.log(VIEW, member, present, past, to.present(member), to.past(member), a); */
 
 			// helper to find reserved words
-			function isInherited(member) { return inherit[member]; };
+			function isInherited(member) { return inherit[member]; }
 
 			// wapper for inherited methods
 			// automatically triggers events, call view methods…
 			function inherited() {
 				// grab the arguments
-			    var args = slice.call(arguments, 0);
+				var args = slice.call(arguments, 0);
 				// save the current State for future reference
 				if (member === INITIALIZE) { View.State = args[0]; }
 				// emit 'first' event
-				present && App.emit(present, View, args);
+				if (present) { App.emit(present, View, args); }
 				// apply the method
-				method && method.apply(View, args);
+				if (method) { method.apply(View, args); }
 				// call the same method for all components views
 				// using 'call' here because uses an argument list
 				// instead of an array of arguments
 				forEachComponent.call(View, member, args);
 				// emit 'last' event
-				past && App.emit(past, View, args);
+				if(past) { App.emit(past, View, args); }
 				// return the View object
 				return this;
 			}
 
 			/* inherited * or * public member */
 			View[member] = isInherited(member) ? inherit[member] : o[member];
-		};
+		}
 
 	/* public */
 
 	/* export subclass */
 
 		// define all members
-		for (member in o) { defineMember(member); };
+		for (member in o) { defineMember(member); }
 
 		// export class
 		return View;

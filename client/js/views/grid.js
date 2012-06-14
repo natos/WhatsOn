@@ -38,32 +38,33 @@ define([
 		executionDelay = 250;
 
 	/**
-	 * Handler for scrolling and resizing events.
-	 * Uses an execution timer for throttling.
-	 * @private
-	 */
+	* Handler for scrolling and resizing events.
+	* Uses an execution timer for throttling.
+	* @private
+	*/
 	function handleResizeAndScroll() {
 		// the grid has moved
 		App.emit(g.GRID_MOVED);
 		// erase the previous timer
 		if (executionTimer) { clearTimeout(executionTimer);	}
 		// set a delay of 200ms to fetch events
-		executionTimer = setTimeout(function() { App.emit(g.GRID_FETCH_EVENTS); }, executionDelay);
-	};
+		executionTimer = setTimeout(function emitFetchEvents() { App.emit(g.GRID_FETCH_EVENTS); }, executionDelay);
+	}
 
 	/**
-	 * Handler for model data changes.
-	 * @private
-	 */
+	* Handler for model data changes.
+	* @private
+	*/
 	function modelChanged(changes) {
+		if (typeof changes === 'undefined') { return; }
 		// check for events changes to render
-		changes && changes.events && renderEvents(changes.events);
-	};
+		if (changes.events) { renderEvents(changes.events); }
+	}
 
 	/**
-	 * Generate a block of CSS to adapt the grid to the current viewport dimensions.
-	 * @private
-	 */
+	* Generate a block of CSS to adapt the grid to the current viewport dimensions.
+	* @private
+	*/
 	function defineStyles() {
 
 		// define constants
@@ -89,12 +90,12 @@ define([
 
 		return cssText.join('\n');
 
-	};
+	}
 
 	/**
-	 * Render a set of EPG events into the grid.
-	 * @private
-	 */
+	* Render a set of EPG events into the grid.
+	* @private
+	*/
 	function renderEvents(events) {
 
 		var link, description, i, event, width, left, startDateTime, endDateTime, right;
@@ -154,12 +155,12 @@ define([
 		// triggers GRID_RENDERED
 		App.emit(g.GRID_RENDERED);
 
-	};
+	}
 
 	/**
-	 * Add or update a named <style> element to the DOM.
-	 * @private
-	 */
+	* Add or update a named <style> element to the DOM.
+	* @private
+	*/
 	function appendCSSBlock(blockId, cssText) {
 		var el = document.getElementById(blockId);
 		if (el) {
@@ -170,70 +171,14 @@ define([
 			el.innerHTML = cssText;
 			document.getElementsByTagName('HEAD')[0].appendChild(el);
 		}
-	};
+	}
 
 /* public */
 
-	var components = {
-		timebar		: TimeBar,
-		channelbar	: ChannelBar,
-		buffer		: Buffer
-	};
-
 	/**
-	 * Load the content for the view.
-	 * Activate associated components.
-	 * Set up event handlers.
-	 * @public
-	 */
-	function initialize() {
-
-		g.END = new Date(g.ZERO.valueOf() + 24*60*60*1000);
-
-		// UI event handlers
-		// every time user scrolls, we want to load new events
-		a.$window.on('resize scroll', handleResizeAndScroll);
-
-		// The model recieves events
-		// we are listening to render new events
-		App.on(g.MODEL_CHANGED, modelChanged);
-
-		return this;
-
-	};
-
-	function render() {
-		// Grid styles depend on the components being initialized.
-		// TODO: bad dependency - try to remove.
-		appendCSSBlock(name + '-styles', defineStyles());
-
-		// Start the first data load
-		App.emit(g.GRID_MOVED);
-		App.emit(g.GRID_FETCH_EVENTS);
-
-	};
-
-	/**
-	 * If necessary, remove the content for the view from the DOM.
-	 * Deactivate associated components. 
-	 * Clean up event handlers.
-	 * @public
-	 */
-	function finalize() {
-
-		a.$window.off('resize scroll', handleResizeAndScroll);
-
-		App.off(g.MODEL_CHANGED, modelChanged);
-
-		return this;
-
-	};
-
-
-	/**
-	 * Determine what time window is visible in the viewport.
-	 * @public
-	 */
+	* Determine what time window is visible in the viewport.
+	* @public
+	*/
 	function getSelectedTime() {
 
 		// How many hours have been scrolled horizontally?
@@ -247,14 +192,14 @@ define([
 			endTime: rightBorderTime
 		};
 
-	};
+	}
 
 	/**
-	 * Determine what channels are visible in the viewport.
-	 * Optionally, return some channels above and below the visible
-	 * channel range, for pre-loading.
-	 * @public
-	 */
+	* Determine what channels are visible in the viewport.
+	* Optionally, return some channels above and below the visible
+	* channel range, for pre-loading.
+	* @public
+	*/
 	function getSelectedChannels(extraAboveAndBelow) {
 
 		// How many channels have been scrolled vertically?
@@ -281,18 +226,62 @@ define([
 
 		return channelIds;
 
-	};
+	}
+
+/* abstract */
+
+	function initialize() {
+
+		g.END = new Date(g.ZERO.valueOf() + 24*60*60*1000);
+
+		// UI event handlers
+		// every time user scrolls, we want to load new events
+		a.$window.on('resize scroll', handleResizeAndScroll);
+
+		// The model recieves events
+		// we are listening to render new events
+		App.on(g.MODEL_CHANGED, modelChanged);
+
+		return this;
+
+	}
+
+	function render() {
+		// Grid styles depend on the components being initialized.
+		// TODO: bad dependency - try to remove.
+		appendCSSBlock(name + '-styles', defineStyles());
+
+		// Start the first data load
+		App.emit(g.GRID_MOVED);
+		App.emit(g.GRID_FETCH_EVENTS);
+
+	}
+
+	function finalize() {
+
+		a.$window.off('resize scroll', handleResizeAndScroll);
+
+		App.off(g.MODEL_CHANGED, modelChanged);
+
+		return this;
+
+	}
+
 
 /* export */
 
 	return new View({
-		name: name,
-		initialize: initialize,
-		finalize: finalize,
-		render: render,
-		getSelectedChannels: getSelectedChannels,
-		getSelectedTime: getSelectedTime,
-		components: components
+		name				: name,
+		initialize			: initialize,
+		finalize			: finalize,
+		render				: render,
+		getSelectedChannels	: getSelectedChannels,
+		getSelectedTime		: getSelectedTime,
+		components			: {
+			timebar		: TimeBar,
+			channelbar	: ChannelBar,
+			buffer		: Buffer
+		}
 	});
 
 });

@@ -22,7 +22,7 @@ define([
 
 		this.timer = setTimeout(clean, 250);
 
-	};
+	}
 
 	function clean() {
 	
@@ -41,7 +41,7 @@ define([
 				if ( $.inArray(channel, visibleChannels) === -1 ) { event.remove(); }
 			});
 		}
-	};
+	}
 
 /* public */
 
@@ -51,7 +51,7 @@ define([
 
 		return this;
 
-	};
+	}
 
 	function render() {
 
@@ -59,7 +59,7 @@ define([
 
 		return this;
 
-	};
+	}
 
 	function finalize() {
 
@@ -67,15 +67,15 @@ define([
 
 		return this;
 
-	};
+	}
 
 /* export */
 
 	return {
-		name: name,
-		initialize: initialize,
-		finalize: finalize,
-		render: render
+		name		: name,
+		initialize	: initialize,
+		finalize	: finalize,
+		render		: render
 	};
 
 });

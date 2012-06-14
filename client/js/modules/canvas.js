@@ -30,7 +30,7 @@ define([
 	*/
 	function startTransition() {
 		a.$transition.appendTo(a.$body).removeClass('hide'); 
-	};
+	}
 
 	function endTransition() { 
 		// just wait, so the view won't blink while rendering,
@@ -41,7 +41,7 @@ define([
 				a.$transition.remove(); 
 			}, 500); 
 		}, 1);
-	};
+	}
 
 	/* 
 	*	Load controllers
@@ -79,25 +79,25 @@ define([
 //		console.log(' ------------------ LOAD CONTROLLER: ' + cachedController.name + ' --------------------');
 		intializeController(cachedController);
 		
-	};
+	}
 
 	function intializeController(controller) {
 //		console.log(' ------------------ INITIALIZE CONTROLLER: ' + controller.name + ' --------------------');
 		controller[INITIALIZE](CURRENT_STATE);
-	};
+	}
 
 	// async load controllers with require
 	function fetchController(controller) {
 //		console.log(' ------------------ FETCH CONTROLLER: ' + controller + ' --------------------');
 		require([controller], mapController);
-	};
+	}
 
 	// Save the current state of the controller
 	// on a local map for later use
 	function mapController(controller) {
 		controllers[controller.name] = controller;
 		intializeController(controller);
-	};
+	}
 
 	// unload a controller
 	function unloadController(State) {
@@ -109,7 +109,7 @@ define([
 		// finalize controller
 //		console.log(' ------------------ UN-LOAD CONTROLLER: ' + State.controller + ' --------------------');
 		finalizeController(controllers[State.controller]);
-	};
+	}
 
 	function finalizeController(controller) {
 		if (typeof controller[FINALIZE] !== "function") {
@@ -119,7 +119,7 @@ define([
 		// finalize controller
 //		console.log(' ------------------ FINALIZE CONTROLLER: ' + controller.name + ' --------------------');
 		controller[FINALIZE]();
-	};
+	}
 
 
 	/* 
@@ -142,7 +142,7 @@ define([
 		unloadController(CURRENT_STATE);
 		loadController(State);
 
-	};
+	}
 
 
 /* public */
@@ -179,7 +179,7 @@ define([
 		App.on(a.CONTROLLER_FINALIZED, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_FINALIZED'); });
 		*/
 		return this;
-	};
+	}
 
 	/* destructor */
 	function finalize() {
@@ -188,7 +188,7 @@ define([
 		App.off(a.NAVIGATE, startTransition);
 		App.off(a.VIEW_RENDERED, endTransition);
 
-	};
+	}
 
 /* export */
 
@@ -196,7 +196,7 @@ define([
 		name: name,
 		controllers: controllers,
 		initialize: initialize,
-		finalize: finalize,
+		finalize: finalize
 	};
 
 });

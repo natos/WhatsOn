@@ -26,9 +26,11 @@ define([
 			console.log(response);
 
 		});
-	};
+	}
 
 /* public */
+
+/* abstract */
 
 	function initialize() {
 
@@ -36,22 +38,24 @@ define([
 
 		return this;
 
-	};
+	}
 
 	function finalize() {
 
+		App.off(c.FAVORITE, favorite);
+
 		return this;
 
-	};
+	}
 
 
 /* export */
 
 	return new Controller({
-		name: name,
-		view: ChannelView,
-		finalize: finalize,
-		initialize: initialize
+		name		: name,
+		initialize	: initialize,
+		finalize	: finalize,
+		view		: ChannelView
 	});
 
 });

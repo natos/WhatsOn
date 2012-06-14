@@ -41,19 +41,19 @@ define([
 		timer.element.css('left', convert.timeToPixels( new Date() ));
 		timer.restart();
 		return this;
-	};
+	}
 
 	function timer_restart() {
 		timer.stop();
 		timer.start();
 		return this;
-	};
+	}
 
 	function timer_stop() {
 		timer.status = false;
 		timer.clock = clearTimeout(timer.clock);
 		return this;
-	};
+	}
 
 	function centerViewPort() {
 
@@ -67,18 +67,21 @@ define([
 
 		return this;
 
-	};
+	}
 
 	function move(position) {
 		if (typeof $timelist === 'undefined') { $timelist = $('#time-bar ol', '#content'); }
 		$timelist.css({ left: position.left + 'px' });
 		return this;
-	};
+	}
 
 	/* modelchange */
 	function modelChanged(obj) {
-		obj && obj.position && move(obj.position);
-	};
+		if (typeof obj === 'undefined') { return; }
+		if (obj.position) {
+			move(obj.position);
+		}
+	}
 
 
 /* public */
@@ -93,7 +96,7 @@ define([
 
 		return this;
 
-	};
+	}
 
 	function render() {
 
@@ -105,13 +108,8 @@ define([
 
 		return this;
 
-	};
+	}
 
-	/**
-	 * If necessary, remove the content for the component from the DOM.
-	 * Clean up event handlers.
-	 * @public
-	 */
 	function finalize() {
 
 		$('.upc-logo').off('click', centerViewPort);
@@ -122,7 +120,7 @@ define([
 		timer.stop();
 
 		return this;
-	};
+	}
 
 /* export */
 

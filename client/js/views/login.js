@@ -1,10 +1,6 @@
-/* 
+/*
 * LoginView
 * ----------
-*
-* Emitting events, UI changes
-* Listen to the model for data changes
-*
 */
 
 define([
@@ -17,18 +13,36 @@ define([
 
 /* private */
 
-	/* constructor */
-	function initialize() {
+/* public */
 
-		App.emit(a.VIEW_RENDERED, this);
+/* abstract */
+
+	function initialize() {
 
 		return this;
 
-	};
+	}
 
-/* public */
+	function render() {
+
+		return this;
+
+	}
+
+	function finalize() {
+
+		return this;
+
+	}
+
+/* export */
+
 	return {
-		initialize: initialize
+		name		: name,
+		initialize	: initialize,
+		render		: render,
+		finalize	: finalize
+
 	};
 
 });

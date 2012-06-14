@@ -11,13 +11,8 @@ define([
 
 /* private */
 
-	/* constructor */
-	function initialize() {
-	
-		return this;
-	
-	};
-	
+/* public */
+
 	function timeToPixels(date, limit) {
 	
 		limit = limit || g.ZERO;
@@ -27,7 +22,7 @@ define([
 	
 		return pixels;
 	
-	};
+	}
 	
 	/**
 	* The EPG API returns dates (event.startDateTime, event.endDateTime)
@@ -40,16 +35,14 @@ define([
 			dt = new Date(apiDate.slice(0,4), parseInt(apiDate.slice(5,7),10) -1, parseInt(apiDate.slice(8,10),10), parseInt(apiDate.slice(11,13),10), parseInt(apiDate.slice(14,16),10));
 		}
 		return dt;
-	};
+	}
 
+/* export */
 
-/* public */
-
-/* @class Converter */
 	return {
-		initialize: initialize,
-		timeToPixels: timeToPixels,
-		parseApiDate: parseApiDate
+		initialize		: initialize,
+		timeToPixels	: timeToPixels,
+		parseApiDate	: parseApiDate
 	};
 
 });

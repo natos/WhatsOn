@@ -27,40 +27,40 @@ define([
 		shift = Array.prototype.shift;
 
 	/**
-	 *	Add the grid just for HTML5 devices
-	 */
+	*	Add the grid just for HTML5 devices
+	*/
 	function addGridButton() {
 		$('.nav').append('<a href="/grid" class="grid"><i class="icon-th"></i><b class="label">TV Gids</b></a>');
-	};
+	}
 
 	/**
-	 *	Handle State Changes
-	 */
+	*	Handle State Changes
+	*/
 	function handleStateChange() {
 
 		var State = History.getState(); // Note: We are using History.getState() instead of event.state
-			State.parts = History.getShortUrl(State.url).match(/[\w\d-?\w\d]+/gi);
+			State.parts = History.getShortUrl(State.url).match(/[\w\d\-?\w\d]+/gi);
 			State.controller = (State.parts) ? shift.apply(State.parts) : '';
 
 		App.emit(a.NAVIGATE, State);
-	};
+	}
 
 	/**
-	 *	Activate anchors
-	 */
+	*	Activate anchors
+	*/
 	function activeAnchors(State) {
 		var anchor = $('.' + State.name);
 		if (anchor[0]) {
 			$('.nav a').removeClass('active');
 			anchor.addClass('active');
 		}
-	};
+	}
 
 	/**
-	 *	Listen to every click on #main, 
-	 *	to override its default behavior
-	 *	and use our own Router to navigate
-	 */
+	*	Listen to every click on #main, 
+	*	to override its default behavior
+	*	and use our own Router to navigate
+	*/
 	function handleAnchors(event) {
 		// save the click target
 		var anchor = event.target;
@@ -86,7 +86,7 @@ define([
 		// else, ingnore
 		// let the event continue
 		// - "Bubble event! Bubble!"
-	};
+	}
 
 /* public */
 
@@ -103,7 +103,7 @@ define([
 		handleStateChange();
 		addGridButton();
 		return this;
-	};
+	}
 
 	function finalize() {
 		// Unbind to StateChange Event
@@ -111,25 +111,25 @@ define([
 		// stop activating links
 		App.off(a.VIEW_INITIALIZING, activeAnchors);
 		return this;
-	};
+	}
 
 	function navigate(data, title, url) {
 		History.pushState(data, title, url);
 		return this;
-	};
+	}
 
 	// 31/05/2012 Natan: THIS IS NOT IN USE
 	function navigateSilent(data, title, url) {
 		History.replaceState(data, title, url);
 		return this;
-	};
+	}
 
 /* export */
 
 	return {
-		name: name,
-		initialize: initialize,
-		navigate: navigate
+		name		: name,
+		initialize	: initialize,
+		navigate	: navigate
 	};
 
 });
