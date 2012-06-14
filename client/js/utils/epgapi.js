@@ -19,18 +19,9 @@ define([
 		average_time += time; average_count += 1;
 		return Math.ceil(average_time / average_count);
 	}
-/*
-* Average time tool
-*/
-	// rescope
-	var $ = $,
-		Timer = Timer,
-		localStorage = localStorage,
-		lscache = lscache,
-		console = console,
-		escape = escape,
+
 	// constants
-		HOURS_PER_SLICE = 4, // Hours per slice must be: 1, 2, 3, 4, 6, 8, 12, 24.
+	var	HOURS_PER_SLICE = 4, // Hours per slice must be: 1, 2, 3, 4, 6, 8, 12, 24.
 		ESTIMATED_AVERAGE_EVENTS_PER_HOUR = 2,
 		EVENTS_PER_SLICE = ESTIMATED_AVERAGE_EVENTS_PER_HOUR * HOURS_PER_SLICE,
 		API_PREFIX = $('head').attr('data-api'),

@@ -40,7 +40,6 @@ define([
 /* export */
 
 	return {
-		initialize		: initialize,
 		timeToPixels	: timeToPixels,
 		parseApiDate	: parseApiDate
 	};
