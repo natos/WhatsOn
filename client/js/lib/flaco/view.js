@@ -28,10 +28,10 @@ define([
 		slice = Array.prototype.slice;
 
 	/**
-	*	Generic inner template functions
+	*	Generic inner templatign
 	*/
 
-	// returns template name
+	// returns template name for a given view
 	function templateName(view) { return '#' + view.name + '-template'; };
 
 	// returns if the template DOM element exists
@@ -39,18 +39,20 @@ define([
 
 	// renders the template
 	function setTemplate(view) {
+		// write the template in the DOM
 		a.$content.html( $( templateName(view) ).text() );
+		// render view :)
 		view.render();
 	};
 
-	// fetch template from server
+	// fetch template from server and save it to the DOM
 	function fetchTemplate(view) {
 		// create template container and append it to the DOM
 		var $template = $(SCRIPT_TAG).attr('id', templateName(view).replace('#','')).appendTo('#templates'),
 		// fetch from url
 		from_url = '/' + view.name + (view.State && view.State.parts ? '/' + view.State.parts.join('/') : '' );
 		// fetch content from server
-		$.get(from_url, function(res) {
+		$.get(from_url, function saveNewTemplate(res) {
 			// save it in the DOM container
 			$template.text(res);
 			// set the template view
@@ -62,15 +64,14 @@ define([
 
 	// loads template, if not exists, it will fetch the template from server
 	function loadTemplate(view) {
-		if ( !$('#' + view.name + '-content')[0] ) {
-			templateExists(view) ? setTemplate(view) : fetchTemplate(view);
-		}
-		view.render();
+		templateExists(view) ? setTemplate(view) : fetchTemplate(view);
 	};
 
 	// well, nothing for now
 	function unloadTemplate(view) {
 		// ? not sure what to do here...
+		// ? because the loadTemplate function
+		// ? already steps on previews templates
 	};
 
 	/**
@@ -81,7 +82,7 @@ define([
 	App.on(a.VIEW_INITIALIZED, loadTemplate);
 	// unload template,
 	// when any view is being finalized
-	App.on(a.VIEW_FINALIZING, unloadTemplate);
+	//App.on(a.VIEW_FINALIZING, unloadTemplate); // not using this now
 
 /* public */
 
@@ -98,12 +99,12 @@ define([
 
 				var expression = /^(\w+)(e|er)$/gi;
 
-				function presentProcess(t, p1, p2, a) { return /er$/.test(t) ? p1 + p2 + 'ing' : p1 + 'ing'; };
-				function pastProcess(t, p1, p2, a) { return /er$/.test(t) ? p1 + p2 + 'ed' : p1 + 'ed'; };
+				function processPresent(t, p1, p2, a) { return /er$/.test(t) ? p1 + p2 + 'ing' : p1 + 'ing'; };
+				function processPast(t, p1, p2, a) { return /er$/.test(t) ? p1 + p2 + 'ed' : p1 + 'ed'; };
 
 				return {
-					present: function toPresent(member) { return member.replace(expression, presentProcess).toUpperCase(); },
-					past: function toPast(member) { return member.replace(expression, pastProcess).toUpperCase(); }
+					present: function toPresent(member) { return member.replace(expression, processPresent).toUpperCase(); },
+					past: function toPast(member) { return member.replace(expression, processPast).toUpperCase(); }
 				}
 
 			})(),
@@ -140,7 +141,7 @@ define([
 				inherit[RENDER] = function render() { return inherited.apply(View, arguments); };
 				inherit[FINALIZE] = function finalize() { return inherited.apply(View, arguments); };
 
-//			console.log(VIEW, member, present, past, to.present(member), to.past(member), a);
+/* console.log(VIEW, member, present, past, to.present(member), to.past(member), a); */
 
 			// helper to find reserved words
 			function isInherited(member) { return inherit[member]; };

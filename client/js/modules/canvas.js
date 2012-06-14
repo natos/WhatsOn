@@ -29,20 +29,18 @@ define([
 	*	Transition 
 	*/
 	function startTransition() {
-		console.log('Canvas Module','Starting transition');
 		a.$transition.appendTo(a.$body).removeClass('hide'); 
 	};
 
 	function endTransition() { 
-		console.log('Canvas Module','Ending transition');
 		// just wait, so the view won't blink while rendering,
 		// better UX feedback with smoother transition
-//		setTimeout(function() {
+		setTimeout(function() {
 			a.$transition.addClass('hide'); 
 			setTimeout(function() { 
 				a.$transition.remove(); 
 			}, 500); 
-//		}, 500);
+		}, 1);
 	};
 
 	/* 
@@ -51,7 +49,7 @@ define([
 	function loadController(State) {
 		// something went wrong
 		if (!State) {
-			console.log('Canvas Module', 'Something went wrong on the navigation! While trying to load a controller got an empty State as argument.');
+//			console.log('Canvas Module', 'Something went wrong on the navigation! While trying to load a controller got an empty State as argument.');
 			return;
 		}
 
@@ -65,7 +63,7 @@ define([
 		// Controller doesn't exist yet
 		// Async load the requested controller
 		if (typeof cachedController === 'undefined') {
-			console.log('Canvas Module', State.controller, ' doesn\'t exists, go an get one.');
+//			console.log('Canvas Module', State.controller, ' doesn\'t exists, go an get one.');
 			// Controller is not cached, go and get one
 			fetchController('controllers/' + State.controller);
 			return;
@@ -73,17 +71,24 @@ define([
 
 		// Check if the controller has a intialize method, all controllers must have one
 		if (typeof cachedController[INITIALIZE] !== "function") {
-			console.log('Canvas Module', cachedController.name + ' doesn\'t have a \'initialize\' method available.');
+//			console.log('Canvas Module', cachedController.name + ' doesn\'t have a \'initialize\' method available.');
 			return;
 		}
-		console.log('----------------------------- INITIALIZING -------------------------------' + State.controller);
 		// Everything seems fine
 		// Initialize controller
-		cachedController[INITIALIZE](State);
+//		console.log(' ------------------ LOAD CONTROLLER: ' + cachedController.name + ' --------------------');
+		intializeController(cachedController);
+		
+	};
+
+	function intializeController(controller) {
+//		console.log(' ------------------ INITIALIZE CONTROLLER: ' + controller.name + ' --------------------');
+		controller[INITIALIZE](CURRENT_STATE);
 	};
 
 	// async load controllers with require
 	function fetchController(controller) {
+//		console.log(' ------------------ FETCH CONTROLLER: ' + controller + ' --------------------');
 		require([controller], mapController);
 	};
 
@@ -91,7 +96,7 @@ define([
 	// on a local map for later use
 	function mapController(controller) {
 		controllers[controller.name] = controller;
-		loadController(CURRENT_STATE);
+		intializeController(controller);
 	};
 
 	// unload a controller
@@ -102,6 +107,7 @@ define([
 			return;
 		}
 		// finalize controller
+//		console.log(' ------------------ UN-LOAD CONTROLLER: ' + State.controller + ' --------------------');
 		finalizeController(controllers[State.controller]);
 	};
 
@@ -110,10 +116,9 @@ define([
 			console.log('Canvas Module', controller.name + ' can\'t be finalized, \'finalize\' method is not a function.');
 			return;	
 		}
-		// save controller and initialize
-		// we save because the public export 
-		// of the controller may change
-		mapController(controller[FINALIZE]());
+		// finalize controller
+//		console.log(' ------------------ FINALIZE CONTROLLER: ' + controller.name + ' --------------------');
+		controller[FINALIZE]();
 	};
 
 
@@ -121,6 +126,8 @@ define([
 	*	Navigate
 	*/
 	function navigate(State) {
+
+//		console.log(' ------------------ NAVIGATE: ' + State.controller + ' --------------------', arguments);
 
 		if (typeof State === 'undefined') {
 			console.log('Canvas Module', 'State object is empty. Stop navigation.');
@@ -155,20 +162,22 @@ define([
 		// remove transition
 		App.on(a.VIEW_RENDERED, endTransition);
 
+
 		// DEBUGGING Handlers
-		/* View live cycle 	*/ 
+		/* View live cycle
 		App.on(a.VIEW_INITIALIZING, function(view) { console.log('Canvas Module', view.name, 'VIEW_INITIALIZING'); });
 		App.on(a.VIEW_INITIALIZED, function(view) { console.log('Canvas Module', view.name, 'VIEW_INITIALIZED'); });
 		App.on(a.VIEW_RENDERING, function(view) { console.log('Canvas Module', view.name, 'VIEW_RENDERING'); });
 		App.on(a.VIEW_RENDERED, function(view) { console.log('Canvas Module', view.name, 'VIEW_RENDERED'); });
 		App.on(a.VIEW_FINALIZING, function(view) { console.log('Canvas Module', view.name, 'VIEW_FINALIZING'); });
 		App.on(a.VIEW_FINALIZED, function(view) { console.log('Canvas Module', view.name, 'VIEW_FINALIZED'); });
-		/* Controller live cycle */
+		*/
+		/* Controller live cycle 
 		App.on(a.CONTROLLER_INITIALIZING, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_INITIALIZATING'); });
 		App.on(a.CONTROLLER_INITIALIZED, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_INITIALIZATED'); });
 		App.on(a.CONTROLLER_FINALIZING, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_FINALIZATING'); });
 		App.on(a.CONTROLLER_FINALIZED, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_FINALIZED'); });
-		
+		*/
 		return this;
 	};
 
@@ -176,6 +185,7 @@ define([
 	function finalize() {
 
 		App.off(a.NAVIGATE, navigate);
+		App.off(a.NAVIGATE, startTransition);
 		App.off(a.VIEW_RENDERED, endTransition);
 
 	};
