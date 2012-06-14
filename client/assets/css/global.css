@@ -338,6 +338,10 @@ img {
 	opacity: 0;
 }
 
+#channels-bar .loading {
+	background: url('/assets/images/loader.gif') 50% 50% no-repeat;
+}
+
 /**
 *	main
 */

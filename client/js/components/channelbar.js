@@ -18,17 +18,27 @@ define([
 	var	$channellist;
 
 	function move(position) {
-
 		if (typeof $channellist === 'undefined') { $channellist = $('#channels-bar ul','#content'); }
-
 		$channellist.css({ top: position.top + 'px' });
-
 		return this;
+	};
+
+	function renderLogos(selectedChannels) {
+		var channelimg, 
+			t = selectedChannels.length,
+			logos = $('#channels-bar .loading').removeAttr('src');
+
+		while (t--) {
+			channelimg = $('#channelImg'+selectedChannels[t]);
+			channelimg.attr('src', channelimg.data('src'));
+		}
 	};
 
 	function modelChanged(changes) {
 		// if there changes on the position object, move the bar
 		changes && changes.position && move(changes.position);
+		// if there changes on selected channels, render logos
+		changes && changes.selectedChannels && renderLogos(changes.selectedChannels);
 
 		return this;
 	};

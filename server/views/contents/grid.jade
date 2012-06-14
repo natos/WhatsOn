@@ -14,4 +14,4 @@
 			each channel in channels
 				li
 					.picture
-						img(title="#{channel.name}", src="http://www.upc.nl#{channel.logoIMG}", id="channelImg#{channel.id}")
+						img.loading(title="#{channel.name}", data-src="http://www.upc.nl#{channel.logoIMG}", data-channelid="#{channel.id}", id="channelImg#{channel.id}")
