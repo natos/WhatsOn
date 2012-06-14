@@ -53,7 +53,17 @@ function(util, events, request, channelPackagesConfig) {
 	/** Get details for a single channel package */
 	ChannelPackageService.prototype.getChannelPackageDetails = function(channelPackageId) {
 
-		this.emit('getChannelPackageDetails', {});
+		var foundChannelPackage = {};
+
+		var matchingPackages = channelPackagesConfig.filter(function(el, ix, arr){
+			return (el.id && el.id===channelPackageId);
+		});
+
+		if (matchingPackages.length > 0) {
+			foundChannelPackage = matchingPackages[0];
+		}
+
+		this.emit('getChannelPackageDetails', foundChannelPackage);
 		return this;
 
 	};
