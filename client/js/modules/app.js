@@ -31,28 +31,18 @@ define([
 
 		// Load the primary modules for the app.
 		// Each module must have an "initialize" method that returns the module itself.
-		loadModules(['modules/user', 'modules/canvas', 'modules/router']);
+		require(['modules/user', 'modules/canvas', 'modules/router'], function initializeModules() {
+			while (module = Array.prototype.shift.apply(arguments)) { App.modules[module.name] = module.initialize(); } 
+		});
 
 		return this;
 	
-	};
-
-	// initialize a collection of modules
-	function initializeModules() {
-		while (module = Array.prototype.shift.apply(arguments)) { 
-			App.modules[module.name] = module.initialize();
-		} 
-	};
-
-	// require and load modules
-	function loadModules(modules) {
-		require(modules, initializeModules);
-	};
+	}
 
 	/**
-	 * Populate the list of channels, and call a callback when they're ready
-	 * @public
-	 */
+	* Populate the list of channels, and call a callback when they're ready
+	* @public
+	*/
 	function populateChannels(callback) {
 		if (this.channels && this.channels.length > 0) {
 			callback();
