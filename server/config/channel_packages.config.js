@@ -39,7 +39,7 @@ function() {
 			'marketId' : 'nl',
 			'title' : 'HD',
 			'description' : '',
-			'channelIds' : []
+			'channelIds' : ['8t','7v','8m','7Y','8F','122','16r','vq','wL','8e','7C','7D','7F','9n','9o','77','7Z','90','eY','9e','16o','7e','7d','h6','vp','123','7g','w7','6z','eZ','7a']
 		}
 	];
 
