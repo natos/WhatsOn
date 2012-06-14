@@ -20,10 +20,6 @@ define([
 
 /* public */
 
-	var components = {
-		carousel: Carousel,
-		favorites: Favorites
-	};
 
 /* abstract */ 
 
@@ -34,8 +30,6 @@ define([
 	};
 
 	function render() {
-
-		console.log('RENDERING DASHBOARD !!!!!!!!!')
 
 		return this;
 

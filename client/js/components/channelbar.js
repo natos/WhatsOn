@@ -18,18 +18,24 @@ define([
 	var	$channellist;
 
 	function move(position) {
-		$channellist && $channellist.css({ top: position.top });
+
+		if (typeof $channellist === 'undefined') { $channellist = $('#channels-bar ul','#content'); }
+
+		$channellist.css({ top: position.top + 'px' });
+
+		return this;
 	};
 
-	function modelChanged(obj) {
-		obj && obj.position && move(obj.position);
+	function modelChanged(changes) {
+		// if there changes on the position object, move the bar
+		changes && changes.position && move(changes.position);
+
+		return this;
 	};
 
 /* public */
 
 	function initialize() {
-
-		$channellist = $('#channels-bar').find('ul')
 
 		// move with the grid
 		App.on(g.MODEL_CHANGED, modelChanged);
@@ -40,12 +46,15 @@ define([
 
 	function render() {
 
+		var $channelrow = $('<div>')
+				.addClass('channel-container')
+
 		// Create channel containers
 		// as rows in the grid
 		for (var i = 0; i < channels.length; i++) {
-			$('<div>')
+			$channelrow
+				.clone()
 				.attr({ 'id': 'cc_' + channels[i].id })
-				.addClass('channel-container')
 				.css({ 'height': g.ROW_HEIGHT + 'px', 'top': i * g.ROW_HEIGHT + 'px' })
 				.appendTo('#grid-container');
 		}
@@ -64,10 +73,10 @@ define([
 /* export */
 
 	return {
-		name: name,
-		initialize: initialize,
-		finalize: finalize,
-		render: render
+		name		: name,
+		initialize	: initialize,
+		finalize	: finalize,
+		render		: render
 	};
 
 });

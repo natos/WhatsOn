@@ -51,7 +51,7 @@ define([
 		if (!model) { model = UserModel; }
 		// check for collections
 		if (!model[name]) {
-			console.log('Favorites: No model, skip rendering');
+			console.log('Warning!', 'Favorites', 'No model, skip rendering');
 			return;
 		}
 
@@ -78,7 +78,7 @@ define([
 			var listname = (typeof e.data['tv_show']==='undefined') ? 'channel' : 'programme',
 				type = (typeof e.data['tv_show']==='undefined') ? 'tv_channel' : 'tv_show',
 				item = e.data[type];
-console.log(listname, type, item);
+
 			var id = item.url.match(/\d+/),
 				req = '/' + listname + '/' + id + '/events.json?callback=?',
 				content = item.title;

@@ -70,8 +70,8 @@ define([
 	};
 
 	function move(position) {
-		console.log(position);
-		$timelist && $timelist.css({ left: position.left });
+		if (typeof $timelist === 'undefined') { $timelist = $('#time-bar ol', '#content'); }
+		$timelist.css({ left: position.left + 'px' });
 		return this;
 	};
 
@@ -87,9 +87,6 @@ define([
 
 		// add logo behavior, move to 'now'
 		$('.upc-logo').on('click', centerViewPort);
-			
-		// grab timelist element
-		$timelist = $('#time-bar').find('ol');
 
 		// move with the grid
 		App.on(g.MODEL_CHANGED, modelChanged);
@@ -117,9 +114,9 @@ define([
 	 */
 	function finalize() {
 
-		App.off(g.MODEL_CHANGED, modelChanged);
-
 		$('.upc-logo').off('click', centerViewPort);
+
+		App.off(g.MODEL_CHANGED, modelChanged);
 
 		// stop ticking timer
 		timer.stop();
@@ -130,10 +127,10 @@ define([
 /* export */
 
 	return {
-		name: name,
-		initialize: initialize,
-		finalize: finalize,
-		render: render
+		name		: name,
+		initialize	: initialize,
+		finalize	: finalize,
+		render		: render
 	};
 
 });

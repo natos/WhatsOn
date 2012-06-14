@@ -56,9 +56,8 @@ define([
 	 * @private
 	 */
 	function modelChanged(changes) {
-		if (changes.events) {
-			renderEvents(changes.events);
-		}
+		// check for events changes to render
+		changes && changes.events && renderEvents(changes.events);
 	};
 
 	/**
