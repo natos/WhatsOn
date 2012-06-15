@@ -33,7 +33,6 @@ function(NowAndNextService, Metadata, QS, config) {
 		// Routing
 
 		app.server.get('/nowandnext', this.render);
-		app.server.get('/list', this.render); // backwards compatibility
 
 	};
 
