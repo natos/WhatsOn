@@ -63,11 +63,11 @@ function(querystring, SearchService, Metadata, DateUtils, Channels) {
 			res.render(template, {
 				metadata		: metadata.get(),
 				config			: _app.config,
+				channels		: _app.channels,
 				query			: query,
 				used_channels	: {},
 				used_datetimes	: {},
 				programmes		: {},
-				channels		: Channels,
 				supports		: req.supports
 			});
 
@@ -118,6 +118,7 @@ function(querystring, SearchService, Metadata, DateUtils, Channels) {
 			res.render(template, {
 				metadata		: metadata.get(),
 				config			: _app.config,
+				channels		: _app.channels,
 				query			: query,
 				used_channels	: used_channels,
 				used_datetimes	: used_datetimes,

@@ -159,6 +159,7 @@ function(NowAndNextService, Metadata, QS, config) {
 			res.render(template, {
 				metadata	: metadata.get(),
 				config		: _app.config,
+				channels	: _app.channels,
 				dt 			: dt,
 				popUrl      : popUrl,
 				favUrl      : favUrl,
@@ -170,7 +171,6 @@ function(NowAndNextService, Metadata, QS, config) {
 				earlierText	: strftime(dtPreviousSlice, '%R'),
 				laterUrl	: laterUrl,
 				laterText	: strftime(dtNextSlice, '%R'),
-				channels	: channels,
 				channelEventsCollections: channelEventsCollections,
 				supports	: req.supports
 			});

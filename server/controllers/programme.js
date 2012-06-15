@@ -117,11 +117,11 @@ function(ProgrammeService, Metadata, DateUtils, Requestn, Channels) {
 				res.render(template, {
 					metadata	: metadata.override(_metadata, 'property').get(),
 					config		: _app.config,
+					channels	: _app.channels,
 					url			: _app.config.APP_URL + 'programme/' + _programme_details.id,
 					data		: _programme_details,
 					title		: _programme_details.title,
 					prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upcsocial: http://ogp.me/ns/fb/upcsocial#',
-					channels	: Channels,
 					supports	: req.supports
 				}); // HTML output	
 		});

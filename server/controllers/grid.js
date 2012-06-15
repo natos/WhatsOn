@@ -55,7 +55,7 @@ function(ChannelService, Metadata, Channels) {
 			res.render(template, {
 				metadata	: metadata.get(),
 				config		: _app.config,
-				channels	: channels,
+				channels	: _app.channels,
 				timebar		: new Array(24),
 				channels	: Channels,
 				supports	: req.supports
