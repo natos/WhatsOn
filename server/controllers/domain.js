@@ -28,6 +28,8 @@ function(DomainService) {
 
 		app.server.get('/domains.json', this.renderDomains);
 
+		app.server.get('/domain/:id/details.json', this.renderDomainDetails);
+
 	};
 
 
@@ -47,6 +49,19 @@ function(DomainService) {
 			res.send(domains); // JSON output
 
 		}).getDomains();
+
+	};
+
+	/** Render a JSON of domain details */
+	DomainController.prototype.renderDomainDetails = function(req, res) {
+
+		var id = req.params.id;
+
+		new DomainService().once('getDomainDetails', function(domainDetails) {
+
+			res.send(domainDetails); // JSON output
+
+		}).getDomainDetails(id);
 
 	};
 

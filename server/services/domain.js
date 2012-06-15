@@ -42,6 +42,7 @@ function(util, events, request, requestN, config) {
 
 	/** @private */
 	var ALL_DOMAINS_URL  = config.API_PREFIX + 'Domain.json',
+		DOMAIN_URL = config.API_PREFIX + 'Domain/%%domainid%%.json',
 		DOMAIN_GROUPS_URL = config.API_PREFIX + 'Domain/%%domainid%%/groups.json',
 		DOMAIN_GROUP_CHANNELS_URL = config.API_PREFIX + 'Domain/%%domainid%%/groups/%%groupid%%/channels.json';
 
@@ -126,6 +127,30 @@ function(util, events, request, requestN, config) {
 		return this;
 
 	};
+
+	/** Get details for a single domain */
+	DomainService.prototype.getDomainDetails = function(domainId) {
+
+		var self = this;
+
+		(new DomainService()).once('getDomains', function(domains){
+
+			var domainDetails = {};
+			var foundDomains = domains.filter(function(domain){
+				return (domain.id===domainId);
+			});
+
+			if (foundDomains && foundDomains.length>0) {
+				domainDetails = foundDomains[0];
+			}
+			self.emit('getDomainDetails', domainDetails);
+
+		}).getDomains();
+
+		return this;
+
+	};
+
 
 	/** @return */
 
