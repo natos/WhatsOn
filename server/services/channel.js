@@ -15,7 +15,8 @@ define([
 	'utils/requestn',
 
 	// config
-	'config/global.config'
+	'config/global.config',
+	'config/channel_packages.config'
 ],
 
 
@@ -23,7 +24,7 @@ define([
 *	@class ChannelService
 */
 
-function(util, events, request, requestN, config) {
+function(util, events, request, requestN, config, channelPackagesConfig) {
 
 	/** @constructor */
 
@@ -98,8 +99,19 @@ function(util, events, request, requestN, config) {
 						}
 
 						// Remove the "links" property for channels. This property is not used, and only takes up space.
-						allChannels.forEach(function(element, index, array){
-							delete element.links;
+						allChannels.forEach(function(channel){
+							delete channel.links;
+						});
+
+						// Attach a channelPackageIds array to each channel, with a list of channel packages in which it is available
+						allChannels.forEach(function(channel){
+							var channelPackageIds = [];
+							channelPackagesConfig.forEach(function(channelPackage){
+								if (channelPackage.channelIds && channelPackage.channelIds.indexOf(channel.id) >= 0) {
+									channelPackageIds.push(channelPackage.id);
+								}
+							});
+							channel.channelPackageIds = channelPackageIds;
 						});
 
 						// Cache the channels
