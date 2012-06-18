@@ -184,11 +184,12 @@ define([
 			channelIdBatch = channelIdBatches[i];
 
 /* for performance tests */
-var timer = new Timer('getEventsForSliceFromApi Time Track');//.off();
+var timer = new Timer('getEventsForSliceFromApi Time Track').off();
 /* for performance tests */
 
 			// Use "&order=startDateTime" to get results in order
-			request = API_PREFIX + 'Channel/' + channelIdBatch.join('|') + '/events/NowAndNext_' + formattedStartTime + '.json?batchSize=' + eventsPerSlice + '&order=startDateTime&callback=?'; 
+			// Use "&optionalProperties=Programme.subcategory" to get category data
+			request = API_PREFIX + 'Channel/' + channelIdBatch.join('|') + '/events/NowAndNext_' + formattedStartTime + '.json?batchSize=' + eventsPerSlice + '&order=startDateTime&optionalProperties=Programme.subcategory&callback=?'; 
 			// TODO: Don't create functions inside a loop! (JSHint)
 			$.getJSON(request, function(apiResponse) {
 				handleApiResponse_EventsForSliceFromApi(apiResponse, timeSlice, eventsPerSlice, timer);
@@ -211,8 +212,7 @@ var timer = new Timer('getEventsForSliceFromApi Time Track');//.off();
 timer.track('API Response');
 // Average time to test Jedrzej API performance
 // API RAT > API Average Response Time
-// UNCOMMENT THIS FOR LOG THE AVERAGE TIME > 
-console.log('API-ART <', average(timer.timeDiff), 'ms>' );
+// UNCOMMENT THIS FOR LOG THE AVERAGE TIME > console.log('API-ART <', average(timer.timeDiff), 'ms>' );
 /* for performance tests */
 
 		var eventsForChannelCollection = [],
