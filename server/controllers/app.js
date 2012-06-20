@@ -18,6 +18,10 @@ define([
 	// utils
 	'utils/supports',
 
+	// services
+
+	'services/channel',
+
 	// controllers
 	'controllers/login',
 	'controllers/dashboard',
@@ -34,7 +38,7 @@ define([
 	'controllers/admin'
 ],
 
-function(request, express, i18n, config, Supports, Login, Dashboard, Grid, Channel, ChannelPackage, Programme, Event, Movies, Search, Settings, NowAndNext, Facebook, Admin) {
+function(request, express, i18n, config, Supports, ChannelService, Login, Dashboard, Grid, Channel, ChannelPackage, Programme, Event, Movies, Search, Settings, NowAndNext, Facebook, Admin) {
 
 /**
  *	@class AppController
@@ -84,7 +88,7 @@ function(request, express, i18n, config, Supports, Login, Dashboard, Grid, Chann
 			};
 
 			// fetch channels
-			request('http://localhost:3000/channels.json', saveChannels);
+			new ChannelService().once('getChannels', saveChannels).getChannels();
 
 		return self;
 
@@ -93,16 +97,10 @@ function(request, express, i18n, config, Supports, Login, Dashboard, Grid, Chann
 
 	/** @private */
 
-	function saveChannels(error, response, body) {
+	function saveChannels(channels) {
 
-		if (error) {
-			console.log('Error', error);
-		}
-
-		if (body) {
-			console.log('Saving channels collection.');
-			AppController.channels = JSON.parse(body);
-		}
+		console.log('Saving channels collection.');
+		AppController.channels = channels;
 
 	}
 

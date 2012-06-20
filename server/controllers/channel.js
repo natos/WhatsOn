@@ -135,8 +135,6 @@ function(ChannelService, Metadata, DateUtils, Requestn, PrettyDate, Channels) {
 	/** Render a JSON response of all channels */
 	ChannelController.prototype.renderChannels = function(req, res) {
 
-		var id = req.params.id;
-
 		new ChannelService().once('getChannels', function(channels) {
 
 			res.send(channels); // JSON output

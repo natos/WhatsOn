@@ -80,49 +80,44 @@ function(util, events, request, requestN, config, channelPackagesConfig) {
 					var errorsCount = 0;
 					var channelsBatch;
 
-					try {
-						for (var i=0; i<requestUrls.length; i++) {
-							if (!responses[requestUrls[i]] || responses[requestUrls[i]].error) {
-								// TODO: Review this, because it crash when responses[thingy] is empty
-								console.log("Error requesting " + requestUrls[i] + ": " + responses[requestUrls[i]].error);
-								errorsCount++;
-							}
+					for (var i=0; i<requestUrls.length; i++) {
+						if (!responses[requestUrls[i]] || responses[requestUrls[i]].error) {
+							// TODO: Review this, because it crash when responses[thingy] is empty
+							console.log("Error requesting " + requestUrls[i] + ": " + responses[requestUrls[i]].error);
+							errorsCount++;
 						}
-
-						if (errorsCount===0) {
-							for (var i=0; i<requestUrls.length; i++) {
-								if (!responses[requestUrls[i]].error && responses[requestUrls[i]].response.statusCode == 200) {
-									channelsBatch = JSON.parse(responses[requestUrls[i]].body);
-									allChannels = allChannels.concat(channelsBatch);
-								}
-							}
-						}
-
-						// Remove the "links" property for channels. This property is not used, and only takes up space.
-						allChannels.forEach(function(channel){
-							delete channel.links;
-						});
-
-						// Attach a channelPackageIds array to each channel, with a list of channel packages in which it is available
-						allChannels.forEach(function(channel){
-							var channelPackageIds = [];
-							channelPackagesConfig.forEach(function(channelPackage){
-								if (channelPackage.channelIds && channelPackage.channelIds.indexOf(channel.id) >= 0) {
-									channelPackageIds.push(channelPackage.id);
-								}
-							});
-							channel.channelPackageIds = channelPackageIds;
-						});
-
-						// Cache the channels
-						CHANNELS_CACHE.list = allChannels;
-						CHANNELS_CACHE.timestamp = now;
-						self.emit('getChannels', allChannels);
-
-					} catch (e) {
-						console.log('Failed to retrieve channels');
-						console.log(e);
 					}
+
+					if (errorsCount===0) {
+						for (var i=0; i<requestUrls.length; i++) {
+							if (!responses[requestUrls[i]].error && responses[requestUrls[i]].response.statusCode == 200) {
+								channelsBatch = JSON.parse(responses[requestUrls[i]].body);
+								allChannels = allChannels.concat(channelsBatch);
+							}
+						}
+					}
+
+					// Remove the "links" property for channels. This property is not used, and only takes up space.
+					allChannels.forEach(function(channel){
+						delete channel.links;
+					});
+
+					// Attach a channelPackageIds array to each channel, with a list of channel packages in which it is available
+					allChannels.forEach(function(channel){
+						var channelPackageIds = [];
+						channelPackagesConfig.forEach(function(channelPackage){
+							if (channelPackage.channelIds && channelPackage.channelIds.indexOf(channel.id) >= 0) {
+								channelPackageIds.push(channelPackage.id);
+							}
+						});
+						channel.channelPackageIds = channelPackageIds;
+					});
+
+					// Cache the channels
+					CHANNELS_CACHE.list = allChannels;
+					CHANNELS_CACHE.timestamp = now;
+					self.emit('getChannels', allChannels);
+
 				}
 
 			);
