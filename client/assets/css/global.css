@@ -766,6 +766,9 @@ footer {
 #programme-content header,
 #channel-content header {
 	padding-left: 50px;
+	border-top: 1px #bbb solid;
+	border-bottom: 1px #ccc solid;
+	background: #eee url('/assets/images/bg-gradient-headers.jpeg') 0 -5px repeat-x;
 }
 
 #programme-content header h1,
@@ -797,8 +800,9 @@ footer {
 #channel-content section article {
 	margin: 0;
 	padding: 5px 10px;
+	border-top: 1px #bbb solid;
 	border-bottom: 1px #ccc solid;
-	background-color: #eee;
+	background: #eee url('/assets/images/bg-gradient-headers.jpeg') 0 -5px repeat-x;
 }
 
 	
@@ -918,7 +922,7 @@ footer {
 
 	#programme-content h2 i,
 	#channel-content h2 i {
-		left: 30px;
+		left: 28px;
 	}
 
 	#programme-content .time,

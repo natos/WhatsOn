@@ -212,7 +212,8 @@ var timer = new Timer('getEventsForSliceFromApi Time Track').off();
 timer.track('API Response');
 // Average time to test Jedrzej API performance
 // API RAT > API Average Response Time
-// UNCOMMENT THIS FOR LOG THE AVERAGE TIME > console.log('API-ART <', average(timer.timeDiff), 'ms>' );
+// UNCOMMENT THIS FOR LOG THE AVERAGE TIME > 
+console.log('API-ART <', average(timer.timeDiff), 'ms>' );
 /* for performance tests */
 
 		var eventsForChannelCollection = [],

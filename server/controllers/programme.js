@@ -114,7 +114,7 @@ function(ProgrammeService, Metadata, DateUtils, Requestn, PrettyDate, Channels) 
 					{ property: "og:title"			, content: _programme_details.title }
 				];
 
-				var template = req.xhr ? 'contents/programme.jade' : 'layouts/programme.jade'
+				var template = req.xhr ? 'contents/programme.jade' : 'layouts/programme.jade';
 
 				res.render(template, {
 					metadata	: metadata.override(_metadata, 'property').get(),
@@ -172,16 +172,15 @@ function(ProgrammeService, Metadata, DateUtils, Requestn, PrettyDate, Channels) 
 
 		new ProgrammeService().once('getEvents', function(error, response, body) {
 
-			var programme_events = [];
+			var programme_events = [], now = new Date();
 
 			if ( !response || /500|404/.test(response.statusCode) ) {
 				programme_events = [{ "statusCode" : "404" }];
 			} else {
 				programme_events = JSON.parse(body);
 				programme_events = dateUtils.prettifyCollection(programme_events, 'startDateTime');
-				programme_events.forEach(function(el) {
-					var startDate = new Date(Date.parse(el.startDateTime));
-						el.simpleTime = strftime(startDate, '%R');
+				programme_events.forEach(function(el, ix, arr) {
+					el.simpleTime = strftime(new Date(Date.parse(el.startDateTime)), '%R');
 				});
 
 			}
