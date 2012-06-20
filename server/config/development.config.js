@@ -23,9 +23,9 @@ function() {
 		'APP_LOGO'		: 'http://upcsocial.herokuapp.com/assets/images/upclogo.jpg',
 		// production
 //		'API_PREFIX'	: 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/',
+		'API_PREFIX'	: 'http://10.65.34.72/cgi-bin/WebObjects/EPGApi.woa/-2004/api/',
 		// neo4j on vaca
 		//'API_PREFIX'	: 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi-Neo4J.woa/api/',
-		'API_PREFIX'	: 'http://10.65.34.72/cgi-bin/WebObjects/EPGApi.woa/-2004/api/',
 		'HTML_PREFIX'	: '',
 		'facebook'		: {
 			'app-id'		: '290742221014129',

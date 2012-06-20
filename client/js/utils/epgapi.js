@@ -12,12 +12,31 @@ define([
 /*
 * Average time tool
 */
-	var average_time = 0,
-		average_count = 0;
+	startShowingAverageTime();
+
+	var average_tilnow = 0,
+		average_time = 0,
+		average_count = 0,
+		last_average = 0;
+
+	function startShowingAverageTime() {
+		setTimeout(showAverageTime,1000);
+	}
+
+	function showAverageTime() {
+
+		setTimeout(showAverageTime,1000);
+
+		if (average_tilnow !== 0 && average_tilnow !== last_average) {
+			console.log('Average time <', average_tilnow, 'ms>');
+			last_average = average_tilnow;
+		}
+
+	}
 
 	function average(time) {
 		average_time += time; average_count += 1;
-		return Math.ceil(average_time / average_count);
+		average_tilnow = Math.ceil(average_time / average_count);
 	}
 
 	// constants
@@ -211,9 +230,7 @@ var timer = new Timer('getEventsForSliceFromApi Time Track').off();
 /* for performance tests */
 timer.track('API Response');
 // Average time to test Jedrzej API performance
-// API RAT > API Average Response Time
-// UNCOMMENT THIS FOR LOG THE AVERAGE TIME > 
-console.log('API-ART <', average(timer.timeDiff), 'ms>' );
+average(timer.timeDiff);
 /* for performance tests */
 
 		var eventsForChannelCollection = [],
