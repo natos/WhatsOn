@@ -14,6 +14,8 @@ define([
 	'utils/dateutils',
 	'utils/requestn',
 
+	'prettydate',
+
 	// mocks
 	'mocks/channels'
 
@@ -24,7 +26,7 @@ define([
  *	@class ProgrammeController
  */
 
-function(ProgrammeService, Metadata, DateUtils, Requestn, Channels) {
+function(ProgrammeService, Metadata, DateUtils, Requestn, PrettyDate, Channels) {
 
 	/** @constructor */
 
@@ -177,6 +179,11 @@ function(ProgrammeService, Metadata, DateUtils, Requestn, Channels) {
 			} else {
 				programme_events = JSON.parse(body);
 				programme_events = dateUtils.prettifyCollection(programme_events, 'startDateTime');
+				programme_events.forEach(function(el) {
+					var startDate = new Date(Date.parse(el.startDateTime));
+						el.simpleTime = strftime(startDate, '%R');
+				});
+
 			}
 
 			/* response */

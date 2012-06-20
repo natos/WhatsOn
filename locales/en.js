@@ -49,5 +49,9 @@
 	"Favorite": "Favorite",
 	"ViewView": "ViewView",
 	"Programmes": "Programmes",
-	"Channels": "Channels"
+	"Channels": "Channels",
+	"Like": "Like",
+	"Favorite Shows": "Favorite Shows",
+	"Favorite Channels": "Favorite Channels",
+	"Shows": "Shows"
 }

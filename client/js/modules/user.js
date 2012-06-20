@@ -14,9 +14,23 @@ define([
 
 ], function UserModuleScope(u, App, UserModel, UserComponent) {
 
-	var name = 'user';
+	var name = 'user',
+
+	// shorcuts
+		slice = Array.prototype.slice;
 
 /* private */
+
+	// constants
+	FACEBOOK_STATUS		= 'facebook-status',
+	AUTH_STATUS_CHANGE	= 'auth.statusChange',
+	OPEN_GRAPH_PREFIX	= '/me/upcsocial:',
+	// og calls
+	FAVORITES_CALL		= OPEN_GRAPH_PREFIX + 'favorite',
+	RECORDINGS_CALL		= OPEN_GRAPH_PREFIX + 'record',
+	// labels
+	FAVORITES			= 'favorites',
+	RECORDINGS			= 'recordings';
 
 	// every time the facebook login status
 	// is changed, this handler will save the
@@ -25,7 +39,7 @@ define([
 	// just happend
 	function facebookLoginStatus(response) {
 
-		UserModel.set('facebook-status', response);
+		UserModel.set(FACEBOOK_STATUS, response);
 
 		switch (response.status) {
 			case u.CONNECTED: 
@@ -40,38 +54,97 @@ define([
 
 	}
 
-	function login() {
-		FB.login(function(response) { }, { scope: u.SCOPE });
+	/**
+	*	Login and Logout actions
+	*	Helpers to execute login with facebook credentials
+	*/
+
+	function login() { 
+console.log('Login in')
+		// Check for arguments. The first argument, could be a callback
+		// Because some actions need login first
+		var args = slice.call(arguments, 0), callback = args.shift();
+
+		// Handle the response of login
+		function handleLogin(response) {
+			// error handling
+			if (response && response.error) {
+				console.log('Error on UserModule', 'Can\'t login', response);
+				return;
+			}
+			// if there's any callback there, just call him
+			if (typeof callback === 'function') { callback(args); }
+		}
+
+		// Login with facebook
+		FB.login(handleLogin, { scope: u.SCOPE }); 
+
 	}
 
-	function logout() {
-		FB.logout(function(response) { });
+	function logout() { FB.logout(function handleLogout(response) { /* cri-cri() */ }); }
+
+	/**
+	*	Fetch opengraph data and save the response into a model, 
+	*	use: 
+	*		fetch( label ).from( opengraph_url ).saveTo( model );
+	*/
+
+	function fetch(label) {
+
+		/* currying scope */
+		var _label = label, _call, _model;
+
+		/* currying helpers */
+		function from(call) {
+
+			_call = call;
+
+			/* curryout */
+			return { saveTo: saveTo };
+		}
+
+		function saveTo(model) {
+
+			_model = model;
+
+			if (_label && _call && _model) {
+				// make the call
+				FB.api(_call, handleResponse);
+			}
+
+			/* curryrestart */
+			return { fetch: this };
+		}
+
+		/* handler */
+		function handleResponse(response) {
+
+			if (!response) { 
+				console.log('Warning!', _label, _call, _model.name, ': Open graph has sent an empty response');
+				return; 
+			}
+
+			_model.set(_label, response);
+		}
+
+		/* curryout */
+		return { from: from };
 	}
 
 	/* FAVORITES */
 
 	function fetchFavorites() {
-		FB.api('/me/upcsocial:favorite', setFavorites);
-	}
 
-	function setFavorites(response) {
-
-		if (!response) { console.log('User Model','Error while trying to process Favorites > Empty response from facebook'); return; }
-
-		UserModel.set('favorites', response);
+		//FB.api(FAVORITES_CALL, setFavorites);
+		fetch(FAVORITES).from(FAVORITES_CALL).saveTo(UserModel);
 	}
 
 	/* RECORDINGS */
 
 	function fetchRecordings() {
-		FB.api('/me/upcsocial:record', setRecordings);
-	}
 
-	function setRecordings(response) {
-
-		if (!response) { console.log('User Model','Error while trying to process Favorites > Empty response from facebook'); return; }
-
-		UserModel.set('recorded', response); 
+		//FB.api(RECORDINGS_CALL, setRecordings);
+		fetch(RECORDINGS).from(RECORDINGS_CALL).saveTo(UserModel);
 	}
 
 	/* actions when user is connected */
@@ -89,6 +162,10 @@ define([
 	function disconnected() {
 		// let know eveyone
 		App.emit(u.LOGGED_OUT);
+		// reset the UserModel by removing data
+		UserModel.set(FACEBOOK_STATUS, false);
+		UserModel.set(FAVORITES, false);
+		UserModel.set(RECORDINGS, false);
 	}
 
 
@@ -108,7 +185,7 @@ define([
 		}
 
 		// FB init
-		FB.init({
+		FB.init({ 
 			appId		: u.APP_ID,
 			status		: true,
 			cookie		: true,
@@ -116,7 +193,7 @@ define([
 		});
 
 		// Lisent for changes on Facebook login status
-		FB.Event.subscribe('auth.statusChange', facebookLoginStatus);
+		FB.Event.subscribe(AUTH_STATUS_CHANGE, facebookLoginStatus);
 
 		this.components = {
 			user: UserComponent.initialize()
@@ -137,7 +214,7 @@ define([
 	function finalize() {
 
 		// unsubscribe from FB notifications
-		FB.Event.unsubscribe('auth.statusChange', facebookLoginStatus);
+		FB.Event.unsubscribe(AUTH_STATUS_CHANGE, facebookLoginStatus);
 
 		// let go all the event handlers
 		App.off(u.LOG_IN, login);
@@ -151,12 +228,19 @@ define([
 		return this;
 	}
 
+	function getAuthStatus() {
+
+		return UserModel[FACEBOOK_STATUS]? true: false;
+
+	}
+
 /* export */
 
 	return {
-		name		: name,
-		initialize	: initialize,
-		model		: UserModel
+		name			: name,
+		initialize		: initialize,
+		getAuthStatus	: getAuthStatus,
+		model			: UserModel
 	};
 
 });

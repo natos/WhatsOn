@@ -20,7 +20,9 @@ define([], function ProgrammeConfigContext() {
 
 		RECORD: 'programme:record',
 
-		FAVORITE: 'programme:favorite',
+		ADD_FAVORITE: 'programme:add_favorite',
+
+		REMOVE_FAVORITE: 'programme:remove_favorite',
 
 		/* DOM Access */
 

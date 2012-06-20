@@ -94,6 +94,7 @@ function(ChannelService, Metadata, DateUtils, Requestn, PrettyDate, Channels) {
 					var startDate = new Date(Date.parse(el.startDateTime));
 					var endDate = new Date(Date.parse(el.endDateTime));
 					el.timeRange = strftime(startDate, '%R') + ' - ' + strftime(endDate, '%R');
+					el.simpleTime = strftime(startDate, '%R');
 
 					var day = startDate.getDay();
 					if (day !== previousDay) {

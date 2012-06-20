@@ -1,32 +1,31 @@
 #programme-content
-	.programmepage
-		header.hd
-			if (data.subcategory.category.name != data.subcategory.name)
-				p.category #{data.subcategory.category.name} > #{data.subcategory.name}
-			else
-				p.category #{data.subcategory.name}
-	
-			.like
-				.fb-like(data-href="#{url}", data-send="false", data-layout="box_count", data-width="80", data-show-faces="true")
-			h1 #{title}
-			p #{data.shortDescription}
-	
-			#user-action
-				button.favorite #{__i('Favorite')}
-				button.record #{__i('Record')}
-				button.remind #{__i('Set Reminder')}
-				button.share #{__i('Share')}
-				//div.fb-like(data-send="true", data-width="450", data-show-faces="true")
-	
-		section.bd
-			if data.events
-				h2.watch-title #{__i('Watch it')}
-				ul#events
+	header
+		if (data.subcategory.category.name != data.subcategory.name)
+			p.category #{data.subcategory.category.name} > #{data.subcategory.name}
+		else
+			p.category #{data.subcategory.name}
+
+		h1 
+			span.favorite
+				i.icon-star-empty
+			| #{title}
+
+		include ../components/useraction
+
+		p #{data.shortDescription}
+
+	section
+		if data.events
+			article
+				h2.watch-title
+					i.icon-time
+					#{__i('Watch it')}
+				ul.channel-event-list
 					each event in data.events
-						li
-							span.icon-time
-							span #{event.prettyDate} 
-							span 
-								| on 
-								a.channel(href="/channel/#{event.channel.id}", data-channelid="#{event.channel.id}") #{event.channel.name}
+						li.event
+							.time #{event.simpleTime}
+							h3.title #{event.prettyDate}
+							a.channel(href="/channel/#{event.channel.id}", data-channelid="#{event.channel.id}")
+								|  on 
+								| #{event.channel.name}
 								|  (#{event.channel.id})
