@@ -12,7 +12,7 @@ define([
 /*
 * Average time tool
 */
-	startShowingAverageTime();
+//	startShowingAverageTime();
 
 	var average_tilnow = 0,
 		average_time = 0,
