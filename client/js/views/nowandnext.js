@@ -33,14 +33,14 @@ define([
 
 	function render() {
 
-		channelsListContainer = $('#channels-list-container');
+		channelsListContainer = $('#nowandnext-content');
 
 		// Observe clicks on 'earlier' and 'later' links,
 		// and use ajax to replace the channels list content
-		channelsListContainer.on('click', 'a.earlier, a.later', function(e) {
+		channelsListContainer.on('click', 'a.earlier, a.later, a.group', function(e) {
 			e.preventDefault();
 			e.stopPropagation();
-			channelsListContainer.load(e.target.href + ' #channels-list-container');
+			channelsListContainer.load(e.target.href);
 		});
 
 		return this;

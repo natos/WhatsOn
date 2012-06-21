@@ -2,7 +2,7 @@
 	ul.channels-list-types
 		each filterGroup in availableFilterGroups
 			li.type(style="width:#{100 / availableFilterGroups.length}%")
-				a(href="#{filterGroup.url}") #{filterGroup.text}
+				a.group(href="#{filterGroup.url}") #{filterGroup.text}
 	
 	#channels-list-container
 		ul.channels-list

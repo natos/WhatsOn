@@ -61,7 +61,7 @@ function(NowAndNextService, DomainService, Metadata, QS, config) {
 	var getStartDate = function(req) {
 		var dt,
 			nowDt = new Date(),
-			dtString = req.params['dt'],
+			dtString = req.params.dt,
 			parts,
 			dateParts,
 			timeParts;
@@ -102,35 +102,44 @@ function(NowAndNextService, DomainService, Metadata, QS, config) {
 				dtPreviousSlice = new Date(dt.valueOf() - (60 * 60 * 1000)),
 				dtNextSlice = new Date(dt.valueOf() + (60 * 60 * 1000)),
 				currentSliceFormattedStartTime = getFormattedSliceStartTime(dt),
-				favUrl,
 				earlierUrl = '/nowandnext/dt/' + getFormattedSliceStartTime(dtPreviousSlice),
 				laterUrl = '/nowandnext/dt/' + getFormattedSliceStartTime(dtNextSlice),
 				strftime = require('prettydate').strftime;
 
 			// Build an array of all the filter options to be offered
 			var availableFilterGroups = domainDetails.groups.map(function(group){
-				return {text:group.name, url:'/nowandnext/group/' + group.id + '/dt/' + currentSliceFormattedStartTime}
+				return {
+					id:  group.id,
+					text: group.name,
+					url: '/nowandnext/group/' + group.id + '/dt/' + currentSliceFormattedStartTime,
+					channelIds: group.channelIds
+				};
 			});
 			// Add an item for "all channels" to the end of the array
-			availableFilterGroups.push({text:'All', url:'/nowandnext/dt/' + currentSliceFormattedStartTime});
+			availableFilterGroups.push({
+				id: 'all',
+				text: 'Alle zenders',
+				url: '/nowandnext/group/all/dt/' + currentSliceFormattedStartTime,
+				channelIds: _app.channels.map(function(channel){return channel.id;})
+			});
 
-			var selectedFilterGroup = req.params['groupid'];
-			if (selectedFilterGroup) {
-				domainDetails.groups.forEach(function(group){
-					if (group.id===selectedFilterGroup) {
-						channelIds = group.channelIds;
-					}
-				});
-				earlierUrl = '/nowandnext/group/' + selectedFilterGroup + '/dt/' + getFormattedSliceStartTime(dtPreviousSlice);
-				laterUrl = '/nowandnext/group/' + selectedFilterGroup + '/dt/' + getFormattedSliceStartTime(dtNextSlice);
-			} else {
-				// TODO: use the full channel list here
-				channelIds = ['7s','6g','7y','8u'];
+			var selectedFilterGroupId = req.params.groupid;
+			// If no filter group specified in the URL, use the first group in the list
+			if (!selectedFilterGroupId) {
+				selectedFilterGroupId = availableFilterGroups[0].id;
 			}
+
+			availableFilterGroups.forEach(function(group){
+				if (group.id===selectedFilterGroupId) {
+					channelIds = group.channelIds;
+					earlierUrl = '/nowandnext/group/' + group.id + '/dt/' + getFormattedSliceStartTime(dtPreviousSlice);
+					laterUrl = '/nowandnext/group/' + group.id + '/dt/' + getFormattedSliceStartTime(dtNextSlice);
+				}
+			});
 
 			(new NowAndNextService()).once('getNowAndNext', function(channels, channelEventsCollections){
 
-				var template = req.xhr ? 'contents/nowandnext.jade' : 'layouts/nowandnext.jade'
+				var template = req.xhr ? 'contents/nowandnext.jade' : 'layouts/nowandnext.jade';
 
 				res.render(template, {
 					metadata	: metadata.get(),
