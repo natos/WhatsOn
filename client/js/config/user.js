@@ -36,6 +36,8 @@ define([], function UserConfigContext() {
 
 		MODEL_CHANGED: 'user:model_changed',
 
+		FETCH_LIKES: 'user:fetch_likes',
+
 		FETCH_FAVORITES: 'user:fetch_favorites',
 
 		FETCH_RECORDINGS: 'user:fetch_recordings',

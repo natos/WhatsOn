@@ -40,7 +40,7 @@ define([
 	}
 
 	// returns if the template DOM element exists
-	function templateExists(view) { return false; /*$( templateId(view) )[0];*/ }
+	function templateExists(view) { return $( templateId(view) )[0]; }
 
 	// renders the template
 	function setTemplate(view) {
@@ -60,7 +60,6 @@ define([
 		var $template = $(SCRIPT_TAG).attr('id', templateName(view)).appendTo('#templates'),
 		// fetch from url
 		from_url = '/' + view.name + getParts(view);
-		console.log(from_url);
 		// fetch content from server
 		$.get(from_url, function saveNewTemplate(res) {
 			// save it in the DOM container

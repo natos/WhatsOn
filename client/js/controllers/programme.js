@@ -23,26 +23,26 @@ define([
 
 	/* maybe try some DRY here */
 
-	function record(url) {
+	function share(obj) {
 
 		if (!User.getAuthStatus()) { 
 			// emit login with a callback, cool eh? :)
 			App.emit(u.LOG_IN, function() {
 				// delayed action
-				record(url); 
+				share(url); 
 			});
 			return; 
 		}
 
-		FB.api('/me/upcsocial:record', 'post', { tv_show: url }, function(response) {
+		FB.ui(obj, function(response) {
 
 			if (!response || response.error) {
-				console.log('Error occured trying to add a new record action', response);
+				console.log('Error occured trying to share on the wall', response);
 				return;
 			}
 
-			console.log('recorded', response);
-			App.emit(u.FETCH_RECORDINGS);
+			console.log('Shared', response);
+
 		});
 
 	}
@@ -112,7 +112,7 @@ define([
 
 	function initialize(State) {
 
-		App.on(p.RECORD, record);
+		App.on(p.SHARE, share);
 		App.on(p.ADD_FAVORITE, addFavorite);
 		App.on(p.REMOVE_FAVORITE, removeFavorite);
 		
@@ -122,7 +122,7 @@ define([
 
 	function finalize() {
 
-		App.off(p.RECORD, record);
+		App.off(p.SHARE, share);
 		App.off(p.ADD_FAVORITE, addFavorite);
 		App.off(p.REMOVE_FAVORITE, removeFavorite);
 
