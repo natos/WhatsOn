@@ -14,6 +14,7 @@ html.no-js.no-mustard
 
 		script
 			document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+			window.mustard = false;
 			if ('querySelector' in document && 'localStorage' in window && 'addEventListener' in window) {
 				window.mustard = true;
 				var href = location.href.toUpperCase();

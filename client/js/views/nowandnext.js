@@ -20,8 +20,6 @@ define([
 
 /* abstract */
 
-	var channelsListContainer;
-
 	function initialize() {
 
 		App.loadCss('/assets/css/nowandnext.css');
@@ -33,23 +31,11 @@ define([
 
 	function render() {
 
-		channelsListContainer = $('#nowandnext-content');
-
-		// Observe clicks on 'earlier' and 'later' links,
-		// and use ajax to replace the channels list content
-		channelsListContainer.on('click', 'a.earlier, a.later, a.group', function(e) {
-			e.preventDefault();
-			e.stopPropagation();
-			channelsListContainer.load(e.target.href);
-		});
-
 		return this;
 
 	}
 
 	function finalize() {
-
-		channelsListContainer.off('click');
 
 		return this;
 	}

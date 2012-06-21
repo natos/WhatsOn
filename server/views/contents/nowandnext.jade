@@ -9,17 +9,16 @@
 			each channelEventsCollection in channelEventsCollections
 				li.channels-list-channel
 					div.inner
-						span.channelmarker(id="channelmarker-#{channelEventsCollection.channel.id}") mark
 						div.channels-list-channel__controls
 							a.logo(href="/channel/#{channelEventsCollection.channel.id}", class="channel", data-channelid="#{channelEventsCollection.channel.id}")
 								img(title="#{channelEventsCollection.channel.name}", src="http://www.upc.nl#{channelEventsCollection.channel.logoIMG}", data-src="http://www.upc.nl#{channelEventsCollection.channel.logoIMG}", id="channelImg#{channelEventsCollection.channel.id}")
-							a.earlier(href=earlierUrl + "#channelmarker-#{channelEventsCollection.channel.id}")
+							a.earlier(href=earlierUrl)
 								span.icon-chevron-left
 								#{earlierText}
 							span.now
 								span.nowtime #{nowTime}
 								span.nowdate #{nowDate}
-							a.later(href=laterUrl + "#channelmarker-#{channelEventsCollection.channel.id}")
+							a.later(href=laterUrl)
 								#{laterText}
 								span.icon-chevron-right
 						div.channels-list-channel__programmes(id="channels-list_channel_#{channelEventsCollection.channel.id}__programmes")
