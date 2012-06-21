@@ -94,6 +94,7 @@ function(ChannelService, Metadata, DateUtils, Requestn, PrettyDate, Channels) {
 					var startDate = new Date(Date.parse(el.startDateTime));
 					var endDate = new Date(Date.parse(el.endDateTime));
 					el.timeRange = strftime(startDate, '%R') + ' - ' + strftime(endDate, '%R');
+					el.simpleTime = strftime(startDate, '%R');
 
 					var day = startDate.getDay();
 					if (day !== previousDay) {
@@ -120,11 +121,11 @@ function(ChannelService, Metadata, DateUtils, Requestn, PrettyDate, Channels) {
 				res.render(template, {
 					metadata	: metadata.override(_metadata, 'property').get(),
 					config		: _app.config,
+					channels	: _app.channels,
 					url			: _app.config.APP_URL + 'channel/' + _channel_details.id,
 					data		: _channel_details,
 					title		: _channel_details.name,
 					prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upcsocial: http://ogp.me/ns/fb/upcsocial#',
-					channels	: Channels,
 					supports	: req.supports
 				}); // HTML output	
 		});
@@ -133,8 +134,6 @@ function(ChannelService, Metadata, DateUtils, Requestn, PrettyDate, Channels) {
 
 	/** Render a JSON response of all channels */
 	ChannelController.prototype.renderChannels = function(req, res) {
-
-		var id = req.params.id;
 
 		new ChannelService().once('getChannels', function(channels) {
 
@@ -151,6 +150,14 @@ function(ChannelService, Metadata, DateUtils, Requestn, PrettyDate, Channels) {
 
 		new ChannelService().once('getDetails', function(error, response, body) {
 
+			// API Error? Grab the mock
+			if ( !body || /404|500/.test(response.statusCode) ) {
+				console.log('Error', 'Trying to fetch Channel', id, 'events');
+				// send an empty response
+				res.send([]);
+				return;
+			}
+
 			var channel_details = JSON.parse(body);
 
 			res.send(channel_details); // JSON output
@@ -166,6 +173,14 @@ function(ChannelService, Metadata, DateUtils, Requestn, PrettyDate, Channels) {
 		var id = req.params.id;
 
 		new ChannelService().once('getEvents', function(error, response, body) {
+
+			// API Error? Grab the mock
+			if ( !body || /404|500/.test(response.statusCode) ) {
+				console.log('Error', 'Trying to fetch Channel', id, 'events');
+				// send an empty response
+				res.send([]);
+				return;
+			}
 
 			var channel_events = JSON.parse(body);
 

@@ -49,7 +49,7 @@ define([
 	function loadController(State) {
 		// something went wrong
 		if (!State) {
-//			console.log('Canvas Module', 'Something went wrong on the navigation! While trying to load a controller got an empty State as argument.');
+			console.log('Canvas Module', 'Something went wrong on the navigation! While trying to load a controller got an empty State as argument.');
 			return;
 		}
 
@@ -63,7 +63,7 @@ define([
 		// Controller doesn't exist yet
 		// Async load the requested controller
 		if (typeof cachedController === 'undefined') {
-//			console.log('Canvas Module', State.controller, ' doesn\'t exists, go an get one.');
+			console.log('Canvas Module', State.controller, ' doesn\'t exists, go an get one.');
 			// Controller is not cached, go and get one
 			fetchController('controllers/' + State.controller);
 			return;
@@ -71,7 +71,7 @@ define([
 
 		// Check if the controller has a intialize method, all controllers must have one
 		if (typeof cachedController[INITIALIZE] !== "function") {
-//			console.log('Canvas Module', cachedController.name + ' doesn\'t have a \'initialize\' method available.');
+			console.log('Canvas Module', cachedController.name + ' doesn\'t have a \'initialize\' method available.');
 			return;
 		}
 		// Everything seems fine

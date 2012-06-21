@@ -55,8 +55,8 @@ function(MoviesService, DateUtils, Metadata, Channels) {
 			res.render(template, {
 				metadata	: metadata.get(),
 				config		: _app.config,
+				channels	: _app.channels,
 				topmovies 	: topmovies,
-				channels	: Channels,
 				supports	: req.supports
 			});
 

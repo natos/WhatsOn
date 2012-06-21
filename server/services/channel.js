@@ -82,64 +82,59 @@ function(util, events, request, requestN, DomainService, config) {
 					var errorsCount = 0;
 					var channelsBatch;
 
-					try {
+					for (var i=0; i<requestUrls.length; i++) {
+						if (!responses[requestUrls[i]] || responses[requestUrls[i]].error) {
+							// TODO: Review this, because it crash when responses[thingy] is empty
+							console.log("Error requesting " + requestUrls[i] + ": " + responses[requestUrls[i]].error);
+							errorsCount++;
+						}
+					}
+
+					if (errorsCount===0) {
 						for (var i=0; i<requestUrls.length; i++) {
-							if (!responses[requestUrls[i]] || responses[requestUrls[i]].error) {
-								// TODO: Review this, because it crash when responses[thingy] is empty
-								console.log("Error requesting " + requestUrls[i] + ": " + responses[requestUrls[i]].error);
-								errorsCount++;
+							if (!responses[requestUrls[i]].error && responses[requestUrls[i]].response.statusCode == 200) {
+								channelsBatch = JSON.parse(responses[requestUrls[i]].body);
+								allChannels = allChannels.concat(channelsBatch);
 							}
 						}
+					}
 
-						if (errorsCount===0) {
-							for (var i=0; i<requestUrls.length; i++) {
-								if (!responses[requestUrls[i]].error && responses[requestUrls[i]].response.statusCode == 200) {
-									channelsBatch = JSON.parse(responses[requestUrls[i]].body);
-									allChannels = allChannels.concat(channelsBatch);
-								}
-							}
-						}
+					// Remove the "links" property for channels. This property is not used, and only takes up space.
+					allChannels.forEach(function(channel){
+						delete channel.links;
+					});
 
-						// Remove the "links" property for channels. This property is not used, and only takes up space.
+					// Attach domain information to each channel
+					(new DomainService()).once('getDomains', function(domains){
+
+						var channelFilterIds = [];
+						var channelThemeIds = [];
+						var channelDomains
 						allChannels.forEach(function(channel){
-							delete channel.links;
+							var channelDomains = domains.map(function(domain){
+								var channelDomainGroups = [];
+								domain.groups.forEach(function(group){
+									if (group.channelIds.indexOf(channel.id) >= 0) {
+										channelDomainGroups.push(group.id);
+									}
+								});
+
+								return ({
+									id: domain.id,
+									groups: channelDomainGroups
+								});
+							});
+							channel.domains = channelDomains;
+
 						});
 
-						// Attach domain information to each channel
-						(new DomainService()).once('getDomains', function(domains){
+						// Cache the channels
+						CHANNELS_CACHE.list = allChannels;
+						CHANNELS_CACHE.timestamp = now;
+						self.emit('getChannels', allChannels);
 
-							var channelFilterIds = [];
-							var channelThemeIds = [];
-							var channelDomains
-							allChannels.forEach(function(channel){
-								var channelDomains = domains.map(function(domain){
-									var channelDomainGroups = [];
-									domain.groups.forEach(function(group){
-										if (group.channelIds.indexOf(channel.id) >= 0) {
-											channelDomainGroups.push(group.id);
-										}
-									});
+					}).getDomains();
 
-									return ({
-										id: domain.id,
-										groups: channelDomainGroups
-									});
-								});
-								channel.domains = channelDomains;
-
-							});
-
-							// Cache the channels
-							CHANNELS_CACHE.list = allChannels;
-							CHANNELS_CACHE.timestamp = now;
-							self.emit('getChannels', allChannels);
-
-						}).getDomains();
-
-					} catch (e) {
-						console.log('Failed to retrieve channels');
-						console.log(e);
-					}
 				}
 
 			);

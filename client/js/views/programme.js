@@ -22,39 +22,88 @@ define([
 
 	var url = $('meta[property="og:url"]').attr('content');
 
-	function handleUserModelChanges(event) {
+	/* State handler */
+	function handleUserModelChanges(changes) {
 
-		var favorites, t, id;
+		if (typeof changes === 'undefined') { return; }
 
-		if (event.favorites) {
+		if (changes.favorites) { checkIfThisIsAFavorite(changes.favorites); }
 
-			favorites = event.favorites.data;
+	}
 
-			t = favorites.length;
-/*
-			while (t--) {
-				// if the ID of the show is in my favorite list, disable the favorite button;
-				if (favorites[t].data.tv_show.url === url) {
-					$('#user-action').find('.favorite').attr('disable','disable').addClass('disable');
-				}
-			}*/
+	/* State changes */
+	/* check if this programme is a favorite */
+	function checkIfThisIsAFavorite(favorites) {
+		var found = false, favorite, programme, t = favorites.data.length;
+		while (t--) {
+			favorite = favorites.data[t];
+			programme = favorite.data.tv_show;
+			if (programme && programme.url === url) {
+				found = true;
+				console.log('found a favorite');
+				thisIsAFavorite(favorite);
+				break;
+			}
+		}
+
+		if (!found) {
+			console.log('didnt found a favorite');
+			thisIsNotLonguerAFavorite();
 		}
 	}
 
+	function thisIsAFavorite(favorite) {
+		$('.favorite').attr('disable','disable').addClass('disable').data('favorite-id', favorite.id);
+		$('.favorite i').attr('class','icon-star');
+	}
+
+	function thisIsNotLonguerAFavorite() {
+		$('.favorite').removeAttr('disable').removeClass('disable').removeAttr('data-favorite-id');
+		$('.favorite i').attr('class','icon-star-empty');
+	}
+
+	/* Action Handler, for User Interaction */
 	function userActionHandler(event) {
 
-		if ( /disable/.test(event.target.className) ) {			
-			console.log('disable');
+		// the only available actions are:
+		// - add to favorite
+		// - remove from favorites
+
+	/* Find a button */
+
+		var button = event.target, $button = $(button), isFavorited;
+
+		// so, grab a parent element
+		while (!$button.hasClass('favorite')) {
+			// if we reach the top container, break
+			// in this case should be the #programme-content
+			if (button === this) { break; }
+			// step up in the DOM to the next parent
+			button = button.parentNode;
+			// wrap it
+			$button = $(button);
+		}
+
+		/* nothing to do here */
+		// when bubbling we reach the document
+		if (button === document) { return; }
+		// the button is disabled
+		if ($button.hasClass('disabled')) { return; }
+
+
+	/* Define the action */
+
+		// check if is already a favorite
+		isFavorited = $button.data('favorite-id')
+		if (isFavorited) {
+			// then the action would be remove from favorite
+			removeFavorite(isFavorited);
 			return;
 		}
 
-		switch (event.target.className) {
-
-			case 'record': record(); break;
-
-			case 'favorite': favorite(); break;
-
-		}
+		// default action is to add a favorite
+		addFavorite(); 
+		return;
 
 	}
 
@@ -66,11 +115,17 @@ define([
 
 	}
 
-	function favorite() {
+	function addFavorite() {
 
-		App.emit(p.FAVORITE, url);
+		App.emit(p.ADD_FAVORITE, url);
 
 	}
+
+	function removeFavorite(id) {
+
+		App.emit(p.REMOVE_FAVORITE, id);
+
+	};
 
 /* public */
 
@@ -78,16 +133,13 @@ define([
 
 	function initialize(State) {
 
-		// And if is already loaded?
-		App.loadCss('/assets/css/programmepage.css');
-
 		App.on(u.MODEL_CHANGED, handleUserModelChanges);
 	
 	}
 
 	function render() {
 
-		p.$userAction = $('#user-action').on('click', userActionHandler);
+		p.$userAction = $('#programme-content').on('click', userActionHandler);
 
 	}
 

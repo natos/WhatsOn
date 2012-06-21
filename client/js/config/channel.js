@@ -18,7 +18,9 @@ define([], function ChannelConfigContext() {
 
 		/* Events */
 
-		FAVORITE: 'channel:favorite',
+		ADD_FAVORITE: 'channel:add_favorite',
+
+		REMOVE_FAVORITE: 'channel:remove_favorite',
 
 		/* DOM Access */
 

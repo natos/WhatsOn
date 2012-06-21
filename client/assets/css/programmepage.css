@@ -1,5 +1,5 @@
 .programmepage {
-	background:#fff;
+
 	border-top:1px solid #ccc;
 	border-bottom:1px solid #ccc;
 }
@@ -29,10 +29,10 @@
 	}
 
 	.programmepage .bd .watch-title {
-		margin-left:80px;
+		margin-left: 40px;
 	}
 	.programmepage .bd #events {
-		margin-left:80px;
+		margin-left: 40px;
 		position:relative;
 	}
 	.programmepage .bd #events li {

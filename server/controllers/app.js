@@ -8,6 +8,7 @@ define([
 	/** @require */
 
 	// modules
+	'request',
 	'express',
 	'i18n',
 
@@ -16,6 +17,10 @@ define([
 
 	// utils
 	'utils/supports',
+
+	// services
+
+	'services/channel',
 
 	// controllers
 	'controllers/login',
@@ -33,16 +38,19 @@ define([
 	'controllers/admin'
 ],
 
+function(request, express, i18n, config, Supports, ChannelService, Login, Dashboard, Grid, Channel, Domain, Programme, Event, Movies, Search, Settings, NowAndNext, Facebook, Admin) {
 
 /**
  *	@class AppController
  */
 
-function(express, i18n, config, Supports, Login, Dashboard, Grid, Channel, Domain, Programme, Event, Movies, Search, Settings, NowAndNext, Facebook, Admin) {
+	var AppController = AppControllerConstructor();
 
 	/** @constructor */
 
-	var AppController = function() {
+	function AppControllerConstructor() {
+
+		/** @public */
 
 		var self = this;
 
@@ -64,28 +72,39 @@ function(express, i18n, config, Supports, Login, Dashboard, Grid, Channel, Domai
 
 			//	setup app controllers
 			self.controllers = {
-				login		: new Login(self),
-				dashboard	: new Dashboard(self),
-				grid		: new Grid(self),
-				channel		: new Channel(self),
-				domain		: new Domain(self),
-				programme	: new Programme(self),
-				event		: new Event(self),
-				movies		: new Movies(self),
-				search		: new Search(self),
-				settings	: new Settings(self),
-				nowandnext 	: new NowAndNext(self),
-				facebook	: new Facebook(self),
-				admin		: new Admin(self)
+				         login	: new Login(self),
+				     dashboard	: new Dashboard(self),
+				          grid	: new Grid(self),
+				       channel	: new Channel(self),
+						domain	: new Domain(self),
+				     programme	: new Programme(self),
+				         event	: new Event(self),
+				        movies	: new Movies(self),
+				        search	: new Search(self),
+				      settings	: new Settings(self),
+				    nowandnext 	: new NowAndNext(self),
+				      facebook	: new Facebook(self),
+				         admin	: new Admin(self)
 			};
 
+			// fetch channels
+			new ChannelService().once('getChannels', saveChannels).getChannels();
+
 		return self;
+
 	};
 
 
 	/** @private */
 
-	var globalHandler = function(req, res, next) {
+	function saveChannels(channels) {
+
+		console.log('Saving channels collection.');
+		AppController.channels = channels;
+
+	}
+
+	function globalHandler(req, res, next) {
 
 		res.isJsonp = req.query.callback || null;
 
@@ -93,13 +112,15 @@ function(express, i18n, config, Supports, Login, Dashboard, Grid, Channel, Domai
 
 		next();
 
-	};
+	}
 
-	var redirectToDashboard = function(req, res, next) {
+	function redirectToDashboard(req, res, next) {
+
 		res.redirect('/dashboard');
+
 	};
 
-	var createServer = function() {
+	function createServer() {
 
 		// not working on version 0.3.0, fixed on 0.3.4
 		// but is not available on npm yet
@@ -145,7 +166,6 @@ function(express, i18n, config, Supports, Login, Dashboard, Grid, Channel, Domai
 
 
 	/** @public */
-
 
 	/** @return */
 

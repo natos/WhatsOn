@@ -48,7 +48,7 @@ function(Metadata, Channels) {
 		res.render(template, {
 			metadata	: metadata.get(),
 			config		: _app.config,
-			channels	: Channels,
+			channels	: _app.channels,
 			supports	: req.supports
 		});
 

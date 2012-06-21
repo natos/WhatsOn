@@ -33,7 +33,7 @@ define([
 				logo = _channel.logoIMG; break;
 			}
 		}
-		return '<img src="http://www.upc.nl/' + logo + '">';
+		return (logo) ? '<img src="http://www.upc.nl/' + logo + '">' : false ;
 	}
 
 /* public */
@@ -46,6 +46,10 @@ define([
 	}
 
 	function render(model) {
+
+		/*
+		*	this is a mess > refactor needed
+		*/
 
 		// grab the model
 		if (!model) { model = UserModel; }
@@ -60,7 +64,7 @@ define([
 
 		// the argument 'model' is a reference to the UserModel
 		// to ways to get here, one is trought the handleModelChanges function
-		// other is directly 
+		// other is by a direct call
 		var favorites = model[name],
 			// DOM elements
 			$favorites = $('.' + name),
@@ -75,20 +79,21 @@ define([
 		$(favorites.data).each(function(i, e) {
 
 			// defining the type of favorite
-			var isTvShow = typeof e.data.tv_show === 'undefined',
-				listname = (isTvShow) ? 'channel' : 'programme',
-				type = (isTvShow) ? 'tv_channel' : 'tv_show',
+			var isChannel = typeof e.data.tv_show === 'undefined',
+				listname = (isChannel) ? 'channel' : 'programme',
+				type = (isChannel) ? 'tv_channel' : 'tv_show',
 				item = e.data[type];
 
 			var id = item.url.match(/\d+/),
 				req = '/' + listname + '/' + id + '/events.json?callback=?',
 				content = item.title;
 
-			if (listname === 'channel') {
+			if (isChannel) {
 				content = find_me_a_logo(item.title) || item.title;
 			}
 
 			// render item inside list
+			// save the reference for later
 			var fav = $link
 				.clone() // new link
 				.attr('href', '/' + listname + '/' + id)
@@ -99,23 +104,24 @@ define([
 					$listitem.clone().appendTo($lists[listname])
 				);
 
-			// get NowAndNext for the favorites
-			$.getJSON(req, function(response) {
-				var event = response[0];
-				if (event && event.prettyDate) {
-					fav.parent().prepend('<p>' + event.prettyDate + '</p>');
-				}
-			});
-		});
+			if (!isChannel) {
+				// get NowAndNext for the favorite shows
+				$.getJSON(req, function(response) {
+					var event = response[0];
+					if (event && event.prettyDate) {
+						fav.parent().append('<span>' + event.prettyDate + '</span>');
+					}
+				});
+			}
 
-		// attach lists to DOM
-		for (var list in $lists) { 
-			$lists[list].appendTo($favorites);	
-		}
+		// end each
+		});
 	}
 
 	function finalize() {
+
 		App.off(u.MODEL_CHANGED, handleModelChanges);
+
 	}
 
 /* export */

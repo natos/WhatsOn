@@ -9,14 +9,6 @@ requirejs.config({
     nodeRequire: require
 });
 
-requirejs([
-
-	'controllers/app'
-
-],
-
-function(App) {
-
-	new App();
-
+requirejs(['controllers/app'],function() {
+	// AppController has autorun :P
 });

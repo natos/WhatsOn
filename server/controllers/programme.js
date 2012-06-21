@@ -14,6 +14,8 @@ define([
 	'utils/dateutils',
 	'utils/requestn',
 
+	'prettydate',
+
 	// mocks
 	'mocks/channels'
 
@@ -24,7 +26,7 @@ define([
  *	@class ProgrammeController
  */
 
-function(ProgrammeService, Metadata, DateUtils, Requestn, Channels) {
+function(ProgrammeService, Metadata, DateUtils, Requestn, PrettyDate, Channels) {
 
 	/** @constructor */
 
@@ -112,16 +114,16 @@ function(ProgrammeService, Metadata, DateUtils, Requestn, Channels) {
 					{ property: "og:title"			, content: _programme_details.title }
 				];
 
-				var template = req.xhr ? 'contents/programme.jade' : 'layouts/programme.jade'
+				var template = req.xhr ? 'contents/programme.jade' : 'layouts/programme.jade';
 
 				res.render(template, {
 					metadata	: metadata.override(_metadata, 'property').get(),
 					config		: _app.config,
+					channels	: _app.channels,
 					url			: _app.config.APP_URL + 'programme/' + _programme_details.id,
 					data		: _programme_details,
 					title		: _programme_details.title,
 					prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upcsocial: http://ogp.me/ns/fb/upcsocial#',
-					channels	: Channels,
 					supports	: req.supports
 				}); // HTML output	
 		});
@@ -170,13 +172,17 @@ function(ProgrammeService, Metadata, DateUtils, Requestn, Channels) {
 
 		new ProgrammeService().once('getEvents', function(error, response, body) {
 
-			var programme_events = [];
+			var programme_events = [], now = new Date();
 
 			if ( !response || /500|404/.test(response.statusCode) ) {
 				programme_events = [{ "statusCode" : "404" }];
 			} else {
 				programme_events = JSON.parse(body);
 				programme_events = dateUtils.prettifyCollection(programme_events, 'startDateTime');
+				programme_events.forEach(function(el, ix, arr) {
+					el.simpleTime = strftime(new Date(Date.parse(el.startDateTime)), '%R');
+				});
+
 			}
 
 			/* response */

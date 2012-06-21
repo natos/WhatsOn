@@ -48,20 +48,15 @@ function(ChannelService, Metadata, Channels) {
 
 	GridController.prototype.render = function(req, res) {
 
-		new ChannelService().once('getChannels', function(channels) {
+		var template = req.xhr ? 'contents/grid.jade' : 'layouts/grid.jade'
 
-			var template = req.xhr ? 'contents/grid.jade' : 'layouts/grid.jade'
-
-			res.render(template, {
-				metadata	: metadata.get(),
-				config		: _app.config,
-				channels	: channels,
-				timebar		: new Array(24),
-				channels	: Channels,
-				supports	: req.supports
-			});
-
-		}).getChannels();
+		res.render(template, {
+			metadata	: metadata.get(),
+			config		: _app.config,
+			channels	: _app.channels,
+			timebar		: new Array(24),
+			supports	: req.supports
+		});
 
 	};
 

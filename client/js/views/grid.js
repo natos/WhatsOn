@@ -98,7 +98,7 @@ define([
 	*/
 	function renderEvents(events) {
 
-		var link, description, i, event, width, left, startDateTime, endDateTime, right;
+		var link, description, i, event, width, left, startDateTime, endDateTime, category, subcategory, right;
 
 		for (i = 0; i < events[0].length; i++) {
 
@@ -107,12 +107,17 @@ define([
 			// Avoid rendering duplicate DOM elements
 			if ( $('#event-' + event.id)[0] ) {
 				// Don't render this event; skip to the next one.
+//				console.log('Warning!','Trying to render duplicate event.');
 				continue;
 			}
 
-			// Data
+			// Time data
 			startDateTime = convert.parseApiDate(event.startDateTime);
 			endDateTime = convert.parseApiDate(event.endDateTime);
+
+			// Category and subcategory
+			category = event.programme.subcategory.category.name;
+			subcategory = event.programme.subcategory.name;
 
 			// Avoid rendering events that end before 00:00 or start after 24:00
 			if ( (endDateTime <= g.ZERO) || (startDateTime >= g.END) ) {
@@ -142,7 +147,9 @@ define([
 				.attr('id', 'event-' + event.id)
 				.addClass('grid-event')
 				.append(link)
-				.append(description)
+				//.append(description)
+				.data('category', category)
+				.data('subcategory', subcategory)
 				.css({
 					'position': 'absolute',
 					'width': width + 'px',

@@ -12,10 +12,7 @@ define([
 	'services/tvtips',
 
 	// utils
-	'utils/metadata',
-
-	// mocks
-	'mocks/channels'
+	'utils/metadata'
 
 ],
 
@@ -24,7 +21,7 @@ define([
  *	@class DashboardController
  */
 
-function(ChannelService, BookingsService, TVTipsService, Metadata, Channels) {
+function(ChannelService, BookingsService, TVTipsService, Metadata) {
 
 	/** @constructor */
 
@@ -58,8 +55,8 @@ function(ChannelService, BookingsService, TVTipsService, Metadata, Channels) {
 			res.render(template, {
 				metadata	: metadata.get(),
 				config		: _app.config,
+				channels	: _app.channels,
 				normalizedEvents : normalizedEvents,
-				channels	: Channels,
 				supports	: req.supports
 			});
 
@@ -68,20 +65,25 @@ function(ChannelService, BookingsService, TVTipsService, Metadata, Channels) {
 		var featuredEventsType = 'tvtips'; // 'tvtips' | 'topbookings'
 
 		switch(featuredEventsType) {
+
 			case 'tvtips':
+
 				new TVTipsService().once('getTVTips', function(normalizedEvents) {
 
 					render(normalizedEvents);
 
 				}).getTVTips('nl');
+
 				break;
 
-			case 'topbookings': 
+			case 'topbookings':
+
 				new BookingsService().once('getTopBookings', function(normalizedEvents) {
 
 					render(normalizedEvents);
 
 				}).getTopBookings();
+
 				break;
 		}
 

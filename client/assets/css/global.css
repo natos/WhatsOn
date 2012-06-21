@@ -78,13 +78,6 @@ img {
 	border: 1px solid #000;
 }
 
-.fluid .btn {
-	border-radius: 0;
-	-moz-border-radius: 0;
-	-webkit-border-radius: 0;
-	border: none;
-}
-
 /**
 *	navigation
 */
@@ -126,9 +119,8 @@ img {
 
 /* logo */
 .upc-logo {
-
-	display: block;
-	text-indent: -100%;
+	display: none;
+	text-indent: -200%;
 	overflow:hidden;
 
 	padding: 0;
@@ -141,10 +133,21 @@ img {
 	left: 5px;
 	position: absolute;
 
+	/* TODO: change UPC logo for LGI Logo */
 	background: transparent url('/assets/images/sprite.png') 0 0 no-repeat;
 
 	opacity: .7; /* hipster branding ;) */
 	z-index: 1100;
+}
+
+@media (min-width: 480px) {
+	
+	.upc-logo {
+		display: block;
+		left: 50%;
+		margin-left: -15px;
+	}
+
 }
 
 /* navbar links */
@@ -239,36 +242,6 @@ img {
 /**
 *	search-box
 */
-.search-box {
-	display: block;
-	background: #666 url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
-	font-size: 1em;
-	padding: 10px;
-	margin: 0;
-	right: 0px;
-	left: 0px;
-	border-bottom: 1px solid #333;
-	z-index: 700;
-    -webkit-transition: top 0.7s ease-in-out 0s;
-    -moz-transition: top 0.7s ease-in-out 0s;
-    -o-transition: top 0.7s ease-in-out 0s;
-    transition: top 0.7s ease-in-out 0s;
-}
-
-.fixed-top .search-box {
-	position: fixed;
-	top: 0;
-}
-
-.fixed-top .search-box.active {
-	top: 50px;
-}
-
-.search-box i {
-	margin-top: 5px;
-	float: right;
-}
-
 .search-box input[type="search"] {
     border: 1px solid #d1d1d1;
     color: #333;
@@ -592,56 +565,6 @@ footer {
 				text-shadow: 2px 2px 2px #000000;
 			}
 
-
-/**
-*	top lists
-*/
-
-#top-lists {
-	-webkit-transition: font-size ease-in-out .3s;
-	background: transparent url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
-}
-
-#top-lists ul li i {
-	float: right;
-}
-
-#top-lists h3 {
-	margin: 0;
-	font-size: 1.3em;
-}
-
-#top-lists h3 i {
-	margin: 0 5px 0 0;
-}
-
-#top-lists ul {
-	margin-top: 5px;
-}
-
-#top-lists li {
-	margin: 0;
-	padding: 10px 20px;
-	background: -moz-linear-gradient(
-		top,
-		#eeeeee 0%,
-		#dddddd 50%,
-		#dbdbdb 50%,
-		#b5b5b5);
-	background: -webkit-gradient(
-		linear, left top, left bottom, 
-		from(#eeeeee),
-		color-stop(0.50, #efefef),
-		color-stop(0.50, #ededed),
-		to(#dddddd));
-}
-
-#top-lists li p {
-	font-size: .8em;
-	float: right;
-	margin: 0;
-}
-
 /**
 *	movies
 */
@@ -686,3 +609,341 @@ footer {
 .movie .poster {
 	position: relative;
 }
+
+
+/**
+*	#user-action buttons
+*/
+
+#user-action button {
+	font-size: 1em;
+	color: #050505;
+	padding: 5px 10px;
+	background: -moz-linear-gradient(
+		top,
+		#ffffff 0%,
+		#ebebeb 50%,
+		#dbdbdb 50%,
+		#b5b5b5);
+	background: -webkit-gradient(
+		linear, left top, left bottom, 
+		from(#ffffff),
+		color-stop(0.50, #ebebeb),
+		color-stop(0.50, #dbdbdb),
+		to(#b5b5b5));
+	border: 1px solid #949494;
+	-moz-box-shadow:
+		0px 1px 1px rgba(000,000,000,0.5),
+		inset 0px 0px 2px rgba(255,255,255,1);
+	-webkit-box-shadow:
+		0px 1px 1px rgba(000,000,000,0.5),
+		inset 0px 0px 2px rgba(255,255,255,1);
+	text-shadow:
+		0px -1px 0px rgba(000,000,000,0.2),
+		0px 1px 0px rgba(255,255,255,1);
+}
+
+#user-action button:first-child {
+	-webkit-border-top-left-radius: 5px;
+	-webkit-border-bottom-left-radius: 5px;
+	-moz-border-radius-topleft: 5px;
+	-moz-border-radius-bottomleft: 5px;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+
+#user-action button:last-child {
+	-webkit-border-top-right-radius: 5px;
+	-webkit-border-bottom-right-radius: 5px;
+	-moz-border-radius-topright: 5px;
+	-moz-border-radius-bottomright: 5px;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+
+#user-action button:hover {
+	color: #000;
+	border: 1px solid #000;
+}
+
+#user-action button.disable {
+	opacity: .8;
+	color: #666;
+}
+
+
+/**
+**	Start dashboard & programme & channel view
+**/
+
+/* dashboard quirks */
+
+	#dashboard-content section article h3 {
+		margin: 5px 0;
+	}
+
+	#dashboard-content section article h3 i {
+		margin-right: 8px;
+	}
+
+	#dashboard-content .programmes span {
+		margin: 5px;
+		font-size: .8em;
+	}
+
+	#dashboard-content .channels li {
+		display: inline-block;
+	}
+
+/* end dashboard quirks */
+
+
+/* small inline favorite */
+#programme-content header h1 .favorite,
+#channel-content header h1 .favorite {
+	position: absolute;
+	cursor: pointer;
+	left: 15px;
+}
+
+#programme-content header h1 .favorite .icon-star,
+#channel-content header h1 .favorite .icon-star {
+	color: #D9D919;
+}
+
+#programme-content header h1 .favorite:hover,
+#channel-content header h1 .favorite:hover {
+	color: #CFB52B;
+}
+
+/* buttons */
+#programme-content #user-action button b,
+#channel-content #user-action button b {
+	display: none;
+}
+/* end buttons */
+
+#programme-content > header,
+#programme-content > section,
+#channel-content > header,
+#channel-content > section {
+	margin: 0;
+}
+
+#programme-content header,
+#channel-content header {
+	border-bottom:1px solid #ccc;
+	position:relative;
+	margin: 0;
+	padding: 5px 10px;
+	min-height: 100px;
+	background-color: #eee;
+}
+
+
+/* channel logos */
+#programme-content .logo,
+#channel-content .logo {
+	display: none;
+}
+
+#dashboard-content .channel {
+	display: block;
+	background-color: #fff;
+	border-radius: 10px;
+	padding: 5px;
+	margin: 5px;
+	border: 1px solid #ccc;
+	border-bottom: 2px solid #aaa; /* small shadow */
+}
+
+#dashboard-content .channel:hover {
+	border: 1px solid #aaa;
+	border-bottom: 2px solid #333; /* small shadow */
+}
+/* end channel logos */
+
+#programme-content header,
+#channel-content header {
+	padding-left: 50px;
+	border-top: 1px #bbb solid;
+	border-bottom: 1px #ccc solid;
+	background: #eee url('/assets/images/bg-gradient-headers.jpeg') 0 -5px repeat-x;
+}
+
+#programme-content header h1,
+#channel-content header h1 {
+	margin: 5px 0;
+}
+
+#programme-content header .category,
+#channel-content header .category {
+	color: #999;
+	margin: 0;
+	font-weight: normal;
+	font-size: 12px;
+}
+
+#programme-content header p,
+#channel-content header p {
+	margin: 10px 0;
+}
+
+#dashboard-content section,
+#programme-content section,
+#channel-content section {
+	margin: 0;
+}
+
+#dashboard-content section article,
+#programme-content section article,
+#channel-content section article {
+	margin: 0;
+	padding: 5px 10px;
+	border-top: 1px #bbb solid;
+	border-bottom: 1px #ccc solid;
+	background: #eee url('/assets/images/bg-gradient-headers.jpeg') 0 -5px repeat-x;
+}
+
+	
+	/* start channel events list */
+	#programme-content h2,
+	#channel-content h2 {
+		padding-left: 60px;
+		color: #aaa;
+	}
+
+	#programme-content h2 i,
+	#channel-content h2 i {
+		position: absolute;
+		font-size: 2em;
+		line-height: 0;
+		color: #ccc;
+		left: 20px;
+	}
+
+	#programme-content,
+	#channel-content {
+		position: relative;
+	}
+	
+	#programme-content .event,
+	#channel-content .programme {
+		margin-left: 60px;
+		margin-bottom: 10px;
+	}
+
+	#programme-content .event .title,
+	#channel-content .programme .title {
+		display: inline;
+		margin: 0;
+	}
+
+	#programme-content .time,
+	#channel-content .time {
+		position: absolute;
+		font-size: .8em;
+		padding: 4px 6px;
+		left: 15px;
+		color: #aaa;
+		border: 1px solid transparent;
+	}
+
+	#programme-content .event:hover .time,
+	#channel-content .programme:hover .time {
+		border: 1px solid #666;
+		color: #666;
+	}
+
+	#programme-content .event a,
+	#programme-content .event a:visited {
+		display: inline;
+		color: #333;
+	}
+
+	#channel-content .programme a,
+	#channel-content .programme a:visited {
+		display: block;
+		color: #333;
+	}
+
+	#programme-content .event a:hover,
+	#channel-content .programme a:hover {
+		color: #000;
+	}
+
+	#programme-content .event a:active,
+	#channel-content .programme a:active {
+		color: #00f;
+	}
+	/* end channel events list */
+
+
+@media (min-width: 480px) {
+
+	#programme-content #user-action button b,
+	#channel-content #user-action button b {
+		display: inline;
+	}
+
+	#programme-content #user-action button i,
+	#channel-content #user-action button i {
+		margin-right: 5px;
+	}
+}
+
+@media screen and (min-width:640px) {
+
+	#programme-content header,
+	#channel-content header {
+		/*	move the stuff to make place for the logo
+		padding: 5px 10px 5px 80px;
+		*/
+	}
+
+	#dashboard-content > section,
+	#programme-content > header,
+	#programme-content > section,
+	#channel-content > header,
+	#channel-content > section {
+		margin: 10px;
+	}
+
+	#dashboard-content > section > article,
+	#programme-content > section > article,
+	#channel-content > section > article {
+		margin-bottom: 10px;
+	}
+
+	#programme-content #user-action,
+	#channel-content #user-action {
+		float: right;
+	}
+
+	#programme-content h2 i,
+	#channel-content h2 i {
+		left: 28px;
+	}
+
+	#programme-content .time,
+	#channel-content .time {
+		position: absolute;
+		font-size: 1em;
+		padding: 2px 4px;
+		left: 20px;
+	}
+
+}
+
+@media (min-width: 980px) {
+
+	#programme-content #user-action button,
+	#channel-content #user-action button {
+		padding: 10px 15px;
+	}
+
+}
+
+/**
+**	End programme & channel view
+**/

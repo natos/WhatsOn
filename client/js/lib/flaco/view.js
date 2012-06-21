@@ -31,25 +31,36 @@ define([
 	*/
 
 	// returns template name for a given view
-	function templateName(view) { return '#' + view.name + '-template'; }
+	function templateName(view) {
+		return view.name + getParts(view).replace('/','-') + '-template'; 
+	}
+
+	function templateId(view) {
+		return '#' + templateName(view);
+	}
 
 	// returns if the template DOM element exists
-	function templateExists(view) { return $( templateName(view) )[0]; }
+	function templateExists(view) { return false; /*$( templateId(view) )[0];*/ }
 
 	// renders the template
 	function setTemplate(view) {
 		// write the template in the DOM
-		a.$content.html( $( templateName(view) ).text() );
+		a.$content.html( $( templateId(view) ).text() );
 		// render view :)
 		view.render();
+	}
+
+	function getParts(view) {
+		return (view.State && view.State.parts ? '/' + view.State.parts.join('/') : '' );
 	}
 
 	// fetch template from server and save it to the DOM
 	function fetchTemplate(view) {
 		// create template container and append it to the DOM
-		var $template = $(SCRIPT_TAG).attr('id', templateName(view).replace('#','')).appendTo('#templates'),
+		var $template = $(SCRIPT_TAG).attr('id', templateName(view)).appendTo('#templates'),
 		// fetch from url
-		from_url = '/' + view.name + (view.State && view.State.parts ? '/' + view.State.parts.join('/') : '' );
+		from_url = '/' + view.name + getParts(view);
+		console.log(from_url);
 		// fetch content from server
 		$.get(from_url, function saveNewTemplate(res) {
 			// save it in the DOM container

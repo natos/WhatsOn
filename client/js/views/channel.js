@@ -21,52 +21,108 @@ define([
 
 	var url = $('meta[property="og:url"]').attr('content');
 
-	function handleUserModelChanges(event) {
+	/* State handler */
+	function handleUserModelChanges(changes) {
 
-		var channels, t, id;
+		if (typeof changes === 'undefined') { return; }
 
-		if (event.channels) {
-
-			channels = event.channels.data;
-
-			t = channels.length;
-
-			while (t--) {
-				// if the ID of the show is in my favorite list, disable the favorite button;
-				if (channels[t].data.tv_show.url === url) {
-					$('#user-action').find('.favorite').attr('disable','disable').addClass('disable');
-				}
-			}
-			
-		}
+		if (changes.favorites) { checkIfThisIsAFavorite(changes.favorites); }
 
 	}
 
+	/* State changes */
+	/* check if this channel is a favorite */
+	function checkIfThisIsAFavorite(favorites) {
+		var found = false, favorite, channel, t = favorites.data.length;
+		while (t--) {
+			favorite = favorites.data[t];
+			channel = favorite.data.tv_channel;
+			if (channel && channel.url === url) {
+				found = true;
+				console.log('found a favorite');
+				thisIsAFavorite(favorite);
+				break;
+			}
+		}
+
+		if (!found) {
+			console.log('didnt found a favorite');
+			thisIsNotLonguerAFavorite();
+		}
+	}
+
+	function thisIsAFavorite(favorite) {
+		$('.favorite').attr('disable','disable').addClass('disable').data('favorite-id', favorite.id);
+		$('.favorite i').attr('class','icon-star');
+	}
+
+	function thisIsNotLonguerAFavorite() {
+		$('.favorite').removeAttr('disable').removeClass('disable').removeAttr('data-favorite-id');
+		$('.favorite i').attr('class','icon-star-empty');
+	}
+
+	/* Action Handler, for User Interaction */
 	function userActionHandler(event) {
 
-		if ( /disable/.test(event.target.className) ) {			
-			console.log('disable');
+		// the only available actions are:
+		// - add to favorite
+		// - remove from favorites
+
+	/* Find a button */
+
+		var button = event.target, $button = $(button), isFavorited;
+
+		// so, grab a parent element
+		while (!$button.hasClass('favorite')) {
+			// if we reach the top container, break
+			// in this case should be the #programme-content
+			if (button === this) { break; }
+			// step up in the DOM to the next parent
+			button = button.parentNode;
+			// wrap it
+			$button = $(button);
+		}
+
+		/* nothing to do here */
+		// when bubbling we reach the document
+		if (button === document) { return; }
+		// the button is disabled
+		if ($button.hasClass('disabled')) { return; }
+
+
+	/* Define the action */
+
+		// check if is already a favorite
+		isFavorited = $button.data('favorite-id')
+		if (isFavorited) {
+			// then the action would be remove from favorite
+			removeFavorite(isFavorited);
 			return;
 		}
 
-		if (event.target.className === 'favorite') { favorite(); }
+		// default action is to add a favorite
+		addFavorite(); 
+		return;
 
 	}
 
 	/* ACTIONS */
 
-	function favorite() {
+	function addFavorite() {
 
-		App.emit(c.FAVORITE, url);
+		App.emit(c.ADD_FAVORITE, url);
 
 	}
+
+	function removeFavorite(id) {
+
+		App.emit(c.REMOVE_FAVORITE, id);
+
+	};
 
 /* public */
 
 	function initialize() {
-
-		App.loadCss('/assets/css/channelpage.css');
-		App.loadCss('/assets/css/channel-event-list.css');
 
 		App.on(u.MODEL_CHANGED, handleUserModelChanges);
 
@@ -84,6 +140,8 @@ define([
 	}
 
 	function finalize() {
+
+		App.off(u.MODEL_CHANGED, handleUserModelChanges);
 
 		return this;
 
