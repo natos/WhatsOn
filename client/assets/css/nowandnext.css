@@ -25,16 +25,15 @@
 	font-weight:bold;
 	text-shadow:1px 1px 1px #fff;
 }
+.channels-list-types .type.selected a {
+	background:#ffb;
+	text-decoration:underline;
+}
 .channels-list-types .type a:hover,
 .channels-list-types .type a:active{
 	background:#ddd;
 }
 
-.channels-list-types.POP a.type-pop,
-.channels-list-types.FAV a.type-fav,
-.channels-list-types.ALL a.type-all {
-	background:#ccc;
-}
 @media screen and (min-width:640px) {
 	.channels-list-types {
 		border-bottom:1px solid #ccc;

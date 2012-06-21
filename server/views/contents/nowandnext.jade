@@ -1,7 +1,7 @@
 #nowandnext-content
 	ul.channels-list-types
 		each filterGroup in availableFilterGroups
-			li.type(style="width:#{100 / availableFilterGroups.length}%")
+			li.type(class="#{filterGroup.selected ? 'selected' : ''}", style="width:#{100 / availableFilterGroups.length}%")
 				a.group(href="#{filterGroup.url}") #{filterGroup.text}
 	
 	#channels-list-container

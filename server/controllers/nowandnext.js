@@ -134,6 +134,7 @@ function(NowAndNextService, DomainService, Metadata, QS, config) {
 					channelIds = group.channelIds;
 					earlierUrl = '/nowandnext/group/' + group.id + '/dt/' + getFormattedSliceStartTime(dtPreviousSlice);
 					laterUrl = '/nowandnext/group/' + group.id + '/dt/' + getFormattedSliceStartTime(dtNextSlice);
+					group.selected = true;
 				}
 			});
 
