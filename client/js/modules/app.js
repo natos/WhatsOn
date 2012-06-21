@@ -21,6 +21,9 @@ define([
 	/* Modules namespace */
 	App.modules = {};
 
+	/* Templates namespace */
+	App.templates = {};
+
 	/* The app holds an array of channels */
 	//App.channels = [];
 	App.channels = channels;

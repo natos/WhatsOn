@@ -113,6 +113,7 @@ define([
 
 			case "logout":
 				event.preventDefault();
+				event.stopPropagation();
 				upc.emit(u.LOG_OUT);
 				// TODO: Redirect to homepage
 //				UserController.logout();

@@ -212,6 +212,10 @@ img {
 	float: right;
 }
 
+.login img {
+	width: 100%;	
+}
+
 .user-control {
 	display: none;
 	overflow: hidden;

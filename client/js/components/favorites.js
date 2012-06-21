@@ -68,7 +68,7 @@ define([
 		var favorites = model[name],
 			// DOM elements
 			$favorites = $('.' + name),
-			// detach lists from DOM
+			// DOM lists from DOM
 			$lists = {
 				'programme'	: $favorites.find('.programmes'),
 				'channel'	: $favorites.find('.channels')

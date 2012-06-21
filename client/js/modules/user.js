@@ -26,9 +26,11 @@ define([
 	AUTH_STATUS_CHANGE	= 'auth.statusChange',
 	OPEN_GRAPH_PREFIX	= '/me/upcsocial:',
 	// og calls
+	LIKES_CALL			= '/me/likes',
 	FAVORITES_CALL		= OPEN_GRAPH_PREFIX + 'favorite',
 	RECORDINGS_CALL		= OPEN_GRAPH_PREFIX + 'record',
 	// labels
+	LIKES				= 'likes',
 	FAVORITES			= 'favorites',
 	RECORDINGS			= 'recordings';
 
@@ -60,7 +62,7 @@ define([
 	*/
 
 	function login() { 
-console.log('Login in')
+
 		// Check for arguments. The first argument, could be a callback
 		// Because some actions need login first
 		var args = slice.call(arguments, 0), callback = args.shift();
@@ -94,36 +96,23 @@ console.log('Login in')
 		/* currying scope */
 		var _label = label, _call, _model;
 
-		/* currying helpers */
-		function from(call) {
-
-			_call = call;
-
-			/* curryout */
-			return { saveTo: saveTo };
-		}
-
-		function saveTo(model) {
-
-			_model = model;
-
-			if (_label && _call && _model) {
-				// make the call
-				FB.api(_call, handleResponse);
+			/* currying helpers */
+			function from(call) { 
+				_call = call;
+				return { saveTo: saveTo };
+			}	
+			function saveTo(model) {
+				_model = model;
+				if (_label && _call && _model) { FB.api(_call, handleResponse); } 
+				return { fetch: this };
 			}
-
-			/* curryrestart */
-			return { fetch: this };
-		}
 
 		/* handler */
 		function handleResponse(response) {
-
 			if (!response) { 
-				console.log('Warning!', _label, _call, _model.name, ': Open graph has sent an empty response');
+				console.log('Warning!', _label, _call, _model.name, ': Open graph has sent an empty response', response);
 				return; 
 			}
-
 			_model.set(_label, response);
 		}
 
@@ -131,19 +120,18 @@ console.log('Login in')
 		return { from: from };
 	}
 
-	/* FAVORITES */
+	/* FETCH LIKES */
+	function fetchLikes() {
+		fetch(LIKES).from(LIKES_CALL).saveTo(UserModel);
+	}
 
+	/* FETCH FAVORITES */
 	function fetchFavorites() {
-
-		//FB.api(FAVORITES_CALL, setFavorites);
 		fetch(FAVORITES).from(FAVORITES_CALL).saveTo(UserModel);
 	}
 
-	/* RECORDINGS */
-
+	/* FETCH RECORDINGS */
 	function fetchRecordings() {
-
-		//FB.api(RECORDINGS_CALL, setRecordings);
 		fetch(RECORDINGS).from(RECORDINGS_CALL).saveTo(UserModel);
 	}
 
@@ -151,6 +139,7 @@ console.log('Login in')
 	function connected() {
 		// when a user is identificated
 		// fetch relevant data from OG
+		App.emit(u.FETCH_LIKES);
 		App.emit(u.FETCH_FAVORITES);
 		App.emit(u.FETCH_RECORDINGS);
 		// let know eveyone
@@ -172,7 +161,6 @@ console.log('Login in')
 /* public */
 
 	function initialize() {
-
 		// FB SDK fallback
 		if (typeof FB === 'undefined') {
 			console.log('User: waiting for facebook SDK');
@@ -204,21 +192,21 @@ console.log('Login in')
 
 		App.on(u.LOG_IN, login);
 		App.on(u.LOG_OUT, logout);
+		App.on(u.FETCH_LIKES, fetchLikes);
 		App.on(u.FETCH_FAVORITES, fetchFavorites);
 		App.on(u.FETCH_RECORDINGS, fetchRecordings);
 
 		return this;
-
 	}
 
 	function finalize() {
-
 		// unsubscribe from FB notifications
 		FB.Event.unsubscribe(AUTH_STATUS_CHANGE, facebookLoginStatus);
 
 		// let go all the event handlers
 		App.off(u.LOG_IN, login);
 		App.off(u.LOG_OUT, logout);
+		App.off(u.FETCH_LIKES, fetchLikes);
 		App.off(u.FETCH_FAVORITES, fetchFavorites);
 		App.off(u.FETCH_RECORDINGS, fetchRecordings);
 	
@@ -229,9 +217,7 @@ console.log('Login in')
 	}
 
 	function getAuthStatus() {
-
 		return UserModel[FACEBOOK_STATUS]? true: false;
-
 	}
 
 /* export */

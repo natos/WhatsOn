@@ -20,6 +20,8 @@ define([], function ProgrammeConfigContext() {
 
 		RECORD: 'programme:record',
 
+		SHARE: 'programme:share',
+
 		ADD_FAVORITE: 'programme:add_favorite',
 
 		REMOVE_FAVORITE: 'programme:remove_favorite',

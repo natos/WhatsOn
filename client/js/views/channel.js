@@ -92,6 +92,12 @@ define([
 
 	/* Define the action */
 
+		action = $button.pluck('className');
+
+		console.log(action);
+
+		return;
+
 		// check if is already a favorite
 		isFavorited = $button.data('favorite-id')
 		if (isFavorited) {

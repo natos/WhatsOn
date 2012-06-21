@@ -11,16 +11,17 @@ define([
 	'config/user',
 	'config/programme',
 	'modules/app',
+	'models/user',
 	'lib/flaco/view',
 	'controllers/programme'
 
-], function ProgrammeViewScope(a, u, p, App, View, ProgrammeController) {
+], function ProgrammeViewScope(a, u, p, App, UserModel, View, ProgrammeController) {
 
-	var name = 'programme';
+	var name = 'programme',
 
 /* private */
 
-	var url = $('meta[property="og:url"]').attr('content');
+	url;
 
 	/* State handler */
 	function handleUserModelChanges(changes) {
@@ -38,6 +39,7 @@ define([
 		while (t--) {
 			favorite = favorites.data[t];
 			programme = favorite.data.tv_show;
+
 			if (programme && programme.url === url) {
 				found = true;
 				console.log('found a favorite');
@@ -71,38 +73,60 @@ define([
 
 	/* Find a button */
 
-		var button = event.target, $button = $(button), isFavorited;
+		var button = event.target, $button = $(button), isDisabled, favoriteId, share;
 
 		// so, grab a parent element
-		while (!$button.hasClass('favorite')) {
+		while (button.tagName !== "BUTTON") {
 			// if we reach the top container, break
 			// in this case should be the #programme-content
-			if (button === this) { break; }
+			if (button === this) { return; }
 			// step up in the DOM to the next parent
 			button = button.parentNode;
-			// wrap it
-			$button = $(button);
 		}
 
-		/* nothing to do here */
-		// when bubbling we reach the document
-		if (button === document) { return; }
+		// wrap it
+		$button = $(button);
 		// the button is disabled
-		if ($button.hasClass('disabled')) { return; }
+		isDisabled = $button.hasClass('disable');
 
 
 	/* Define the action */
 
-		// check if is already a favorite
-		isFavorited = $button.data('favorite-id')
-		if (isFavorited) {
-			// then the action would be remove from favorite
-			removeFavorite(isFavorited);
-			return;
+		action = $button.pluck('className')[0];
+
+		switch (action) {
+
+			case 'like':
+				App.emit(p.ADD_LIKE, url);
+				break;
+
+			case 'like disable':
+				App.emit(p.REMOVE_LIKE, url);
+				break;
+
+			case 'favorite':
+				App.emit(p.ADD_FAVORITE, url);
+				break;
+
+			case 'favorite disable':
+				// check if is already a favorite
+				favoriteId = $button.data('favorite-id');
+				App.emit(p.REMOVE_FAVORITE, favoriteId);
+				break;
+
+			case 'share':
+				var share = { 
+					method	: 'feed', 
+					link	: url,
+					name	: 'Share in your timeline',
+					caption: 'Reference Documentation',
+					description: 'Using Dialogs to interact with users.'
+				};
+				App.emit(p.SHARE, share);
+				break
+
 		}
 
-		// default action is to add a favorite
-		addFavorite(); 
 		return;
 
 	}
@@ -133,14 +157,26 @@ define([
 
 	function initialize(State) {
 
+		console.log(State);
+		// uncomment next line for production
+		//url = State.url;
+		// on dev, we need to hardcode the production url
+		// to trick facebook open graph
+		url = 'http://upcsocial.herokuapp.com' + State.hash.split('?')[0];
+
+		console.log(url);
+
 		App.on(u.MODEL_CHANGED, handleUserModelChanges);
 	
 	}
 
 	function render() {
 
+		console.log('rendering programme view');
+
 		p.$userAction = $('#programme-content').on('click', userActionHandler);
 
+		handleUserModelChanges(UserModel);
 	}
 
 	function finalize() {
