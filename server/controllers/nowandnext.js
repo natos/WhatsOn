@@ -8,6 +8,7 @@ define([
 
 	// services
 	'services/nowandnext',
+	'services/domain',
 
 	// utils
 	'utils/metadata',
@@ -22,7 +23,7 @@ define([
  *	@class NowAndNextController
  */
 
-function(NowAndNextService, Metadata, QS, config) {
+function(NowAndNextService, DomainService, Metadata, QS, config) {
 
 	/** @constructor */
 
@@ -41,17 +42,7 @@ function(NowAndNextService, Metadata, QS, config) {
 
 	var _app,
 
-		metadata = new Metadata(),
-
-		nowAndNextService = new NowAndNextService(),
-
-		LIST_TYPE_ALL = 'ALL',
-		LIST_TYPE_POP = 'POP',
-		LIST_TYPE_FAV = 'FAV',
-
-		ALLOWED_LIST_TYPES = [LIST_TYPE_ALL, LIST_TYPE_POP, LIST_TYPE_FAV],
-
-		DEFAULT_LIST_TYPE = LIST_TYPE_POP;
+		metadata = new Metadata();
 
 	// Given a date, return a string in the format 'YYYY-MM-DDTHH:00Z',
 	// which is the format the EPG api accepts for marking the start time.
@@ -60,11 +51,6 @@ function(NowAndNextService, Metadata, QS, config) {
 	var getFormattedSliceStartTime = function(dt) {
 		return dt.getFullYear().toString() + '-' + ('00' + (dt.getMonth() + 1).toString()).slice(-2) + '-' + ('00' + dt.getDate().toString()).slice(-2) + 'T' + ('00' + dt.getHours().toString()).slice(-2) + ':00Z';
 	};
-
-	// TODO: Implement popular channels per country
-	var getPopularChannels = function(countryId) {
-		return ['7J', '6s', '7G'];
-	}
 
 	// TODO: Use Date.parse() for simpler way of parsing date in query string?
 	// (Check timezone handling.)
@@ -92,21 +78,6 @@ function(NowAndNextService, Metadata, QS, config) {
 		return dt;
 	};
 
-	var getListTypeFromQueryString = function(req) {
-		var type = DEFAULT_LIST_TYPE,
-			typeString = req.query['type'],
-			typeIndex;
-
-		if (typeof typeString === 'string') {
-			typeIndex = ALLOWED_LIST_TYPES.indexOf(typeString.toUpperCase());
-			if (typeIndex >= 0) {
-				type = ALLOWED_LIST_TYPES[typeIndex];
-			}
-		}
-
-		return type;
-	};
-
 	var getChannelIdsFromQueryString = function(req) {
 		var channelIds = [],
 			channelsString = req.query['channels'];
@@ -123,60 +94,66 @@ function(NowAndNextService, Metadata, QS, config) {
 
 	NowAndNextController.prototype.render = function(req, res) {
 
-		var dt = getDateFromQueryString(req),
-			listType = getListTypeFromQueryString(req),
-			channelIds,
-			dtPreviousSlice = new Date(dt.valueOf() - (60 * 60 * 1000)),
-			dtNextSlice = new Date(dt.valueOf() + (60 * 60 * 1000)),
-			popUrl = '?dt=' + getFormattedSliceStartTime(dt) + '&type=pop',
-			allUrl = '?dt=' + getFormattedSliceStartTime(dt) + '&type=all',
-			favUrl,
-			earlierUrl = '?dt=' + getFormattedSliceStartTime(dtPreviousSlice),
-			laterUrl = '?dt=' + getFormattedSliceStartTime(dtNextSlice),
-			strftime = require('prettydate').strftime;
+		// We first need to get details of the "Filter" domain
+		(new DomainService()).once('getDomainDetails', function(domainDetails){
 
-		if (listType == LIST_TYPE_ALL) {
-			channelIds = null;
-			earlierUrl += '&type=' + LIST_TYPE_ALL;
-			laterUrl += '&type=' + LIST_TYPE_ALL;
-		} else if (listType == LIST_TYPE_POP) {
-			channelIds = getPopularChannels('NL');
-			earlierUrl += '&type=' + LIST_TYPE_POP;
-			laterUrl += '&type=' + LIST_TYPE_POP;
-		} else {
-			channelIds = getChannelIdsFromQueryString(req);
-			earlierUrl += '&type=' + LIST_TYPE_FAV + '&channels=' + channelIds.join('|');
-			laterUrl += '&type=' + LIST_TYPE_FAV + '&channels=' + channelIds.join('|');
-		};
+			var dt = getDateFromQueryString(req),
+				channelIds = [],
+				dtPreviousSlice = new Date(dt.valueOf() - (60 * 60 * 1000)),
+				dtNextSlice = new Date(dt.valueOf() + (60 * 60 * 1000)),
+				currentSliceFormattedStartTime = getFormattedSliceStartTime(dt),
+				popUrl = '?dt=' + getFormattedSliceStartTime(dt) + '&type=pop',
+				allUrl = '?dt=' + getFormattedSliceStartTime(dt) + '&type=all',
+				favUrl,
+				earlierUrl = '?dt=' + getFormattedSliceStartTime(dtPreviousSlice),
+				laterUrl = '?dt=' + getFormattedSliceStartTime(dtNextSlice),
+				strftime = require('prettydate').strftime;
 
-		favUrl = '?dt=' + getFormattedSliceStartTime(dt) + '&type=fav&channels=7s|6g|7y|8u';
-
-		nowAndNextService.once('getNowAndNext', function(channels, channelEventsCollections){
-
-			var template = req.xhr ? 'contents/nowandnext.jade' : 'layouts/nowandnext.jade'
-
-			res.render(template, {
-				metadata	: metadata.get(),
-				config		: _app.config,
-				dt 			: dt,
-				popUrl      : popUrl,
-				favUrl      : favUrl,
-				allUrl      : allUrl,
-				nowTime     : strftime(dt, '%R'),
-				nowDate	    : strftime(dt, '%A %e %B'),
-				listType    : listType,
-				earlierUrl	: earlierUrl,
-				earlierText	: strftime(dtPreviousSlice, '%R'),
-				laterUrl	: laterUrl,
-				laterText	: strftime(dtNextSlice, '%R'),
-				channels	: channels,
-				channelEventsCollections: channelEventsCollections,
-				supports	: req.supports
+			// Build an array of all the filter options to be offered
+			var availableFilterGroups = domainDetails.groups.map(function(group){
+				return {text:group.name, url:'/nowandnext/?dt=' + currentSliceFormattedStartTime + '&group=' + group.id}
 			});
+			// Add an item for "all channels" to the end of the array
+			availableFilterGroups.push({text:'All', url:'/nowandnext/?dt=' + currentSliceFormattedStartTime});
 
-		});
+			var selectedFilterGroup = req.query['group'];
+			if (selectedFilterGroup) {
+				domainDetails.groups.forEach(function(group){
+					if (group.id===selectedFilterGroup) {
+						channelIds = group.channelIds;
+					}
+				});
+				earlierUrl += '&group=' + selectedFilterGroup;
+				laterUrl += '&group=' + selectedFilterGroup;
+			} else {
+				// TODO: use the full channel list here
+				channelIds = ['7s','6g','7y','8u'];
+			}
 
-		nowAndNextService.getNowAndNext(dt, channelIds);
+			(new NowAndNextService()).once('getNowAndNext', function(channels, channelEventsCollections){
+
+				var template = req.xhr ? 'contents/nowandnext.jade' : 'layouts/nowandnext.jade'
+
+				res.render(template, {
+					metadata	: metadata.get(),
+					config		: _app.config,
+					dt 			: dt,
+					availableFilterGroups      : availableFilterGroups,
+					nowTime     : strftime(dt, '%R'),
+					nowDate	    : strftime(dt, '%A %e %B'),
+					earlierUrl	: earlierUrl,
+					earlierText	: strftime(dtPreviousSlice, '%R'),
+					laterUrl	: laterUrl,
+					laterText	: strftime(dtNextSlice, '%R'),
+					channels	: channels,
+					channelEventsCollections: channelEventsCollections,
+					supports	: req.supports
+				});
+
+			}).getNowAndNext(dt, channelIds);
+
+
+		}).getDomainDetails('Filter');
 
 	};
 

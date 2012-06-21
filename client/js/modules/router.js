@@ -42,6 +42,9 @@ define([
 			State.parts = History.getShortUrl(State.url).match(/[\w\d\-?\w\d]+/gi);
 			State.controller = (State.parts) ? shift.apply(State.parts) : '';
 
+console.log('-----------');
+console.log(State);
+
 		App.emit(a.NAVIGATE, State);
 	}
 

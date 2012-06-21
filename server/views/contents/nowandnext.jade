@@ -1,13 +1,8 @@
 #nowandnext-content
-	ul(class=["channels-list-types", "#{listType}"])
-		li.type
-			a.type-pop(href=popUrl) Popular channels
-		li.type
-			a.type-fav(href=favUrl)
-				img(src="/assets/images/f_logo.png", height="16", width="16", style="display:inline;vertical-align:top;margin-right:0.5em") 
-				span Liked channels
-		li.type
-			a.type-all(href=allUrl) All channels
+	ul.channels-list-types
+		each filterGroup in availableFilterGroups
+			li.type(style="width:#{100 / availableFilterGroups.length}%")
+				a(href="#{filterGroup.url}") #{filterGroup.text}
 	
 	#channels-list-container
 		ul.channels-list
