@@ -3,9 +3,6 @@
 	width:100%;
 }
 .channels-list-types .type {
-	box-sizing:-moz-border-box;
-	box-sizing:-webkit-border-box;
-	box-sizing:border-box;
 	display:table-cell;
 	list-style-type:none;
 	border-left:1px solid #ccc;
@@ -44,6 +41,7 @@
 
 .channels-list {
 	padding:0;
+	margin-top:10px;
 }
 .channels-list-channel {
 	width:100%;
@@ -54,6 +52,7 @@
 .channels-list-channel > .inner {
 	background:#fefefe;
 	box-shadow:0 0 5px #666;
+	margin-bottom:10px;
 }
 @media screen and (min-width:640px) {
 	.channels-list {

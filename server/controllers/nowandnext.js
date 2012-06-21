@@ -148,7 +148,7 @@ function(NowAndNextService, DomainService, Metadata, QS, config) {
 					dt 			: dt,
 					availableFilterGroups      : availableFilterGroups,
 					nowTime     : strftime(dt, '%R'),
-					nowDate	    : strftime(dt, '%A %e %B'),
+					nowDate	    : strftime(dt, '%a %e %B'),
 					earlierUrl	: earlierUrl,
 					earlierText	: strftime(dtPreviousSlice, '%R'),
 					laterUrl	: laterUrl,
