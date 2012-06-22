@@ -13,15 +13,15 @@ define([
 	'modules/app',
 	'models/user',
 	'lib/flaco/view',
-	'controllers/programme'
+	'components/social'
 
-], function ProgrammeViewScope(a, u, p, App, UserModel, View, ProgrammeController) {
+], function ProgrammeViewScope(a, u, p, App, UserModel, View, Social) {
 
 	var name = 'programme',
 
 /* private */
 
-	url;
+	id, url;
 
 	/* State handler */
 	function handleUserModelChanges(changes) {
@@ -106,12 +106,14 @@ define([
 
 			case 'favorite':
 				App.emit(p.ADD_FAVORITE, url);
+				thisIsAFavorite(id); // change de UI
 				break;
 
 			case 'favorite disable':
 				// check if is already a favorite
 				favoriteId = $button.data('favorite-id');
 				App.emit(p.REMOVE_FAVORITE, favoriteId);
+				thisIsNotLonguerAFavorite();
 				break;
 
 			case 'share':
@@ -153,6 +155,10 @@ define([
 
 /* public */
 
+	var components = {
+		social: Social
+	};
+
 /* abstract */
 
 	function initialize(State) {
@@ -162,28 +168,25 @@ define([
 		//url = State.url;
 		// on dev, we need to hardcode the production url
 		// to trick facebook open graph
-		url = 'http://upcsocial.herokuapp.com' + State.hash.split('?')[0];
 
-		console.log(url);
-
-		App.on(u.MODEL_CHANGED, handleUserModelChanges);
+		//App.on(u.MODEL_CHANGED, handleUserModelChanges);
 	
 	}
 
 	function render() {
 
 		console.log('rendering programme view');
+		
+		//p.$userAction = $('#programme-content').on('click', userActionHandler);
 
-		p.$userAction = $('#programme-content').on('click', userActionHandler);
-
-		handleUserModelChanges(UserModel);
+		//handleUserModelChanges(UserModel);
 	}
 
 	function finalize() {
 
-		p.$userAction.off('click', userActionHandler);
+		//p.$userAction.off('click', userActionHandler);
 
-		App.off(u.MODEL_CHANGED, handleUserModelChanges);
+		//App.off(u.MODEL_CHANGED, handleUserModelChanges);
 
 	}
 
@@ -193,7 +196,8 @@ define([
 		name		: name,
 		initialize	: initialize,
 		finalize	: finalize,
-		render		: render
+		render		: render,
+		components	: components
 	});
 
 });

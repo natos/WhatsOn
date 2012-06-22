@@ -88,6 +88,7 @@ function(request, express, i18n, config, Supports, ChannelService, Login, Dashbo
 			};
 
 			// fetch channels
+// TODO: Change to Sync... 
 			new ChannelService().once('getChannels', saveChannels).getChannels();
 
 		return self;

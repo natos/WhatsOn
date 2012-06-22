@@ -83,7 +83,7 @@ define([
 
 	}
 
-	function logout() { FB.logout(function handleLogout(response) { /* cri-cri() */ }); }
+	function logout() { FB.logout(function handleLogout(response) { /* cri-cri */ }); }
 
 	/**
 	*	Fetch opengraph data and save the response into a model, 

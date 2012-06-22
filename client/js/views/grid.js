@@ -107,7 +107,7 @@ define([
 			// Avoid rendering duplicate DOM elements
 			if ( $('#event-' + event.id)[0] ) {
 				// Don't render this event; skip to the next one.
-//				console.log('Warning!','Trying to render duplicate event.');
+				//console.log('Warning!','Trying to render duplicate event.');
 				continue;
 			}
 

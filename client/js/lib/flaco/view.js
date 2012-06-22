@@ -32,15 +32,32 @@ define([
 
 	// returns template name for a given view
 	function templateName(view) {
-		return view.name + getParts(view).replace('/','-') + '-template'; 
+		var parts = getParts(view).replace('/','-');
+			parts = parts === "-" ? '' : parts;
+		return view.name + parts + '-template'; 
 	}
 
-	function templateId(view) {
-		return '#' + templateName(view);
-	}
+	function templateId(view) {	return '#' + templateName(view); }
+
+	function getParts(view) { return (view.State && view.State.parts ? '/' + view.State.parts.join('/') : '' );	}
 
 	// returns if the template DOM element exists
 	function templateExists(view) { return $( templateId(view) )[0]; }
+
+	// returns if the content DOM element exists
+	function contentExists(view) { return $('#' + view.name + '-content')[0]; }
+
+	// fetch template from server and save it to the DOM
+	function fetchTemplate(view) {
+		// fetch from url
+		var from_url = '/' + view.name + getParts(view);
+		// fetch content from server
+		$.get(from_url, function saveNewTemplate(content) {
+			saveTemplate(view, content);
+			// set the template view
+			setTemplate(view);
+		});
+	}
 
 	// renders the template
 	function setTemplate(view) {
@@ -50,33 +67,33 @@ define([
 		view.render();
 	}
 
-	function getParts(view) {
-		return (view.State && view.State.parts ? '/' + view.State.parts.join('/') : '' );
-	}
-
-	// fetch template from server and save it to the DOM
-	function fetchTemplate(view) {
+	function saveTemplate(view, content) {
+		var content = content || $('#content').html();
 		// create template container and append it to the DOM
-		var $template = $(SCRIPT_TAG).attr('id', templateName(view)).appendTo('#templates'),
-		// fetch from url
-		from_url = '/' + view.name + getParts(view);
-		// fetch content from server
-		$.get(from_url, function saveNewTemplate(res) {
+		var $template = templateExists(view) ? $( templateId(view) ) : $(SCRIPT_TAG).attr('id', templateName(view)).appendTo('#templates');
 			// save it in the DOM container
-			$template.text(res);
-			// set the template view
-			setTemplate(view);
-		});
+			$template.text( content );
 	}
 
 	/* Main template functions */
 
 	// loads template, if not exists, it will fetch the template from server
 	function loadTemplate(view) {
-		if (templateExists(view)) {
-			setTemplate(view);
+
+		// avoid load templates for
+		// content already rendered
+		if (contentExists(view)) {
+			view.render();
+			return;
+		}
+
+		// if the template existe, use it
+		if (templateExists(view)) {	
+			setTemplate(view); 
 		} else {
-			fetchTemplate(view);
+			console.log('template doesn\'t exist, fetch template');
+			// otherwise, fetch it 
+			fetchTemplate(view); 
 		}
 	}
 
@@ -85,6 +102,7 @@ define([
 		// ? not sure what to do here...
 		// ? because the loadTemplate function
 		// ? already steps on previews templates
+		saveTemplate(view);
 	}
 
 	/**
@@ -95,7 +113,7 @@ define([
 	App.on(a.VIEW_INITIALIZED, loadTemplate);
 	// unload template,
 	// when any view is being finalized
-	//App.on(a.VIEW_FINALIZING, unloadTemplate); // not using this now
+	App.on(a.VIEW_FINALIZING, unloadTemplate);
 
 /* public */
 
@@ -132,12 +150,13 @@ define([
 		// helper for each component
 		function forEachComponent(method, args) {
 			if (!components) { return; }
+			console.log('forEachComponent', method, args);
 			var name, component;
 			for (name in components) {
 				if (components.hasOwnProperty(name)) {
 					component = components[name];
 					if (typeof(component[method])==='function') {
-						component[method].apply(args);
+						component[method].apply(component, args);
 					}
 				}
 			}
