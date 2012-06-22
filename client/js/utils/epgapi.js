@@ -264,6 +264,15 @@ average(timer.timeDiff);
 				// Cache the event collection by channel ID and timeslice index
 				cacheKey = getCacheKey(channelId, timeSlice);
 
+				eventsToBeCached = [];
+				for(var i=eventsForChannel.length - 1; i>=0; i--) {
+					// Only cache events in this slice that actually *belong* in the current slice.
+					// Note (MS 22/6/2012): Once we have Jędrzej's new API that guarantees to
+					// return only the events in a slice, we won't need this check any more.
+					if (convert.parseApiDate(eventsForChannel[i].startDateTime).valueOf() >= timeSlice[1].valueOf() ) {
+						eventsForChannel.pop();
+					}
+				}
 				putEventsForChannelIntoCache(cacheKey, eventsForChannel);
 
 				$CUSTOM_EVENT_ROOT.emit(CHANNEL_EVENTS_RECEIVED_EVENT, [eventsForChannel]);
