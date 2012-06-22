@@ -180,38 +180,6 @@ define([
 		}
 	}
 
-	/**
-	 * Render the grid state (channels list and size) for a specific filter group
-	 */
-	function renderGridContent(groupId) {
-
-		var channels = App.getChannelsByFilterGroup(groupId);
-		var i;
-		var channelsCount = channels.length;
-		var channelRowsHtml = [];
-
-		// Set up the channel bar
-		ChannelBar.renderChannelsGroup(channels);
-
-		// Grid styles depend on the components being initialized.
-		// TODO: bad dependency - try to remove.
-		appendCSSBlock(name + '-styles', defineStyles());
-
-		// Create the row containers for the grid
-		for (i = 0; i < channelsCount; i++) {
-			channel = channels[i];
-			channelRowsHtml.push('<div class="channel-container" id="cc_' + channel.id + '" style="height:' + g.ROW_HEIGHT + 'px;top:' + (i * g.ROW_HEIGHT) + 'px"></div>')
-		}
-		$('#grid-container').html(channelRowsHtml.join(''));
-
-		// Center the current time in the viewport
-		TimeBar.centerViewPort();
-
-		// Start the first data load for this grid configuration
-		App.emit(g.GRID_MOVED);
-		App.emit(g.GRID_FETCH_EVENTS);
-
-	}
 
 /* public */
 
@@ -264,14 +232,28 @@ define([
 
 	function render() {
 
-		// We can only render the *content* of the grid and the channels
-		// after the channels have loaded.
-		App.populateChannels(function(){
-			// Filter group 541 matches the domain "DTV Starter" in NL.
-			// Filter group 986 matches the domain "DTV Royaal" in NL.
-			// Filter group 987 matches the domain "HD" in NL.
-			renderGridContent('986');
-		});
+		// Channel group 986 is 'DTV Royaal' (NL)
+		// TODO: remove hard-coded group id.
+		var channels = App.getChannelsByFilterGroup('986');
+		var i;
+		var channelsCount = channels.length;
+		var channelRowsHtml = [];
+
+		// Create the row containers for the grid
+		for (i = 0; i < channelsCount; i++) {
+			channel = channels[i];
+			channelRowsHtml.push('<div class="channel-container" id="cc_' + channel.id + '" style="height:' + g.ROW_HEIGHT + 'px;top:' + (i * g.ROW_HEIGHT) + 'px"></div>')
+		}
+		$('#grid-container').html(channelRowsHtml.join(''));
+
+		// Grid styles depend on the channelbar component being rendered.
+		// TODO: bad dependency - try to remove.
+		ChannelBar.renderChannelsGroup(channels);
+		appendCSSBlock(name + '-styles', defineStyles());
+
+		// Start the first data load for this grid configuration
+		App.emit(g.GRID_MOVED);
+		App.emit(g.GRID_FETCH_EVENTS);
 
 		return this;
 	}
