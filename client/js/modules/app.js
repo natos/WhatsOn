@@ -32,15 +32,17 @@ define([
 	 */
 	App.channels = [];
 
-
 	/* constructor */
 	function initialize() {
 
-		// Load the primary modules for the app.
-		// Each module must have an "initialize" method that returns the module itself.
-		require(['modules/user', 'modules/canvas', 'modules/router'], function initializeModules() {
-			while (module = Array.prototype.shift.apply(arguments)) { App.modules[module.name] = module.initialize(); } 
-		});
+		// Channels MUST be available when the app starts up.
+		populateChannels(function(){
+			// Load the primary modules for the app.
+			// Each module must have an "initialize" method that returns the module itself.
+			require(['modules/user', 'modules/canvas', 'modules/router'], function initializeModules() {
+				while (module = Array.prototype.shift.apply(arguments)) { App.modules[module.name] = module.initialize(); } 
+			});
+		})
 
 		return this;
 	
@@ -70,6 +72,33 @@ define([
 		document.getElementsByTagName("head")[0].appendChild(link);
 	}
 
+	/**
+	 * Return a list of channels based on the specified Filter group id.
+	 * Make sure the main channels list is populated first, by calling populateChannels()!
+	 */
+	function getChannelsByFilterGroup(groupId) {
+		var channels = App.channels;
+		var channelsSubset = [];
+		var i, j, count, channel, domain;
+
+		for (i=0, count=channels.length; i<count; i++) {
+			channel = channels[i];
+			if (channel && channel.domains) {
+				j = channel.domains.length;
+				while(j) {
+					j = j-1;
+					if (channel.domains[j].id==='Filter') {
+						if (channel.domains[j].groups.indexOf(groupId) >=0) {
+							channelsSubset.push(channel);
+						}
+						break;
+					}
+				}
+			}
+		}
+
+		return channelsSubset;
+	}
 
 	/* public */
 
@@ -77,6 +106,7 @@ define([
 	App.initialize = initialize;
 	App.populateChannels = populateChannels;
 	App.loadCss = loadCss;
+	App.getChannelsByFilterGroup = getChannelsByFilterGroup;
 
 	return App;
 

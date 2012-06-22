@@ -128,7 +128,8 @@ define([
 		name		: name,
 		initialize	: initialize,
 		finalize	: finalize,
-		render		: render
+		render		: render,
+		centerViewPort : centerViewPort
 	};
 
 });

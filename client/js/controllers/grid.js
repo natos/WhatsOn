@@ -68,13 +68,10 @@ define([
 
 	function initialize() {
 
-		// Ensure that the channels are populated
-		App.populateChannels(function(){
-			// Events Handlers
-			App.on(g.GRID_MOVED, gridMoved);
-			App.on(g.GRID_FETCH_EVENTS, getEvents);
-			App.on('eventsReceived', setEvents);
-		});
+		// Events Handlers
+		App.on(g.GRID_MOVED, gridMoved);
+		App.on(g.GRID_FETCH_EVENTS, getEvents);
+		App.on('eventsReceived', setEvents);
 
 		return this;
 

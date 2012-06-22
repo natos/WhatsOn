@@ -180,6 +180,39 @@ define([
 		}
 	}
 
+	/**
+	 * Render the grid state (channels list and size) for a specific filter group
+	 */
+	function renderGridContent(groupId) {
+
+		var channels = App.getChannelsByFilterGroup(groupId);
+		var i;
+		var channelsCount = channels.length;
+		var channelRowsHtml = [];
+
+		// Set up the channel bar
+		ChannelBar.renderChannelsGroup(channels);
+
+		// Grid styles depend on the components being initialized.
+		// TODO: bad dependency - try to remove.
+		appendCSSBlock(name + '-styles', defineStyles());
+
+		// Create the row containers for the grid
+		for (i = 0; i < channelsCount; i++) {
+			channel = channels[i];
+			channelRowsHtml.push('<div class="channel-container" id="cc_' + channel.id + '" style="height:' + g.ROW_HEIGHT + 'px;top:' + (i * g.ROW_HEIGHT) + 'px"></div>')
+		}
+		$('#grid-container').html(channelRowsHtml.join(''));
+
+		// Center the current time in the viewport
+		TimeBar.centerViewPort();
+
+		// Start the first data load for this grid configuration
+		App.emit(g.GRID_MOVED);
+		App.emit(g.GRID_FETCH_EVENTS);
+
+	}
+
 /* public */
 
 	/**
@@ -208,37 +241,13 @@ define([
 	* @public
 	*/
 	function getSelectedChannels(extraAboveAndBelow) {
-
-		// How many channels have been scrolled vertically?
-		var channelsScrolledUp = window.pageYOffset / g.ROW_HEIGHT,
-		firstChannel = (channelsScrolledUp < 0) ? 0 : Math.floor(channelsScrolledUp),
-		// TODO: calculate this based on actual dimensions
-		topOffset = 100,
-		// How many channels tall is the screen?
-		channelsTall = (window.innerHeight - topOffset) / g.ROW_HEIGHT,
-		channelIds = [],
-		i = 0;
-
-		if (!extraAboveAndBelow) {
-			extraAboveAndBelow = 0;
-		}
-
-		// Return N channels above and below the visible window 
-		for (i = (0 - extraAboveAndBelow); i < (channelsTall + extraAboveAndBelow); i++) {
-			if ( (firstChannel + i) < 0 || (firstChannel + i) >= App.channels.length ) {
-				continue;
-			}
-			channelIds.push(App.channels[firstChannel + i].id);
-		}
-
-		return channelIds;
-
+		// delegate to the getSelectedChannels method of the channelbar component
+		return ChannelBar.getSelectedChannels(extraAboveAndBelow);
 	}
 
 /* abstract */
 
 	function initialize() {
-
 		g.END = new Date(g.ZERO.valueOf() + 24*60*60*1000);
 
 		// UI event handlers
@@ -254,14 +263,17 @@ define([
 	}
 
 	function render() {
-		// Grid styles depend on the components being initialized.
-		// TODO: bad dependency - try to remove.
-		appendCSSBlock(name + '-styles', defineStyles());
 
-		// Start the first data load
-		App.emit(g.GRID_MOVED);
-		App.emit(g.GRID_FETCH_EVENTS);
+		// We can only render the *content* of the grid and the channels
+		// after the channels have loaded.
+		App.populateChannels(function(){
+			// Filter group 541 matches the domain "DTV Starter" in NL.
+			// Filter group 986 matches the domain "DTV Royaal" in NL.
+			// Filter group 987 matches the domain "HD" in NL.
+			renderGridContent('986');
+		});
 
+		return this;
 	}
 
 	function finalize() {

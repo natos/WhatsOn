@@ -17,8 +17,15 @@ define([
 
 	var	$channellist;
 
+	/**
+	 * This is the set of channels that will be displayed in the channelbar,
+	 * and on the grid. This may be a subset of the complete list of channels
+	 * available to the app.
+	 */
+	var _channels = [];
+
 	function move(position) {
-		if (typeof $channellist === 'undefined') { $channellist = $('#channels-bar ul','#content'); }
+		if (typeof $channellist === 'undefined') { $channellist = $('#channels-bar-list'); }
 		$channellist.css({ top: position.top + 'px' });
 	}
 
@@ -53,25 +60,12 @@ define([
 		App.on(g.MODEL_CHANGED, modelChanged);
 
 		return this;
-
 	}
 
 	function render() {
 
-		var $channelrow = $('<div>')
-				.addClass('channel-container');
-
-		// Create channel containers
-		// as rows in the grid
-		for (var i = 0; i < channels.length; i++) {
-			$channelrow
-				.clone()
-				.attr({ 'id': 'cc_' + channels[i].id })
-				.css({ 'height': g.ROW_HEIGHT + 'px', 'top': i * g.ROW_HEIGHT + 'px' })
-				.appendTo('#grid-container');
-		}
-
 		return this;
+
 	}
 
 	function finalize() {
@@ -82,13 +76,71 @@ define([
 
 	}
 
+	/**
+	* Determine what channels are visible in the viewport.
+	* Optionally, return some channels above and below the visible
+	* channel range, for pre-loading.
+	* @public
+	*/
+	function getSelectedChannels(extraAboveAndBelow) {
+
+		// How many channels have been scrolled vertically?
+		var channelsScrolledUp = window.pageYOffset / g.ROW_HEIGHT,
+			firstChannel = (channelsScrolledUp < 0) ? 0 : Math.floor(channelsScrolledUp),
+			// TODO: calculate this based on actual dimensions
+			topOffset = 100,
+			// How many channels tall is the screen?
+			channelsTall = (window.innerHeight - topOffset) / g.ROW_HEIGHT,
+			channelIds = [],
+			i = 0;
+
+		if (!extraAboveAndBelow) {
+			extraAboveAndBelow = 0;
+		}
+
+		// Return N channels above and below the visible window
+		for (i = (0 - extraAboveAndBelow); i < (channelsTall + extraAboveAndBelow); i++) {
+			if ( (firstChannel + i) < 0 || (firstChannel + i) >= _channels.length ) {
+				continue;
+			}
+			channelIds.push(_channels[firstChannel + i].id);
+		}
+
+		return channelIds;
+
+	}
+
+	/**
+	 * Render the channels bar for the specified group id
+	 */
+	function renderChannelsGroup(channels) {
+		// Set the class-level list of channels
+		_channels = channels;
+
+		// Render the list of channels we want to use.
+		var i, channel;
+		var channelsCount = channels.length;
+		var channelItemsHtml = [];
+
+		// Create the channel items in the channel bar, and the
+		// row containers for the grid
+		for (i = 0; i < channelsCount; i++) {
+			channel = channels[i];
+			channelItemsHtml.push('<li><div class="picture"><img class="loading" title="' + channel.name + '" data-src="http://www.upc.nl' + channel.logoIMG + '" data-channelid="' + channel.id + '" id="channelImg' + channel.id + '" title=</li>');
+		}
+		$('#channels-bar-list').html(channelItemsHtml.join(''));
+	}
+
+
 /* export */
 
 	return {
 		name		: name,
 		initialize	: initialize,
 		finalize	: finalize,
-		render		: render
+		render		: render,
+		getSelectedChannels : getSelectedChannels,
+		renderChannelsGroup : renderChannelsGroup
 	};
 
 });

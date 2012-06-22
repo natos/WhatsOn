@@ -10,8 +10,4 @@
 	
 	#channels-bar
 		.shade
-		ul
-			each channel in channels
-				li
-					.picture
-						img.loading(title="#{channel.name}", data-src="http://www.upc.nl#{channel.logoIMG}", data-channelid="#{channel.id}", id="channelImg#{channel.id}")
+		ul#channels-bar-list
