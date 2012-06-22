@@ -24,9 +24,13 @@ define([
 	/* Templates namespace */
 	App.templates = {};
 
-	/* The app holds an array of channels */
-	//App.channels = [];
-	App.channels = channels;
+	/* The app holds an array of channels, but this array is empty
+	  when the app initializes. If a component wants to access the
+	  channels, it should first call App.populateChannels to
+	  ensure that the array is full before using it. If the array
+	  was empty, this will invoke an ajax request to get the list.
+	 */
+	App.channels = [];
 
 
 	/* constructor */
@@ -52,6 +56,7 @@ define([
 		} else {
 			$.getJSON('/channels.json', function(data, status, xhr){
 				App.channels = data;
+				window.channels = App.channels;
 				callback();
 			});
 		}

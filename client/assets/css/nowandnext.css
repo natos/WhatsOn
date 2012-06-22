@@ -5,14 +5,16 @@
 .channels-list-types .type {
 	display:table-cell;
 	list-style-type:none;
-	width:33.33333%;
 	border-left:1px solid #ccc;
 }
 .channels-list-types .type a {
+	box-sizing:-moz-border-box;
+	box-sizing:-webkit-border-box;
+	box-sizing:border-box;
 	display:block;
 	width:100%;
 	white-space:nowrap;
-	padding:0.7em 0 0.5em;
+	padding:0.7em 0.5em 0.5em;
 	text-align:center;
 	background:#eee;
 	cursor:pointer;
@@ -24,12 +26,11 @@
 .channels-list-types .type a:active{
 	background:#ddd;
 }
-
-.channels-list-types.POP a.type-pop,
-.channels-list-types.FAV a.type-fav,
-.channels-list-types.ALL a.type-all {
-	background:#ccc;
+.channels-list-types .type.selected a {
+	background:#ffb;
+	text-decoration:underline;
 }
+
 @media screen and (min-width:640px) {
 	.channels-list-types {
 		border-bottom:1px solid #ccc;
@@ -40,6 +41,7 @@
 
 .channels-list {
 	padding:0;
+	margin-top:10px;
 }
 .channels-list-channel {
 	width:100%;
@@ -50,6 +52,7 @@
 .channels-list-channel > .inner {
 	background:#fefefe;
 	box-shadow:0 0 5px #666;
+	margin-bottom:10px;
 }
 @media screen and (min-width:640px) {
 	.channels-list {

@@ -8,10 +8,9 @@ require.config({
 // <head> of the page. We do this to set a 'mustard' classname on the document element
 // (like Modernizr).
 // TODO: load zepto for mustard and jquery for mayo?
-var mustard = (document.documentElement.className.indexOf('no-mustard') < 0) && (document.documentElement.className.indexOf('mustard') >= 0);
-if (console && console.log) { console.log('mustard = ' + mustard); }
+if (console && console.log) { console.log('mustard = ' + window.mustard); }
 
-if (mustard) {
+if (window.mustard) {
 	// Boot the rich client
 
 	require([

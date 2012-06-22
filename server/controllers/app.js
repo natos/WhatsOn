@@ -27,7 +27,7 @@ define([
 	'controllers/dashboard',
 	'controllers/grid',
 	'controllers/channel',
-	'controllers/channelpackage',
+	'controllers/domain',
 	'controllers/programme',
 	'controllers/event',
 	'controllers/movies',
@@ -38,7 +38,7 @@ define([
 	'controllers/admin'
 ],
 
-function(request, express, i18n, config, Supports, ChannelService, Login, Dashboard, Grid, Channel, ChannelPackage, Programme, Event, Movies, Search, Settings, NowAndNext, Facebook, Admin) {
+function(request, express, i18n, config, Supports, ChannelService, Login, Dashboard, Grid, Channel, Domain, Programme, Event, Movies, Search, Settings, NowAndNext, Facebook, Admin) {
 
 /**
  *	@class AppController
@@ -76,7 +76,7 @@ function(request, express, i18n, config, Supports, ChannelService, Login, Dashbo
 				     dashboard	: new Dashboard(self),
 				          grid	: new Grid(self),
 				       channel	: new Channel(self),
-				channelpackage	: new ChannelPackage(self),
+						domain	: new Domain(self),
 				     programme	: new Programme(self),
 				         event	: new Event(self),
 				        movies	: new Movies(self),

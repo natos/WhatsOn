@@ -119,7 +119,7 @@ function(ChannelService, util, events, request, RequestN, config) {
 
 	/** @public */
 
-	/** Get list of top movies */
+	/** Get list of now-and-next events */
 	NowAndNextService.prototype.getNowAndNext = function(dt, requestedChannelIds) {
 
 		var self = this;

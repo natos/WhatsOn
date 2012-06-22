@@ -14,9 +14,11 @@ define([
 	// utils
 	'utils/requestn',
 
+	// services
+	'services/domain',
+
 	// config
-	'config/global.config',
-	'config/channel_packages.config'
+	'config/global.config'
 ],
 
 
@@ -24,7 +26,7 @@ define([
 *	@class ChannelService
 */
 
-function(util, events, request, requestN, config, channelPackagesConfig) {
+function(util, events, request, requestN, DomainService, config) {
 
 	/** @constructor */
 
@@ -102,21 +104,36 @@ function(util, events, request, requestN, config, channelPackagesConfig) {
 						delete channel.links;
 					});
 
-					// Attach a channelPackageIds array to each channel, with a list of channel packages in which it is available
-					allChannels.forEach(function(channel){
-						var channelPackageIds = [];
-						channelPackagesConfig.forEach(function(channelPackage){
-							if (channelPackage.channelIds && channelPackage.channelIds.indexOf(channel.id) >= 0) {
-								channelPackageIds.push(channelPackage.id);
-							}
-						});
-						channel.channelPackageIds = channelPackageIds;
-					});
+					// Attach domain information to each channel
+					(new DomainService()).once('getDomains', function(domains){
 
-					// Cache the channels
-					CHANNELS_CACHE.list = allChannels;
-					CHANNELS_CACHE.timestamp = now;
-					self.emit('getChannels', allChannels);
+						var channelFilterIds = [];
+						var channelThemeIds = [];
+						var channelDomains
+						allChannels.forEach(function(channel){
+							var channelDomains = domains.map(function(domain){
+								var channelDomainGroups = [];
+								domain.groups.forEach(function(group){
+									if (group.channelIds.indexOf(channel.id) >= 0) {
+										channelDomainGroups.push(group.id);
+									}
+								});
+
+								return ({
+									id: domain.id,
+									groups: channelDomainGroups
+								});
+							});
+							channel.domains = channelDomains;
+
+						});
+
+						// Cache the channels
+						CHANNELS_CACHE.list = allChannels;
+						CHANNELS_CACHE.timestamp = now;
+						self.emit('getChannels', allChannels);
+
+					}).getDomains();
 
 				}
 
