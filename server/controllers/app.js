@@ -88,8 +88,18 @@ function(request, express, i18n, config, Supports, ChannelService, Login, Dashbo
 			};
 
 			// fetch channels
-// TODO: Change to Sync... 
-			new ChannelService().once('getChannels', saveChannels).getChannels();
+			new ChannelService().once('getChannels', function saveChannels(channels) {
+
+				// save the channels
+				self.channels = channels;
+
+				// start the server
+				self.server.listen(process.env.PORT || config.PORT, function listening() {
+					console.log("Express server listening on port %d", server.address().port);
+					console.log("Express server ready!");
+				});
+
+			}).getChannels();
 
 		return self;
 
@@ -97,13 +107,6 @@ function(request, express, i18n, config, Supports, ChannelService, Login, Dashbo
 
 
 	/** @private */
-
-	function saveChannels(channels) {
-
-		console.log('Saving channels collection.');
-		AppController.channels = channels;
-
-	}
 
 	function globalHandler(req, res, next) {
 
@@ -158,8 +161,7 @@ function(request, express, i18n, config, Supports, ChannelService, Login, Dashbo
 				__n: i18n.__n
 			});
 
-			// start the server
-			server.listen(process.env.PORT || config.PORT); console.log("Express server listening on port %d", server.address().port);
+			console.log("Express server starting ...");
 
 		return server;
 
