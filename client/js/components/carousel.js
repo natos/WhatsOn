@@ -14,6 +14,8 @@ define([
 
 	var $window = $(window),
 
+	rowing = true,
+
 	timer = {
 		clock: void 0,
 		time: 5000, // time to slide
@@ -62,10 +64,22 @@ define([
 		$this.addClass('selected');
 	}
 
+	function playpauseHandler() {
+		if (rowing) { 
+			timer.stop();
+			$(this).find('.icon-pause').removeClass('icon-pause').addClass('icon-play');
+		} else {
+			timer.start();
+			$(this).find('.icon-play').removeClass('icon-play').addClass('icon-pause');
+		}
+		rowing = !rowing;
+	}
+
 	function addButtons() {
 
-		var navigator = $('<div>').addClass('navigator').appendTo(el),
-			disc = $('<i>').addClass('disc').addClass('icon-stop'),
+		var playpause = $('<div>').attr('id','playpause').html('<i class="icon-pause">').on('click', playpauseHandler).appendTo(el),
+			navigator = $('<div>').addClass('navigator').appendTo(el),
+			disc = $('<i>').addClass('disc').addClass('icon-certificate'),
 			maxScreenWidth = Math.max($window.width(), $window.height()),
 			programme,
 			imgSize,
@@ -84,10 +98,7 @@ define([
 		list.find('.programme').each(function(i, e) {
 
 			programme = $(e);
-
-			programme.css({
-				'left' : 100*i + '%'
-			});
+			programme.css({ 'left' : 100*i + '%' });
 
 			//programme.prepend('<img class="programme-bg" src="/assets/programmes/' + imgSize + '/' + coolPics[i] + '.jpg" />');
 
@@ -101,6 +112,7 @@ define([
 				.data('index', i)
 				.click(discHandler)
 				.appendTo(navigator);
+
 		});	
 
 		// select first
@@ -171,8 +183,6 @@ define([
 
 	function render() {
 
-		console.log('RENDERING CAROUSEL');
-
 		el = $('#featured').addClass('carousel');
 
 		list = el.find('.show').addClass('slide');
@@ -201,11 +211,11 @@ define([
 /* export */ 
 
 	return {
-		name: name,
-		initialize: initialize,
-		finalize: finalize,
-		render: render,
-		map: map
+		name		: name,
+		initialize	: initialize,
+		finalize	: finalize,
+		render		: render,
+		map			: map
 	};
 
 });
