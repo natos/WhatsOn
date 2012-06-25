@@ -8,9 +8,7 @@ html.no-js.no-mustard
 		meta(name="apple-mobile-web-app-capable", content="yes")
 		meta(names="apple-mobile-web-app-status-bar-style", content="black-translucent")
 
-		if metadata
-			each meta in metadata
-				meta(property='#{meta.property}', content='#{meta.content}')
+		include ../assets/metadata
 
 		script
 			document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
