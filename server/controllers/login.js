@@ -49,7 +49,8 @@ function(Metadata, Channels) {
 			metadata	: metadata.get(),
 			config		: _app.config,
 			channels	: _app.channels,
-			supports	: req.supports
+			supports	: req.supports,
+			xhr			: req.xhr
 		});
 
 	};

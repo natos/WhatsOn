@@ -155,7 +155,8 @@ function(NowAndNextService, DomainService, Metadata, QS, config) {
 					laterText	: strftime(dtNextSlice, '%R'),
 					channels	: channels,
 					channelEventsCollections: channelEventsCollections,
-					supports	: req.supports
+					supports	: req.supports,
+					xhr			: req.xhr
 				});
 
 			}).getNowAndNext(dt, channelIds);

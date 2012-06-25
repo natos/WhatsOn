@@ -57,7 +57,8 @@ function(ChannelService, BookingsService, TVTipsService, Metadata) {
 				config		: _app.config,
 				channels	: _app.channels,
 				normalizedEvents : normalizedEvents,
-				supports	: req.supports
+				supports	: req.supports,
+				xhr			: req.xhr
 			});
 
 		};

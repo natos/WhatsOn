@@ -68,7 +68,8 @@ function(querystring, SearchService, Metadata, DateUtils, Channels) {
 				used_channels	: {},
 				used_datetimes	: {},
 				programmes		: {},
-				supports		: req.supports
+				supports		: req.supports,
+				xhr				: req.xhr
 			});
 
 			return; 

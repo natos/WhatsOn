@@ -126,7 +126,8 @@ function(ChannelService, Metadata, DateUtils, Requestn, PrettyDate, Channels) {
 					data		: _channel_details,
 					title		: _channel_details.name,
 					prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upcsocial: http://ogp.me/ns/fb/upcsocial#',
-					supports	: req.supports
+					supports	: req.supports,
+					xhr			: req.xhr
 				}); // HTML output	
 		});
 

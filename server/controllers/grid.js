@@ -55,7 +55,8 @@ function(ChannelService, Metadata, Channels) {
 			config		: _app.config,
 			channels	: _app.channels,
 			timebar		: new Array(24),
-			supports	: req.supports
+			supports	: req.supports,
+			xhr			: req.xhr
 		});
 
 	};

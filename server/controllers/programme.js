@@ -90,7 +90,7 @@ function(ProgrammeService, Metadata, DateUtils, Requestn, PrettyDate, Channels) 
 						title		: '404',
 						prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upc-social: http://ogp.me/ns/fb/upc-social#',
 						supports	: req.supports,
-						isAjax		: req.xhr
+						xhr			: req.xhr
 
 					});
 					return;
@@ -124,7 +124,8 @@ function(ProgrammeService, Metadata, DateUtils, Requestn, PrettyDate, Channels) 
 					data		: _programme_details,
 					title		: _programme_details.title,
 					prefix		: 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# upcsocial: http://ogp.me/ns/fb/upcsocial#',
-					supports	: req.supports
+					supports	: req.supports,
+					xhr			: req.xhr
 				}); // HTML output	
 		});
 

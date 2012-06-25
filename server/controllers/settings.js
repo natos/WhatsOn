@@ -19,7 +19,7 @@ define([
  *	@class SettingsController
  */
 
-function(Metadata, Channels) {
+function(Metadata) {
 
 	/** @constructor */
 
@@ -48,8 +48,9 @@ function(Metadata, Channels) {
 		res.render(template, {
 			metadata	: metadata.get(),
 			config		: _app.config,
-			channels	: Channels,
-			supports	: req.supports
+			channels	: _app.channels,
+			supports	: req.supports,
+			xhr			: req.xhr
 		});
 
 	};

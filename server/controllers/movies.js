@@ -57,7 +57,8 @@ function(MoviesService, DateUtils, Metadata, Channels) {
 				config		: _app.config,
 				channels	: _app.channels,
 				topmovies 	: topmovies,
-				supports	: req.supports
+				supports	: req.supports,
+				xhr			: req.xhr
 			});
 
 		};
