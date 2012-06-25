@@ -84,7 +84,7 @@ define([
 				type = (isChannel) ? 'tv_channel' : 'tv_show',
 				item = e.data[type];
 
-			var id = item.url.match(/\d+/),
+			var id = item.url.match(/\d+\w+/),
 				req = '/' + listname + '/' + id + '/events.json?callback=?',
 				content = item.title;
 

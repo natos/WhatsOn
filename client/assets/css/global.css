@@ -616,10 +616,10 @@ footer {
 
 
 /**
-*	#user-action buttons
+*	#social buttons
 */
 
-#user-action button {
+#social button {
 	font-size: 1em;
 	color: #050505;
 	padding: 5px 10px;
@@ -647,7 +647,7 @@ footer {
 		0px 1px 0px rgba(255,255,255,1);
 }
 
-#user-action button:first-child {
+#social button:first-child {
 	-webkit-border-top-left-radius: 5px;
 	-webkit-border-bottom-left-radius: 5px;
 	-moz-border-radius-topleft: 5px;
@@ -656,7 +656,7 @@ footer {
 	border-bottom-left-radius: 5px;
 }
 
-#user-action button:last-child {
+#social button:last-child {
 	-webkit-border-top-right-radius: 5px;
 	-webkit-border-bottom-right-radius: 5px;
 	-moz-border-radius-topright: 5px;
@@ -665,12 +665,12 @@ footer {
 	border-bottom-right-radius: 5px;
 }
 
-#user-action button:hover {
+#social button:hover {
 	color: #000;
 	border: 1px solid #000;
 }
 
-#user-action button.disable {
+#social button.disable {
 	opacity: .8;
 	color: #666;
 }
@@ -721,8 +721,8 @@ footer {
 }
 
 /* buttons */
-#programme-content #user-action button b,
-#channel-content #user-action button b {
+#programme-content #social button b,
+#channel-content #social button b {
 	display: none;
 }
 /* end buttons */
@@ -887,13 +887,13 @@ footer {
 
 @media (min-width: 480px) {
 
-	#programme-content #user-action button b,
-	#channel-content #user-action button b {
+	#programme-content #social button b,
+	#channel-content #social button b {
 		display: inline;
 	}
 
-	#programme-content #user-action button i,
-	#channel-content #user-action button i {
+	#programme-content #social button i,
+	#channel-content #social button i {
 		margin-right: 5px;
 	}
 }
@@ -921,9 +921,11 @@ footer {
 		margin-bottom: 10px;
 	}
 
-	#programme-content #user-action,
-	#channel-content #user-action {
-		float: right;
+	#programme-content #social,
+	#channel-content #social {
+		position: absolute;
+		top: 10px;
+		right: 10px;
 	}
 
 	#programme-content h2 i,
@@ -943,8 +945,8 @@ footer {
 
 @media (min-width: 980px) {
 
-	#programme-content #user-action button,
-	#channel-content #user-action button {
+	#programme-content #social button,
+	#channel-content #social button {
 		padding: 10px 15px;
 	}
 

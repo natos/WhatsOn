@@ -18,12 +18,6 @@ define([], function ChannelConfigContext() {
 
 		/* Events */
 
-		SHARE: 'programme:share',
-
-		ADD_FAVORITE: 'channel:add_favorite',
-
-		REMOVE_FAVORITE: 'channel:remove_favorite',
-
 		/* DOM Access */
 
 		$window: $(window),

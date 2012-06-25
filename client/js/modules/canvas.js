@@ -35,12 +35,10 @@ define([
 	function endTransition() { 
 		// just wait, so the view won't blink while rendering,
 		// better UX feedback with smoother transition
-		setTimeout(function() {
-			a.$transition.addClass('hide'); 
-			setTimeout(function() { 
-				a.$transition.remove(); 
-			}, 500); 
-		}, 1);
+		a.$transition.addClass('hide'); 
+		setTimeout(function removeTransition() { 
+			a.$transition.remove(); 
+		}, 500); 
 	}
 
 	/* 
@@ -49,7 +47,7 @@ define([
 	function loadController(State) {
 		// something went wrong
 		if (!State) {
-			console.log('Canvas Module', 'Something went wrong on the navigation! While trying to load a controller got an empty State as argument.');
+			console.log('loadController','State object is empty, can\'t load a controller without information.');
 			return;
 		}
 
@@ -63,7 +61,7 @@ define([
 		// Controller doesn't exist yet
 		// Async load the requested controller
 		if (typeof cachedController === 'undefined') {
-			console.log('Canvas Module', State.controller, ' doesn\'t exists, go an get one.');
+			console.log('loadController', State.controller, ' doesn\'t exists, go an get it, lazy loading.');
 			// Controller is not cached, go and get one
 			fetchController('controllers/' + State.controller);
 			return;
@@ -103,7 +101,7 @@ define([
 	function unloadController(State) {
 		// something went wrong
 		if (!State) {
-			console.log('Canvas Module', 'Something went wrong on the navigation! While trying to unload a controller got an empty State as argument.');
+			console.log('unloadController','State object is empty, must be the first load.');
 			return;
 		}
 		// finalize controller

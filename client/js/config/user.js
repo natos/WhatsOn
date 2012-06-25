@@ -41,7 +41,13 @@ define([], function UserConfigContext() {
 		FETCH_FAVORITES: 'user:fetch_favorites',
 
 		FETCH_RECORDINGS: 'user:fetch_recordings',
-	
+
+		SHARE: 'user:share',
+
+		ADD_FAVORITE: 'user:add_favorite',
+
+		REMOVE_FAVORITE: 'user:remove_favorite',
+
 		/* message */
 
 		NOT_AUTHORIZED: 'not_authorized',

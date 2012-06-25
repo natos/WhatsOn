@@ -32,7 +32,9 @@ define([
 	// labels
 	LIKES				= 'likes',
 	FAVORITES			= 'favorites',
-	RECORDINGS			= 'recordings';
+	RECORDINGS			= 'recordings',
+	FAVORITE_PROGRAMMES = 'favorite-programmes',
+	FAVORITE_CHANNELS	= 'favorite-channels';
 
 	// every time the facebook login status
 	// is changed, this handler will save the
@@ -54,6 +56,28 @@ define([
 				break;
 		}
 
+	}
+
+	/* actions when user is connected */
+	function connected() {
+		// when a user is identificated
+		// fetch relevant data from OG
+		fetchLikes();
+		fetchFavorites();
+//		fetchRecordings();
+		// let know eveyone
+		App.emit(u.LOGGED_IN);
+
+	}
+
+	/* actions when user is disconnected */
+	function disconnected() {
+		// let know eveyone
+		App.emit(u.LOGGED_OUT);
+		// reset the UserModel by removing data
+		UserModel.set(FACEBOOK_STATUS, false);
+		UserModel.set(FAVORITES, false);
+//		UserModel.set(RECORDINGS, false);
 	}
 
 	/**
@@ -85,6 +109,8 @@ define([
 
 	function logout() { FB.logout(function handleLogout(response) { /* cri-cri */ }); }
 
+	function getAuthStatus() { return UserModel[FACEBOOK_STATUS]? true: false;	}
+
 	/**
 	*	Fetch opengraph data and save the response into a model, 
 	*	use: 
@@ -94,17 +120,22 @@ define([
 	function fetch(label) {
 
 		/* currying scope */
-		var _label = label, _call, _model;
+		var _label = label, _call, _model, _callback;
 
 			/* currying helpers */
 			function from(call) { 
 				_call = call;
 				return { saveTo: saveTo };
 			}	
+
 			function saveTo(model) {
 				_model = model;
+				return { process: process };
+			}
+
+			function process(callback) {
+				_callback = callback;
 				if (_label && _call && _model) { FB.api(_call, handleResponse); } 
-				return { fetch: this };
 			}
 
 		/* handler */
@@ -113,6 +144,18 @@ define([
 				console.log('Warning!', _label, _call, _model.name, ': Open graph has sent an empty response', response);
 				return; 
 			}
+
+			if (_callback) { 
+				_callback({
+					label: _label,
+					call: _call,
+					model: _model,
+					callback: _callback,
+					response: response
+				});
+				return;
+			}
+
 			_model.set(_label, response);
 		}
 
@@ -122,41 +165,136 @@ define([
 
 	/* FETCH LIKES */
 	function fetchLikes() {
-		fetch(LIKES).from(LIKES_CALL).saveTo(UserModel);
+		fetch(LIKES)
+		.from(LIKES_CALL)
+		.saveTo(UserModel)
+		.process();
 	}
 
 	/* FETCH FAVORITES */
 	function fetchFavorites() {
-		fetch(FAVORITES).from(FAVORITES_CALL).saveTo(UserModel);
+		fetch(FAVORITES)
+		.from(FAVORITES_CALL)
+		.saveTo(UserModel)
+		.process(function preprocessFavorites(obj) {
+
+			// save favorites
+			obj.model.set(obj.label, obj.response);
+
+			var TV_PROGRAMME = 'tv_show',
+				TV_CHANNEL = 'tv_channel',
+				_programmes = {},
+				_channels = {};
+
+			obj.response.data.forEach(function(favorite) {
+
+				if (TV_PROGRAMME in favorite.data && favorite.data[TV_PROGRAMME].url) {
+					_programmes[favorite.data[TV_PROGRAMME].url] = favorite;
+				}
+
+				if (TV_CHANNEL in favorite.data && favorite.data[TV_CHANNEL].url) {
+					_channels[favorite.data[TV_CHANNEL].url] = favorite;
+				}
+
+			});
+
+			obj.model.set(FAVORITE_PROGRAMMES, _programmes);
+			obj.model.set(FAVORITE_CHANNELS, _channels);
+
+		});
 	}
 
 	/* FETCH RECORDINGS */
 	function fetchRecordings() {
-		fetch(RECORDINGS).from(RECORDINGS_CALL).saveTo(UserModel);
+		fetch(RECORDINGS)
+		.from(RECORDINGS_CALL)
+		.saveTo(UserModel)
+		.process();
 	}
 
-	/* actions when user is connected */
-	function connected() {
-		// when a user is identificated
-		// fetch relevant data from OG
-		App.emit(u.FETCH_LIKES);
-		App.emit(u.FETCH_FAVORITES);
-		App.emit(u.FETCH_RECORDINGS);
-		// let know eveyone
-		App.emit(u.LOGGED_IN);
+	/*
+	* Social actions
+	*/
+
+	function share(obj) {
+
+		if (!getAuthStatus()) { 
+			// emit login with a callback, cool eh? :)
+			login(function afterLogin() { share(obj); });
+			return; 
+		}
+
+		FB.ui(obj, function(response) {
+
+			if (!response || response.error) {
+				console.log('Error occured trying to share on the wall', response);
+				return;
+			}
+
+			console.log('Shared', response);
+
+		});
 
 	}
 
-	/* actions when user is disconnected */
-	function disconnected() {
-		// let know eveyone
-		App.emit(u.LOGGED_OUT);
-		// reset the UserModel by removing data
-		UserModel.set(FACEBOOK_STATUS, false);
-		UserModel.set(FAVORITES, false);
-		UserModel.set(RECORDINGS, false);
+	function addFavorite(type, url) {
+
+		// Problems to solve here…
+		// TODO: What if an unknown user, want to add a favorite, that already have?
+
+		// When user is not logued in, get its credentials and delay the action
+		if (!getAuthStatus()) { 
+			login(function afterLogin() { addFavorite(url); });
+			return; 
+		}
+
+		type = type.split('upcsocial:').join('');
+
+		var _favorite = {};
+			_favorite[type] = url;
+
+		// post the new favorite show to open graph
+		FB.api('/me/upcsocial:favorite', 'post', _favorite, function handleAddFavoriteResponse(response) {
+
+			if (!response || response.error) {
+				console.log('Error occured trying to add a new favorite', response);
+				return;
+			} 
+
+			console.log('Favorite was added', response);
+			// TODO: Update the model, avoid fetching favorites
+			fetchFavorites();
+		});
 	}
 
+	function removeFavorite(id) {
+
+		// Not sure if this use case is necessary, I don't think an unknown user
+		// would be able to remove a favorite, because he don't have any.
+		// When user is not logued in, get its credentials and delay the action
+		if (!getAuthStatus()) { 
+			login(function afterLogin() { removeFavorite(url); });
+			return; 
+		}
+
+		// delete node from open graph
+		FB.api(id, 'delete', function handleRemoveFavoriteResponse(response) {
+
+			if (!response || response.error) {
+				console.log('Error occured trying to remove favorite', response);
+				return;
+			}
+
+			console.log('Favorite was deleted');
+			// TODO: Update the model, avoid fetching favorites
+			fetchFavorites();
+		});
+
+	}
+
+	/*
+	* End Social actions
+	*/
 
 /* public */
 
@@ -183,6 +321,7 @@ define([
 		// Lisent for changes on Facebook login status
 		FB.Event.subscribe(AUTH_STATUS_CHANGE, facebookLoginStatus);
 
+		// TODO: Improve this component
 		this.components = {
 			user: UserComponent.initialize()
 		};
@@ -192,9 +331,14 @@ define([
 
 		App.on(u.LOG_IN, login);
 		App.on(u.LOG_OUT, logout);
+
 		App.on(u.FETCH_LIKES, fetchLikes);
 		App.on(u.FETCH_FAVORITES, fetchFavorites);
 		App.on(u.FETCH_RECORDINGS, fetchRecordings);
+
+		App.on(u.SHARE, share);
+		App.on(u.ADD_FAVORITE, addFavorite);
+		App.on(u.REMOVE_FAVORITE, removeFavorite);
 
 		return this;
 	}
@@ -206,18 +350,19 @@ define([
 		// let go all the event handlers
 		App.off(u.LOG_IN, login);
 		App.off(u.LOG_OUT, logout);
+
 		App.off(u.FETCH_LIKES, fetchLikes);
 		App.off(u.FETCH_FAVORITES, fetchFavorites);
 		App.off(u.FETCH_RECORDINGS, fetchRecordings);
-	
+
+		App.off(u.SHARE, share);
+		App.off(u.ADD_FAVORITE, addFavorite);
+		App.off(u.REMOVE_FAVORITE, removeFavorite);
+
 		// unload the components
 		this.components.user = UserComponent.finalize();	
 
 		return this;
-	}
-
-	function getAuthStatus() {
-		return UserModel[FACEBOOK_STATUS]? true: false;
 	}
 
 /* export */
@@ -225,7 +370,6 @@ define([
 	return {
 		name			: name,
 		initialize		: initialize,
-		getAuthStatus	: getAuthStatus,
 		model			: UserModel
 	};
 

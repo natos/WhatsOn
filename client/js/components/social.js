@@ -16,11 +16,29 @@ define([
 
 /* private */
 
-	url = $('meta[property="og:url"]').attr('content'),
+	// metadata
+
+	url,
+
+	type,
+
+	// constant
+
+	FAVORITE_PROGRAMMES = 'favorite-programmes',
+
+	FAVORITE_CHANNELS	= 'favorite-channels',
+
+	FAVORITE_COLLECTION,
+
+	// naming
 
 	template_id = '#' + name + '-template',
 
+	// DOM access
+
 	$template = $(template_id),
+
+	$content = $('#content'),
 
 	$social;
 
@@ -29,40 +47,35 @@ define([
 
 		if (typeof changes === 'undefined') { return; }
 
-		if (changes.favorites) { checkIfThisIsAFavorite(changes.favorites); }
+		if (changes[FAVORITE_COLLECTION]) { checkIfIsFavorite(changes); }
 
 	}
 
 	/* State changes */
 	/* check if this programme is a favorite */
-	function checkIfThisIsAFavorite(favorites) {
-		var found = false, favorite, programme, t = favorites.data.length;
-		while (t--) {
-			favorite = favorites.data[t];
-			programme = favorite.data.tv_show;
 
-			if (programme && programme.url === url) {
-				found = true;
-				console.log('found a favorite');
-				thisIsAFavorite(favorite);
-				break;
-			}
-		}
+	function checkIfIsFavorite(changes) {
 
-		if (!found) {
-			console.log('didnt found a favorite');
+		var isFavorite = changes[FAVORITE_COLLECTION] && changes[FAVORITE_COLLECTION][url];
+
+		if (isFavorite) {
+			thisIsAFavorite(isFavorite);
+		} else {
 			thisIsNotLonguerAFavorite();
 		}
+
 	}
 
 	function thisIsAFavorite(favorite) {
-		$('.favorite').attr('disable','disable').addClass('disable').data('favorite-id', favorite.id);
-		$('.favorite i').attr('class','icon-star');
+		console.log('found a favorite');
+		$('.favorite', '#content').attr('disable','disable').addClass('disable').data('favorite-id', favorite.id);
+		$('.favorite i', '#content').attr('class','icon-star');
 	}
 
 	function thisIsNotLonguerAFavorite() {
-		$('.favorite').removeAttr('disable').removeClass('disable').removeAttr('data-favorite-id');
-		$('.favorite i').attr('class','icon-star-empty');
+		console.log('didnt found a favorite');
+		$('.favorite', '#content').removeAttr('disable').removeClass('disable').removeAttr('data-favorite-id');
+		$('.favorite i', '#content').attr('class','icon-star-empty');
 	}
 
 	/* Action Handler, for User Interaction */
@@ -100,22 +113,22 @@ define([
 				break;
 
 			case 'like disable':
-				App.emit(p.REMOVE_LIKE, url);
+				App.emit(u.REMOVE_LIKE, url);
 				break;
 
 			case 'favorite':
-				App.emit(p.ADD_FAVORITE, url);
+				App.emit(u.ADD_FAVORITE, type, url);
 				thisIsAFavorite(id); // change de UI
 				break;
 
 			case 'favorite disable':
-				// check if is already a favorite
 				favoriteId = $button.data('favorite-id');
-				App.emit(p.REMOVE_FAVORITE, favoriteId);
+				App.emit(u.REMOVE_FAVORITE, favoriteId);
 				thisIsNotLonguerAFavorite();
 				break;
 
 			case 'share':
+				// TODO: Improve information
 				var share = { 
 					method	: 'feed', 
 					link	: url,
@@ -123,7 +136,7 @@ define([
 					caption: 'Reference Documentation',
 					description: 'Using Dialogs to interact with users.'
 				};
-				App.emit(p.SHARE, share);
+				App.emit(u.SHARE, share);
 				break
 
 		}
@@ -132,26 +145,6 @@ define([
 
 	}
 
-	/* ACTIONS */
-
-	function record() {
-
-		App.emit(p.RECORD, url);
-
-	}
-
-	function addFavorite() {
-
-		App.emit(p.ADD_FAVORITE, url);
-
-	}
-
-	function removeFavorite(id) {
-
-		App.emit(p.REMOVE_FAVORITE, id);
-
-	};
-
 /* public */
 
 	function initialize(State) {
@@ -159,19 +152,34 @@ define([
 		// subscribe to get favorites
 		App.on(u.MODEL_CHANGED, handleModelChanges);
 
+		// save basic data for this favorite
 		id = State.parts[0];
+		// hardcoded here to emulate producction urls for facebook
 		url = 'http://upcsocial.herokuapp.com' + State.hash.split('?')[0];
+		type = /programme/.test(State.url) ? 'tv_show' : 'tv_channel';
+		// define which collection we gonna use
+		// favorite programmes or channels
+		FAVORITE_COLLECTION = /programme/.test(State.url) ? FAVORITE_PROGRAMMES : FAVORITE_CHANNELS;
 
 	}
 
 	function render(model) {
 
-				
+		// render template
+		$content.find('header').append($template.html());
+
+		// listent for user behavior
 		$social = $('#social').on('click', userActionHandler);
+
+		// force checks
+		handleModelChanges(UserModel);
 
 	}
 
 	function finalize() {
+
+		// remove the buttons
+		$social.off('click', userActionHandler).remove();
 
 		App.off(u.MODEL_CHANGED, handleModelChanges);
 
