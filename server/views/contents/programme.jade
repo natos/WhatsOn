@@ -6,11 +6,11 @@
 			p.category #{data.subcategory.name}
 
 		h1 
-			span.favorite
+			button.favorite
 				i.icon-star-empty
 			| #{title}
 
-		p #{data.shortDescription}
+		p.description #{data.shortDescription}
 
 	section
 		if data.events

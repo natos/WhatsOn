@@ -705,6 +705,8 @@ footer {
 /* small inline favorite */
 #programme-content header h1 .favorite,
 #channel-content header h1 .favorite {
+	border: none;
+	background: none;
 	position: absolute;
 	cursor: pointer;
 	left: 15px;

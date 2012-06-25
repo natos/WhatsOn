@@ -128,15 +128,7 @@ define([
 				break;
 
 			case 'share':
-				// TODO: Improve information
-				var share = { 
-					method	: 'feed', 
-					link	: url,
-					name	: 'Share in your timeline',
-					caption: 'Reference Documentation',
-					description: 'Using Dialogs to interact with users.'
-				};
-				App.emit(u.SHARE, share);
+				App.emit(u.SHARE, { method: 'feed', link: url });
 				break
 
 		}
@@ -151,7 +143,6 @@ define([
 
 		// subscribe to get favorites
 		App.on(u.MODEL_CHANGED, handleModelChanges);
-
 		// save basic data for this favorite
 		id = State.parts[0];
 		// hardcoded here to emulate producction urls for facebook
@@ -167,10 +158,9 @@ define([
 
 		// render template
 		$content.find('header').append($template.html());
-
 		// listent for user behavior
-		$social = $('#social').on('click', userActionHandler);
-
+		$social = $('#social');
+		$content.on('click', userActionHandler);
 		// force checks
 		handleModelChanges(UserModel);
 
@@ -179,8 +169,9 @@ define([
 	function finalize() {
 
 		// remove the buttons
-		$social.off('click', userActionHandler).remove();
-
+		$social.remove();
+		$content.off('click', userActionHandler);
+		// remove model handler
 		App.off(u.MODEL_CHANGED, handleModelChanges);
 
 	}

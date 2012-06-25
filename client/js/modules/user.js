@@ -244,7 +244,7 @@ define([
 
 		// When user is not logued in, get its credentials and delay the action
 		if (!getAuthStatus()) { 
-			login(function afterLogin() { addFavorite(url); });
+			login(function afterLogin() { addFavorite(type, url); });
 			return; 
 		}
 
@@ -273,7 +273,7 @@ define([
 		// would be able to remove a favorite, because he don't have any.
 		// When user is not logued in, get its credentials and delay the action
 		if (!getAuthStatus()) { 
-			login(function afterLogin() { removeFavorite(url); });
+			login(function afterLogin() { removeFavorite(id); });
 			return; 
 		}
 

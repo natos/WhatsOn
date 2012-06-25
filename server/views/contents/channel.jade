@@ -10,11 +10,11 @@ if (xhr)
 			img(src="http://www.upc.nl#{data.logoIMG}")
 
 		h1 
-			span.favorite
+			button.favorite
 				i.icon-star-empty
 			| #{title}
 
-		p #{data.description}
+		p.description #{data.description}
 
 	section
 		if data
