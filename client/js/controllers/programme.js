@@ -6,15 +6,10 @@
 
 define([
 
-	'config/app',
-	'config/user',
-	'config/programme',
-	'modules/app',
-	'modules/User',
 	'lib/flaco/controller',
 	'views/programme'
 
-], function ProgrammeControllerScope(a, u, p, App, User, Controller, ProgrammeView) {
+], function ProgrammeControllerScope(Controller, ProgrammeView) {
 
 
 	var name = 'programme';

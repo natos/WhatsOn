@@ -6,15 +6,10 @@
 
 define([
 
-	'config/app',
-	'config/user',
-	'config/channel',
-	'modules/app',
-	'modules/user',
 	'lib/flaco/controller',
 	'views/channel'
 
-], function ChannelControllerScope(a, u, c, App, User, Controller, ChannelView) {
+], function ChannelControllerScope(Controller, ChannelView) {
 
 	var name = 'channel';
 
