@@ -63,6 +63,30 @@ define([
 	function setTemplate(view) {
 		// write the template in the DOM
 		a.$content.html( $( templateId(view) ).text() );
+		// re write metadata content for this view
+		var metamap = {}, original, metadata, property, content;
+		// map original meta tags
+		var original = $('head').find('meta');
+			original.forEach(function(o) {
+				property = $(o).attr('property');
+				content = $(o).attr('content');
+				if (property && content) { 
+					metamap[property] = { 
+						property: property, 
+						content: content, 
+						element: o }; 
+				}
+			});
+		// compare and replace with new ones
+		var $metadata = $('#content').find('meta');
+			$metadata.forEach(function(meta) {
+				property = $(meta).attr('property');
+				content = $(meta).attr('content');
+				if (metamap[property] && metamap[property].content !== content) {
+					metamap[property].element['content'] = content;
+				}
+			});
+
 		// render view :)
 		view.render();
 	}
@@ -150,7 +174,6 @@ define([
 		// helper for each component
 		function forEachComponent(method, args) {
 			if (!components) { return; }
-			console.log('forEachComponent', method, args);
 			var name, component;
 			for (name in components) {
 				if (components.hasOwnProperty(name)) {
@@ -173,8 +196,8 @@ define([
 				// helpers for named functions
 				inherit = {};
 				inherit[INITIALIZE] = function initialize() { return inherited.apply(View, arguments); };
-				inherit[RENDER] = function render() { return inherited.apply(View, arguments); };
-				inherit[FINALIZE] = function finalize() { return inherited.apply(View, arguments); };
+				inherit[RENDER] 	= function render() 	{ return inherited.apply(View, arguments); };
+				inherit[FINALIZE] 	= function finalize() 	{ return inherited.apply(View, arguments); };
 
 /* console.log(VIEW, member, present, past, to.present(member), to.past(member), a); */
 
