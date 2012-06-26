@@ -264,7 +264,7 @@ average(timer.timeDiff);
 				// Cache the event collection by channel ID and timeslice index
 				cacheKey = getCacheKey(channelId, timeSlice);
 
-				eventsToBeCached = [];
+				//eventsToBeCached = [];
 				for(var i=eventsForChannel.length - 1; i>=0; i--) {
 					// Only cache events in this slice that actually *belong* in the current slice.
 					// Note (MS 22/6/2012): Once we have Jędrzej's new API that guarantees to
