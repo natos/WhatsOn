@@ -714,6 +714,22 @@ footer {
 		display: inline-block;
 	}
 
+	#dashboard-content .favorites.loading h3 {
+		background: url('/assets/images/ajax-loader.gif') 50% 50% no-repeat;
+	}
+
+	.favorites.loading ul {
+		opacity: 0;
+	    -webkit-transition: opacity .3s ease-in-out 0s;
+	    -moz-transition: opacity .3s ease-in-out 0s;
+	    -o-transition: opacity .3s ease-in-out 0s;
+	    transition: opacity .3s ease-in-out 0s;
+	}
+
+	.favorites ul {
+		opacity: 1;
+	}
+
 /* end dashboard quirks */
 
 
@@ -827,7 +843,6 @@ footer {
 	background: #eee url('/assets/images/bg-gradient-headers.jpeg') 0 -5px repeat-x;
 	border-radius: 3px;
 }
-
 	
 	/* start channel events list */
 	#programme-content h2,

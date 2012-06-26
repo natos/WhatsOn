@@ -58,11 +58,7 @@ define([
 
 		var isFavorite = changes[FAVORITE_COLLECTION] && changes[FAVORITE_COLLECTION][url];
 
-		if (isFavorite) {
-			thisIsAFavorite(isFavorite);
-		} else {
-			thisIsNotLonguerAFavorite();
-		}
+		if (isFavorite) { thisIsAFavorite(isFavorite); } else { thisIsNotLonguerAFavorite(); }
 
 	}
 
@@ -73,7 +69,7 @@ define([
 	}
 
 	function thisIsNotLonguerAFavorite() {
-		console.log('didnt found a favorite');
+		console.log('didn\'t found a favorite');
 		$('.favorite', '#content').removeAttr('disable').removeClass('disable').removeAttr('data-favorite-id');
 		$('.favorite i', '#content').attr('class','icon-star-empty');
 	}
@@ -81,7 +77,10 @@ define([
 	/* Action Handler, for User Interaction */
 	function userActionHandler(event) {
 
-		if (!url) { return; }
+		if (!url) { 
+			console.log('Social component', 'No URL defined, can\'t work like that!');
+			return; 
+		}
 
 	/* Find a button */
 
@@ -90,7 +89,7 @@ define([
 		// so, grab a parent element
 		while (button.tagName !== "BUTTON") {
 			// if we reach the top container, break
-			// in this case should be the #programme-content
+			// in this case should be the #content
 			if (button === this) { return; }
 			// step up in the DOM to the next parent
 			button = button.parentNode;
@@ -109,7 +108,7 @@ define([
 		switch (action) {
 
 			case 'like':
-				App.emit(p.ADD_LIKE, url);
+				App.emit(u.ADD_LIKE, url);
 				break;
 
 			case 'like disable':
@@ -118,19 +117,18 @@ define([
 
 			case 'favorite':
 				App.emit(u.ADD_FAVORITE, type, url);
-				thisIsAFavorite(id); // change de UI
+				thisIsAFavorite(id); // Update UI, don't wait for the response
 				break;
 
 			case 'favorite disable':
 				favoriteId = $button.data('favorite-id');
 				App.emit(u.REMOVE_FAVORITE, favoriteId);
-				thisIsNotLonguerAFavorite();
+				thisIsNotLonguerAFavorite(); // Update UI, don't wait for the response
 				break;
 
 			case 'share':
 				App.emit(u.SHARE, { method: 'feed', link: url });
-				break
-
+				break;
 		}
 
 		return;

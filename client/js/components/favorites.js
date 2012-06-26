@@ -12,28 +12,122 @@ define([
 
 ], function(a, u, App, UserModel) {
 
-	var name = 'favorites';
+	var name = 'favorites',
 
 /* private */
 
-	var template_name = '#' + name + '-template';
+	template_name = '#' + name + '-template',
 
-	function handleModelChanges(changes) {
-		// check if favorites has changed
-		if (changes.favorites) {
-			render(changes); 
-		}
-	}
+	FAVORITE_PROGRAMMES = 'favorite-programmes',
 
-	function find_me_a_logo(name) {
+	FAVORITE_CHANNELS = 'favorite-channels',
+
+	$list_item = $('<li>'),
+
+	$anchor = $('<a>'),
+
+	$channel_list,
+
+	$programme_list;
+
+	function find_me_a_logo(id) {
 		var logo = false;
 		for (var i = 0; i < channels.length; i++) {
 			var _channel = channels[i];
-			if (_channel.name === name) {
+			if (_channel.id === id) {
 				logo = _channel.logoIMG; break;
 			}
 		}
 		return (logo) ? '<img src="http://www.upc.nl/' + logo + '">' : false ;
+	}
+
+	function handleDataChanges(model) {
+
+		if (!model) { model = UserModel; }
+
+		if (typeof model === 'undefined') {
+			console.log('Warning!', 'Favorites', 'No model, skip rendering');
+			return;
+		}
+
+		if (model[FAVORITE_PROGRAMMES]) { renderProgrames(model[FAVORITE_PROGRAMMES]); }
+
+		if (model[FAVORITE_CHANNELS]) { renderChannels(model[FAVORITE_CHANNELS]); }
+
+		return;
+
+	}
+
+	function renderChannels(channels) {
+
+		var url, channel, id,
+			$a,	$li, $parent, $list = $('.favorites .channels');
+			// save the list container
+			$parent = $list.parent();
+			// remove the list from DOM
+			$list.remove();
+
+		// for all the favorite channels
+		for (url in channels) {
+			channel = channels[url].data['tv_channel'];
+			id = channel.url.match(/\d+\w+/)[0];
+			// create a new anchor
+			$a = $anchor
+					.clone()
+					.attr('href', '/channel/' + id)
+					.attr('class', 'channel')
+					.html(find_me_a_logo(id));
+			// create a list item, append it to the list
+			$li = $list_item.clone().append($a).appendTo($list);
+		}
+
+		// add the list to the DOM
+		$list.appendTo($parent);
+		// remove the loading
+		$parent.removeClass('loading');
+	}
+
+	// iterate the favorites, for each of them
+	// fetch the now and next, and shows
+	// only the programmes with next information
+	function renderProgrames(programmes) {		
+
+		var url, programme, id, map = {}, query = [],
+			$a,	$li, $parent, $list = $('.favorites .programmes');
+			// save the list container
+			$parent = $list.parent();
+			// remove the list from DOM
+			$list.remove();
+
+		// for all the favorite channels
+		for (url in programmes) {
+			programme = programmes[url].data['tv_show'];
+			id = programme.url.match(/\d+\w+/)[0];
+			// create a new anchor
+			$a = $anchor
+					.clone()
+					.attr('href', '/programme/' + id)
+					.attr('class', 'programme')
+					.html(programme.title);
+			// create a list item
+			$li = $list_item.clone().append($a);
+			// map the guy
+			map[id] = $li;
+			// save the id to query nowandnext
+			query.push(id);
+		}
+
+		// get the now and next for favorite programmes
+		$.getJSON('/programme/' + query.join('-') + '/next.json', function(response) {
+			for (var eventTime in response) {
+				var _id = response[eventTime].programme.id;
+				map[_id].prepend('<span>' + response[eventTime].prettyDate + '</span>').appendTo($list);
+			}
+			// add the list to the DOM
+			$list.appendTo($parent);
+			// remove the loading
+			$parent.removeClass('loading');
+		});
 	}
 
 /* public */
@@ -41,86 +135,28 @@ define([
 	function initialize() {
 
 		// subscribe to get re-render favorites
-		App.on(u.MODEL_CHANGED, handleModelChanges);
+		App.on(u.MODEL_CHANGED, handleDataChanges);
+
+		return this;
 
 	}
 
 	function render(model) {
 
-		/*
-		*	this is a mess > refactor needed
-		*/
-
-		// grab the model
-		if (!model) { model = UserModel; }
-		// check for collections
-		if (!model[name]) {
-			console.log('Warning!', 'Favorites', 'No model, skip rendering');
-			return;
-		}
-
 		// load template
 		$('#top-lists').html( $(template_name).text() );
 
-		// the argument 'model' is a reference to the UserModel
-		// to ways to get here, one is trought the handleModelChanges function
-		// other is by a direct call
-		var favorites = model[name],
-			// DOM elements
-			$favorites = $('.' + name),
-			// DOM lists from DOM
-			$lists = {
-				'programme'	: $favorites.find('.programmes'),
-				'channel'	: $favorites.find('.channels')
-			},
-			$listitem = $('<li></li>'),
-			$link = $('<a>');
+		handleDataChanges(UserModel);
 
-		$(favorites.data).each(function(i, e) {
+		return this;
 
-			// defining the type of favorite
-			var isChannel = typeof e.data.tv_show === 'undefined',
-				listname = (isChannel) ? 'channel' : 'programme',
-				type = (isChannel) ? 'tv_channel' : 'tv_show',
-				item = e.data[type];
-
-			var id = item.url.match(/\d+\w+/),
-				req = '/' + listname + '/' + id + '/events.json?callback=?',
-				content = item.title;
-
-			if (isChannel) {
-				content = find_me_a_logo(item.title) || item.title;
-			}
-
-			// render item inside list
-			// save the reference for later
-			var fav = $link
-				.clone() // new link
-				.attr('href', '/' + listname + '/' + id)
-				.attr('class', listname)
-//				.data('programmeid', id)
-				.html(content)
-				.appendTo(
-					$listitem.clone().appendTo($lists[listname])
-				);
-
-			if (!isChannel) {
-				// get NowAndNext for the favorite shows
-				$.getJSON(req, function(response) {
-					var event = response[0];
-					if (event && event.prettyDate) {
-						fav.parent().append('<span>' + event.prettyDate + '</span>');
-					}
-				});
-			}
-
-		// end each
-		});
 	}
 
 	function finalize() {
 
-		App.off(u.MODEL_CHANGED, handleModelChanges);
+		App.off(u.MODEL_CHANGED, handleDataChanges);
+
+		return this;
 
 	}
 

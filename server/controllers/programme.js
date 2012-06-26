@@ -42,6 +42,9 @@ function(ProgrammeService, Metadata, DateUtils, Requestn, PrettyDate, Channels) 
 
 		app.server.get('/programme/:id/events.json', this.renderEvents);
 
+		app.server.get('/programme/:id/next.json', this.renderNext);
+
+
 	};
 
 
@@ -201,6 +204,70 @@ function(ProgrammeService, Metadata, DateUtils, Requestn, PrettyDate, Channels) 
 			res.end();
 
 		}).getEvents(id);
+
+	};
+
+
+	/** Render a JSON of next programme event */
+	ProgrammeController.prototype.renderNext = function(req, res) {
+
+		var REQUEST_NEXT = [],
+			RESPONSE_NEXT = {};
+			// id param is a querystring with programmes ids divided by '-'
+			id = req.params.id;
+			id.split('-').map(function(id) {
+				REQUEST_NEXT.push('http://' + req.headers.host + '/programme/' + id + '/events.json');
+			}),
+			sortFunction = function(a, b) {
+				return new Date( (a.startDateTime).replace(/-/g,"/").replace(/[TZ]/g," ") ) - new Date( (b.startDateTime).replace(/-/g,"/").replace(/[TZ]/g," ") );
+			}
+
+		Requestn(REQUEST_NEXT, function(response) {
+
+			var url, programme, events, i, t, next, _startDateTime, now = new Date();
+
+			for (url in response) {
+
+				programme = response[url];
+				events = JSON.parse(programme.body);
+				events.sort(sortFunction);
+
+				t = events.length;
+
+				for (i = 0; i < t; i++) {
+
+					event = events[i];
+
+					if (/404|500/.test(event.statusCode)) { continue; }
+
+					_startDateTime = new Date((event.startDateTime).replace(/-/g,"/").replace(/[TZ]/g," ")).valueOf();
+
+					if (_startDateTime.valueOf() > now.valueOf()) {
+						RESPONSE_NEXT[_startDateTime] = event;
+						break;
+					}
+
+				};
+
+			}
+
+			/* response */
+
+			// JSONP support
+			if (res.isJsonp) {
+				res.contentType('json');
+				res.send( res.isJsonp + '(' + JSON.stringify(RESPONSE_NEXT) + ');' );
+				res.end();
+				return;
+			}
+
+			// normal response
+			res.send(RESPONSE_NEXT); // JSON output
+			res.end();
+
+		});
+
+		return;
 
 	};
 

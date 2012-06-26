@@ -77,6 +77,8 @@ define([
 		// reset the UserModel by removing data
 		UserModel.set(FACEBOOK_STATUS, false);
 		UserModel.set(FAVORITES, false);
+		UserModel.set(FAVORITE_PROGRAMMES, false);
+		UserModel.set(FAVORITE_CHANNELS, false);
 //		UserModel.set(RECORDINGS, false);
 	}
 

@@ -46,7 +46,8 @@ function(ChannelService, util, events, request, RequestN, config) {
 
 	/** @private */
 
-	var API_CHANNEL_BATCH_SIZE = 5,
+	var PROGRAMME_EVENTS = config.API_PREFIX + 'Programme/%%id%%/events.json?order=startDateTime';
+		API_CHANNEL_BATCH_SIZE = 5,
 		API_EVENTS_BATCH_SIZE = 4;
 
 	// TODO: build a mechanism to flush the cache. At the moment, it is write-only.
@@ -125,6 +126,7 @@ function(ChannelService, util, events, request, RequestN, config) {
 		var self = this;
 
 		// Step 1: get a list of all channels (should be cached)
+			// >>> NS: 25/06/2012: The channel list is available on App module as a constant
 		// Step 2: once we have a list of channels, make a batch of now+next api calls, and combine their results 
 		_channelService.once('getChannels', function(channels) {
 			var i, j,
