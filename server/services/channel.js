@@ -99,10 +99,11 @@ function(util, events, request, requestN, DomainService, config) {
 						}
 					}
 
+					// UPDATE 26/06/2012 NS: This is the new way of getting logos.
 					// Remove the "links" property for channels. This property is not used, and only takes up space.
-					allChannels.forEach(function(channel){
-						delete channel.links;
-					});
+//					allChannels.forEach(function(channel){
+//						delete channel.links;
+//					});
 
 					// Attach domain information to each channel
 					(new DomainService()).once('getDomains', function(domains){

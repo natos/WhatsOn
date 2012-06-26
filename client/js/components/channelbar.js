@@ -32,11 +32,11 @@ define([
 	function renderLogos(selectedChannels) {
 		var channelimg, 
 			t = selectedChannels.length,
-			logos = $('#channels-bar .loading').removeAttr('src');
+			logos = $('#channels-bar .picture img').removeAttr('src').addClass('loading');
 
 		while (t--) {
 			channelimg = $('#channelImg'+selectedChannels[t]);
-			channelimg.attr('src', channelimg.data('src'));
+			channelimg.attr('src', channelimg.data('src')).removeClass('loading');
 		}
 	}
 
@@ -117,18 +117,29 @@ define([
 		// Set the class-level list of channels
 		_channels = channels;
 
+		// DRY Alert!
+		// This function is needed in other components.
+		function getLogo(channel) {
+			if (!channel.links) { return; }
+			var foundif = false, t = channel.links.length;
+			while (t--) { if (channel.links[t].rel === "logo") { foundit = channel.links[t]; } }
+			return foundit;
+		}
+
 		// Render the list of channels we want to use.
-		var i, channel;
-		var channelsCount = channels.length;
-		var channelItemsHtml = [];
+		var i, channel, t = channels.length, output = [];
 
 		// Create the channel items in the channel bar, and the
 		// row containers for the grid
-		for (i = 0; i < channelsCount; i++) {
+		for (i = 0; i < t; i++) {
 			channel = channels[i];
-			channelItemsHtml.push('<li><div class="picture"><img class="loading" title="' + channel.name + '" data-src="http://www.upc.nl' + channel.logoIMG + '" data-channelid="' + channel.id + '" id="channelImg' + channel.id + '" title=</li>');
+			// There's a link rel=logo in the links collections
+			// we need to improve this, not always the logo is
+			// the first link on the collection
+			output.push('<li><div class="picture"><img class="loading" title="' + channel.name + '" data-src="http://www.upc.nl' + getLogo(channel).href + '?size=medium" data-channelid="' + channel.id + '" id="channelImg' + channel.id + '" title=</li>');
 		}
-		$('#channels-bar-list').html(channelItemsHtml.join(''));
+
+		$('#channels-bar-list').html(output.join(''));
 	}
 
 

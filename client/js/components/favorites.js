@@ -30,6 +30,7 @@ define([
 
 	$programme_list;
 
+	// TODO: Update new aproach to get logos
 	function find_me_a_logo(id) {
 		var logo = false;
 		for (var i = 0; i < channels.length; i++) {
