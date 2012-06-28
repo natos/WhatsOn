@@ -82,7 +82,7 @@ define([
 		var cssText = [];
 			// Generate style rules for the heights and widths specific to the current browser
 			cssText.push('#grid-container {height:' + g.GRID_HEIGHT + 'px;width:' + g.GRID_WIDTH + 'px;margin-left:' + g.CHANNEL_BAR_WIDTH + 'px;margin-top:' + g.TIMEBAR_HEIGHT + 'px;}');
-			cssText.push('#grid-container .event {height:' + g.ROW_HEIGHT + 'px;}');
+			cssText.push('#grid-container .grid-event {height:' + g.ROW_HEIGHT + 'px;}');
 			cssText.push('#channels-bar li {height:' + g.ROW_HEIGHT + 'px;}');
 			cssText.push('#time-bar ol {width:' + g.GRID_WIDTH + 'px;margin-left:' + g.CHANNEL_BAR_WIDTH + 'px;}');
 			cssText.push('#time-bar li {width:' + g.HOUR_WIDTH + 'px;}');
@@ -98,14 +98,15 @@ define([
 	*/
 	function renderEvents(events) {
 
-		var link, description, i, event, width, left, startDateTime, endDateTime, category, subcategory, right;
+		var i, event, width, left, startDateTime, endDateTime, category, subcategory, right, eventId, programmeId;
 
 		for (i = 0; i < events[0].length; i++) {
 
 			event = events[0][i];
+			eventId = event.id;
 
 			// Avoid rendering duplicate DOM elements
-			if ( $('#event-' + event.id)[0] ) {
+			if ( $('#event-' + event.id).length ) {
 				// Don't render this event; skip to the next one.
 				//console.log('Warning!','Trying to render duplicate event.');
 				continue;
@@ -133,30 +134,14 @@ define([
 				event.programme.title = "←" + event.programme.title;
 			}
 
-			// DOM
-			link = $('<a>')
-				.addClass('programme')
-				.attr({ 'id': event.programme.id, 'href': '/programme/' + event.programme.id, 'title': event.programme.title, 'data-programmeid': event.programme.id })
-				.text(event.programme.title);
+			// Insert into DOM
+			programmeId = event.programme.id;
+			var eventContent = '<a class="programme" id="' + programmeId + '" href="/programme/' + programmeId + '" data-programmeid="' + programmeId + '" title="' + event.programme.title + '">'
+								+ '<div class="grid-event" data-category="' + category + '" data-subcategory="' + subcategory + '" id="event-' + eventId + '" style="width:' + width + 'px;left:' + left + 'px">'
+								+ event.programme.title
+								+ '</div></a>'
+			$('#cc_' + event.channel.id).append(eventContent);
 
-			description = $('<p>')
-				.addClass('description')
-				.text(event.programme.shortDescription);
-
-			$('<div>')
-				.attr('id', 'event-' + event.id)
-				.addClass('grid-event')
-				.append(link)
-				//.append(description)
-				.data('category', category)
-				.data('subcategory', subcategory)
-				.css({
-					'position': 'absolute',
-					'width': width + 'px',
-					'height': g.ROW_HEIGHT + 'px',
-					'left': left + 'px'
-				})
-				.appendTo('#cc_' + event.channel.id);
 		}
 
 		// triggers GRID_RENDERED
