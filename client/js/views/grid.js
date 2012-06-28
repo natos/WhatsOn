@@ -102,9 +102,9 @@ define([
 
 		var i, event, width, left, startDateTime, endDateTime, category, subcategory, right, eventId, programmeId;
 
-		for (i = 0; i < events[0].length; i++) {
+		for (i = 0; i < events.length; i++) {
 
-			event = events[0][i];
+			event = events[i];
 			eventId = event.id;
 
 			// Avoid rendering duplicate DOM elements
@@ -145,6 +145,7 @@ define([
 			$('#cc_' + event.channel.id).append(eventContent);
 
 		}
+
 
 		// triggers GRID_RENDERED
 		App.emit(g.GRID_RENDERED);

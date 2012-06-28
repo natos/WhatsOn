@@ -47,9 +47,7 @@ define([
 		$CUSTOM_EVENT_ROOT = App,
 		CHANNEL_EVENTS_RECEIVED_EVENT = 'eventsReceived',
 		SEARCH_RESULTS_RECEIVED_EVENT = 'searchResultsReceived',
-		CACHE_DURATION = 60 * 24, // 1 day
-		_eventsForChannelCache = {}; // Events cache for browsers without localstorage
-
+		CACHE_DURATION = 60 * 24; // 1 day
 
 	/**
 	* Format a date as a string YYYY-MM-DDTHH:00Z
@@ -116,42 +114,6 @@ define([
 	};
 
 	/**
-	* For a list of channelIds and a single time slice, retrieve the events
-	* for this time slice, either from the API, or from cache. Raise "eventsReceived"
-	* messages when the events are available.
-	*
-	* @private
-	* @async
-	* @return void
-	*/
-	var getEventsForSlice = function(channelIds, timeSlice) {
-		var channelIdsToFetchFromApi = [],
-			channelIdsToFetchFromCache = [],
-			channelIdsCount = channelIds.length,
-			i,
-			channelId,
-			cacheKey,
-			cachedEventsForChannel;
-
-		// Iterate over the channels list to see if we have an events collection
-		// for this channel and time slice in cache. If not, add the channel to a list
-		// of channels to fetch from the api.
-		for (i = 0; i < channelIdsCount; i++) {
-			channelId = channelIds[i]; 
-			cacheKey = getCacheKey(channelId, timeSlice);
-			cachedEventsForChannel = _eventsForChannelCache[cacheKey];
-
-			if (cachedEventsForChannel) {
-				$CUSTOM_EVENT_ROOT.emit(CHANNEL_EVENTS_RECEIVED_EVENT, [cachedEventsForChannel]);
-			} else {
-				channelIdsToFetchFromApi.push(channelId);
-			}
-		}
-
-		getEventsForSliceFromApi(channelIdsToFetchFromApi, timeSlice, EVENTS_PER_SLICE);
-	};
-
-	/**
 	* @private
 	* @async
 	* @return void
@@ -165,6 +127,8 @@ define([
 			formattedStartTime = formatTimeForApiRequest(timeSlice[0]),
 			channelIdBatchesCount,
 			channelIdBatch,
+			// for recursive calling more events;
+			eventsPerSlice = eventsPerSlice || EVENTS_PER_SLICE,
 			request;
 
 		for (i = 0; i < batchesCount; i++) {
@@ -247,9 +211,8 @@ average(timer.timeDiff);
 						eventsForChannel.pop();
 					}
 				}
-				_eventsForChannelCache[cacheKey] = eventsForChannel;
 
-				$CUSTOM_EVENT_ROOT.emit(CHANNEL_EVENTS_RECEIVED_EVENT, [eventsForChannel]);
+				$CUSTOM_EVENT_ROOT.emit(CHANNEL_EVENTS_RECEIVED_EVENT, eventsForChannel, cacheKey);
 			} else {
 				// Not enough events for this channel and time slice.
 				// Add the channel to the repeatChannelIds array
@@ -297,7 +260,7 @@ average(timer.timeDiff);
 			i;
 
 		for (i=0; i<slicesCount; i++) {
-			getEventsForSlice(channelIds, timeSlices[i]);
+			getEventsForSliceFromApi(channelIds, timeSlices[i]);
 		}
 	};
 
@@ -326,9 +289,14 @@ average(timer.timeDiff);
 		});
 	};
 
+	var getCacheKey = function(channelId, timeSlice) {
+		return channelId + '|' + timeSlice[0].valueOf() + '|' + timeSlice[1].valueOf();
+	};
+
 	return {
-		getEventsForSlice	: getEventsForSlice,
-		getTimeSlices		: getTimeSlices
+		getEventsForSliceFromApi	: getEventsForSliceFromApi,
+		getTimeSlices				: getTimeSlices,
+		getCacheKey					: getCacheKey,
 //		searchForEvents		: searchForEvents
 	};
 

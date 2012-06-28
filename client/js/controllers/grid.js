@@ -18,9 +18,11 @@ define([
 
 ], function GridController(g, App, Controller, GridModel, GridView, EpgApi) {
 
-	var name = 'grid';
+	var name = 'grid',
 
 /* private */
+
+	_eventsForChannelCache = {}; // Events cache for browsers without localstorage
 
 	/**
 	* Handler for the GRID_MOVED event.
@@ -32,7 +34,7 @@ define([
 		GridModel.set('position', { 'top': window.pageYOffset * -1, 'left': window.pageXOffset * -1 });
 		GridModel.set('selectedChannels', GridView.getSelectedChannels(2));
 		GridModel.set('selectedTime', GridView.getSelectedTime());
-	
+
 		return this;
 	}
 	
@@ -41,14 +43,19 @@ define([
 	* "eventsReceived" is raised by the EpgApi.js object whenever a batch of EPG data
 	* has been retrieved from the API, or from cache.
 	*/
-	function setEvents(events) {
+	function setEvents(events, cacheKey) {
 
+		_eventsForChannelCache[cacheKey] = events;
+		// cache things		
 		GridModel.set('events', events);
 	
 		return this;
 	
 	}
 	
+
+	_eventsForChannelRendered = {}
+
 	/**
 	* Handler for the GRID_FETCH_EVENTS event.
 	* GRID_FETCH_EVENTS is raised by the grid view at the *end* of a resize or scroll
@@ -59,23 +66,34 @@ define([
 
 		// get slices
 
-		var timeSlices = EpgApi.getTimeSlices(GridModel.selectedTime.startTime, GridModel.selectedTime.endTime),
+		var channels = GridModel.selectedChannels,
+			startTime = GridModel.selectedTime.startTime,
+			endTime = GridModel.selectedTime.endTime,
+			timeSlices = EpgApi.getTimeSlices(startTime, endTime),
 			slicesCount = timeSlices.length,
-			i;
+			channelsCount = channels.length,
+			i, e, cacheKey, 
+			uncachedChannels;
 
-		for (i=0; i<slicesCount; i++) {
-			EpgApi.getEventsForSlice(GridModel.selectedChannels, timeSlices[i]);
+		// create cachekey
+		for (e=0; e<slicesCount; e++) {
+			uncachedChannels = [];
+			for (i=0; i<channelsCount; i++) {
+				cacheKey = EpgApi.getCacheKey(channels[i], timeSlices[e]);
+				if (_eventsForChannelCache[cacheKey]) {
+					console.log('exist on cache');
+					// render it
+					// render map with stuff
+					setEvents(_eventsForChannelCache[cacheKey], cacheKey);
+				} else {
+					console.log('doesn\' exist on cache');
+//					_eventsForChannelCache[cacheKey] = true;
+					uncachedChannels.push(channels[i]);
+				}
+			}
+			// get events for uncached channels with thi
+			EpgApi.getEventsForSliceFromApi(uncachedChannels, timeSlices[e]);
 		}
-
-		// get cache key
-
-		// check the cache
-
-			// return if theres data
-
-		// or fetch slices for channels
-
-	//	EpgApi.getEventsForChannels(GridModel.selectedChannels, GridModel.selectedTime.startTime, GridModel.selectedTime.endTime);
 	
 		return this;
 	}
