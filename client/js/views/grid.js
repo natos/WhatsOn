@@ -21,14 +21,16 @@ define([
 
 	'config/app',
 	'config/grid',
+	'config/channel',
 	'modules/app',
+	'models/channel',
 	'lib/flaco/view',
 	'components/timebar',
 	'components/channelbar',
 	'components/buffer',
 	'utils/convert'
 
-], function GridViewScope(a, g, App, View, TimeBar, ChannelBar, Buffer, convert) {
+], function GridViewScope(a, g, c, App, ChannelModel, View, TimeBar, ChannelBar, Buffer, convert) {
 
 	var name = "grid";
 
@@ -216,6 +218,7 @@ define([
 /* abstract */
 
 	function initialize() {
+
 		g.END = new Date(g.ZERO.valueOf() + 24*60*60*1000);
 
 		// UI event handlers
@@ -232,24 +235,13 @@ define([
 
 	function render() {
 
-		// Channel group 986 is 'DTV Royaal' (NL)
-		// TODO: remove hard-coded group id.
-		var channels = App.getChannelsByFilterGroup('986');
-		var i;
-		var channelsCount = channels.length;
-		var channelRowsHtml = [];
-
-		// Create the row containers for the grid
-		for (i = 0; i < channelsCount; i++) {
-			channel = channels[i];
-			channelRowsHtml.push('<div class="channel-container" id="cc_' + channel.id + '" style="height:' + g.ROW_HEIGHT + 'px;top:' + (i * g.ROW_HEIGHT) + 'px"></div>')
+		// detecting first render
+		if ( $('#channels-bar-list li').size() === 0 ) {
+			// render channel rows and list
+			ChannelBar.renderChannelsGroup();
+			// attach some cool styles
+			appendCSSBlock(name + '-styles', defineStyles());
 		}
-		$('#grid-container').html(channelRowsHtml.join(''));
-
-		// Grid styles depend on the channelbar component being rendered.
-		// TODO: bad dependency - try to remove.
-		ChannelBar.renderChannelsGroup(channels);
-		appendCSSBlock(name + '-styles', defineStyles());
 
 		// Start the first data load for this grid configuration
 		App.emit(g.GRID_MOVED);

@@ -16,19 +16,21 @@ define([], function ChannelConfigContext() {
 
 	return {
 
+		/* Default data */
+
+		DEFAULT_GROUP: '986',
+
+		/* Labels */
+
+		DATA: 'data',
+
+		GROUPS: 'groups',
+
+		SELECTED_GROUP: 'selected_group',
+
 		/* Events */
 
-		/* DOM Access */
-
-		$window: $(window),
-	
-		$body: $(document.body),
-
-		$userAction: $('#user-action'),		
-
-		$record: $('.record'),
-
-		$favorite: $('.favorite')
+		MODEL_CHANGED: 'channel:model_changed',
 
 	};
 

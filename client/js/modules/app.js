@@ -9,59 +9,40 @@
 define([
 
 	'/js/lib/event/event.js',
-	'config/app'
+	'utils/channel',
+	'models/channel',
+	'models/grid',
+	'models/user'
 
-], function AppModuleScope(EventEmitter, c) {
+], function AppModuleScope(EventEmitter, ChannelUtils, ChannelModel, GridModel, UserModel) {
 
-	/* private */
+/* private */
+
+/* public */
 
 	/* App extends EventEmitter */
 	var App = new EventEmitter();
 
-	/* Modules namespace */
-	App.modules = {};
-
-	/* Templates namespace */
-	App.templates = {};
-
-	/* The app holds an array of channels, but this array is empty
-	  when the app initializes. If a component wants to access the
-	  channels, it should first call App.populateChannels to
-	  ensure that the array is full before using it. If the array
-	  was empty, this will invoke an ajax request to get the list.
-	 */
-	App.channels = [];
-
+		/* Modules namespace */
+		App.modules = {};
+		
 	/* constructor */
 	function initialize() {
 
-		// Channels MUST be available when the app starts up.
-		populateChannels(function(){
+		// Fetch channels and Load Modules
+		ChannelUtils.fetchAnd(function loadModules(channels) {
+			// save the channels in the global scope // don't like this // backwards compatibility
+			// and into the App namespace
+			window.channels = App.channels = channels;
 			// Load the primary modules for the app.
 			// Each module must have an "initialize" method that returns the module itself.
 			require(['modules/user', 'modules/canvas', 'modules/router'], function initializeModules() {
 				while (module = Array.prototype.shift.apply(arguments)) { App.modules[module.name] = module.initialize(); } 
 			});
-		})
+		});
 
-		return this;
+		return App;
 	
-	}
-
-	/**
-	* Populate the list of channels, and call a callback when they're ready
-	* @public
-	*/
-	function populateChannels(callback) {
-		if (this.channels && this.channels.length > 0) {
-			callback();
-		} else {
-			$.getJSON('/channels.json', function(data, status, xhr){
-				App.channels = data;
-				window.channels = App.channels;
-				callback();
-			});
-		}
 	}
 
 	function loadCss(url) {
@@ -75,6 +56,7 @@ define([
 	/**
 	 * Return a list of channels based on the specified Filter group id.
 	 * Make sure the main channels list is populated first, by calling populateChannels()!
+	 * TODO: Remove this method
 	 */
 	function getChannelsByFilterGroup(groupId) {
 		var channels = App.channels;
@@ -104,9 +86,13 @@ define([
 
 	App.name = 'UPC Social';
 	App.initialize = initialize;
-	App.populateChannels = populateChannels;
-	App.loadCss = loadCss;
-	App.getChannelsByFilterGroup = getChannelsByFilterGroup;
+	App.loadCss = loadCss;	// * TODO: Remove this method
+	App.getChannelsByFilterGroup = getChannelsByFilterGroup;	// * TODO: Remove this method
+	App.models = {
+		channel	: ChannelModel, 
+		grid 	: GridModel,
+		user	: UserModel
+	}
 
 	return App;
 

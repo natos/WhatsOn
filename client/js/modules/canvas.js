@@ -186,6 +186,7 @@ define([
 		App.off(a.NAVIGATE, startTransition);
 		App.off(a.VIEW_RENDERED, endTransition);
 
+		return this;
 	}
 
 /* export */
