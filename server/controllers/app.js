@@ -68,7 +68,6 @@ function(request, express, i18n, config, Supports, ChannelService, Login, Dashbo
 			// Redirect to dashboard
 			// for requests from root "/"
 			self.server.get('/', redirectToDashboard);
-			self.server.get('/logout', redirectToDashboard);
 
 			//	setup app controllers
 			self.controllers = {
