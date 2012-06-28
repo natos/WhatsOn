@@ -7,10 +7,12 @@ define([
 
 	'config/app',
 	'config/user',
+	'config/channel',
 	'modules/app',
-	'models/user'
+	'models/user',
+	'models/channel'
 
-], function(a, u, App, UserModel) {
+], function(a, u, c, App, UserModel, ChannelModel) {
 
 	var name = 'favorites',
 
@@ -32,7 +34,7 @@ define([
 
 	// TODO: Update new aproach to get logos
 	function find_me_a_logo(id) {
-		var logo = false;
+		var logo = false, channels = ChannelModel[c.DATA];
 		for (var i = 0; i < channels.length; i++) {
 			var _channel = channels[i];
 			if (_channel.id === id) {

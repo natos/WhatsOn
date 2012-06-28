@@ -42,7 +42,7 @@ define([
 	* has been retrieved from the API, or from cache.
 	*/
 	function setEvents(events) {
-	
+
 		GridModel.set('events', events);
 	
 		return this;
@@ -71,7 +71,7 @@ define([
 		// Events Handlers
 		App.on(g.GRID_MOVED, gridMoved);
 		App.on(g.GRID_FETCH_EVENTS, getEvents);
-		App.on('eventsReceived', setEvents);
+		App.on('eventsReceived', setEvents); // NS: don't like this string there…
 
 		return this;
 
@@ -81,7 +81,7 @@ define([
 
 		App.off(g.GRID_MOVED, gridMoved);
 		App.off(g.GRID_FETCH_EVENTS, getEvents);
-		App.off('eventsReceived', setEvents);
+		App.off('eventsReceived', setEvents); // NS: don't like it here either…
 
 		return this;
 

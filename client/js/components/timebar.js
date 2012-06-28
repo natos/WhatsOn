@@ -70,16 +70,17 @@ define([
 	}
 
 	function move(position) {
-		if (typeof $timelist === 'undefined') { $timelist = $('#time-bar ol', '#content'); }
+		if (typeof $timelist === 'undefined') { return; }
 		$timelist.css({ left: position.left + 'px' });
 		return this;
 	}
 
 	/* modelchange */
-	function modelChanged(obj) {
-		if (typeof obj === 'undefined') { return; }
-		if (obj.position) {
-			move(obj.position);
+	function modelChanged(changes) {
+		if (typeof changes === 'undefined') { return; }
+		// if there changes on the position object, move the bar
+		if (changes.position) {
+			move(changes.position);
 		}
 	}
 
@@ -99,6 +100,8 @@ define([
 	}
 
 	function render() {
+
+		$timelist = $('#time-bar-list', '#content');
 
 		// initialize ticker
 		timer.start().tick();
