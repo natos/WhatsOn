@@ -3,8 +3,8 @@ h1 Admin: TV Tips
 if tvTips
 	each event in tvTips
 		h2 
-			a(href="/event/#{event.id}") #{event.programme.title}
-		p #{event.prettyStartTime} 
+			a(href="/programme/#{event.programme.id}") #{event.programme.title}
+		p Event id #{event.id} #{event.prettyStartTime}
 			|on 
 			a(href="/channel/#{event.channel.id}") #{event.channel.name}
 		p #{event.programme.shortDescription}

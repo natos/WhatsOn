@@ -13,6 +13,7 @@ define([
 
 	// utils
 	'utils/dateutils',
+	'utils/requestN',
 
 	// config
 	'config/global.config'
@@ -23,7 +24,7 @@ define([
  *	@class TVTipsService
  */
 
-function(util, events, request, DateUtils, config) {
+function(util, events, request, DateUtils, requestN, config) {
 	'use strict';
 
 	/** @constructor */
@@ -44,6 +45,14 @@ function(util, events, request, DateUtils, config) {
 	/** @private */
 
 	var _dateUtils = new DateUtils();
+	var EVENT_DETAILS_URL = config.API_PREFIX + 'Event/%%id%%.json';
+	var _tvTipsCache;
+	var _tvTipsCacheTimestamp;
+
+	// The event cache holds a map of event.id:eventdetails,
+	// so that we don't always have to retrieve the details for an event.
+	var _eventDetailsCache = {};
+
 
 	/**
 	 * The TVTips feed is XML. The xml2js parser turns this
@@ -88,19 +97,23 @@ function(util, events, request, DateUtils, config) {
 					}
 				}
 
-				normalizedEvents.push(normalizedEvent);
+				// Skip events that don't have an event ID.
+				// (These are generally UPC on-demand events.)
+				if (typeof(normalizedEvent.id) === 'string') {
+					normalizedEvents.push(normalizedEvent);
+				}
 			}
 		}
 
 		return normalizedEvents;
 	};
 
-	/** @public */
 
-	/** Get list of TV tips */
-	TVTipsService.prototype.getTVTips = function(marketId) {
-
-		var self = this;
+	/**
+	 * Retrieve, normalize, and cache the tv Tips feed.
+	 * Raise an event when complete.
+	 */
+	 var populateTvTipsCache = function(self) {
 
 		// TODO: choose URL (& mock?) from config based on marketId
 		var tvTipsUrl = 'http://tvgids.upc.nl/cgi-bin/WebObjects/FeedSniplets.woa/wa/XmlFeedActions/getFeed?groupName=nlTVTips';
@@ -124,12 +137,66 @@ function(util, events, request, DateUtils, config) {
 //var inspect = require('eyes').inspector({maxLength:20000});
 //console.log(inspect(result));
 
-					self.emit('getTVTips', normalizeTVTips(result));
-				})
+					// Normalize the TV tips feed to return events in our "standard" format
+					// Note: this will REMOVE events that do not have an event ID.
+					var normalizedEvents = normalizeTVTips(result);
 
+					// Get event details (specifically: programme ID) for each event.
+					// Note: this will REMOVE events for which we cannot find a programme ID.
+					var requestUrls = [];
+					for(var i=0; i<normalizedEvents.length; i++) {
+						if (!_eventDetailsCache[normalizedEvents[i].id]) {
+							requestUrls.push(EVENT_DETAILS_URL.replace(/%%id%%/, normalizedEvents[i].id));
+						}
+					}
+
+					requestN(requestUrls, function(responses) {
+						var i, eventDetails;
+
+						// Store any new event details responses in cache
+						for (i=0; i<requestUrls.length; i++) {
+							if (!responses[requestUrls[i]].error && responses[requestUrls[i]].response.statusCode == 200) {
+								eventDetails = JSON.parse(responses[requestUrls[i]].body);
+								_eventDetailsCache[eventDetails.id] = eventDetails;
+							}
+						}
+
+						// Attach programme ID to normalized events
+						var normalizedEventsWithProgrammeIds = [];
+						for (i=0; i<normalizedEvents.length; i++) {
+							eventDetails = _eventDetailsCache[normalizedEvents[i].id];
+							if (eventDetails && eventDetails.programme && eventDetails.programme.id) {
+								normalizedEvents[i].programme.id = eventDetails.programme.id;
+								normalizedEventsWithProgrammeIds.push(normalizedEvents[i]);
+							}
+						}
+
+						_tvTipsCache = normalizedEventsWithProgrammeIds;
+						_tvTipsCacheTimestamp = new Date();
+
+						self.emit('getTVTips', _tvTipsCache);
+					});
+
+				});
 			}
 
 		});
+
+	 }
+
+	/** @public */
+
+	/** Get list of TV tips */
+	TVTipsService.prototype.getTVTips = function(marketId) {
+
+		var self = this;
+
+		// Use cached tvTips for up to 1 hour
+		if (_tvTipsCache && _tvTipsCacheTimestamp && (new Date().valueOf() - _tvTipsCacheTimestamp.valueOf()) < (1000 * 60 * 60)) {
+			self.emit('getTVTips', _tvTipsCache);
+		} else {
+			populateTvTipsCache(self);
+		}
 
 		return this;
 	};

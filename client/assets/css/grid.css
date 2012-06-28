@@ -259,29 +259,23 @@
 /* A .grid-event represents a single event in the programme grid.
 .grid-event elements are absolutely positioned inside a parent .channel-container */ 
 .grid-event {
+	font-weight: bold;
+	color: #000;
 	position:absolute;
 	overflow: hidden;
 	border-left: 1px solid #aaa;
 	border-right: 1px solid #aaa;
 	font-size: .9em;
 	cursor: pointer;
+	/* Use box-sizing:border-box to simplify calculations */;
+	-moz-box-sizing:border-box;
+	-webkit-box-sizing:border-box;
+	box-sizing:border-box;
+	padding:5px;
 }
 
 .grid-event:active {
 	background: #fff url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
-}
-
-#grid-container .programme,
-#grid-container .programme + p {
-	display: block;
-	margin: 5px;
-	padding: 0;
-	color: #666;
-}
-
-#grid-container .programme {
-	font-weight: bold;
-	color: #000;
 }
 
 .timer-ticker {
