@@ -4,14 +4,11 @@
 *
 */
 
-define([
-
-	'config/app',
-	'modules/app'
-
-], function GenericModelScope(a, App) {
+define([], function GenericModelScope() {
 
 /* private */
+
+	var EVENT_EMITTER_URI = 'modules/app';
 
 /* public */
 
@@ -29,7 +26,7 @@ define([
 	/* protected */
 
 		// helper to find reserved words
-		function isInherited(member) { return ['set', 'event'].indexOf(member) >= 0; }
+		function isInherited(member) { return ['set', 'get'].indexOf(member) >= 0; }
 
 		// define public members
 		function definePublicMember(member) { if (!isInherited(member)) { Model[member] = o[member]; } }
@@ -52,7 +49,7 @@ define([
 				obj[key] = value;
 
 			// emit event
-			if (event) { App.emit(event, obj); }
+			if (event) { require([EVENT_EMITTER_URI], function trigger(EventEmitter) { EventEmitter.emit(event, obj); }); }
 
 			return obj;
 		};
