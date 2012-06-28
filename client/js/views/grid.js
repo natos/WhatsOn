@@ -100,7 +100,9 @@ define([
 	*/
 	function renderEvents(events) {
 
-		var i, event, width, left, startDateTime, endDateTime, category, subcategory, right, eventId, programmeId;
+		var i, event, width, left, startDateTime, endDateTime, category, subcategory, right, eventId, programmeId, channelId,
+
+		eventContent = "";
 
 		for (i = 0; i < events.length; i++) {
 
@@ -138,13 +140,13 @@ define([
 
 			// Insert into DOM
 			programmeId = event.programme.id;
-			var eventContent = '<a class="programme" id="' + programmeId + '" href="/programme/' + programmeId + '" data-programmeid="' + programmeId + '" title="' + event.programme.title + '">'
-								+ '<div class="grid-event" data-category="' + category + '" data-subcategory="' + subcategory + '" id="event-' + eventId + '" style="width:' + width + 'px;left:' + left + 'px">'
-								+ event.programme.title
-								+ '</div></a>'
-			$('#cc_' + event.channel.id).append(eventContent);
+			channelId = event.channel.id;
 
-		}
+			eventContent += '<a href="/programme/' + programmeId + '" data-programmeid="' + programmeId + '" title="' + event.programme.title + '" class="grid-event" data-category="' + category + '" data-subcategory="' + subcategory + '" id="event-' + eventId + '" style="width:' + width + 'px;left:' + left + 'px">' + event.programme.title + '</a>';
+
+		} // end loop
+
+		$('#cc_' + channelId).append(eventContent);
 
 
 		// triggers GRID_RENDERED
@@ -258,8 +260,8 @@ define([
 		getSelectedTime		: getSelectedTime,
 		components			: {
 			timebar		: TimeBar,
-			channelbar	: ChannelBar,
-			buffer		: Buffer
+			channelbar	: ChannelBar
+//			buffer		: Buffer
 		}
 	});
 
