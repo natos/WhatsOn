@@ -57,7 +57,25 @@ define([
 	*/
 	function getEvents() {
 
-		EpgApi.getEventsForChannels(GridModel.selectedChannels, GridModel.selectedTime.startTime, GridModel.selectedTime.endTime);
+		// get slices
+
+		var timeSlices = EpgApi.getTimeSlices(GridModel.selectedTime.startTime, GridModel.selectedTime.endTime),
+			slicesCount = timeSlices.length,
+			i;
+
+		for (i=0; i<slicesCount; i++) {
+			EpgApi.getEventsForSlice(GridModel.selectedChannels, timeSlices[i]);
+		}
+
+		// get cache key
+
+		// check the cache
+
+			// return if theres data
+
+		// or fetch slices for channels
+
+	//	EpgApi.getEventsForChannels(GridModel.selectedChannels, GridModel.selectedTime.startTime, GridModel.selectedTime.endTime);
 	
 		return this;
 	}

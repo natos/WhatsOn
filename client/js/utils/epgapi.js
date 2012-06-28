@@ -50,32 +50,6 @@ define([
 		CACHE_DURATION = 60 * 24, // 1 day
 		_eventsForChannelCache = {}; // Events cache for browsers without localstorage
 
-	// Test for localstorage
-	var hasStorage = (function() {
-		try {
-			localStorage.setItem('monkey', 'fez');
-			localStorage.removeItem('monkey');
-			return true;
-		} catch(e) {
-			return false;
-		}
-	}());
-
-	// Define a facade for caching events
-	var getEventsForChannelFromCache;
-	var putEventsForChannelIntoCache;
-
-	// disable local Storage
-	hasStorage = false;
-
-	if (hasStorage) {
-		getEventsForChannelFromCache = function(cacheKey) {return lscache.get(cacheKey);};
-		putEventsForChannelIntoCache = function(cacheKey, value) {lscache.set(cacheKey, value, CACHE_DURATION);};
-	} else {
-		getEventsForChannelFromCache = function(cacheKey) {return _eventsForChannelCache[cacheKey];};
-		putEventsForChannelIntoCache = function(cacheKey, value) {_eventsForChannelCache[cacheKey] = value;};
-	}
-
 
 	/**
 	* Format a date as a string YYYY-MM-DDTHH:00Z
@@ -165,7 +139,7 @@ define([
 		for (i = 0; i < channelIdsCount; i++) {
 			channelId = channelIds[i]; 
 			cacheKey = getCacheKey(channelId, timeSlice);
-			cachedEventsForChannel = getEventsForChannelFromCache(cacheKey);
+			cachedEventsForChannel = _eventsForChannelCache[cacheKey];
 
 			if (cachedEventsForChannel) {
 				$CUSTOM_EVENT_ROOT.emit(CHANNEL_EVENTS_RECEIVED_EVENT, [cachedEventsForChannel]);
@@ -273,7 +247,7 @@ average(timer.timeDiff);
 						eventsForChannel.pop();
 					}
 				}
-				putEventsForChannelIntoCache(cacheKey, eventsForChannel);
+				_eventsForChannelCache[cacheKey] = eventsForChannel;
 
 				$CUSTOM_EVENT_ROOT.emit(CHANNEL_EVENTS_RECEIVED_EVENT, [eventsForChannel]);
 			} else {
@@ -314,6 +288,7 @@ average(timer.timeDiff);
 	* @public
 	* @async
 	* @return void
+	* @deprecated
 	*/
 	var getEventsForChannels = function(channelIds, startTime, endTime) {
 
@@ -352,8 +327,9 @@ average(timer.timeDiff);
 	};
 
 	return {
-		getEventsForChannels	: getEventsForChannels,
-		searchForEvents			: searchForEvents
+		getEventsForSlice	: getEventsForSlice,
+		getTimeSlices		: getTimeSlices
+//		searchForEvents		: searchForEvents
 	};
 
 });
