@@ -228,10 +228,6 @@ define([
 			appendCSSBlock(name + '-styles', defineStyles());
 		}
 
-		// Start the first data load for this grid configuration
-		App.emit(g.GRID_MOVED);
-		App.emit(g.GRID_FETCH_EVENTS);
-
 		return this;
 	}
 
