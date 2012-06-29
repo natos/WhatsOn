@@ -30,7 +30,7 @@ define([
 	'components/buffer',
 	'utils/convert',
 	'models/grid',
-	'utils/epgapi'
+	'/js/lib/timetrack/timetrack.js'
 
 ], function GridViewScope(a, g, c, App, ChannelModel, View, TimeBar, ChannelBar, Buffer, convert, GridModel, EpgApi) {
 
@@ -43,8 +43,9 @@ define([
 
 	var _channelVisibilityPrevious = {};
 	var _channelVisibilityCurrent = {};
-	var EXTRA_ABOVE_AND_BELOW = 2;
+	var EXTRA_ABOVE_AND_BELOW = 2; // I've moved this to the grid config file
 
+	var $grid_container;
 
 	/**
 	* Handler for scrolling and resizing events.
@@ -59,7 +60,7 @@ define([
 		// set a delay of 200ms to fetch events
 		executionTimer = setTimeout(function emitFetchEvents() { 
 			App.emit(g.GRID_FETCH_EVENTS);
-			redrawWithoutNewData();
+//			redrawWithoutNewData();
 		}, executionDelay);
 	}
 
@@ -70,9 +71,14 @@ define([
 	function modelChanged(changes) {
 		if (typeof changes === 'undefined') { return; }
 		// check for events changes to render
-		if (changes.events) { 
+/*		if (changes.events) { 
 			redrawWithNewData(changes.events);
 			//renderEvents(changes.events);
+		}*/
+
+		if (changes.render) {
+			$grid_container.html(changes.render);
+			App.emit(g.GRID_RENDERED);
 		}
 	}
 
@@ -208,11 +214,16 @@ define([
 		$('#cc_' + channelId).html('');
 	}
 
+	var timer;
+
 	/**
 	* Render a whole channel of EPG events into the grid
 	* @private
 	*/
 	function renderChannel(channelId, channelSliceCache) {
+
+		timer = new Timer('Rendering channel');
+
 //console.log('renderChannel ' + channelId);
 		// Note: the channelSliceCache is undefined until the first data has been received
 		if (channelSliceCache) {
@@ -230,6 +241,8 @@ define([
 			}
 			$('#cc_' + channelId).html(channelContent);
 		}
+
+		timer.track('Channel rendered');
 
 	}
 
@@ -367,6 +380,8 @@ define([
 	}
 
 	function render() {
+
+		$grid_container = $('#grid-container','#content');
 
 		// detecting first render
 		if ( $('#channels-bar-list li').size() === 0 ) {

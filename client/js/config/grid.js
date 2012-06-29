@@ -48,6 +48,8 @@ define([], function GridConfigContext() {
 
 		MAX_DOM_ELEMENTS: 500,
 
+		EXTRA_ABOVE_AND_BELOW: 2,
+
 		/* events */
 
 		MODEL_CHANGED: 'grid:model_changed',
