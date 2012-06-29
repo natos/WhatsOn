@@ -28,9 +28,11 @@ define([
 	'components/timebar',
 	'components/channelbar',
 	'components/buffer',
-	'utils/convert'
+	'utils/convert',
+	'models/grid',
+	'utils/epgapi'
 
-], function GridViewScope(a, g, c, App, ChannelModel, View, TimeBar, ChannelBar, Buffer, convert) {
+], function GridViewScope(a, g, c, App, ChannelModel, View, TimeBar, ChannelBar, Buffer, convert, GridModel, EpgApi) {
 
 	var name = "grid";
 
@@ -38,6 +40,11 @@ define([
 
 	var executionTimer,
 		executionDelay = 250;
+
+	var _channelVisibilityPrevious = {};
+	var _channelVisibilityCurrent = {};
+	var EXTRA_ABOVE_AND_BELOW = 2;
+
 
 	/**
 	* Handler for scrolling and resizing events.
@@ -50,7 +57,10 @@ define([
 		// erase the previous timer
 		if (executionTimer) { clearTimeout(executionTimer);	}
 		// set a delay of 200ms to fetch events
-		executionTimer = setTimeout(function emitFetchEvents() { App.emit(g.GRID_FETCH_EVENTS); }, executionDelay);
+		executionTimer = setTimeout(function emitFetchEvents() { 
+			App.emit(g.GRID_FETCH_EVENTS);
+			redrawWithoutNewData();
+		}, executionDelay);
 	}
 
 	/**
@@ -60,7 +70,10 @@ define([
 	function modelChanged(changes) {
 		if (typeof changes === 'undefined') { return; }
 		// check for events changes to render
-		if (changes.events) { renderEvents(changes.events); }
+		if (changes.events) { 
+			redrawWithNewData(changes.events);
+			//renderEvents(changes.events);
+		}
 	}
 
 	/**
@@ -95,26 +108,145 @@ define([
 	}
 
 	/**
-	* Render a set of EPG events into the grid.
+	* Redraw the grid channel-by-channel because the user has moved the grid.
+	* No new event data has been received.
+	*
+	* Iterate through the channels, and determine what action is required: 
+	*  CHANNEL VISIBILITY 
+	* PREVIOUS  |  CURRENT  |  ACTION REQUIRED
+	*    Y            Y        No change - do not re-render channel
+	*    Y            N        Set channel to blank (#cc.innerHTML = "")
+	*    N            Y        Render channel events
+	*    N            N        No change - do not re-render channel
+	* 
 	* @private
 	*/
-	function renderEvents(events) {
+	function redrawWithoutNewData() {
+		_channelVisibilityCurrent = getCurrentChannelVisibility();
+
+		var channelModel = App.models.channel;
+		var channelsInGrid = channelModel.groups[channelModel.selected_group];
+
+		// For each channel in the grid, compare its current visibility against the previous visibility
+		var channelId, currentVisibility, previousVisibility;
+		var channelSliceCache = GridModel['channelSliceCache'];
+		for(var channel in channelsInGrid) {
+			if (channelsInGrid.hasOwnProperty(channel)) {
+				channelId = channelsInGrid[channel].id;
+				currentVisibility = _channelVisibilityCurrent[channelId];
+				previousVisibility = _channelVisibilityPrevious[channelId];
+				// We only have to take action if the visibility has changed
+				if (previousVisibility !== currentVisibility) { // N + Y, or Y + N
+					if (currentVisibility) { // N + Y
+						// render channel
+						renderChannel(channelId, channelSliceCache);
+					} else {  // Y + N
+						// set channel blank
+						$("#cc_" + channelId).html("");
+					}
+				}
+			}
+		}
+
+		_channelVisibilityPrevious = _channelVisibilityCurrent;
+	}
+
+	/**
+	* Redraw the grid channel-by-channel because new event data has been received.
+	* The grid *might* have moved since the last time.
+	*
+	* Iterate through the channels, and determine what action is required: 
+	*  CHANNEL VISIBILITY 
+	* PREVIOUS  |  CURRENT  |  ACTION REQUIRED
+	*    Y            Y        If the events received are for this channel, render the channel. Otherwise, do nothing. 
+	*    Y            N        Set channel to blank (#cc.innerHTML = "")
+	*    N            Y        Render channel events
+	*    N            N        No change - do not re-render channel
+	* 
+	* @private
+	*/
+	function redrawWithNewData(eventsForChannelSlice) {
+		_channelVisibilityCurrent = getCurrentChannelVisibility();
+
+		var channelModel = App.models.channel;
+		var channelsInGrid = channelModel.groups[channelModel.selected_group];
+
+		// For each channel in the grid, compare its current visibility against the previous visibility
+		var channelId, currentVisibility, previousVisibility;
+		var channelSliceCache = GridModel['channelSliceCache'];
+		for(var channel in channelsInGrid) {
+			if (channelsInGrid.hasOwnProperty(channel)) {
+				channelId = channelsInGrid[channel].id;
+				currentVisibility = _channelVisibilityCurrent[channelId];
+				previousVisibility = _channelVisibilityPrevious[channelId];
+
+				if (previousVisibility && currentVisibility) { // Y + Y
+					// render channel ONLY IF the events for slice are for the current channel
+					if (eventsForChannelSlice && eventsForChannelSlice.length>0 && eventsForChannelSlice[0].channel.id===channelId) {
+						renderChannel(channelId, channelSliceCache);
+					}
+				} else if (previousVisibility && !currentVisibility) { // Y + N
+					// set channel blank
+					blankChannel(channelId);
+				} else if (!previousVisibility && currentVisibility) { // N + Y
+					// render channel
+					renderChannel(channelId, channelSliceCache);
+				} else { // N + N
+					// do nothing
+				}
+			}
+		}
+		
+		_channelVisibilityPrevious = _channelVisibilityCurrent;
+	}
+
+	/**
+	* Clear an entire channel row
+	* @private
+	*/
+	function blankChannel(channelId) {
+		$('#cc_' + channelId).html('');
+	}
+
+	/**
+	* Render a whole channel of EPG events into the grid
+	* @private
+	*/
+	function renderChannel(channelId, channelSliceCache) {
+//console.log('renderChannel ' + channelId);
+		// Note: the channelSliceCache is undefined until the first data has been received
+		if (channelSliceCache) {
+			// Get a list of ALL time slices for the grid:
+			var timeSlices = EpgApi.getTimeSlices(g.ZERO, g.END);
+			var cacheKey, timeSlice, i, events;
+			var channelContent = "";
+			for (i=0; i< timeSlices.length; i++) {
+				timeSlice = timeSlices[i];
+				cacheKey = EpgApi.getCacheKey(channelId, timeSlice);
+				events = channelSliceCache[cacheKey];
+				if (events) {
+					channelContent += buildEventsForChannelSlice(events);
+				}
+			}
+			$('#cc_' + channelId).html(channelContent);
+		}
+
+	}
+
+	/**
+	* Build the HTML for a channel slice of EPG events into the grid.
+	* @private
+	*/
+	function buildEventsForChannelSlice(channelSliceEvents) {
 
 		var i, event, width, left, startDateTime, endDateTime, category, subcategory, right, eventId, programmeId, channelId,
 
 		eventContent = "";
 
-		for (i = 0; i < events.length; i++) {
+		for (i = 0; i < channelSliceEvents.length; i++) {
 
-			event = events[i];
+			event = channelSliceEvents[i];
 			eventId = event.id;
-
-			// Avoid rendering duplicate DOM elements
-			if ( $('#event-' + event.id).length ) {
-				// Don't render this event; skip to the next one.
-				//console.log('Warning!','Trying to render duplicate event.');
-				continue;
-			}
 
 			// Time data
 			startDateTime = convert.parseApiDate(event.startDateTime);
@@ -123,11 +255,6 @@ define([
 			// Category and subcategory
 			category = event.programme.subcategory.category.name;
 			subcategory = event.programme.subcategory.name;
-
-			// Avoid rendering events that end before 00:00 or start after 24:00
-			if ( (endDateTime <= g.ZERO) || (startDateTime >= g.END) ) {
-				continue;
-			}
 
 			width = convert.timeToPixels(endDateTime, startDateTime);
 			left = convert.timeToPixels(startDateTime, g.ZERO);
@@ -146,11 +273,7 @@ define([
 
 		} // end loop
 
-		$('#cc_' + channelId).append(eventContent);
-
-
-		// triggers GRID_RENDERED
-		App.emit(g.GRID_RENDERED);
+		return eventContent;
 
 	}
 
@@ -168,6 +291,27 @@ define([
 			el.innerHTML = cssText;
 			document.getElementsByTagName('HEAD')[0].appendChild(el);
 		}
+	}
+
+	function getCurrentChannelVisibility() {
+		var channelsInViewport = ChannelBar.getSelectedChannels(EXTRA_ABOVE_AND_BELOW);
+		var channelModel = App.models.channel;
+		var channelsInGrid = channelModel.groups[channelModel.selected_group];
+
+		var channelVisibility = {};
+		var channelId;
+		
+		// For each channel in the grid, add an entry to the channelVisibility hash,
+		// with a true/false value to represent its visibility.
+		// Example: {"6x":true,"7y":true,"7s":false, ...}
+		for(var channel in channelsInGrid) {
+			if (channelsInGrid.hasOwnProperty(channel)) {
+				channelId = channelsInGrid[channel].id;
+				channelVisibility[channelId] = (channelsInViewport.indexOf(channelId) >= 0);
+			}
+		}
+
+		return channelVisibility;
 	}
 
 

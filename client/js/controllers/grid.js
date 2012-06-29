@@ -22,7 +22,7 @@ define([
 
 /* private */
 
-	_eventsForChannelCache = {}; // Events cache for browsers without localstorage
+	_eventsForChannelCache = {}; // Events cache
 
 	/**
 	* Handler for the GRID_MOVED event.
@@ -48,13 +48,11 @@ define([
 		_eventsForChannelCache[cacheKey] = events;
 		// cache things		
 		GridModel.set('events', events);
+		GridModel.set('channelSliceCache', _eventsForChannelCache);
 	
 		return this;
 	
 	}
-	
-
-	_eventsForChannelRendered = {}
 
 	/**
 	* Handler for the GRID_FETCH_EVENTS event.
