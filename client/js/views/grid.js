@@ -239,9 +239,9 @@ define([
 	*/
 	function buildEventsForChannelSlice(channelSliceEvents) {
 
-		var i, event, width, left, startDateTime, endDateTime, category, subcategory, right, eventId, programmeId, channelId,
+		var i, event, width, left, startDateTime, endDateTime, category, subcategory, right, eventId, programmeId, channelId, eventTitle;
 
-		eventContent = "";
+		var eventContent = "";
 
 		for (i = 0; i < channelSliceEvents.length; i++) {
 
@@ -258,18 +258,19 @@ define([
 
 			width = convert.timeToPixels(endDateTime, startDateTime);
 			left = convert.timeToPixels(startDateTime, g.ZERO);
+			eventTitle = event.programme.title;
 			if (left < 0) {
 				right = left + width;
 				left = 0;
 				width = right;
-				event.programme.title = "←" + event.programme.title;
+				eventTitle = "←" + event.programme.title;
 			}
 
 			// Insert into DOM
 			programmeId = event.programme.id;
 			channelId = event.channel.id;
 
-			eventContent += '<a href="/programme/' + programmeId + '" data-programmeid="' + programmeId + '" title="' + event.programme.title + '" class="grid-event" data-category="' + category + '" data-subcategory="' + subcategory + '" id="event-' + eventId + '" style="width:' + width + 'px;left:' + left + 'px">' + event.programme.title + '</a>';
+			eventContent += '<a href="/programme/' + programmeId + '" data-programmeid="' + programmeId + '" class="grid-event" data-category="' + category + '" data-subcategory="' + subcategory + '" id="event-' + eventId + '" style="width:' + width + 'px;left:' + left + 'px">' + eventTitle + '</a>';
 
 		} // end loop
 
