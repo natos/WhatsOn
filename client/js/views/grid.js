@@ -123,12 +123,12 @@ define([
 			subcategory = event.programme.subcategory.name;
 
 			// Avoid rendering events that end before 00:00 or start after 24:00
-			if ( (endDateTime <= g.ZERO) || (startDateTime >= g.END) ) {
+			if ( (endDateTime <= g.zeroTime) || (startDateTime >= g.END) ) {
 				continue;
 			}
 
 			width = convert.timeToPixels(endDateTime, startDateTime);
-			left = convert.timeToPixels(startDateTime, g.ZERO);
+			left = convert.timeToPixels(startDateTime, g.zeroTime);
 			if (left < 0) {
 				right = left + width;
 				left = 0;
@@ -179,8 +179,8 @@ define([
 		// How many hours have been scrolled horizontally?
 		var hoursScrolledLeft = window.pageXOffset / g.HOUR_WIDTH,
 			// Calculate the left border time, and right border time
-			leftBorderTime = new Date(g.ZERO.valueOf() + (hoursScrolledLeft * g.MILLISECONDS_IN_HOUR) - (g.VIEWPORT_WIDTH_HOURS/4 * g.MILLISECONDS_IN_HOUR)),
-			rightBorderTime = new Date(g.ZERO.valueOf() + (hoursScrolledLeft * g.MILLISECONDS_IN_HOUR) + (g.VIEWPORT_WIDTH_HOURS * g.MILLISECONDS_IN_HOUR));
+			leftBorderTime = new Date(g.zeroTime.valueOf() + (hoursScrolledLeft * g.MILLISECONDS_IN_HOUR) - (g.VIEWPORT_WIDTH_HOURS/4 * g.MILLISECONDS_IN_HOUR)),
+			rightBorderTime = new Date(g.zeroTime.valueOf() + (hoursScrolledLeft * g.MILLISECONDS_IN_HOUR) + (g.VIEWPORT_WIDTH_HOURS * g.MILLISECONDS_IN_HOUR));
 
 		return {
 			startTime: leftBorderTime,
@@ -204,7 +204,7 @@ define([
 
 	function initialize() {
 
-		g.END = new Date(g.ZERO.valueOf() + 24*60*60*1000);
+		g.END = new Date(g.zeroTime.valueOf() + 24*60*60*1000);
 
 		// UI event handlers
 		// every time user scrolls, we want to load new events

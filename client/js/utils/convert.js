@@ -15,7 +15,7 @@ define([
 
 	function timeToPixels(date, limit) {
 	
-		limit = limit || g.ZERO;
+		limit = limit || g.zeroTime;
 	
 		var time = ( date.valueOf() - limit.valueOf() ) / g.MILLISECONDS_IN_HOUR; // hours
 		var pixels = Math.floor(time * g.HOUR_WIDTH); // pixels
@@ -23,7 +23,7 @@ define([
 		return pixels;
 	
 	}
-	
+
 	/**
 	* The EPG API returns dates (event.startDateTime, event.endDateTime)
 	* in the format YYYY-MM-DDThh:mmZ. Safari can't use this string as a

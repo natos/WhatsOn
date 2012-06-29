@@ -10,6 +10,27 @@ define([], function GridConfigContext() {
 
 /* private */
 
+	/**
+	 * For displaying a time window of 24 hours, we want to
+	 * place the "now" time at 25% of the window, so that
+	 * zero time is now - 6 hours.
+	 * @param {Date} targetDateTime optional
+	 * @private
+	 */
+	var setZeroTime = function(targetTime) {
+
+		var targetTime = targetTime || new Date();
+		var zeroTime = new Date(targetTime.valueOf() - (6 * 60 * 60 * 1000));
+		zeroTime.setMinutes(0);
+		zeroTime.setSeconds(0);
+
+		return zeroTime;
+
+	}
+
+	var _zeroTime = setZeroTime();
+
+
 /* public */
 
 /* export */
@@ -18,20 +39,6 @@ define([], function GridConfigContext() {
 
 		/* constants */
 
-		ZERO: (function(){
-
-			var _ZERO = new Date();
-
-			_ZERO.setHours(0);
-			_ZERO.setMinutes(0);
-			_ZERO.setSeconds(0);
-
-			return _ZERO;
-
-		}()),
-
-		NOW: new Date(),
-	
 		HOUR_WIDTH: 200,
 	
 		ROW_HEIGHT: 60,
@@ -47,6 +54,14 @@ define([], function GridConfigContext() {
 		VIEWPORT_WIDTH_HOURS: 0,
 
 		MAX_DOM_ELEMENTS: 500,
+
+		/* properties */
+
+		zeroTime : _zeroTime,
+
+		/* methods */
+
+		setZeroTime : setZeroTime,
 
 		/* events */
 
