@@ -22,8 +22,47 @@ define([
 
 ], function GridController(g, c, App, Controller, GridModel, ChannelModel, GridView, convert, EpgApi) {
 
-	var name = 'grid',
 
+	var timer;
+
+	startShowingAverageTime();
+
+	var average_tilnow = 0,
+		average_time = 0,
+		average_count = 0,
+		last_average = 0;
+
+	function startShowingAverageTime() {
+		setTimeout(showAverageTime,1000);
+	}
+
+	function showAverageTime() {
+
+		setTimeout(showAverageTime,1000);
+
+		if (average_tilnow !== 0 && average_tilnow !== last_average) {
+			console.log('Average time <', average_tilnow, 'ms>');
+			last_average = average_tilnow;
+		}
+
+	}
+
+	function average(time) {
+		average_time += time; average_count += 1;
+		average_tilnow = Math.ceil(average_time / average_count);
+	}
+
+	App.on(g.GRID_RENDERED, function() { 
+		/* for performance tests */
+		timer.track('Render');
+		// Average time to test Jedrzej API performance
+		average(timer.timeDiff);
+		/* for performance tests */
+	});
+
+
+
+	var name = 'grid',
 
 /* private */
 
@@ -93,7 +132,8 @@ define([
 
 		_channelVisibilityPrevious = _channelVisibilityCurrent;
 
-		GridModel.set('render', _shadow);
+		//GridModel.set('render', _shadow.html());
+		GridView.renderShadow(_shadow.html());
 	}
 
 	/**
@@ -144,7 +184,8 @@ define([
 		
 		_channelVisibilityPrevious = _channelVisibilityCurrent;
 
-		GridModel.set('render', _shadow.html());
+		//GridModel.set('render', _shadow.html());
+		GridView.renderShadow(_shadow.html());
 	}
 
 	/**
@@ -155,9 +196,6 @@ define([
 		_shadow.find('#cc_' + channelId).html('');
 	}
 
-	var timer;
-
-	App.on(g.GRID_RENDERED, function() { timer.track('Channel rendered') });
 
 	/**
 	* Render a whole channel of EPG events into the grid
@@ -165,7 +203,7 @@ define([
 	*/
 	function renderChannel(channelId, channelSliceCache) {
 
-		timer = new Timer('Rendering channel');
+		timer = new Timer('Render Events for Grid Time Track').off();
 
 		// Note: the channelSliceCache is undefined until the first data has been received
 		if (channelSliceCache) {
@@ -309,12 +347,12 @@ define([
 			for (i=0; i<channelsCount; i++) {
 				cacheKey = EpgApi.getCacheKey(channels[i], timeSlices[e]);
 				if (_eventsForChannelCache[cacheKey]) {
-					console.log('exist on cache');
+					//console.log('exist on cache');
 					// render it
 					// render map with stuff
 					setEvents(_eventsForChannelCache[cacheKey], cacheKey);
 				} else {
-					console.log('doesn\' exist on cache');
+					//console.log('doesn\' exist on cache');
 //					_eventsForChannelCache[cacheKey] = true;
 					uncachedChannels.push(channels[i]);
 				}

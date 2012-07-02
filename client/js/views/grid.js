@@ -29,8 +29,7 @@ define([
 	'components/channelbar',
 	'components/buffer',
 	'utils/convert',
-	'models/grid',
-	'/js/lib/timetrack/timetrack.js'
+	'models/grid'
 
 ], function GridViewScope(a, g, c, App, ChannelModel, View, TimeBar, ChannelBar, Buffer, convert, GridModel, EpgApi) {
 
@@ -74,12 +73,12 @@ define([
 /*		if (changes.events) { 
 			redrawWithNewData(changes.events);
 			//renderEvents(changes.events);
-		}*/
+		}
 
 		if (changes.render) {
 			$grid_container.html(changes.render);
 			App.emit(g.GRID_RENDERED);
-		}
+		}*/
 	}
 
 	/**
@@ -214,16 +213,11 @@ define([
 		$('#cc_' + channelId).html('');
 	}
 
-	var timer;
-
 	/**
 	* Render a whole channel of EPG events into the grid
 	* @private
 	*/
 	function renderChannel(channelId, channelSliceCache) {
-
-		timer = new Timer('Rendering channel');
-
 //console.log('renderChannel ' + channelId);
 		// Note: the channelSliceCache is undefined until the first data has been received
 		if (channelSliceCache) {
@@ -241,8 +235,6 @@ define([
 			}
 			$('#cc_' + channelId).html(channelContent);
 		}
-
-		timer.track('Channel rendered');
 
 	}
 
@@ -398,6 +390,11 @@ define([
 		return this;
 	}
 
+	function renderShadow(_shadow) {
+		document.getElementById('grid-container').innerHTML = _shadow;
+		App.emit(g.GRID_RENDERED);
+	}
+
 	function finalize() {
 
 		a.$window.off('resize scroll', handleResizeAndScroll);
@@ -418,6 +415,7 @@ define([
 		render				: render,
 		getSelectedChannels	: getSelectedChannels,
 		getSelectedTime		: getSelectedTime,
+		renderShadow		: renderShadow,
 		components			: {
 			timebar		: TimeBar,
 			channelbar	: ChannelBar
