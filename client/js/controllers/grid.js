@@ -151,6 +151,7 @@ define([
 	* @private
 	*/
 	function redrawWithNewData(eventsForChannelSlice) {
+
 		_channelVisibilityCurrent = getCurrentChannelVisibility();
 
 		var channelModel = App.models.channel;
