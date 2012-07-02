@@ -36,6 +36,14 @@ define([
 
 /* private */
 
+	// Objects
+	var _$timebar, _$channelsbar;
+
+	// Touch coordinates, used for checking velocity
+	var _previousTouchX, _previousTouchY, _previousTouchTime;
+	var _touchVelocityX = 0;
+	var _touchVelocityY = 0;
+
 	var executionTimer,
 		executionDelay = 250;
 
@@ -53,6 +61,43 @@ define([
 		executionTimer = setTimeout(function emitFetchEvents() { App.emit(g.GRID_FETCH_EVENTS); }, executionDelay);
 	}
 
+	function updateTouchVelocity(e) {
+		if (e && e.changedTouches && e.changedTouches.length==1) {
+			var currentX = e.changedTouches[0].pageX;
+			var currentY = e.changedTouches[0].pageY;
+			var currentTime = new Date();
+			if (_previousTouchX && _previousTouchY && _previousTouchTime) {
+				var interval = (currentTime.valueOf() - _previousTouchTime.valueOf()) / 1000;
+				_touchVelocityX = (currentX - _previousTouchX) / interval;
+				_touchVelocityY = (currentY - _previousTouchY) / interval;
+			}
+
+			_previousTouchX = currentX;
+			_previousTouchY = currentY;
+			_previousTouchTime = currentTime;
+		}
+	}
+
+	function onTouchEnd(e) {
+
+		if (Math.abs(_touchVelocityX) > 200 || Math.abs(_touchVelocityY) > 200) {
+			_$timebar.hide();
+			_$channelsbar.hide();
+		}
+	}
+
+	var restoreHeadersExecutionTimer;
+	function restoreHeaders() {
+		// erase the previous timer
+		if (restoreHeadersExecutionTimer) { clearTimeout(restoreHeadersExecutionTimer);	}
+		// set a delay of 200ms to fetch events
+		restoreHeadersExecutionTimer = setTimeout(function emitFetchEvents() {
+			_$timebar.show();
+			_$channelsbar.show();
+		}, 100);
+	}
+
+
 	/**
 	* Handler for model data changes.
 	* @private
@@ -69,13 +114,13 @@ define([
 	*/
 	function defineStyles() {
 
-		// define constants
-		var $channelsbar = $('#channels-bar');
-		var $timebar = $('#time-bar');
+		// Set view variables
+		_$channelsbar = $('#channels-bar');
+		_$timebar = $('#time-bar');
 
-		g.TIMEBAR_HEIGHT = $timebar.height();
-		g.CHANNELS_COUNT = $channelsbar.find('li').length;
-		g.CHANNEL_BAR_WIDTH = $channelsbar.width();
+		g.TIMEBAR_HEIGHT = _$timebar.height();
+		g.CHANNELS_COUNT = _$channelsbar.find('li').length;
+		g.CHANNEL_BAR_WIDTH = _$channelsbar.width();
 		g.VIEWPORT_WIDTH_HOURS = (document.body.clientWidth - g.CHANNEL_BAR_WIDTH) / g.HOUR_WIDTH;
 		// Size the grid
 		g.GRID_HEIGHT = g.ROW_HEIGHT * g.CHANNELS_COUNT;
@@ -200,6 +245,7 @@ define([
 		return ChannelBar.getSelectedChannels(extraAboveAndBelow);
 	}
 
+
 /* abstract */
 
 	function initialize() {
@@ -209,6 +255,10 @@ define([
 		// UI event handlers
 		// every time user scrolls, we want to load new events
 		a.$window.on('resize scroll touchmove', handleResizeAndScroll);
+
+		a.$window.on('touchend', onTouchEnd);
+		a.$window.on('touchstart touchmove', updateTouchVelocity);
+		a.$window.on('scroll touchstart', restoreHeaders);
 
 		// The model recieves events
 		// we are listening to render new events
