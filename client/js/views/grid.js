@@ -38,13 +38,11 @@ define([
 /* private */
 
 	var executionTimer,
-		executionDelay = 250;
+		executionDelay = 250,
 
-	var _channelVisibilityPrevious = {};
-	var _channelVisibilityCurrent = {};
-	var EXTRA_ABOVE_AND_BELOW = 2; // I've moved this to the grid config file
+		EXTRA_ABOVE_AND_BELOW = 2, // I've moved this to the grid config file
 
-	var $grid_container;
+		$grid_container;
 
 	/**
 	* Handler for scrolling and resizing events.
@@ -391,8 +389,13 @@ define([
 	}
 
 	function renderShadow(_shadow) {
-		document.getElementById('grid-container').innerHTML = _shadow;
+
+		var grid = document.getElementById('grid-container');
+			grid.innerHTML = '';
+			grid.appendChild(_shadow);
+
 		App.emit(g.GRID_RENDERED);
+
 	}
 
 	function finalize() {

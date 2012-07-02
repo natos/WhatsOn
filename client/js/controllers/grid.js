@@ -22,46 +22,6 @@ define([
 
 ], function GridController(g, c, App, Controller, GridModel, ChannelModel, GridView, convert, EpgApi) {
 
-
-	var timer;
-
-	startShowingAverageTime();
-
-	var average_tilnow = 0,
-		average_time = 0,
-		average_count = 0,
-		last_average = 0;
-
-	function startShowingAverageTime() {
-		setTimeout(showAverageTime,1000);
-	}
-
-	function showAverageTime() {
-
-		setTimeout(showAverageTime,1000);
-
-		if (average_tilnow !== 0 && average_tilnow !== last_average) {
-			console.log('Average time <', average_tilnow, 'ms>');
-			last_average = average_tilnow;
-		}
-
-	}
-
-	function average(time) {
-		average_time += time; average_count += 1;
-		average_tilnow = Math.ceil(average_time / average_count);
-	}
-
-	App.on(g.GRID_RENDERED, function() { 
-		/* for performance tests */
-		timer.track('Render');
-		// Average time to test Jedrzej API performance
-		average(timer.timeDiff);
-		/* for performance tests */
-	});
-
-
-
 	var name = 'grid',
 
 /* private */
@@ -73,18 +33,22 @@ define([
 
 	function createShadow() {
 
-		_shadow = $('<div>').attr('id','shadow');
+		_shadow = document.createDocumentFragment();
 
 		// grab selected channels from channel model
-		_channels = ChannelModel[c.GROUPS][ChannelModel[c.SELECTED_GROUP]], i = 0, t = _channels.length, rows = [];
+		var _channels = ChannelModel[c.GROUPS][ChannelModel[c.SELECTED_GROUP]], i = 0, t = _channels.length, row, div = document.createElement('div');
 	
 		// iterate channel collection
 		for (i; i < t; i++) {
 			// create a new channel row for the grid
-			rows.push('<div class="channel-container" id="cc_' + _channels[i].id + '" style="top:' + (i * g.ROW_HEIGHT) + 'px"></div>');
-		}
+			row = div.cloneNode(false);
+			row.id = 'cc_' + _channels[i].id;
+			row.className = "channel-container";
+			row.style.top = i * g.ROW_HEIGHT + 'px';
 
-		_shadow.html(rows.join(''));
+			_shadow.appendChild(row);
+
+		}
 
 	}
 
@@ -133,7 +97,7 @@ define([
 		_channelVisibilityPrevious = _channelVisibilityCurrent;
 
 		//GridModel.set('render', _shadow.html());
-		GridView.renderShadow(_shadow.html());
+		GridView.renderShadow(_shadow.cloneNode(true));
 	}
 
 	/**
@@ -186,7 +150,7 @@ define([
 		_channelVisibilityPrevious = _channelVisibilityCurrent;
 
 		//GridModel.set('render', _shadow.html());
-		GridView.renderShadow(_shadow.html());
+		GridView.renderShadow(_shadow.cloneNode(true));
 	}
 
 	/**
@@ -194,7 +158,12 @@ define([
 	* @private
 	*/
 	function blankChannel(channelId) {
-		_shadow.find('#cc_' + channelId).html('');
+		var channel = _shadow.querySelectorAll('#cc_' + channelId)[0];
+
+		while (channel.firstChild) {
+		  channel.removeChild(channel.firstChild);
+		}
+
 	}
 
 
@@ -204,23 +173,23 @@ define([
 	*/
 	function renderChannel(channelId, channelSliceCache) {
 
-		timer = new Timer('Render Events for Grid Time Track').off();
-
 		// Note: the channelSliceCache is undefined until the first data has been received
 		if (channelSliceCache) {
 			// Get a list of ALL time slices for the grid:
-			var timeSlices = EpgApi.getTimeSlices(g.ZERO, g.END);
-			var cacheKey, timeSlice, i, events;
-			var channelContent = "";
-			for (i=0; i< timeSlices.length; i++) {
+			var timeSlices = EpgApi.getTimeSlices(g.ZERO, g.END), cacheKey, timeSlice, i, events,
+				channelRow = document.createDocumentFragment();
+			for (i = 0; i < timeSlices.length; i++) {
 				timeSlice = timeSlices[i];
 				cacheKey = EpgApi.getCacheKey(channelId, timeSlice);
 				events = channelSliceCache[cacheKey];
 				if (events) {
-					channelContent += buildEventsForChannelSlice(events);
+					channelRow.appendChild(buildEventsForChannelSlice(events));
 				}
 			}
-			_shadow.find('#cc_' + channelId).html(channelContent);
+
+			// find the channel row and insert the documentFragment
+			_shadow.querySelectorAll('#cc_' + channelId)[0].appendChild(channelRow);
+
 		}
 
 	}
@@ -231,9 +200,7 @@ define([
 	*/
 	function buildEventsForChannelSlice(channelSliceEvents, cacheKey) {
 
-		var i, event, width, left, startDateTime, endDateTime, category, subcategory, right, eventId, programmeId, channelId, eventTitle;
-
-		var eventContent = "";
+		var i, event, width, left, startDateTime, endDateTime, category, subcategory, right, eventId, programmeId, channelId, eventTitle, eventCollection = document.createDocumentFragment(), link = document.createElement('a'), eventElement, ids = [];
 
 		for (i = 0; i < channelSliceEvents.length; i++) {
 
@@ -251,6 +218,7 @@ define([
 			width = convert.timeToPixels(endDateTime, startDateTime);
 			left = convert.timeToPixels(startDateTime, g.ZERO);
 			eventTitle = event.programme.title;
+
 			if (left < 0) {
 				right = left + width;
 				left = 0;
@@ -258,25 +226,43 @@ define([
 				eventTitle = "←" + event.programme.title;
 			}
 
-			// Insert into DOM
 			programmeId = event.programme.id;
 			channelId = event.channel.id;
 
-			eventContent += '<a href="/programme/' + programmeId + '" data-programmeid="' + programmeId + '" class="grid-event" data-category="' + category + '" data-subcategory="' + subcategory + '" id="event-' + eventId + '" style="width:' + width + 'px;left:' + left + 'px">' + eventTitle + '</a>';
+			if (_shadow.querySelectorAll('#event-' + eventId)[0]) {
+				continue;
+			};
+
+			// define element
+			eventElement = link.cloneNode(false);
+			eventElement.id = 'event-' + eventId;
+			eventElement.className = 'grid-event';
+			eventElement.style.width = width + 'px';
+			eventElement.style.left = left + 'px';
+			eventElement.innerText = eventTitle;
+			eventElement.setAttribute('href', '/programme/' + programmeId);
+			eventElement.setAttribute('data-programmeid', programmeId);
+			eventElement.setAttribute('data-category', category);
+			eventElement.setAttribute('data-subcategory', subcategory);
+			eventElement.setAttribute('data-programmeid', programmeId);
+			eventElement.setAttribute('data-programmeid', programmeId);
+			eventElement.setAttribute('data-programmeid', programmeId);
+
+			// Insert			
+			eventCollection.appendChild(eventElement);
 
 		} // end loop
 
-		return eventContent;
+		return eventCollection;
 
 	}
 
 	function getCurrentChannelVisibility() {
-		var channelsInViewport = GridView.getSelectedChannels(g.EXTRA_ABOVE_AND_BELOW);
-		var channelModel = App.models.channel;
-		var channelsInGrid = channelModel.groups[channelModel.selected_group];
 
-		var channelVisibility = {};
-		var channelId;
+		var channelsInViewport = GridModel['selectedChannels'],
+			channelsInGrid = ChannelModel[c.GROUPS][ChannelModel[c.SELECTED_GROUP]],
+			channelVisibility = {},
+			channelId;
 		
 		// For each channel in the grid, add an entry to the channelVisibility hash,
 		// with a true/false value to represent its visibility.
@@ -299,7 +285,7 @@ define([
 	function gridMoved() {
 		// Update model UI data
 		GridModel.set('position', { 'top': window.pageYOffset * -1, 'left': window.pageXOffset * -1 });
-		GridModel.set('selectedChannels', GridView.getSelectedChannels(2));
+		GridModel.set('selectedChannels', GridView.getSelectedChannels(g.EXTRA_ABOVE_AND_BELOW));
 		GridModel.set('selectedTime', GridView.getSelectedTime());
 
 		return this;
