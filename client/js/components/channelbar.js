@@ -133,7 +133,7 @@ define([
 			// create a new channel row for the grid
 			rows.push('<div class="channel-container" id="cc_' + _channels[i].id + '" style="top:' + (i * g.ROW_HEIGHT) + 'px"></div>');
 			// and a channel logo on the side bar
-			list.push('<li><div class="picture"><img class="loading" title="' + _channels[i].name + '" data-src="http://www.upc.nl' + getLogo(_channels[i]).href + '?size=medium" data-channelid="' + _channels[i].id + '" id="channelImg' + _channels[i].id + '" title=</li>');
+			list.push('<li><div class="picture"><img class="loading" title="' + _channels[i].name + '" data-src="http://www.upc.nl' + getLogo(_channels[i]).href + '?size=medium" data-channelid="' + _channels[i].id + '" id="channelImg' + _channels[i].id + '" /></div></li>');
 		}
 
 		// append to DOM
