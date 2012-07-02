@@ -70,9 +70,9 @@ define([
 	}
 
 	function move(position) {
-		if (typeof $timelist === 'undefined') { return; }
-		$timelist.css({ left: position.left + 'px' });
-		return this;
+		if ($timelist) {
+			$timelist.css({ left: position.left + 'px' });
+		}
 	}
 
 	/* modelchange */
