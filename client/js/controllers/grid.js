@@ -22,16 +22,32 @@ define([
 
 /* private */
 
+	var gridMoveExecutionTimer,
+		gridMoveExecutionDelay = 100;
+
 	/**
 	* Handler for the GRID_MOVED event.
 	* GRID_MOVED is raised by the grid view whenever the visible channel range
 	* or time window changes.
 	*/
 	function gridMoved() {
-		// Update model UI data
+		// Update model UI data:
+
+		// Update position immediately; this is used for updating 
+		// the channelbar and timebar scroll positions
 		GridModel.set('position', { 'top': window.pageYOffset * -1, 'left': window.pageXOffset * -1 });
-		GridModel.set('selectedChannels', GridView.getSelectedChannels(2));
-		GridModel.set('selectedTime', GridView.getSelectedTime());
+
+		// Delay updating the selectedChannels and selectedTime values.
+		// We don't need to trigger the dependent events (fetch data)
+		// with _every_ onscroll event, especially on slow (Android) devices.
+
+		// erase the previous timer
+		if (gridMoveExecutionTimer) { clearTimeout(gridMoveExecutionTimer); }
+		// set a delay before rendering the logos
+		gridMoveExecutionTimer = setTimeout(function () {
+			GridModel.set('selectedChannels', GridView.getSelectedChannels(2));
+			GridModel.set('selectedTime', GridView.getSelectedTime());
+		}, gridMoveExecutionDelay);
 	
 		return this;
 	}
