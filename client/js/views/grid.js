@@ -208,7 +208,7 @@ define([
 
 		// UI event handlers
 		// every time user scrolls, we want to load new events
-		a.$window.on('resize scroll', handleResizeAndScroll);
+		a.$window.on('resize scroll touchmove', handleResizeAndScroll);
 
 		// The model recieves events
 		// we are listening to render new events
@@ -233,7 +233,7 @@ define([
 
 	function finalize() {
 
-		a.$window.off('resize scroll', handleResizeAndScroll);
+		a.$window.off('resize scroll touchmove', handleResizeAndScroll);
 
 		App.off(g.MODEL_CHANGED, modelChanged);
 

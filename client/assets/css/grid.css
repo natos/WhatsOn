@@ -76,6 +76,13 @@
 	z-index: 9;
 	background-color: black;
 }
+#time-bar-list {
+	-webkit-transform:translate3d(0,0,0);
+	   -moz-transform:translate3d(0,0,0);
+	    -ms-transform:translate3d(0,0,0);
+	     -o-transform:translate3d(0,0,0);
+	        transform:translate3d(0,0,0);
+}
 
 #time-bar .shade {
 	/* Fake box-shadow. CSS box-shadow can decrease scrolling performance on old iOS and Android browsers. */ 
@@ -210,10 +217,15 @@
 	right: -6px;
 }
 
-#channels-bar ul {
+#channels-bar-list {
 	position: absolute;
 	background:#fff;
 	width: 63px;
+	-webkit-transform:translate3d(0,0,0);
+	   -moz-transform:translate3d(0,0,0);
+	    -ms-transform:translate3d(0,0,0);
+	     -o-transform:translate3d(0,0,0);
+	        transform:translate3d(0,0,0);
 }
 
 #channels-bar li {
