@@ -45,7 +45,7 @@ define([
 		EVENTS_PER_SLICE = ESTIMATED_AVERAGE_EVENTS_PER_HOUR * HOURS_PER_SLICE,
 		API_PREFIX = $('head').attr('data-api'),
 		$CUSTOM_EVENT_ROOT = App,
-		CHANNEL_EVENTS_RECEIVED_EVENT = 'eventsReceived',
+		CHANNEL_EVENTS_RECEIVED_EVENT = 'grid:eventsReceived',
 		SEARCH_RESULTS_RECEIVED_EVENT = 'searchResultsReceived',
 		CACHE_DURATION = 60 * 24; // 1 day
 

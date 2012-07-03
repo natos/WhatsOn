@@ -75,7 +75,7 @@ define([
 
 		// For each channel in the grid, compare its current visibility against the previous visibility
 		var channelId, currentVisibility, previousVisibility;
-		var channelSliceCache = GridModel['channelSliceCache'];
+		var channelSliceCache = GridModel[g.CHANNEL_SLICE_CACHE];
 		for(var channel in channelsInGrid) {
 			if (channelsInGrid.hasOwnProperty(channel)) {
 				channelId = channelsInGrid[channel].id;
@@ -96,8 +96,11 @@ define([
 
 		_channelVisibilityPrevious = _channelVisibilityCurrent;
 
-		//GridModel.set('render', _shadow.html());
-		GridView.renderShadow(_shadow.cloneNode(true));
+		// cloneNode(true) the boolean argument defines
+		// if is gonna be a deep clone, including all node children
+		// or false, just the selected node
+//		GridView.renderShadow(_shadow.cloneNode(true));
+		GridModel.set('render', _shadow.cloneNode(true));
 	}
 
 	/**
@@ -123,7 +126,7 @@ define([
 
 		// For each channel in the grid, compare its current visibility against the previous visibility
 		var channelId, currentVisibility, previousVisibility;
-		var channelSliceCache = GridModel['channelSliceCache'];
+		var channelSliceCache = GridModel[g.CHANNEL_SLICE_CACHE];
 		for(var channel in channelsInGrid) {
 			if (channelsInGrid.hasOwnProperty(channel)) {
 				channelId = channelsInGrid[channel].id;
@@ -149,8 +152,80 @@ define([
 		
 		_channelVisibilityPrevious = _channelVisibilityCurrent;
 
-		//GridModel.set('render', _shadow.html());
-		GridView.renderShadow(_shadow.cloneNode(true));
+		// cloneNode(true) the boolean argument defines
+		// if is gonna be a deep clone, including all node children
+		// or false, just the selected node
+//		GridView.renderShadow(_shadow.cloneNode(true));
+		GridModel.set('render', _shadow.cloneNode(true));
+	}
+
+
+	/**
+	* Redraw the grid channel-by-channel because new event data has been received.
+	* The grid *might* have moved since the last time.
+	*
+	* Iterate through the channels, and determine what action is required: 
+	*  CHANNEL VISIBILITY 
+	* PREVIOUS  |  CURRENT  |  ACTION REQUIRED
+	*    Y            Y        No change - do not re-render channel
+	*    Y            Y        If the events received are for this channel, render the channel. Otherwise, do nothing. 
+	*    Y            N        Set channel to blank (#cc.innerHTML = "")
+	*    N            Y        Render channel events
+	*    N            N        No change - do not re-render channel
+	* 
+	* @private
+	*/
+
+	function redrawGrid(eventsForChannelSlice) {
+
+		_channelVisibilityCurrent = getCurrentChannelVisibility();
+
+		var channelModel = App.models.channel;
+		var channelsInGrid = channelModel.groups[channelModel.selected_group];
+
+		// For each channel in the grid, compare its current visibility against the previous visibility
+		var channelId, currentVisibility, previousVisibility;
+		var channelSliceCache = GridModel[g.CHANNEL_SLICE_CACHE];
+		for(var channel in channelsInGrid) {
+			if (channelsInGrid.hasOwnProperty(channel)) {
+				channelId = channelsInGrid[channel].id;
+				currentVisibility = _channelVisibilityCurrent[channelId];
+				previousVisibility = _channelVisibilityPrevious[channelId];
+
+				// We only have to take action if the visibility has changed
+				if (previousVisibility !== currentVisibility) { // N + Y, or Y + N
+					if (currentVisibility) { // N + Y
+						// render channel
+						renderChannel(channelId, channelSliceCache);
+					} else {  // Y + N
+						// set channel blank
+						blankChannel(channelId);
+					}
+				}
+
+				if (previousVisibility && currentVisibility) { // Y + Y
+					// render channel ONLY IF the events for slice are for the current channel
+					if (eventsForChannelSlice && eventsForChannelSlice.length>0 && eventsForChannelSlice[0].channel.id===channelId) {
+						renderChannel(channelId, channelSliceCache);
+					}
+				} else if (previousVisibility && !currentVisibility) { // Y + N
+					// set channel blank
+					blankChannel(channelId);
+				} else if (!previousVisibility && currentVisibility) { // N + Y
+					// render channel
+					renderChannel(channelId, channelSliceCache);
+				} else { // N + N
+					// do nothing
+				}
+			}
+		}
+		
+		_channelVisibilityPrevious = _channelVisibilityCurrent;
+
+		// cloneNode(true) the boolean argument defines
+		// if is gonna be a deep clone, including all node children
+		// or false, just the selected node
+		GridModel.set('render', _shadow.cloneNode(true));
 	}
 
 	/**
@@ -158,12 +233,10 @@ define([
 	* @private
 	*/
 	function blankChannel(channelId) {
+		// grab the channel
 		var channel = _shadow.querySelectorAll('#cc_' + channelId)[0];
-
-		while (channel.firstChild) {
-		  channel.removeChild(channel.firstChild);
-		}
-
+		// iterate and remove all its children
+		while (channel.firstChild) { channel.removeChild(channel.firstChild); }
 	}
 
 
@@ -200,7 +273,8 @@ define([
 	*/
 	function buildEventsForChannelSlice(channelSliceEvents, cacheKey) {
 
-		var i, event, width, left, startDateTime, endDateTime, category, subcategory, right, eventId, programmeId, channelId, eventTitle, eventCollection = document.createDocumentFragment(), link = document.createElement('a'), eventElement, ids = [];
+		var i, event, width, left, startDateTime, endDateTime, category, subcategory, right, eventId, programmeId, channelId, eventTitle,
+			eventCollection = document.createDocumentFragment(), link = document.createElement('a'), eventElement, ids = [];
 
 		for (i = 0; i < channelSliceEvents.length; i++) {
 
@@ -231,7 +305,7 @@ define([
 
 			if (_shadow.querySelectorAll('#event-' + eventId)[0]) {
 				continue;
-			};
+			}
 
 			// define element
 			eventElement = link.cloneNode(false);
@@ -245,8 +319,6 @@ define([
 			eventElement.setAttribute('data-category', category);
 			eventElement.setAttribute('data-subcategory', subcategory);
 			eventElement.setAttribute('data-programmeid', programmeId);
-			eventElement.setAttribute('data-programmeid', programmeId);
-			eventElement.setAttribute('data-programmeid', programmeId);
 
 			// Insert			
 			eventCollection.appendChild(eventElement);
@@ -259,7 +331,7 @@ define([
 
 	function getCurrentChannelVisibility() {
 
-		var channelsInViewport = GridModel['selectedChannels'],
+		var channelsInViewport = GridModel[g.SELECTED_CHANNELS],
 			channelsInGrid = ChannelModel[c.GROUPS][ChannelModel[c.SELECTED_GROUP]],
 			channelVisibility = {},
 			channelId;
@@ -284,9 +356,9 @@ define([
 	*/
 	function gridMoved() {
 		// Update model UI data
-		GridModel.set('position', { 'top': window.pageYOffset * -1, 'left': window.pageXOffset * -1 });
-		GridModel.set('selectedChannels', GridView.getSelectedChannels(g.EXTRA_ABOVE_AND_BELOW));
-		GridModel.set('selectedTime', GridView.getSelectedTime());
+		GridModel.set(g.POSITION, { 'top': window.pageYOffset * -1, 'left': window.pageXOffset * -1 });
+		GridModel.set(g.SELECTED_CHANNELS, GridView.components.channelbar.getSelectedChannels(g.EXTRA_ABOVE_AND_BELOW));
+		GridModel.set(g.SELECTED_TIME, GridView.getSelectedTime());
 
 		return this;
 	}
@@ -301,10 +373,11 @@ define([
 
 		_eventsForChannelCache[cacheKey] = events;
 
-		redrawWithNewData(events);
+		//redrawWithNewData(events);
+		redrawGrid(events);
 
 		GridModel.set('events', events);
-		GridModel.set('channelSliceCache', _eventsForChannelCache);
+		GridModel.set(g.CHANNEL_SLICE_CACHE, _eventsForChannelCache);
 	
 		return this;
 	
@@ -319,9 +392,9 @@ define([
 	function getEvents() {
 
 		// get slices
-		var channels = GridModel.selectedChannels,
-			startTime = GridModel.selectedTime.startTime,
-			endTime = GridModel.selectedTime.endTime,
+		var channels = GridModel[g.SELECTED_CHANNELS],
+			startTime = GridModel[g.SELECTED_TIME].startTime,
+			endTime = GridModel[g.SELECTED_TIME].endTime,
 			timeSlices = EpgApi.getTimeSlices(startTime, endTime),
 			slicesCount = timeSlices.length,
 			channelsCount = channels.length,
@@ -348,8 +421,9 @@ define([
 			EpgApi.getEventsForSliceFromApi(uncachedChannels, timeSlices[e]);
 		}
 
-		redrawWithoutNewData();
-	
+		//redrawWithoutNewData();
+		redrawGrid();
+
 		return this;
 	}
 
@@ -366,7 +440,7 @@ define([
 		// Events Handlers
 		App.on(g.GRID_MOVED, gridMoved);
 		App.on(g.GRID_FETCH_EVENTS, getEvents);
-		App.on('eventsReceived', setEvents); // NS: don't like this string there…
+		App.on(g.EVENTS_RECEIVED, setEvents);
 
 		return this;
 
@@ -376,7 +450,7 @@ define([
 
 		App.off(g.GRID_MOVED, gridMoved);
 		App.off(g.GRID_FETCH_EVENTS, getEvents);
-		App.off('eventsReceived', setEvents); // NS: don't like it here either…
+		App.off(g.EVENTS_RECEIVED, setEvents);
 
 		return this;
 
