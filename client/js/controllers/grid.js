@@ -248,7 +248,6 @@ define([
 	* or time window changes.
 	*/
 	function gridMoved() {
-
 		// Update model UI data:
 
 		// Update position immediately; this is used for updating 

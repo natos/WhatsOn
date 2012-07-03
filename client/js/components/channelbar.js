@@ -20,10 +20,10 @@ define([
 		_channellist,
 
 	/**
-	 * This is the set of channels that will be displayed in the channelbar,
-	 * and on the grid. This may be a subset of the complete list of channels
-	 * available to the app.
-	 */
+	* This is the set of channels that will be displayed in the channelbar,
+	* and on the grid. This may be a subset of the complete list of channels
+	* available to the app.
+	*/
 		_channels = [];
 
 	function move(position) { 
@@ -34,7 +34,7 @@ define([
 
 	function renderLogos(selectedChannels) {
 
-		var channelImg,
+		var channelimg, 
 			t = selectedChannels.length;
 
 		while (t--) {
@@ -118,8 +118,8 @@ define([
 	}
 
 	/**
-	 * Render the selected channels list and rows
-	 */
+	* Render the selected channels list and rows
+	*/
 	function renderChannelsGroup() {
 
 		// DRY Alert!
