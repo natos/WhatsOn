@@ -193,6 +193,7 @@ define([
 			programmeId = event.programme.id;
 			channelId = event.channel.id;
 
+			// avoid duplicate events ;)
 			if (_shadow.querySelectorAll('#event-' + eventId)[0]) {
 				continue;
 			}
