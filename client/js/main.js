@@ -35,6 +35,7 @@ if (window.mustard) {
 
 		/* global signature */
 		window.upc = App.initialize();
+window.app = App;
 
 	});
 

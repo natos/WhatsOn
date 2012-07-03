@@ -34,7 +34,7 @@ define([
 
 	var executionTimer,
 
-		$grid_container;
+		_gridcontainer;
 
 	/**
 	* Handler for scrolling and resizing events.
@@ -47,9 +47,7 @@ define([
 		// erase the previous timer
 		if (executionTimer) { clearTimeout(executionTimer);	}
 		// set a delay of 200ms to fetch events
-		executionTimer = setTimeout(function emitFetchEvents() { 
-			App.emit(g.GRID_FETCH_EVENTS);
-		}, g.EXECUTION_DELAY);
+		executionTimer = setTimeout(function emitFetchEvents() { App.emit(g.GRID_FETCH_EVENTS); }, g.EXECUTION_DELAY);
 	}
 
 	/**
@@ -59,19 +57,13 @@ define([
 	function modelChanged(changes) {
 		if (typeof changes === 'undefined') { return; }
 		// check for events changes to render
-/*		if (changes.events) { 
-			redrawWithNewData(changes.events);
-			//renderEvents(changes.events);
-		}
-*/
 		if (changes.render) {
 			// revieces a DocumentFragment to replace the entire grid
-			var grid = document.getElementById('grid-container');	
 			// iterate and remove all its children
-			while (grid.firstChild) { grid.removeChild(grid.firstChild); }
-
-			grid.appendChild(changes.render);
-	
+			while (_gridcontainer.firstChild) { _gridcontainer.removeChild(_gridcontainer.firstChild); }
+			// append the _shadow grid
+			_gridcontainer.appendChild(changes.render);
+			// trigger rendered
 			App.emit(g.GRID_RENDERED);
 		}
 	}
@@ -134,8 +126,8 @@ define([
 		// How many hours have been scrolled horizontally?
 		var hoursScrolledLeft = window.pageXOffset / g.HOUR_WIDTH,
 			// Calculate the left border time, and right border time
-			leftBorderTime = new Date(g.ZERO.valueOf() + (hoursScrolledLeft * g.MILLISECONDS_IN_HOUR) - (g.VIEWPORT_WIDTH_HOURS/4 * g.MILLISECONDS_IN_HOUR)),
-			rightBorderTime = new Date(g.ZERO.valueOf() + (hoursScrolledLeft * g.MILLISECONDS_IN_HOUR) + (g.VIEWPORT_WIDTH_HOURS * g.MILLISECONDS_IN_HOUR));
+			leftBorderTime = new Date(g.zeroTime.valueOf() + (hoursScrolledLeft * g.MILLISECONDS_IN_HOUR) - (g.VIEWPORT_WIDTH_HOURS/4 * g.MILLISECONDS_IN_HOUR)),
+			rightBorderTime = new Date(g.zeroTime.valueOf() + (hoursScrolledLeft * g.MILLISECONDS_IN_HOUR) + (g.VIEWPORT_WIDTH_HOURS * g.MILLISECONDS_IN_HOUR));
 
 		return {
 			startTime: leftBorderTime,
@@ -159,8 +151,6 @@ define([
 
 	function initialize() {
 
-		g.END = new Date(g.ZERO.valueOf() + 24*60*60*1000);
-
 		// UI event handlers
 		// every time user scrolls, we want to load new events
 		a.$window.on('resize scroll', handleResizeAndScroll);
@@ -175,20 +165,18 @@ define([
 
 	function render() {
 
-		$grid_container = $('#grid-container','#content');
+		_gridcontainer = document.getElementById('grid-container');
 
 		// detecting first render
 		// NS: maybe there's a better way
-		if ( $('#channels-bar-list li').size() === 0 ) {
+		//     I'm thinking in define every variable CSS on config files
+		//	   to avoid dependencies
+		if ( document.getElementById('channels-bar-list').children.length === 0 ) {
 			// render channel rows and list
 			ChannelBar.renderChannelsGroup();
 			// attach some cool styles
 			appendCSSBlock(name + '-styles', defineStyles());
 		}
-
-		// Start the first data load for this grid configuration
-		App.emit(g.GRID_MOVED);
-		App.emit(g.GRID_FETCH_EVENTS);
 
 		return this;
 	}

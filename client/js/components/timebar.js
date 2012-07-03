@@ -70,9 +70,9 @@ define([
 	}
 
 	function move(position) {
-		if (typeof $timelist === 'undefined') { return; }
-		$timelist.css({ left: position.left + 'px' });
-		return this;
+		if ($timelist) {
+			$timelist.css({ left: position.left + 'px' });
+		}
 	}
 
 	/* modelchange */
@@ -102,6 +102,17 @@ define([
 	function render() {
 
 		$timelist = $('#time-bar-list', '#content');
+
+		// Render the time intervals
+		var zeroTime = g.zeroTime;
+		var timeIntervalsHtml = "";
+		var daysOfWeek = ['Zo', 'Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za'];
+		var t;
+		for (var i=0; i<24; i++) {
+			t = new Date(zeroTime.valueOf() + (i * 60 * 60 * 1000));
+			timeIntervalsHtml += "<li><span>" + ("0" + t.getHours()).slice(-2) + ":00 (" + daysOfWeek[t.getDay()] + ")</span></li>";
+		}
+		$timelist.html(timeIntervalsHtml);
 
 		// initialize ticker
 		timer.start().tick();

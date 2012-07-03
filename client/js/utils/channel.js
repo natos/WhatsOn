@@ -27,10 +27,11 @@ define([
 
 	function process(data) {
 
-		var groups = {}, group, channel, domain, iterator = data.length, domainIterator, groupIterator;
+		var groups = {}, group, channel, domain, i, domainIterator, groupIterator;
 
-		while (iterator--) {
-			channel = data[iterator];
+		var dataLength = data.length;
+		for (i=0; i<dataLength; i++) {
+			channel = data[i];
 			domainIterator = channel.domains.length;
 			while(domainIterator--) {
 				domain = channel.domains[domainIterator];

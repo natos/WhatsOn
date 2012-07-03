@@ -53,114 +53,6 @@ define([
 	}
 
 	/**
-	* Redraw the grid channel-by-channel because the user has moved the grid.
-	* No new event data has been received.
-	*
-	* Iterate through the channels, and determine what action is required: 
-	*  CHANNEL VISIBILITY 
-	* PREVIOUS  |  CURRENT  |  ACTION REQUIRED
-	*    Y            Y        No change - do not re-render channel
-	*    Y            N        Set channel to blank (#cc.innerHTML = "")
-	*    N            Y        Render channel events
-	*    N            N        No change - do not re-render channel
-	* 
-	* @private
-	*/
-	function redrawWithoutNewData() {
-
-		_channelVisibilityCurrent = getCurrentChannelVisibility();
-
-		var channelModel = App.models.channel;
-		var channelsInGrid = channelModel.groups[channelModel.selected_group];
-
-		// For each channel in the grid, compare its current visibility against the previous visibility
-		var channelId, currentVisibility, previousVisibility;
-		var channelSliceCache = GridModel[g.CHANNEL_SLICE_CACHE];
-		for(var channel in channelsInGrid) {
-			if (channelsInGrid.hasOwnProperty(channel)) {
-				channelId = channelsInGrid[channel].id;
-				currentVisibility = _channelVisibilityCurrent[channelId];
-				previousVisibility = _channelVisibilityPrevious[channelId];
-				// We only have to take action if the visibility has changed
-				if (previousVisibility !== currentVisibility) { // N + Y, or Y + N
-					if (currentVisibility) { // N + Y
-						// render channel
-						renderChannel(channelId, channelSliceCache);
-					} else {  // Y + N
-						// set channel blank
-						blankChannel(channelId);
-					}
-				}
-			}
-		}
-
-		_channelVisibilityPrevious = _channelVisibilityCurrent;
-
-		// cloneNode(true) the boolean argument defines
-		// if is gonna be a deep clone, including all node children
-		// or false, just the selected node
-//		GridView.renderShadow(_shadow.cloneNode(true));
-		GridModel.set('render', _shadow.cloneNode(true));
-	}
-
-	/**
-	* Redraw the grid channel-by-channel because new event data has been received.
-	* The grid *might* have moved since the last time.
-	*
-	* Iterate through the channels, and determine what action is required: 
-	*  CHANNEL VISIBILITY 
-	* PREVIOUS  |  CURRENT  |  ACTION REQUIRED
-	*    Y            Y        If the events received are for this channel, render the channel. Otherwise, do nothing. 
-	*    Y            N        Set channel to blank (#cc.innerHTML = "")
-	*    N            Y        Render channel events
-	*    N            N        No change - do not re-render channel
-	* 
-	* @private
-	*/
-	function redrawWithNewData(eventsForChannelSlice) {
-
-		_channelVisibilityCurrent = getCurrentChannelVisibility();
-
-		var channelModel = App.models.channel;
-		var channelsInGrid = channelModel.groups[channelModel.selected_group];
-
-		// For each channel in the grid, compare its current visibility against the previous visibility
-		var channelId, currentVisibility, previousVisibility;
-		var channelSliceCache = GridModel[g.CHANNEL_SLICE_CACHE];
-		for(var channel in channelsInGrid) {
-			if (channelsInGrid.hasOwnProperty(channel)) {
-				channelId = channelsInGrid[channel].id;
-				currentVisibility = _channelVisibilityCurrent[channelId];
-				previousVisibility = _channelVisibilityPrevious[channelId];
-
-				if (previousVisibility && currentVisibility) { // Y + Y
-					// render channel ONLY IF the events for slice are for the current channel
-					if (eventsForChannelSlice && eventsForChannelSlice.length>0 && eventsForChannelSlice[0].channel.id===channelId) {
-						renderChannel(channelId, channelSliceCache);
-					}
-				} else if (previousVisibility && !currentVisibility) { // Y + N
-					// set channel blank
-					blankChannel(channelId);
-				} else if (!previousVisibility && currentVisibility) { // N + Y
-					// render channel
-					renderChannel(channelId, channelSliceCache);
-				} else { // N + N
-					// do nothing
-				}
-			}
-		}
-		
-		_channelVisibilityPrevious = _channelVisibilityCurrent;
-
-		// cloneNode(true) the boolean argument defines
-		// if is gonna be a deep clone, including all node children
-		// or false, just the selected node
-//		GridView.renderShadow(_shadow.cloneNode(true));
-		GridModel.set('render', _shadow.cloneNode(true));
-	}
-
-
-	/**
 	* Redraw the grid channel-by-channel because new event data has been received.
 	* The grid *might* have moved since the last time.
 	*
@@ -262,9 +154,7 @@ define([
 
 			// find the channel row and insert the documentFragment
 			_shadow.querySelectorAll('#cc_' + channelId)[0].appendChild(channelRow);
-
 		}
-
 	}
 
 	/**
@@ -349,17 +239,34 @@ define([
 		return channelVisibility;
 	}
 
+	var gridMoveExecutionTimer,
+		gridMoveExecutionDelay = 100;
+
 	/**
 	* Handler for the GRID_MOVED event.
 	* GRID_MOVED is raised by the grid view whenever the visible channel range
 	* or time window changes.
 	*/
 	function gridMoved() {
-		// Update model UI data
-		GridModel.set(g.POSITION, { 'top': window.pageYOffset * -1, 'left': window.pageXOffset * -1 });
-		GridModel.set(g.SELECTED_CHANNELS, GridView.components.channelbar.getSelectedChannels(g.EXTRA_ABOVE_AND_BELOW));
-		GridModel.set(g.SELECTED_TIME, GridView.getSelectedTime());
 
+		// Update model UI data:
+
+		// Update position immediately; this is used for updating 
+		// the channelbar and timebar scroll positions
+		GridModel.set(g.POSITION, { 'top': window.pageYOffset * -1, 'left': window.pageXOffset * -1 });
+
+		// Delay updating the selectedChannels and selectedTime values.
+		// We don't need to trigger the dependent events (fetch data)
+		// with _every_ onscroll event, especially on slow (Android) devices.
+
+		// erase the previous timer
+		if (gridMoveExecutionTimer) { clearTimeout(gridMoveExecutionTimer); }
+		// set a delay before rendering the logos
+		gridMoveExecutionTimer = setTimeout(function () {
+			GridModel.set(g.SELECTED_CHANNELS, GridView.components.channelbar.getSelectedChannels(g.EXTRA_ABOVE_AND_BELOW));
+			GridModel.set(g.SELECTED_TIME, GridView.getSelectedTime());
+		}, gridMoveExecutionDelay);
+	
 		return this;
 	}
 	
@@ -376,7 +283,6 @@ define([
 		//redrawWithNewData(events);
 		redrawGrid(events);
 
-		GridModel.set('events', events);
 		GridModel.set(g.CHANNEL_SLICE_CACHE, _eventsForChannelCache);
 	
 		return this;
@@ -393,9 +299,7 @@ define([
 
 		// get slices
 		var channels = GridModel[g.SELECTED_CHANNELS],
-			startTime = GridModel[g.SELECTED_TIME].startTime,
-			endTime = GridModel[g.SELECTED_TIME].endTime,
-			timeSlices = EpgApi.getTimeSlices(startTime, endTime),
+			timeSlices = EpgApi.getTimeSlices(GridModel[g.SELECTED_TIME].startTime, GridModel[g.SELECTED_TIME].endTime),
 			slicesCount = timeSlices.length,
 			channelsCount = channels.length,
 			i, e, cacheKey, 
@@ -417,11 +321,11 @@ define([
 					uncachedChannels.push(channels[i]);
 				}
 			}
+
 			// get events for uncached channels with thi
 			EpgApi.getEventsForSliceFromApi(uncachedChannels, timeSlices[e]);
 		}
 
-		//redrawWithoutNewData();
 		redrawGrid();
 
 		return this;
@@ -436,6 +340,9 @@ define([
 		if (!_shadow) {
 			createShadow();
 		}
+
+		g.ZERO = g.zeroTime;
+		g.END = new Date(g.zeroTime.valueOf() + 24*60*60*1000);
 
 		// Events Handlers
 		App.on(g.GRID_MOVED, gridMoved);
