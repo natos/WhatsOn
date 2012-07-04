@@ -353,7 +353,9 @@ average(timer.timeDiff);
 
 	return {
 		getEventsForChannels	: getEventsForChannels,
-		searchForEvents			: searchForEvents
+		searchForEvents			: searchForEvents,
+		getTimeSlices 			: getTimeSlices,
+		formatTimeForApiRequest : formatTimeForApiRequest
 	};
 
 });

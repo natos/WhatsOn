@@ -14,9 +14,10 @@ define([
 	'lib/flaco/controller',
 	'models/grid',
 	'views/grid',
-	'utils/epgapi'
+	'utils/epgapi',
+	'utils/convert'
 
-], function GridController(g, App, Controller, GridModel, GridView, EpgApi) {
+], function GridController(g, App, Controller, GridModel, GridView, EpgApi, convert) {
 
 	var name = 'grid';
 
@@ -73,8 +74,50 @@ define([
 	*/
 	function getEvents() {
 
-		EpgApi.getEventsForChannels(GridModel.selectedChannels, GridModel.selectedTime.startTime, GridModel.selectedTime.endTime);
-	
+		//EpgApi.getEventsForChannels(GridModel.selectedChannels, GridModel.selectedTime.startTime, GridModel.selectedTime.endTime);
+
+
+		/********************
+		*					*
+		*	Qualifiers!!!	*
+		*					*
+		********************/
+
+		// extra querystring parameters
+		var querystring = '&batchSize=8&order=startDateTime&optionalProperties=Programme.subcategory&callback=?',
+		// define time slices
+		timeSlices = EpgApi.getTimeSlices(GridModel.selectedTime.startTime, GridModel.selectedTime.endTime),		
+		// grab selected channels
+		selectedChannels = GridModel.selectedChannels.slice(0, GridModel.selectedChannels.length),
+		// iteration helpers
+		sliceOfChannels = true, URL, i, t;
+
+		// for all channel slices
+		while (sliceOfChannels) {
+
+			// group by 5 channels
+			sliceOfChannels = selectedChannels.splice(0,5);
+
+			// if there is no more channels stop
+			if (sliceOfChannels.length === 0) { 
+				sliceOfChannels = false;
+			} else {
+				// iterate timeslices
+				t =  timeSlices.length;
+				for ( i = 0; i < t; i++) {
+					// construct a URL to request
+					URL = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/' + sliceOfChannels.join('%7C') + '/events.json?qualifier=startDateTime%3E=@{timestamp%20' + EpgApi.formatTimeForApiRequest(timeSlices[i][0]) + '}%20and%20endDateTime%3C@{timestamp%20' + EpgApi.formatTimeForApiRequest(timeSlices[i][1]) + '}' + querystring;
+
+//http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/7L%7C6x%7C7M%7C8h%7C7N/events.json?qualifier=startDateTime%3E=@{timestamp%202012-07-04T12:00Z}%20and%20endDateTime%3C@{timestamp%202012-07-04T16:00Z}&batchSize=8&order=startDateTime&optionalProperties=Programme.subcategory&callback=jsonp7
+
+					$.getJSON(URL, setEvents);
+
+
+				}
+			}
+
+		}
+
 		return this;
 	}
 
