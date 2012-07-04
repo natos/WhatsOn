@@ -114,6 +114,8 @@ define([
 		
 		_channelVisibilityPrevious = _channelVisibilityCurrent;
 
+		// ONLY RENDER IF IS NECESARY
+
 		// cloneNode(true) the boolean argument defines
 		// if is gonna be a deep clone, including all node children
 		// or false, just the selected node
@@ -200,16 +202,15 @@ define([
 
 			// define element
 			eventElement = link.cloneNode(false);
+			eventElement.innerText = eventTitle;
 			eventElement.id = 'event-' + eventId;
 			eventElement.className = 'grid-event';
 			eventElement.style.width = width + 'px';
 			eventElement.style.left = left + 'px';
-			eventElement.innerText = eventTitle;
-			eventElement.setAttribute('href', '/programme/' + programmeId);
+			eventElement.href = '/programme/' + programmeId;
 			eventElement.setAttribute('data-programmeid', programmeId);
 			eventElement.setAttribute('data-category', category);
 			eventElement.setAttribute('data-subcategory', subcategory);
-			eventElement.setAttribute('data-programmeid', programmeId);
 
 			// Insert			
 			eventCollection.appendChild(eventElement);
