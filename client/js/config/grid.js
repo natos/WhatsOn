@@ -55,15 +55,31 @@ define([], function GridConfigContext() {
 
 		MAX_DOM_ELEMENTS: 500,
 
+		EXTRA_ABOVE_AND_BELOW: 2,
+
+		EXECUTION_DELAY: 250,
+
+		/* labels */
+
+		POSITION: 'position',
+
+		SELECTED_CHANNELS: 'selectedChannels',
+
+		SELECTED_TIME: 'selectedTime',
+
+		CHANNEL_SLICE_CACHE: 'channelSliceCache',
+
 		/* properties */
 
-		zeroTime : _zeroTime,
+		zeroTime: _zeroTime,
 
 		/* methods */
 
-		setZeroTime : setZeroTime,
+		setZeroTime: setZeroTime,
 
 		/* events */
+
+		EVENTS_RECEIVED: 'grid:eventsReceived',
 
 		MODEL_CHANGED: 'grid:model_changed',
 

@@ -31,7 +31,7 @@ define([
 	/* timer functions */
 	function timer_start() {
 		timer.status = true;
-		timer.element.appendTo('#grid-container');
+		timer.element.appendTo('#grid-content');
 		timer.clock = setTimeout(timer.tick, timer.time);
 		return this;
 	}

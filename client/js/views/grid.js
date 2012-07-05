@@ -21,23 +21,28 @@ define([
 
 	'config/app',
 	'config/grid',
-	'config/channel',
 	'modules/app',
-	'models/channel',
 	'lib/flaco/view',
 	'components/timebar',
-	'components/channelbar',
-	'components/buffer',
-	'utils/convert'
+	'components/channelbar'
 
-], function GridViewScope(a, g, c, App, ChannelModel, View, TimeBar, ChannelBar, Buffer, convert) {
+], function GridViewScope(a, g, App, View, TimeBar, ChannelBar) {
 
 	var name = "grid";
 
 /* private */
 
+	// Objects
+	var _$timebar, _$channelsbar;
+
+	// Touch coordinates, used for checking velocity
+	var _previousTouchX, _previousTouchY, _previousTouchTime;
+	var _touchVelocityX = 0;
+	var _touchVelocityY = 0;
+
 	var executionTimer,
-		executionDelay = 250;
+
+		_gridcontainer;
 
 	/**
 	* Handler for scrolling and resizing events.
@@ -50,8 +55,45 @@ define([
 		// erase the previous timer
 		if (executionTimer) { clearTimeout(executionTimer);	}
 		// set a delay of 200ms to fetch events
-		executionTimer = setTimeout(function emitFetchEvents() { App.emit(g.GRID_FETCH_EVENTS); }, executionDelay);
+		executionTimer = setTimeout(function emitFetchEvents() { App.emit(g.GRID_FETCH_EVENTS); }, g.EXECUTION_DELAY);
 	}
+
+	function updateTouchVelocity(e) {
+		if (e && e.changedTouches && e.changedTouches.length==1) {
+			var currentX = e.changedTouches[0].pageX;
+			var currentY = e.changedTouches[0].pageY;
+			var currentTime = new Date();
+			if (_previousTouchX && _previousTouchY && _previousTouchTime) {
+				var interval = (currentTime.valueOf() - _previousTouchTime.valueOf()) / 1000;
+				_touchVelocityX = (currentX - _previousTouchX) / interval;
+				_touchVelocityY = (currentY - _previousTouchY) / interval;
+			}
+
+			_previousTouchX = currentX;
+			_previousTouchY = currentY;
+			_previousTouchTime = currentTime;
+		}
+	}
+
+	function onTouchEnd(e) {
+
+		if (Math.abs(_touchVelocityX) > 200 || Math.abs(_touchVelocityY) > 200) {
+			_$timebar.hide();
+			_$channelsbar.hide();
+		}
+	}
+
+	var restoreHeadersExecutionTimer;
+	function restoreHeaders() {
+		// erase the previous timer
+		if (restoreHeadersExecutionTimer) { clearTimeout(restoreHeadersExecutionTimer);	}
+		// set a delay of 200ms to fetch events
+		restoreHeadersExecutionTimer = setTimeout(function emitFetchEvents() {
+			_$timebar.show();
+			_$channelsbar.show();
+		}, 100);
+	}
+
 
 	/**
 	* Handler for model data changes.
@@ -60,7 +102,15 @@ define([
 	function modelChanged(changes) {
 		if (typeof changes === 'undefined') { return; }
 		// check for events changes to render
-		if (changes.events) { renderEvents(changes.events); }
+		if (changes.render) {
+			// revieces a DocumentFragment to replace the entire grid
+			// iterate and remove all its children
+			while (_gridcontainer.firstChild) { _gridcontainer.removeChild(_gridcontainer.firstChild); }
+			// append the _shadow grid
+			_gridcontainer.appendChild(changes.render);
+			// trigger rendered
+			App.emit(g.GRID_RENDERED);
+		}
 	}
 
 	/**
@@ -69,13 +119,13 @@ define([
 	*/
 	function defineStyles() {
 
-		// define constants
-		var $channelsbar = $('#channels-bar');
-		var $timebar = $('#time-bar');
+		// Set view variables
+		_$channelsbar = $('#channels-bar');
+		_$timebar = $('#time-bar');
 
-		g.TIMEBAR_HEIGHT = $timebar.height();
-		g.CHANNELS_COUNT = $channelsbar.find('li').length;
-		g.CHANNEL_BAR_WIDTH = $channelsbar.width();
+		g.TIMEBAR_HEIGHT = _$timebar.height();
+		g.CHANNELS_COUNT = _$channelsbar.find('li').length;
+		g.CHANNEL_BAR_WIDTH = _$channelsbar.width();
 		g.VIEWPORT_WIDTH_HOURS = (document.body.clientWidth - g.CHANNEL_BAR_WIDTH) / g.HOUR_WIDTH;
 		// Size the grid
 		g.GRID_HEIGHT = g.ROW_HEIGHT * g.CHANNELS_COUNT;
@@ -95,68 +145,6 @@ define([
 	}
 
 	/**
-	* Render a set of EPG events into the grid.
-	* @private
-	*/
-	function renderEvents(channels) {
-
-		var c, i, events, event, width, left, startDateTime, endDateTime, category, subcategory, right, eventId, programmeId;
-
-		for (c = 0; c < channels.length; c++) {
-			
-			events = channels[c];
-
-			for (i = 0; i < events.length; i++) {
-	
-				event = events[i];
-				eventId = event.id;
-	
-				// Avoid rendering duplicate DOM elements
-				if ( $('#event-' + event.id).length ) {
-					// Don't render this event; skip to the next one.
-					//console.log('Warning!','Trying to render duplicate event.');
-					continue;
-				}
-	
-				// Time data
-				startDateTime = convert.parseApiDate(event.startDateTime);
-				endDateTime = convert.parseApiDate(event.endDateTime);
-	
-				// Category and subcategory
-				category = event.programme.subcategory.category.name;
-				subcategory = event.programme.subcategory.name;
-	
-				// Avoid rendering events that end before 00:00 or start after 24:00
-				if ( (endDateTime <= g.zeroTime) || (startDateTime >= g.END) ) {
-					continue;
-				}
-	
-				width = convert.timeToPixels(endDateTime, startDateTime);
-				left = convert.timeToPixels(startDateTime, g.zeroTime);
-				if (left < 0) {
-					right = left + width;
-					left = 0;
-					width = right;
-					event.programme.title = "←" + event.programme.title;
-				}
-	
-				// Insert into DOM
-				programmeId = event.programme.id;
-				var eventContent = '<a class="programme" id="' + programmeId + '" href="/programme/' + programmeId + '" data-programmeid="' + programmeId + '" title="' + event.programme.title + '">'
-									+ '<div class="grid-event" data-category="' + category + '" data-subcategory="' + subcategory + '" id="event-' + eventId + '" style="width:' + width + 'px;left:' + left + 'px">'
-									+ event.programme.title
-									+ '</div></a>'
-				$('#cc_' + event.channel.id).append(eventContent);
-	
-			}
-		}
-
-		// triggers GRID_RENDERED
-		App.emit(g.GRID_RENDERED);
-
-	}
-
-	/**
 	* Add or update a named <style> element to the DOM.
 	* @private
 	*/
@@ -171,7 +159,6 @@ define([
 			document.getElementsByTagName('HEAD')[0].appendChild(el);
 		}
 	}
-
 
 /* public */
 
@@ -205,15 +192,18 @@ define([
 		return ChannelBar.getSelectedChannels(extraAboveAndBelow);
 	}
 
+
 /* abstract */
 
 	function initialize() {
 
-		g.END = new Date(g.zeroTime.valueOf() + 24*60*60*1000);
-
 		// UI event handlers
 		// every time user scrolls, we want to load new events
-		a.$window.on('resize scroll', handleResizeAndScroll);
+		a.$window.on('resize scroll touchmove', handleResizeAndScroll);
+
+		a.$window.on('touchend', onTouchEnd);
+		a.$window.on('touchstart touchmove', updateTouchVelocity);
+		a.$window.on('scroll touchstart', restoreHeaders);
 
 		// The model recieves events
 		// we are listening to render new events
@@ -225,8 +215,13 @@ define([
 
 	function render() {
 
+		_gridcontainer = document.getElementById('grid-container');
+
 		// detecting first render
-		if ( $('#channels-bar-list li').size() === 0 ) {
+		// NS: maybe there's a better way
+		//     I'm thinking in define every variable CSS on config files
+		//	   to avoid dependencies
+		if ( document.getElementById('channels-bar-list').children.length === 0 ) {
 			// render channel rows and list
 			ChannelBar.renderChannelsGroup();
 			// attach some cool styles
@@ -238,7 +233,7 @@ define([
 
 	function finalize() {
 
-		a.$window.off('resize scroll', handleResizeAndScroll);
+		a.$window.off('resize scroll touchmove', handleResizeAndScroll);
 
 		App.off(g.MODEL_CHANGED, modelChanged);
 
@@ -258,8 +253,7 @@ define([
 		getSelectedTime		: getSelectedTime,
 		components			: {
 			timebar		: TimeBar,
-			channelbar	: ChannelBar,
-			buffer		: Buffer
+			channelbar	: ChannelBar
 		}
 	});
 

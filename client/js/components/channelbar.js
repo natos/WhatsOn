@@ -13,33 +13,34 @@ define([
 
 ], function ChannelBar(c, g, ChannelModel, GridModel, App) {
 
-	var name = 'channelbar';
+	var name = 'channelbar',
 
 /* private */
 
-	var	$channellist;
+		_channellist,
 
 	/**
-	 * This is the set of channels that will be displayed in the channelbar,
-	 * and on the grid. This may be a subset of the complete list of channels
-	 * available to the app.
-	 */
-	var _channels = [];
-
+	* This is the set of channels that will be displayed in the channelbar,
+	* and on the grid. This may be a subset of the complete list of channels
+	* available to the app.
+	*/
+		_channels = [];
 
 	function move(position) { 
-		if ($channellist) {
-			$channellist.css({ top: position.top + 'px' });
+		if (_channellist) { 
+			_channellist.style.top = position.top + 'px';
 		}
 	}
 
 	function renderLogos(selectedChannels) {
+
 		var channelimg, 
 			t = selectedChannels.length;
 
 		while (t--) {
-			channelimg = $('#channelImg'+selectedChannels[t]);
-			channelimg.attr('src', channelimg.data('src')).removeClass('loading');
+			channelImg = document.getElementById('channelImg'+selectedChannels[t]);
+			channelImg.className = ''; // remove loading
+			channelImg.setAttribute('src', channelImg.getAttribute('data-src'));
 		}
 	}
 
@@ -69,7 +70,7 @@ define([
 	function render() {
 
 		// grab the channellist
-		$channellist = $('#channels-bar-list');
+		_channellist = document.getElementById('channels-bar-list');
 
 		return this;
 
@@ -117,12 +118,15 @@ define([
 	}
 
 	/**
-	 * Render the selected channels list and rows
-	 */
+	* Render the selected channels list and rows
+	*/
 	function renderChannelsGroup() {
 
 		// DRY Alert!
 		// This function is needed in other components.
+		// NS: Maybe is a good idea to create a map of logos
+		//		and cache it on the channelModel something
+		//		easy like: ChannelModel.logos[ChannelID]...
 		function getLogo(channel) {
 			if (!channel.links) { return; }
 			var foundif = false, t = channel.links.length;
@@ -130,21 +134,39 @@ define([
 			return foundit;
 		}
 		// grab selected channels from channel model
-		_channels = ChannelModel[c.GROUPS][ChannelModel[c.SELECTED_GROUP]], i = 0, t = _channels.length, rows = [], list = [];
+		_channels = ChannelModel[c.GROUPS][ChannelModel[c.SELECTED_GROUP]];
 
 		// iterate channel collection
-		var channelId;
-		for (i; i < t; i++) {
+		var channelId, name, i, t = _channels.length, item, picture, image, 
+			list = document.createDocumentFragment(), 
+			listItem = document.createElement('li'), 
+			div = document.createElement('div'), 
+			img = document.createElement('img');
+
+		for (i = 0; i < t; i++) {
+
 			channelId = _channels[i].id;
-			// create a new channel row for the grid
-			rows.push('<div class="channel-container" id="cc_' + channelId + '" style="top:' + (i * g.ROW_HEIGHT) + 'px"></div>');
-			// and a channel logo on the side bar
-			list.push('<li><div class="picture"><img class="loading" title="' + _channels[i].name + '" data-src="http://www.upc.nl' + getLogo(_channels[i]).href + '?size=medium" id="channelImg' + channelId + '" /></div></li>');
+			name = _channels[i].name;
+
+			image = img.cloneNode(false);
+			image.className = 'loading';
+			image.setAttribute('id', 'channelImg' + channelId);
+			image.setAttribute('title', name);
+			image.setAttribute('data-src', 'http://www.upc.nl' + getLogo(_channels[i]).href + '?size=medium');
+
+			picture = div.cloneNode(false);
+			picture.className = 'picture';
+			picture.appendChild(image);
+
+			item = listItem.cloneNode(false);
+			item.appendChild(picture);
+			
+			list.appendChild(item);
+
 		}
 
 		// append to DOM
-		$('#grid-container').html(rows.join('\n'));
-		$('#channels-bar-list').html(list.join('\n'));
+		document.getElementById('channels-bar-list').appendChild(list);
 
 		return;
 

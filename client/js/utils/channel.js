@@ -44,6 +44,8 @@ define([
 			}
 		}
 
+		// TODO: sort channels 
+
 		// Save raw collection
 		ChannelModel.set(c.DATA, data);
 		// Save groups map
