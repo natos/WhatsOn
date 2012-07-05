@@ -168,7 +168,7 @@ define([
 	*/
 	function buildEventsForChannelSlice(channelSliceEvents, cacheKey) {
 
-		var i, events, event, width, left, right, startDateTime, endDateTime, category, subcategory, eventId, programmeId, channelId, eventTitle,
+		var i, events, event, width, left, right, startDateTime, endDateTime, category, subcategory, eventId, programmeId, channelId, eventTitle, offset, content,
 			eventCollection = document.createDocumentFragment(), link = document.createElement('a'), eventElement, ids = [];
 
 		for (i = 0; i < channelSliceEvents.length; i++) {
@@ -178,21 +178,27 @@ define([
 
 			// avoid duplicate events ;)
 			if (_shadow.querySelectorAll('#event-' + eventId)[0]) {
+				//console.log('duplicated');
 				continue;
 			}
+
+			eventTitle = event.programme.title;
 
 			// Time data
 			startDateTime = convert.parseApiDate(event.startDateTime);
 			endDateTime = convert.parseApiDate(event.endDateTime);
 
-			// Category and subcategory
-			category = event.programme.subcategory.category.name;
-			subcategory = event.programme.subcategory.name;
-
+			// size data
 			width = convert.timeToPixels(endDateTime, startDateTime);
 			left = convert.timeToPixels(startDateTime, g.ZERO);
-			eventTitle = event.programme.title;
+			offset = left + width;
 
+			// avoid events outside view
+			if (offset < 0) {
+				continue;
+			}
+
+			// adjust left 
 			if (left < 0) {
 				right = left + width;
 				left = 0;
@@ -200,24 +206,27 @@ define([
 				eventTitle = "←" + event.programme.title;
 			}
 
-			if (left===0) {
-			console.log(channelSliceEvents[i]);
-			}
-
+			// ids
 			programmeId = event.programme.id;
 			channelId = event.channel.id;
 
+			// Category and subcategory
+			category = event.programme.subcategory.category.name;
+			subcategory = event.programme.subcategory.name;
+
+			// define content
+			eventTitle = document.createTextNode(eventTitle);
+
 			// define element
 			eventElement = link.cloneNode(false);
-			eventElement.innerText = eventTitle;
 			eventElement.id = 'event-' + eventId;
 			eventElement.className = 'grid-event';
+			eventElement.href = '/programme/' + programmeId;
 			eventElement.style.width = width + 'px';
 			eventElement.style.left = left + 'px';
-			eventElement.href = '/programme/' + programmeId;
-			eventElement.setAttribute('data-programmeid', programmeId);
 			eventElement.setAttribute('data-category', category);
 			eventElement.setAttribute('data-subcategory', subcategory);
+			eventElement.appendChild(eventTitle);
 
 			// Insert			
 			eventCollection.appendChild(eventElement);
@@ -285,6 +294,30 @@ define([
 	*/
 	function setEvents(events, cacheKey) {
 
+		var e;
+
+		for (e = 0; e < events.length; e++) {
+
+			delete events[e]._type;
+			delete events[e].channel._type;
+			delete events[e].channel.name;
+			delete events[e].programme._type;
+			delete events[e].programme.shortDescription;
+
+			if (events[e].programme.subcategory) {
+				delete events[e].programme.subcategory._type;
+				delete events[e].programme.subcategory.id;
+				delete events[e].programme.subcategory.category._type;
+				delete events[e].programme.subcategory.category.id;
+			}
+
+			if (events[e].programme.category) {
+				delete events[e].programme.category._type;
+				delete events[e].programme.category.id;
+			}
+		}
+
+
 		_eventsForChannelCache[cacheKey] = events;
 
 		redrawGrid(events);
@@ -316,75 +349,22 @@ define([
 			uncachedChannels;
 
 		// create cachekey
-		for (e=0; e<slicesCount; e++) {
+		for (e = 0; e < slicesCount; e++) {
 			uncachedChannels = [];
 			for (i=0; i<channelsCount; i++) {
 				cacheKey = EpgApi.getCacheKey(channels[i], timeSlices[e]);
 				if (_eventsForChannelCache[cacheKey]) {
-					console.log('exist on cache');
-					// render it
-					// render map with stuff
+					//console.log('exist on cache');
 					setEvents(_eventsForChannelCache[cacheKey], cacheKey);
 				} else {
-					console.log('doesn\' exist on cache');
-//					_eventsForChannelCache[cacheKey] = true;
+					//console.log('doesn\' exist on cache');
 					uncachedChannels.push(channels[i]);
 				}
 			}
+
 			// get events for uncached channels with thi
 			EpgApi.getEventsForSliceFromApi(uncachedChannels, timeSlices[e]);
 		}
-
-		return this;
-
-		// Museum
-		//EpgApi.getEventsForChannels(GridModel.selectedChannels, GridModel.selectedTime.startTime, GridModel.selectedTime.endTime);
-
-
-		/********************
-		*					*
-		*	Qualifiers!!!	*
-		*					*
-		********************/
-/*
-		// extra querystring parameters
-		var querystring = '&batchSize=8&order=startDateTime&optionalProperties=Programme.subcategory&callback=?',
-		// define time slices
-		timeSlices = EpgApi.getTimeSlices(GridModel.selectedTime.startTime, GridModel.selectedTime.endTime),		
-		// grab selected channels
-		selectedChannels = GridModel.selectedChannels.slice(0, GridModel.selectedChannels.length),
-		// iteration helpers
-		cacheKey, uncachedSlices = [], sliceOfChannels = true, URL, i, t;
-
-		// for all channel slices
-		while (sliceOfChannels) {
-
-			// group by 5 channels
-			sliceOfChannels = selectedChannels.splice(0,5);
-
-			// if there is no more channels stop
-			if (sliceOfChannels.length === 0) { 
-				sliceOfChannels = false;
-			} else {
-				// iterate timeslices
-				t =  timeSlices.length;
-				for ( i = 0; i < t; i++) {
-
-					cacheKey = EpgApi.getCacheKey(sliceOfChannels.join('%7C'), timeSlices[i]);
-
-					if (_eventsForChannelCache[cacheKey]) {
-						setEvents(_eventsForChannelCache[cacheKey], cacheKey);
-					} else {
-
-						URL = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/' + sliceOfChannels.join('%7C') + '/events.json?qualifier=endDateTime%3E=@{timestamp%20' + EpgApi.formatTimeForApiRequest(timeSlices[i][0]) + '}%20and%20startDateTime%3C@{timestamp%20' + EpgApi.formatTimeForApiRequest(timeSlices[i][1]) + '}' + querystring;
-
-						$.getJSON(URL, function(events) { setEvents(events, cacheKey) });
-					}
-				}
-			}
-		}*/
-
-		//redrawGrid();
 
 		return this;
 	}
