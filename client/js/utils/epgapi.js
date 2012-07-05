@@ -2,7 +2,6 @@ define([
 
 	'modules/app',
 	'utils/convert',
-	'/js/lib/lscache/lscache.js',
 	'/js/lib/timetrack/timetrack.js'
 
 ], function(App, convert) {
