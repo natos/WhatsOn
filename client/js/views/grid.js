@@ -103,7 +103,7 @@ define([
 		var c, i, events, event, width, left, startDateTime, endDateTime, category, subcategory, right, eventId, programmeId;
 
 		for (c = 0; c < channels.length; c++) {
-
+			
 			events = channels[c];
 
 			for (i = 0; i < events.length; i++) {

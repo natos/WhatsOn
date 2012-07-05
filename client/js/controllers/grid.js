@@ -106,9 +106,7 @@ define([
 				t =  timeSlices.length;
 				for ( i = 0; i < t; i++) {
 					// construct a URL to request
-					URL = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/' + sliceOfChannels.join('%7C') + '/events.json?qualifier=startDateTime%3E=@{timestamp%20' + EpgApi.formatTimeForApiRequest(timeSlices[i][0]) + '}%20and%20endDateTime%3C@{timestamp%20' + EpgApi.formatTimeForApiRequest(timeSlices[i][1]) + '}' + querystring;
-
-//http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/7L%7C6x%7C7M%7C8h%7C7N/events.json?qualifier=startDateTime%3E=@{timestamp%202012-07-04T12:00Z}%20and%20endDateTime%3C@{timestamp%202012-07-04T16:00Z}&batchSize=8&order=startDateTime&optionalProperties=Programme.subcategory&callback=jsonp7
+					URL = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/' + sliceOfChannels.join('%7C') + '/events.json?qualifier=endDateTime%3E=@{timestamp%20' + EpgApi.formatTimeForApiRequest(timeSlices[i][0]) + '}%20and%20startDateTime%3C@{timestamp%20' + EpgApi.formatTimeForApiRequest(timeSlices[i][1]) + '}' + querystring;
 
 					$.getJSON(URL, setEvents);
 
