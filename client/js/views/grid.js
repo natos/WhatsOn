@@ -98,52 +98,57 @@ define([
 	* Render a set of EPG events into the grid.
 	* @private
 	*/
-	function renderEvents(events) {
+	function renderEvents(channels) {
 
-		var i, event, width, left, startDateTime, endDateTime, category, subcategory, right, eventId, programmeId;
+		var c, i, events, event, width, left, startDateTime, endDateTime, category, subcategory, right, eventId, programmeId;
 
-		for (i = 0; i < events[0].length; i++) {
+		for (c = 0; c < channels.length; c++) {
+			
+			events = channels[c];
 
-			event = events[0][i];
-			eventId = event.id;
-
-			// Avoid rendering duplicate DOM elements
-			if ( $('#event-' + event.id).length ) {
-				// Don't render this event; skip to the next one.
-				//console.log('Warning!','Trying to render duplicate event.');
-				continue;
+			for (i = 0; i < events.length; i++) {
+	
+				event = events[i];
+				eventId = event.id;
+	
+				// Avoid rendering duplicate DOM elements
+				if ( $('#event-' + event.id).length ) {
+					// Don't render this event; skip to the next one.
+					//console.log('Warning!','Trying to render duplicate event.');
+					continue;
+				}
+	
+				// Time data
+				startDateTime = convert.parseApiDate(event.startDateTime);
+				endDateTime = convert.parseApiDate(event.endDateTime);
+	
+				// Category and subcategory
+				category = event.programme.subcategory.category.name;
+				subcategory = event.programme.subcategory.name;
+	
+				// Avoid rendering events that end before 00:00 or start after 24:00
+				if ( (endDateTime <= g.zeroTime) || (startDateTime >= g.END) ) {
+					continue;
+				}
+	
+				width = convert.timeToPixels(endDateTime, startDateTime);
+				left = convert.timeToPixels(startDateTime, g.zeroTime);
+				if (left < 0) {
+					right = left + width;
+					left = 0;
+					width = right;
+					event.programme.title = "←" + event.programme.title;
+				}
+	
+				// Insert into DOM
+				programmeId = event.programme.id;
+				var eventContent = '<a class="programme" id="' + programmeId + '" href="/programme/' + programmeId + '" data-programmeid="' + programmeId + '" title="' + event.programme.title + '">'
+									+ '<div class="grid-event" data-category="' + category + '" data-subcategory="' + subcategory + '" id="event-' + eventId + '" style="width:' + width + 'px;left:' + left + 'px">'
+									+ event.programme.title
+									+ '</div></a>'
+				$('#cc_' + event.channel.id).append(eventContent);
+	
 			}
-
-			// Time data
-			startDateTime = convert.parseApiDate(event.startDateTime);
-			endDateTime = convert.parseApiDate(event.endDateTime);
-
-			// Category and subcategory
-			category = event.programme.subcategory.category.name;
-			subcategory = event.programme.subcategory.name;
-
-			// Avoid rendering events that end before 00:00 or start after 24:00
-			if ( (endDateTime <= g.zeroTime) || (startDateTime >= g.END) ) {
-				continue;
-			}
-
-			width = convert.timeToPixels(endDateTime, startDateTime);
-			left = convert.timeToPixels(startDateTime, g.zeroTime);
-			if (left < 0) {
-				right = left + width;
-				left = 0;
-				width = right;
-				event.programme.title = "←" + event.programme.title;
-			}
-
-			// Insert into DOM
-			programmeId = event.programme.id;
-			var eventContent = '<a class="programme" id="' + programmeId + '" href="/programme/' + programmeId + '" data-programmeid="' + programmeId + '" title="' + event.programme.title + '">'
-								+ '<div class="grid-event" data-category="' + category + '" data-subcategory="' + subcategory + '" id="event-' + eventId + '" style="width:' + width + 'px;left:' + left + 'px">'
-								+ event.programme.title
-								+ '</div></a>'
-			$('#cc_' + event.channel.id).append(eventContent);
-
 		}
 
 		// triggers GRID_RENDERED
