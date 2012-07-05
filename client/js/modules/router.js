@@ -8,7 +8,7 @@ define([
 
 	'config/app',
 	'modules/app',
-	'/js/lib/history/history.native.js'
+	'/js/lib/history/1.7.1-r2/bundled/html4+html5/native.history.js'
 
 ], function RouterModuleScope(a, App) {
 
