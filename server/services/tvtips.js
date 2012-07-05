@@ -13,7 +13,7 @@ define([
 
 	// utils
 	'utils/dateutils',
-	'utils/requestN',
+	'utils/requestn',
 
 	// config
 	'config/global.config'
