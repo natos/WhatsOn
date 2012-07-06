@@ -16,6 +16,8 @@ define([
 
 	// services
 	'services/domain',
+	'services/bookings',
+	'services/tvtips',
 
 	// config
 	'config/global.config'
@@ -26,7 +28,7 @@ define([
 *	@class ChannelService
 */
 
-function(util, events, request, requestN, DomainService, config) {
+function(util, events, request, requestN, DomainService, BookingsService, TVTipsService, config) {
 
 	/** @constructor */
 
@@ -174,6 +176,45 @@ function(util, events, request, requestN, DomainService, config) {
 
 		return this;
 	};
+
+	/**
+	 * Return a list of "popular" channels.
+	 * This list is generated from the TV Tips and Top Bookings.
+	 */
+	ChannelService.prototype.getPopularChannels = function(marketId) {
+
+		var self = this;
+
+		(new BookingsService()).once('getTopBookings', function(topBookings) {
+			(new TVTipsService()).once('getTVTips', function(tvTips){
+
+				var popularChannelIds = [];
+				var tvTipsCount = tvTips.length;
+				var topBookingsCount = topBookings.length;
+				var i, channelId;
+
+				for (i=0; i< topBookingsCount; i++) {
+					channelId = topBookings[i].channel.id;
+					if (popularChannelIds.indexOf(channelId) < 0) {
+						popularChannelIds.push(channelId);
+					}
+				}
+
+				for (i=0; i< tvTipsCount; i++) {
+					channelId = tvTips[i].channel.id;
+					if (popularChannelIds.indexOf(channelId) < 0) {
+						popularChannelIds.push(channelId);
+					}
+				}
+
+				self.emit('getPopularChannels', popularChannelIds);
+
+			}).getTVTips();
+		}).getTopBookings();
+
+		return this;
+
+	}
 
 	/** @return */
 

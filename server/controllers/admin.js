@@ -9,6 +9,7 @@ define([
 	// services
 	'services/bookings',
 	'services/tvtips',
+	'services/channel',
 
 	// utils
 	'utils/dateutils'
@@ -20,7 +21,7 @@ define([
  *	@class AdminController
  */
 
-function(BookingsService, TVTipsService, DateUtils) {
+function(BookingsService, TVTipsService, ChannelService, DateUtils) {
 
 	/** @constructor */
 
@@ -32,6 +33,7 @@ function(BookingsService, TVTipsService, DateUtils) {
 
 		app.server.get('/admin/topbookings', this.renderTopBookings);
 		app.server.get('/admin/tvtips', this.renderTVTips);
+		app.server.get('/admin/popularchannels', this.renderPopularChannels);
 	};
 
 
@@ -75,6 +77,22 @@ function(BookingsService, TVTipsService, DateUtils) {
 			});
 
 		}).getTVTips(marketId);
+
+	};
+
+	AdminController.prototype.renderPopularChannels = function(req, res) {
+
+		var marketId = 'nl';
+
+		new ChannelService().once('getPopularChannels', function(popularChannelIds) {
+
+			// res.render('layouts/admin/tvtips.jade', {
+			// 	tvTips : tvTips
+			// });
+
+			res.send(popularChannelIds);
+
+		}).getPopularChannels(marketId);
 
 	};
 
