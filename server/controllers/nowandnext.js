@@ -160,7 +160,7 @@ function(NowAndNextService, DomainService, Metadata, QS, config) {
 					xhr			: req.xhr
 				});
 
-			}).getNowAndNext(dt, channelIds);
+			}).getNowAndNext(dt, channelIds, false);
 
 
 		}).getDomainDetails('Filter');

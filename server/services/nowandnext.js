@@ -57,10 +57,15 @@ function(ChannelService, util, events, request, RequestN, config) {
 
 	// Given a date, return a string in the format 'YYYY-MM-DDTHH:00Z',
 	// which is the format the EPG api accepts for marking the start time.
-	// Note that we ignore that MINUTES of the specified time, so that we
-	// always ask the EPG api for data starting at the top of each hour.
-	var getFormattedSliceStartTime = function(dt) {
-		return dt.getFullYear().toString() + '-' + ('00' + (dt.getMonth() + 1).toString()).slice(-2) + '-' + ('00' + dt.getDate().toString()).slice(-2) + 'T' + ('00' + dt.getHours().toString()).slice(-2) + ':00Z';
+	var getExactFormattedSliceStartTime = function(dt) {
+		return dt.getUTCFullYear().toString() + '-' + ('00' + (dt.getUTCMonth() + 1).toString()).slice(-2) + '-' + ('00' + dt.getUTCDate().toString()).slice(-2) + 'T' + ('00' + dt.getUTCHours().toString()).slice(-2) + ':' + ('00' + dt.getUTCMinutes().toString()).slice(-2) + 'Z';
+	};
+
+	// Given a date, return a string in the format 'YYYY-MM-DDTHH:00Z',
+	// which is the format the EPG api accepts for marking the start time.
+	// This function IGNORES the MINUTES of the specified time.
+	var getRoundedFormattedSliceStartTime = function(dt) {
+		return dt.getUTCFullYear().toString() + '-' + ('00' + (dt.getUTCMonth() + 1).toString()).slice(-2) + '-' + ('00' + dt.getUTCDate().toString()).slice(-2) + 'T' + ('00' + dt.getUTCHours().toString()).slice(-2) + ':00Z';
 	};
 
 
@@ -121,7 +126,7 @@ function(ChannelService, util, events, request, RequestN, config) {
 	/** @public */
 
 	/** Get list of now-and-next events */
-	NowAndNextService.prototype.getNowAndNext = function(dt, requestedChannelIds) {
+	NowAndNextService.prototype.getNowAndNext = function(dt, requestedChannelIds, exact) {
 
 		var self = this;
 
@@ -131,7 +136,7 @@ function(ChannelService, util, events, request, RequestN, config) {
 		_channelService.once('getChannels', function(channels) {
 			var i, j,
 				requestedChannels = [],
-				formattedSliceStartTime = getFormattedSliceStartTime(dt),
+				formattedSliceStartTime = exact ? getExactFormattedSliceStartTime(dt) : getRoundedFormattedSliceStartTime(dt),
 				channelIdsToFetch = [], // Compose an array of the channel Ids whose events for this slice are not in cache yet
 				cacheKey,
 				channelIdBatches = [],

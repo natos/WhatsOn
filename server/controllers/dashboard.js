@@ -10,6 +10,8 @@ define([
 	'services/channel',
 	'services/bookings',
 	'services/tvtips',
+	'services/bookings',
+	'services/nowandnext',
 
 	// utils
 	'utils/metadata'
@@ -21,7 +23,7 @@ define([
  *	@class DashboardController
  */
 
-function(ChannelService, BookingsService, TVTipsService, Metadata) {
+function(ChannelService, BookingsService, TVTipsService, TopBookingsService, NowAndNextService, Metadata) {
 
 	/** @constructor */
 
@@ -46,47 +48,80 @@ function(ChannelService, BookingsService, TVTipsService, Metadata) {
 
 	DashboardController.prototype.render = function(req, res) {
 
-		var render = function(normalizedEvents) {
+		var render = function(tvTipsEvents, topBookingsEvents, eventsOnPopularChannelsRightNow) {
 
-			if (!normalizedEvents) { return; }
+			if (!tvTipsEvents) { return; }
 
 			var template = req.xhr ? 'contents/dashboard.jade' : 'layouts/dashboard.jade'
+
+			var channelsMap = {};
+			_app.channels.forEach(function(el, ix, arr){channelsMap[el.id] = el});
 
 			res.render(template, {
 				metadata	: metadata.get(),
 				config		: _app.config,
 				channels	: _app.channels,
-				normalizedEvents : normalizedEvents,
+				channelsMap : channelsMap,
+				tvTipsEvents : tvTipsEvents,
+				topBookingsEvents : topBookingsEvents,
+				eventsOnPopularChannelsRightNow : eventsOnPopularChannelsRightNow,
 				supports	: req.supports,
 				xhr			: req.xhr
 			});
 
 		};
 
-		var featuredEventsType = 'tvtips'; // 'tvtips' | 'topbookings'
+		(new TVTipsService()).once('getTVTips', function(tvTipsEvents) {
+			(new TopBookingsService()).once('getTopBookings', function(topBookingsEvents) {
+				(new ChannelService()).once('getPopularChannelIds', function(popularChannelIds){
 
-		switch(featuredEventsType) {
+					var nowTime = new Date();
+					var nowTimeValue = nowTime.valueOf();
 
-			case 'tvtips':
+					(new NowAndNextService()).once('getNowAndNext', function(popularChannels, channelEventsCollection){
 
-				new TVTipsService().once('getTVTips', function(normalizedEvents) {
+						var channelsCount = popularChannels.length;
+						var eventsOnPopularChannelsRightNow = [];
+						var i, channel, event, item, startTimeValue, endTimeValue;
 
-					render(normalizedEvents);
+						// TODO: HANDLE TIME ZONES!!!
 
-				}).getTVTips('nl');
+						for (i=0; i<channelsCount; i++) {
+							item = channelEventsCollection[i];
+							if (item.channelEvents && item.channelEvents.length > 0) {
+								channel = item.channel;
+								event = item.channelEvents[0];
+								startTime = new Date(event.startDateTime); // UTC
+								startTimeValue = startTime.valueOf();
+								endTime = new Date(event.endDateTime); // UTC
+								endTimeValue = endTime.valueOf();
+								event.startTimeString = ('00' + startTime.getHours().toString()).slice(-2) + ':' + ('00' + startTime.getMinutes().toString()).slice(-2); // Local time FOR THE WEB SERVER
+								event.endTimeString = ('00' + endTime.getHours().toString()).slice(-2) + ':' + ('00' + endTime.getMinutes().toString()).slice(-2); // Local time FOR THE WEB SERVER
+								event.percentageComplete = (100 * (nowTimeValue - startTimeValue)) / (endTimeValue - startTimeValue);
+								event.channel = {
+									id: channel.id,
+									name: channel.name,
+									logoImg: channel.logoIMG
+								}
+								event.nextEvent = item.channelEvents[1];
 
-				break;
+								eventsOnPopularChannelsRightNow.push(event);
+							}
+						}
 
-			case 'topbookings':
+						topBookingsEvents.forEach(function(el, ix, arr){
+							startTime = new Date(el.startDateTime); // UTC
+							endTime = new Date(el.endDateTime); // UTC
+							el.startTimeString = ('00' + startTime.getHours().toString()).slice(-2) + ':' + ('00' + startTime.getMinutes().toString()).slice(-2); // Local time FOR THE WEB SERVER
+							el.endTimeString = ('00' + endTime.getHours().toString()).slice(-2) + ':' + ('00' + endTime.getMinutes().toString()).slice(-2); // Local time FOR THE WEB SERVER
+						});
 
-				new BookingsService().once('getTopBookings', function(normalizedEvents) {
+						render(tvTipsEvents, topBookingsEvents, eventsOnPopularChannelsRightNow);
 
-					render(normalizedEvents);
-
-				}).getTopBookings();
-
-				break;
-		}
+					}).getNowAndNext(nowTime, popularChannelIds, true)
+				}).getPopularChannelIds();
+			}).getTopBookings('nl');
+		}).getTVTips('nl');
 
 	};
 

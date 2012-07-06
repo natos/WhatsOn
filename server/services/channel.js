@@ -178,10 +178,10 @@ function(util, events, request, requestN, DomainService, BookingsService, TVTips
 	};
 
 	/**
-	 * Return a list of "popular" channels.
+	 * Return a list of the IDs of "popular" channels.
 	 * This list is generated from the TV Tips and Top Bookings.
 	 */
-	ChannelService.prototype.getPopularChannels = function(marketId) {
+	ChannelService.prototype.getPopularChannelIds = function(marketId) {
 
 		var self = this;
 
@@ -207,7 +207,7 @@ function(util, events, request, requestN, DomainService, BookingsService, TVTips
 					}
 				}
 
-				self.emit('getPopularChannels', popularChannelIds);
+				self.emit('getPopularChannelIds', popularChannelIds);
 
 			}).getTVTips();
 		}).getTopBookings();

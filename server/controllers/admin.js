@@ -84,7 +84,7 @@ function(BookingsService, TVTipsService, ChannelService, DateUtils) {
 
 		var marketId = 'nl';
 
-		new ChannelService().once('getPopularChannels', function(popularChannelIds) {
+		new ChannelService().once('getPopularChannelIds', function(popularChannelIds) {
 
 			// res.render('layouts/admin/tvtips.jade', {
 			// 	tvTips : tvTips
@@ -92,7 +92,7 @@ function(BookingsService, TVTipsService, ChannelService, DateUtils) {
 
 			res.send(popularChannelIds);
 
-		}).getPopularChannels(marketId);
+		}).getPopularChannelIds(marketId);
 
 	};
 
