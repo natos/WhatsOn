@@ -137,6 +137,12 @@ define([
 			return;
 		}
 
+		// If the grid is not allowed, redirect to dashboard.
+		if (State.controller === 'grid' && !App.allowGrid()) {
+			Router.navigate({}, '', '/dashboard');
+			return;
+		}
+
 		unloadController(CURRENT_STATE);
 		loadController(State);
 

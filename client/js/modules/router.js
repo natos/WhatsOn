@@ -99,9 +99,13 @@ define([
 		// to override its default behavior
 		// and use our own Router to navigate
 		a.$main.on('click', handleAnchors);
+
 		// First load
 		handleStateChange();
-		addGridButton();
+		if (App.allowGrid()) {
+			addGridButton();
+		}
+
 		return this;
 	}
 
