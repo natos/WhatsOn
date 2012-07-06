@@ -48,9 +48,8 @@ function(util, events, request, config, DateUtils, TOP_BOOKINGS_MOCK) {
 
 	var _dateUtils = new DateUtils();
 
-	var TOP_BOOKINGS = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGBooking.woa/wa/topBookings';
-
-	var TOP_BOOKINGS_MOCK = JSON.stringify(TOP_BOOKINGS_MOCK); // emulating a text response
+	var _topBookingsCache;
+	var _topBookingsCacheTimestamp;
 
 	/**
 	 * Turn the JS object from the top bookings feed into a 
@@ -87,15 +86,16 @@ function(util, events, request, config, DateUtils, TOP_BOOKINGS_MOCK) {
 		return normalizedEvents;
 	};
 
+	/**
+	 * Retrieve, normalize, and cache the Top Bookings feed.
+	 * Raise an event when complete.
+	 */
+	 var populateTopBookingsCache = function(self) {
 
-	/** @public */
+		// TODO: choose URL from config based on marketId
+		var topBookingsUrl = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGBooking.woa/wa/topBookings';
 
-	/** Get list of top bookings */
-	BookingsService.prototype.getTopBookings = function(id) {
-
-		var self = this;
-
-		request(TOP_BOOKINGS, function(error, response, body) {
+		request(topBookingsUrl, function(error, response, body) {
 
 			// API Error? Grab the mock
 			if ( !body || /404|500/.test(response.statusCode) ) {
@@ -104,14 +104,41 @@ function(util, events, request, config, DateUtils, TOP_BOOKINGS_MOCK) {
 
 			} else {
 
-				var topBookings = JSON.parse(body);
+				var topBookings = [];
+				try {
+					topBookings = JSON.parse(body);
+					topBookings = normalizeTopBookings(topBookings);
+					_topBookingsCache = topBookings;
+					_topBookingsCacheTimestamp = new Date();
+				} catch(e) {
+					// Error - do not update cache
+					topBookings = [];
+				}
 
-				self.emit('getTopBookings', normalizeTopBookings(topBookings));
+				self.emit('getTopBookings', topBookings);
 
 			}
 
 
 		});
+
+
+	 }
+
+
+	/** @public */
+
+	/** Get list of top bookings */
+	BookingsService.prototype.getTopBookings = function(id) {
+
+		var self = this;
+
+		// Use cached Top Bookings for up to 15 minutes
+		if (_topBookingsCache && _topBookingsCacheTimestamp && (new Date().valueOf() - _topBookingsCacheTimestamp.valueOf()) < (1000 * 60 * 15)) {
+			self.emit('getTopBookings', _topBookingsCache);
+		} else {
+			populateTopBookingsCache(self);
+		}
 
 		return this;
 	};
