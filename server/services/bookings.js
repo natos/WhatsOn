@@ -75,7 +75,7 @@ function(util, events, request, config, DateUtils, TOP_BOOKINGS_MOCK) {
 					'id' : topBooking.programme.id,
 					'shortDescription' : topBooking.programme.shortDescription,
 					'descriptionHtml' : '',
-					'imageUrl' : config['FEATURED_PROGRAMMES_IMAGE_BASE_URL'] + '/s/' + topBooking.programme.id + '.jpg'
+					'imageUrl' : '' // We don't have images for top bookings
 				},
 				'channel' : {
 					'id' : topBooking.channel.id,

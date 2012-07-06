@@ -8,31 +8,9 @@ if topBookings
 			|on 
 			a(href="/channel/#{event.channel.id}") #{event.channel.name}
 		p #{event.programme.shortDescription}
-		p 
-			img(src="#{event.programme.imageUrl}")
 
 		p Programme ID: #{event.programme.id}
 		p
 			a(href="https://www.google.com/search?prmd=imvns&tbm=isch&q=#{event.programme.title}") Google image search
 			&nbsp;
 			a(href="http://www.imdb.com/find?q=#{event.programme.title}") IMDB title search
-		table
-			tr
-				th s
-				th m
-				th l
-				th xl
-			tr
-				td
-					a(href="#{baseImageUrl}/s/#{event.programme.id}.jpg")
-						img(src="#{baseImageUrl}/s/#{event.programme.id}.jpg", style="height:45px")
-				td
-					a(href="#{baseImageUrl}/m/#{event.programme.id}.jpg")
-						img(src="#{baseImageUrl}/m/#{event.programme.id}.jpg", style="height:45px")
-				td
-					a(href="#{baseImageUrl}/l/#{event.programme.id}.jpg")
-						img(src="#{baseImageUrl}/l/#{event.programme.id}.jpg", style="height:45px")
-				td
-					a(href="#{baseImageUrl}/xl/#{event.programme.id}.jpg")
-						img(src="#{baseImageUrl}/xl/#{event.programme.id}.jpg", style="height:45px")
-		br

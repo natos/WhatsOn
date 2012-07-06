@@ -50,8 +50,7 @@ function(BookingsService, TVTipsService, DateUtils) {
 			if (!topBookings) { return; }
 
 			res.render('layouts/admin/topbookings.jade', {
-				topBookings : topBookings,
-				baseImageUrl : 'http://aleona.eu/clients/upc/programme-images'
+				topBookings : topBookings
 			});
 
 		};
