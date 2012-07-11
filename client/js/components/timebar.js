@@ -53,8 +53,18 @@ define([
 	}
 
 	function changeChannelSelection(event) {
-		// change channel selection 
-		ChannelModel.set(c.SELECTED_GROUP, event.target.value);
+
+		switch(event.target.name) {
+			case 'channelSelector':
+				// change channel selection 
+				ChannelModel.set(c.SELECTED_GROUP, event.target.value);
+				break;
+
+			case 'timeSelector':
+				console.log(event.target.id);
+				centerViewPort();
+				break;
+		}
 	}
 
 	function toggleTimeControls(event) {

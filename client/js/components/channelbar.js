@@ -174,15 +174,6 @@ define([
 		// GC
 		list = null;
 
-		delete i;
-		delete t;
-		delete name;
-		delete channelId;
-		delete list;
-		delete image;
-		delete picture;
-		delete item;
-
 		return;
 
 	}
