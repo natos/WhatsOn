@@ -316,6 +316,9 @@ img {
 }
 
 #channels-bar .loading {
+	border: none;
+	width: 25px;
+	height: 25px;
 	background: url('/assets/images/loader.gif') 50% 50% no-repeat;
 }
 

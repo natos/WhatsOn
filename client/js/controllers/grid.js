@@ -17,38 +17,79 @@ define([
 	'models/channel',
 	'views/grid',
 	'utils/convert',
+	'utils/dom',
 	'utils/epgapi'
 
-], function GridController(g, c, App, Controller, GridModel, ChannelModel, GridView, convert, EpgApi) {
+], function GridController(g, c, App, Controller, GridModel, ChannelModel, GridView, convert, dom, EpgApi) {
 
 	var name = 'grid',
 
 /* private */
 
+	// timer
+	gridMoveExecutionTimer,
+	gridMoveExecutionDelay = 100,
+
+	// cache
 	_channelVisibilityPrevious = {},
 	_channelVisibilityCurrent = {},
 	_eventsForChannelCache = {}, // Events cache
-	_shadow;
 
-	function createShadow() {
+	// grab selected channels from channel model
+	_channels = ChannelModel[c.GROUPS][ChannelModel[c.SELECTED_GROUP]], 
 
-		_shadow = document.createDocumentFragment();
+	// builders
+	_shadow = dom.create('fragment'),
+	_tick = dom.create('div'),
 
-		// grab selected channels from channel model
-		var _channels = ChannelModel[c.GROUPS][ChannelModel[c.SELECTED_GROUP]], i = 0, t = _channels.length, row, div = document.createElement('div');
-	
+	// map of channel rows references
+	// inside shadowdom, we need this
+	// references because the DocumentFragment
+	// interface doesn't have any element or
+	// document API available
+	_channelsInShadow = {};
+
+	function emptyTheShadow() {
+		// empty previous rows
+		while (_shadow.firstChild) { _shadow.removeChild(_shadow.firstChild); }
+	}
+
+	function fillTheShadow() {
+
+		// Create shadow DOM
+		var i = 0, t = _channels.length, row;
 		// iterate channel collection
 		for (i; i < t; i++) {
 			// create a new channel row for the grid
-			row = div.cloneNode(false);
+			row = dom.create('div');
 			row.id = 'cc_' + _channels[i].id;
 			row.className = "channel-container";
 			row.style.top = i * g.ROW_HEIGHT + 'px';
-
+	
+			// save reference in a map
+			_channelsInShadow[_channels[i].id] = row;
+	
+			// append to shadowdom
 			_shadow.appendChild(row);
-
+	
+			// GC
+			row = null;
 		}
+	
+		// add the ticker to the shadowdom
+		// the ticker shows the "now" time
+		_tick.id = 'timer-ticker';
+		_shadow.appendChild(_tick);
+	}
 
+	function channelModelChanged(changes) {
+		console.log(changes);
+		if (changes[c.SELECTED_GROUP]) {
+			_channels = ChannelModel[c.GROUPS][ChannelModel[c.SELECTED_GROUP]];
+			emptyTheShadow();
+			fillTheShadow();
+			GridView.render();
+		}
 	}
 
 	/**
@@ -60,7 +101,7 @@ define([
 	* PREVIOUS  |  CURRENT  |  ACTION REQUIRED
 	*    Y            Y        No change - do not re-render channel
 	*    Y            Y        If the events received are for this channel, render the channel. Otherwise, do nothing. 
-	*    Y            N        Set channel to blank (#cc.innerHTML = "")
+	*    Y            N        Set channel to blank
 	*    N            Y        Render channel events
 	*    N            N        No change - do not re-render channel
 	* 
@@ -131,7 +172,7 @@ define([
 	*/
 	function blankChannel(channelId) {
 		// grab the channel
-		var channel = _shadow.querySelectorAll('#cc_' + channelId)[0];
+		var channel = _channelsInShadow[channelId];
 		// iterate and remove all its children
 		while (channel.firstChild) { channel.removeChild(channel.firstChild); }
 	}
@@ -146,19 +187,15 @@ define([
 		// Note: the channelSliceCache is undefined until the first data has been received
 		if (channelSliceCache) {
 			// Get a list of ALL time slices for the grid:
-			var timeSlices = EpgApi.getTimeSlices(g.ZERO, g.END), cacheKey, timeSlice, i, events,
-				channelRow = document.createDocumentFragment();
+			var timeSlices = EpgApi.getTimeSlices(g.ZERO, g.END), cacheKey, timeSlice, i, events;
 			for (i = 0; i < timeSlices.length; i++) {
 				timeSlice = timeSlices[i];
 				cacheKey = EpgApi.getCacheKey(channelId, timeSlice);
 				events = channelSliceCache[cacheKey];
 				if (events) {
-					channelRow.appendChild(buildEventsForChannelSlice(events));
+					buildEventsForChannelSlice(channelId, events);
 				}
 			}
-
-			// find the channel row and insert the documentFragment
-			_shadow.querySelectorAll('#cc_' + channelId)[0].appendChild(channelRow);
 		}
 	}
 
@@ -166,18 +203,18 @@ define([
 	* Build the HTML for a channel slice of EPG events into the grid.
 	* @private
 	*/
-	function buildEventsForChannelSlice(channelSliceEvents, cacheKey) {
+	function buildEventsForChannelSlice(channelId, events) {
 
-		var i, events, event, width, left, right, startDateTime, endDateTime, category, subcategory, eventId, programmeId, channelId, eventTitle, offset, content,
-			eventCollection = document.createDocumentFragment(), link = document.createElement('a'), eventElement, ids = [];
+		var i, event, width, left, right, startDateTime, endDateTime, category, subcategory, eventId, programmeId, channelId, eventTitle, offset, content, eventElement,
+			channelRow = _channelsInShadow[channelId];
 
-		for (i = 0; i < channelSliceEvents.length; i++) {
+		for (i = 0; i < events.length; i++) {
 
-			event = channelSliceEvents[i];
+			event = events[i];
 			eventId = event.id;
 
 			// avoid duplicate events ;)
-			if (_shadow.querySelectorAll('#event-' + eventId)[0]) {
+			if (channelRow.querySelectorAll('#event-' + eventId)[0]) {
 				//console.log('duplicated');
 				continue;
 			}
@@ -218,7 +255,7 @@ define([
 			eventTitle = document.createTextNode(eventTitle);
 
 			// define element
-			eventElement = link.cloneNode(false);
+			eventElement = dom.create('a');
 			eventElement.id = 'event-' + eventId;
 			eventElement.className = 'grid-event';
 			eventElement.href = '/programme/' + programmeId;
@@ -229,11 +266,13 @@ define([
 			eventElement.appendChild(eventTitle);
 
 			// Insert			
-			eventCollection.appendChild(eventElement);
+			channelRow.appendChild(eventElement);
+
+			// GC			
+			eventElement = null;
+			eventTitle = null;
 
 		} // end loop
-
-		return eventCollection;
 
 	}
 
@@ -257,9 +296,6 @@ define([
 		return channelVisibility;
 	}
 
-	var gridMoveExecutionTimer,
-		gridMoveExecutionDelay = 100;
-
 	/**
 	* Handler for the GRID_MOVED event.
 	* GRID_MOVED is raised by the grid view whenever the visible channel range
@@ -279,13 +315,20 @@ define([
 		// erase the previous timer
 		if (gridMoveExecutionTimer) { clearTimeout(gridMoveExecutionTimer); }
 		// set a delay before rendering the logos
-		gridMoveExecutionTimer = setTimeout(function () {
-			GridModel.set(g.SELECTED_CHANNELS, GridView.components.channelbar.getSelectedChannels(g.EXTRA_ABOVE_AND_BELOW));
-			GridModel.set(g.SELECTED_TIME, GridView.getSelectedTime());
-		}, gridMoveExecutionDelay);
+		gridMoveExecutionTimer = setTimeout(changeSelection, gridMoveExecutionDelay);
 	
 		return this;
 	}
+
+	/**
+	* Fires gridMoved 
+	* Saves selected channels, and selected time.
+	*/
+	function changeSelection() {
+		GridModel.set(g.SELECTED_CHANNELS, GridView.components.channelbar.getSelectedChannels(g.EXTRA_ABOVE_AND_BELOW));
+		GridModel.set(g.SELECTED_TIME, GridView.getSelectedTime());
+	}
+
 	
 	/**
 	* Handler for the "eventsReceived" event.
@@ -322,7 +365,7 @@ define([
 
 		redrawGrid(events);
 
-		GridModel.set(g.CHANNEL_SLICE_CACHE, _eventsForChannelCache);
+		GridModel.set(g.CHANNEL_SLICE_CACHE, _eventsForChannelCache); // no need to store this again, you know, memory
 	
 		return this;
 	
@@ -336,9 +379,7 @@ define([
 	*/
 	function getEvents() {
 
-
 		// get slices
-
 		var channels = GridModel.selectedChannels,
 			startTime = GridModel.selectedTime.startTime,
 			endTime = GridModel.selectedTime.endTime,
@@ -348,10 +389,12 @@ define([
 			i, e, cacheKey, 
 			uncachedChannels;
 
-		// create cachekey
+		// for each slice
 		for (e = 0; e < slicesCount; e++) {
+			// find uncached channels
 			uncachedChannels = [];
-			for (i=0; i<channelsCount; i++) {
+			for (i = 0; i < channelsCount; i++) {
+				// create cachekey
 				cacheKey = EpgApi.getCacheKey(channels[i], timeSlices[e]);
 				if (_eventsForChannelCache[cacheKey]) {
 					//console.log('exist on cache');
@@ -375,17 +418,19 @@ define([
 
 	function initialize() {
 
-		if (!_shadow) {
-			createShadow();
-		}
-
 		g.ZERO = g.zeroTime;
 		g.END = new Date(g.zeroTime.valueOf() + 24*60*60*1000);
+
+		// fill the shadow DOM
+		// with selected channels
+		fillTheShadow();
 
 		// Events Handlers
 		App.on(g.GRID_MOVED, gridMoved);
 		App.on(g.GRID_FETCH_EVENTS, getEvents);
 		App.on(g.EVENTS_RECEIVED, setEvents);
+
+		App.on(c.MODEL_CHANGED, channelModelChanged);
 
 		return this;
 
@@ -393,9 +438,15 @@ define([
 
 	function finalize() {
 
+		// this maybe help GC
+		// in some cases
+		emptyTheShadow()
+
 		App.off(g.GRID_MOVED, gridMoved);
 		App.off(g.GRID_FETCH_EVENTS, getEvents);
 		App.off(g.EVENTS_RECEIVED, setEvents);
+
+		App.off(c.MODEL_CHANGED, channelModelChanged);
 
 		return this;
 

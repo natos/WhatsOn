@@ -32,18 +32,6 @@ define([
 
 	$programme_list;
 
-	// TODO: Update new aproach to get logos
-	function find_me_a_logo(id) {
-		var logo = false, channels = ChannelModel[c.DATA];
-		for (var i = 0; i < channels.length; i++) {
-			var _channel = channels[i];
-			if (_channel.id === id) {
-				logo = _channel.logoIMG; break;
-			}
-		}
-		return (logo) ? '<img src="http://www.upc.nl/' + logo + '">' : false ;
-	}
-
 	function handleDataChanges(model) {
 
 		if (!model) { model = UserModel; }
@@ -79,7 +67,7 @@ define([
 					.clone()
 					.attr('href', '/channel/' + id)
 					.attr('class', 'channel')
-					.html(find_me_a_logo(id));
+					.html('<img src="http://www.upc.nl/' + ChannelModel[c.BY_ID][id].logo.href + '">');
 			// create a list item, append it to the list
 			$li = $list_item.clone().append($a).appendTo($list);
 		}

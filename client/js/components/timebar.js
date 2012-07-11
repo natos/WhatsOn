@@ -5,62 +5,30 @@
 
 define([
 
-	'config/grid', 
+	'config/grid',
+	'config/channel',
 	'modules/app',
+	'models/channel',
 	'utils/convert'
 
-], function TimeBar(g, App, convert) {
+], function TimeBar(g, c, App, ChannelModel, convert) {
 
-	var name = 'timebar';
+	var name = 'timebar',
 
 /* private */
 
-	var	$timelist,
+	_timebar,
+	_timelist,
+	_timecontrols = document.createElement('div'),
+	_timecontrolsTemplate = document.getElementById('timecontrols-template');
 
-	timer = {
-		clock	: void 0,
-		time	: 1000 * 5, // time to tick
-		status	: false,
-		element	: $('<div class="timer-ticker">'),
-		start	: timer_start,
-		tick	: timer_run,
-		restart	: timer_restart,
-		stop	: timer_stop
-	};
-
-	/* timer functions */
-	function timer_start() {
-		timer.status = true;
-		timer.element.appendTo('#grid-content');
-		timer.clock = setTimeout(timer.tick, timer.time);
-		return this;
-	}
-
-	function timer_run() {
-		if (!timer.status) { return; }
-		timer.element.css('left', convert.timeToPixels( new Date() ));
-		timer.restart();
-		return this;
-	}
-
-	function timer_restart() {
-		timer.stop();
-		timer.start();
-		return this;
-	}
-
-	function timer_stop() {
-		timer.status = false;
-		timer.clock = clearTimeout(timer.clock);
-		return this;
-	}
+	_timecontrols.id = 'time-controls';
+	_timecontrols.innerHTML = _timecontrolsTemplate.innerHTML;
 
 	function centerViewPort() {
 
 		var left = convert.timeToPixels( new Date() );
-
-		// center in the screen
-		left = left - ( document.body.clientWidth / 2 ) + g.CHANNEL_BAR_WIDTH;
+			left = left - ( document.body.clientWidth / 2 ) + g.CHANNEL_BAR_WIDTH;
 
 		// move the window left, but the same distance top
 		window.scroll(left, document.body.scrollTop);
@@ -70,8 +38,8 @@ define([
 	}
 
 	function move(position) {
-		if ($timelist) {
-			$timelist.css({ left: position.left + 'px' });
+		if (_timelist) {
+			_timelist.style.left = position.left + 'px';
 		}
 	}
 
@@ -84,6 +52,30 @@ define([
 		}
 	}
 
+	function changeChannelSelection(event) {
+		// change channel selection 
+		ChannelModel.set(c.SELECTED_GROUP, event.target.value);
+	}
+
+	function toggleTimeControls(event) {
+
+		event.stopPropagation();
+
+		var target = event.target;
+
+		while (target.id === 'time-controls') {
+			target = target.parentNode;
+		}
+
+		// close time controls
+		if (_timebar.className) {
+			_timebar.className = '';
+			return;
+		}
+
+		_timebar.className = 'expanded';
+
+	}
 
 /* public */
 
@@ -101,21 +93,26 @@ define([
 
 	function render() {
 
-		$timelist = $('#time-bar-list', '#content');
+		// expand time bar
+		_timebar = document.getElementById('time-bar');
+		_timebar.appendChild(_timecontrols);
+		_timebar.addEventListener('click', toggleTimeControls);
+		_timecontrols.addEventListener('change', changeChannelSelection);
+
+		_timelist = document.getElementById('time-bar-list');
 
 		// Render the time intervals
-		var zeroTime = g.zeroTime;
-		var timeIntervalsHtml = "";
-		var daysOfWeek = ['Zo', 'Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za'];
-		var t;
+		var zeroTime = g.zeroTime,
+			timeIntervalsHtml = "",
+			daysOfWeek = ['Zo', 'Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za'],
+			t;
+
 		for (var i=0; i<24; i++) {
 			t = new Date(zeroTime.valueOf() + (i * 60 * 60 * 1000));
-			timeIntervalsHtml += "<li><span>" + ("0" + t.getHours()).slice(-2) + ":00 (" + daysOfWeek[t.getDay()] + ")</span></li>";
+			timeIntervalsHtml += "<li><span>" + ("0" + t.getHours()).slice(-2) + "hs</span></li>"; //":00 (" + daysOfWeek[t.getDay()] + ")</span></li>";
 		}
-		$timelist.html(timeIntervalsHtml);
 
-		// initialize ticker
-		timer.start().tick();
+		_timelist.innerHTML = timeIntervalsHtml;
 
 		// scroll to now
 		centerViewPort();
@@ -130,20 +127,17 @@ define([
 
 		App.off(g.MODEL_CHANGED, modelChanged);
 
-		// stop ticking timer
-		timer.stop();
-
 		return this;
 	}
 
 /* export */
 
 	return {
-		name		: name,
-		initialize	: initialize,
-		finalize	: finalize,
-		render		: render,
-		centerViewPort : centerViewPort
+		name			: name,
+		initialize		: initialize,
+		finalize		: finalize,
+		render			: render,
+		centerViewPort	: centerViewPort
 	};
 
 });

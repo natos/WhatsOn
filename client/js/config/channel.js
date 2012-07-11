@@ -24,6 +24,8 @@ define([], function ChannelConfigContext() {
 
 		DATA: 'data',
 
+		BY_ID: 'byId',
+
 		GROUPS: 'groups',
 
 		SELECTED_GROUP: 'selected_group',

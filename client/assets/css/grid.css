@@ -8,61 +8,6 @@
 }
 
 /* ==============
-   Layer
-   ============== */
-
-.layer {
-	position: fixed;
-
-	top: 40px;
-	right: 40px;
-	bottom: 40px;
-	left: 40px;
-
-	padding: 10px;
-
-	background: #fff;
-
-	z-index: 40;
-
-	border-radius: 10px;
-
-	-webkit-box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, .3);
-	-moz-box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, .3);
-
-}
-
-.dimmer {
-
-	position: fixed;
-
-	top: 0px;
-	right: 0px;
-	bottom: 0px;
-	left: 0px;
-
-	background: #fff;
-
-	opacity: .7;
-	
-	z-index: 19;	
-}
-
-.close {
-	position: absolute;
-	right: 10px;
-	top: 10px;
-	width: 20px;
-	height: 20px;
-	text-align: center;
-	cursor: pointer;
-	color: #fff;
-	background: #999;
-
-	border-radius: 5px;
-}
-
-/* ==============
    Time Bar
    ============== */
 
@@ -71,11 +16,28 @@
 	top: 50px;
 	left: 0;
 	right: 0;
-	height: 20px;
+	height: 25px;
 	font-size: .8em;
 	z-index: 9;
-	background-color: black;
+	background-color: #333;
+	border-top: 1px solid #000;
+
+	-webkit-transition: height ease-in-out .3s;
+	   -moz-transition: height ease-in-out .3s;
+	     -o-transition: height ease-in-out .3s;
+	        transition: height ease-in-out .3s;
+
+	-webkit-transform:translate3d(0,0,0);
+	   -moz-transform:translate3d(0,0,0);
+	    -ms-transform:translate3d(0,0,0);
+	     -o-transform:translate3d(0,0,0);
+	        transform:translate3d(0,0,0);
 }
+
+#time-bar.expanded {
+	height: 65px;
+}
+
 #time-bar-list {
 	-webkit-transform:translate3d(0,0,0);
 	   -moz-transform:translate3d(0,0,0);
@@ -93,16 +55,15 @@
 	bottom: -6px;
 }
 
-#time-bar ol {
-	background: #000;
-	color: #ccc;
-	height: 20px;
-	width: 4800px;
+#time-bar-list {
 	position: absolute;
+	color: #ccc;
+	height: 30px;
+	bottom: -8px;
 	/* Width is set dynamically by the view. It depends on how many hours are shown. */
 }
 
-#time-bar li {
+#time-bar-list li {
 	width: 200px;
 	position: relative;
 	display: inline-block;
@@ -111,7 +72,7 @@
 	text-align: center;
 }
 
-#time-bar li span {
+#time-bar-list li span {
 	position:relative;
 	background:url('/assets/images/spike-down.png') no-repeat 50% 100%;
 	display:block;
@@ -120,80 +81,81 @@
 	height:24px;
 }
 
-/* ==============
-   Time moving controls
-   ============== */
-
-#time-controls div {
-	position: absolute;  /* for devices that not support fixed positioning, this is fixed with js  */
-	background: white;
-	opacity: 0;
-	-webkit-transition: opacity .3s ease-in-out;
-	-moz-transition: opacity .3s ease-in-out;
-
-}
-
-#time-controls div .icon {
-	width: 30px;
-	height: 30px;
+#time-controls {
+	color: #fff;
 	position: absolute;
-	cursor: pointer;
-	margin: 10px;
-	background: transparent url('/assets/images/sprite.png') -104px 1px no-repeat;
-	border-radius: 20px;
-	opacity: 1;
-}
-
-#time-controls div:hover {
+	overflow: hidden;
+	background: #666;
+	top: 0;
+	bottom: 25px;
+	left: 0;
+	right: 0;
 	opacity: .8;
+
+	-webkit-transform:translate3d(0,0,0);
+	   -moz-transform:translate3d(0,0,0);
+	    -ms-transform:translate3d(0,0,0);
+	     -o-transform:translate3d(0,0,0);
+	        transform:translate3d(0,0,0);
 }
 
-.move-top {
-	right: 0;
-	top: 70px;
+#time-controls ul { 
+	margin: 14px 5px;
 }
 
-.move-top, .move-bottom {
-	left: 63px;
-	height: 50px;
+#time-controls li {
+	display: inline;
 }
 
-.move-right, .move-left {
-	width: 50px;
-	top: 70px;
-	bottom: 0;
+#time-controls input[type="radio"] {
+	display: none;
 }
 
-.move-right, .move-bottom {
-	right: 0;
-	bottom: 0;
+#time-controls ul li:first-child input[type="radio"] + label {
+	border-top-left-radius: 10px;
+	border-bottom-left-radius: 10px;
 }
 
-.move-left {
-	left: 63px;
+#time-controls ul li:last-child input[type="radio"] + label {
+	border-top-right-radius: 10px;
+	border-bottom-right-radius: 10px;
 }
 
-.move-top .icon {
-	left: 50%;
-	-webkit-transform: rotate(90deg);
-	-moz-transform: rotate(90deg);
+#time-controls input[type="radio"] + label {
+	font-size: 1em;
+	color: #050505;
+	padding: 5px 10px;
+	background: -moz-linear-gradient(
+		top,
+		#ffffff 0%,
+		#ebebeb 50%,
+		#dbdbdb 50%,
+		#b5b5b5);
+	background: -webkit-gradient(
+		linear, left top, left bottom, 
+		from(#ffffff),
+		color-stop(0.50, #ebebeb),
+		color-stop(0.50, #dbdbdb),
+		to(#b5b5b5));
+	-moz-box-shadow:
+		0px 1px 3px rgba(000,000,000,0.5),
+		inset 0px 0px 2px rgba(255,255,255,1);
+	-webkit-box-shadow:
+		0px 1px 3px rgba(000,000,000,0.5),
+		inset 0px 0px 2px rgba(255,255,255,1);
+	text-shadow:
+		0px -1px 0px rgba(000,000,000,0.2),
+		0px 1px 0px rgba(255,255,255,1);
 }
 
-.move-right .icon {
-	top: 50%;
-	-webkit-transform: rotate(180deg);
-	-moz-transform: rotate(180deg);
+#time-controls input[type="radio"]:checked + label {
+	color: #fff;
+	background: rgb(17,17,17);
+	background: -moz-linear-gradient(top, rgba(17,17,17,1) 0%, rgba(51,51,51,1) 23%, rgba(102,102,102,1) 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(17,17,17,1)), color-stop(23%,rgba(51,51,51,1)), color-stop(100%,rgba(102,102,102,1)));
+	background: -webkit-linear-gradient(top, rgba(17,17,17,1) 0%,rgba(51,51,51,1) 23%,rgba(102,102,102,1) 100%);
 }
 
-.move-bottom .icon {
-	left: 50%;
-	-webkit-transform: rotate(-90deg);
-	-moz-transform: rotate(-90deg);
-}
-
-.move-left .icon {
-	top: 50%;
-}
 /* ==============
    Channel Bar
    ============== */
@@ -203,7 +165,7 @@
 	top: 70px;
 	left: 0;
 	bottom:0;
-	width: 63px;
+	width: 55px;
 	z-index:5;
 	background-color: white;
 }
@@ -220,7 +182,7 @@
 #channels-bar-list {
 	position: absolute;
 	background:#fff;
-	width: 63px;
+	width: 55px;
 	-webkit-transform:translate3d(0,0,0);
 	   -moz-transform:translate3d(0,0,0);
 	    -ms-transform:translate3d(0,0,0);
@@ -290,7 +252,7 @@
 	background: #fff url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
 }
 
-.timer-ticker {
+#timer-ticker {
 	position: absolute;
 	height: 100%;
 	width: 4px;
@@ -301,8 +263,8 @@
 	background: yellowGreen;
 	
 	-webkit-box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, .3);
-	-moz-box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, .3);
-	box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, .3);
+	   -moz-box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, .3);
+	        box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, .3);
 
 	opacity: .9;
 

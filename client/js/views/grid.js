@@ -21,28 +21,42 @@ define([
 
 	'config/app',
 	'config/grid',
+	'config/channel',
 	'modules/app',
+	'models/channel',
 	'lib/flaco/view',
 	'components/timebar',
-	'components/channelbar'
+	'components/channelbar',
+	'utils/convert',
+	'utils/dom'
 
-], function GridViewScope(a, g, App, View, TimeBar, ChannelBar) {
+], function GridViewScope(a, g, c, App, ChannelModel, View, TimeBar, ChannelBar, convert, dom) {
 
-	var name = "grid";
+	var name = "grid",
 
 /* private */
 
 	// Objects
-	var _$timebar, _$channelsbar;
+	_timebar, 
+	_channelsbar,
+	_gridcontainer,
+	_ticker,
 
 	// Touch coordinates, used for checking velocity
-	var _previousTouchX, _previousTouchY, _previousTouchTime;
-	var _touchVelocityX = 0;
-	var _touchVelocityY = 0;
+	_previousTouchX, _previousTouchY, _previousTouchTime,
+	_touchVelocityX = 0,
+	_touchVelocityY = 0,
 
-	var executionTimer,
+	executionTimer,
 
-		_gridcontainer;
+	timer = {
+		clock	: void 0,
+		time	: 1000 * 5, // time to tick
+		status	: false,
+		start	: timer_start,
+		tick	: timer_run,
+		stop	: timer_stop
+	};
 
 	/**
 	* Handler for scrolling and resizing events.
@@ -78,8 +92,8 @@ define([
 	function onTouchEnd(e) {
 
 		if (Math.abs(_touchVelocityX) > 200 || Math.abs(_touchVelocityY) > 200) {
-			_$timebar.hide();
-			_$channelsbar.hide();
+			_timebar.style.display = 'none';
+			_channelsbar.style.display = 'none';
 		}
 	}
 
@@ -88,9 +102,9 @@ define([
 		// erase the previous timer
 		if (restoreHeadersExecutionTimer) { clearTimeout(restoreHeadersExecutionTimer);	}
 		// set a delay of 200ms to fetch events
-		restoreHeadersExecutionTimer = setTimeout(function emitFetchEvents() {
-			_$timebar.show();
-			_$channelsbar.show();
+		restoreHeadersExecutionTimer = setTimeout(function emitSomeThingElse() {
+			_timebar.style.display = 'block';
+			_channelsbar.style.display = 'block';
 		}, 100);
 	}
 
@@ -108,6 +122,8 @@ define([
 			while (_gridcontainer.firstChild) { _gridcontainer.removeChild(_gridcontainer.firstChild); }
 			// append the _shadow grid
 			_gridcontainer.appendChild(changes.render);
+			_ticker = document.getElementById('timer-ticker');
+			timer.tick();
 			// trigger rendered
 			App.emit(g.GRID_RENDERED);
 		}
@@ -117,17 +133,21 @@ define([
 	* Generate a block of CSS to adapt the grid to the current viewport dimensions.
 	* @private
 	*/
-	function defineStyles() {
+	function drawStyles() {
 
-		// Set view variables
-		_$channelsbar = $('#channels-bar');
-		_$timebar = $('#time-bar');
+		// style element
+		var style = document.getElementById('grid-styles');
 
-		g.TIMEBAR_HEIGHT = _$timebar.height();
-		g.CHANNELS_COUNT = _$channelsbar.find('li').length;
-		g.CHANNEL_BAR_WIDTH = _$channelsbar.width();
+		// if doesn't exist create the tag
+		if (!style) {
+			style = dom.create('style');
+			style.id = 'grid-style';
+			document.getElementsByTagName('HEAD')[0].appendChild(style)
+		}
+
+		// data data data!
+		g.CHANNELS_COUNT = ChannelModel[c.GROUPS][ChannelModel[c.SELECTED_GROUP]].length;
 		g.VIEWPORT_WIDTH_HOURS = (document.body.clientWidth - g.CHANNEL_BAR_WIDTH) / g.HOUR_WIDTH;
-		// Size the grid
 		g.GRID_HEIGHT = g.ROW_HEIGHT * g.CHANNELS_COUNT;
 		g.GRID_WIDTH = g.HOUR_WIDTH * 24;
 
@@ -140,24 +160,10 @@ define([
 			cssText.push('#time-bar li {width:' + g.HOUR_WIDTH + 'px;}');
 			cssText.push('.channel-container {height:' + g.ROW_HEIGHT + 'px;}');
 
-		return cssText.join('\n');
+		// insert styles
+		// redraw and reflow here!
+		style.innerHTML = cssText.join('\n');
 
-	}
-
-	/**
-	* Add or update a named <style> element to the DOM.
-	* @private
-	*/
-	function appendCSSBlock(blockId, cssText) {
-		var el = document.getElementById(blockId);
-		if (el) {
-			el.innerHTML = cssText;
-		} else {
-			el = document.createElement('style');
-			el.id = blockId;
-			el.innerHTML = cssText;
-			document.getElementsByTagName('HEAD')[0].appendChild(el);
-		}
 	}
 
 /* public */
@@ -192,6 +198,27 @@ define([
 		return ChannelBar.getSelectedChannels(extraAboveAndBelow);
 	}
 
+	/* timer functions */
+	function timer_start() {
+		timer.status = true;
+		timer.clock = setTimeout(timer.tick, timer.time);
+		return this;
+	}
+
+	function timer_run() {
+		if (!timer.status) { return; }
+		if (typeof _ticker === 'undefined') { return; }
+		_ticker.style.left = convert.timeToPixels( new Date() ) + 'px';
+		timer.stop();
+		timer.start();
+		return this;
+	}
+
+	function timer_stop() {
+		timer.status = false;
+		timer.clock = clearTimeout(timer.clock);
+		return this;
+	}
 
 /* abstract */
 
@@ -201,9 +228,10 @@ define([
 		// every time user scrolls, we want to load new events
 		a.$window.on('resize scroll touchmove', handleResizeAndScroll);
 
-		a.$window.on('touchend', onTouchEnd);
+		// NS: Do we need this for iOS??
 		a.$window.on('touchstart touchmove', updateTouchVelocity);
 		a.$window.on('scroll touchstart', restoreHeaders);
+		a.$window.on('touchend', onTouchEnd);
 
 		// The model recieves events
 		// we are listening to render new events
@@ -215,8 +243,13 @@ define([
 
 	function render() {
 
-		_gridcontainer = document.getElementById('grid-container');
+		drawStyles();
 
+		_gridcontainer = document.getElementById('grid-container');
+		_channelsbar = document.getElementById('channels-bar');
+		_timebar = document.getElementById('time-bar');
+
+/*
 		// detecting first render
 		// NS: maybe there's a better way
 		//     I'm thinking in define every variable CSS on config files
@@ -227,6 +260,10 @@ define([
 			// attach some cool styles
 			appendCSSBlock(name + '-styles', defineStyles());
 		}
+*/
+
+		// initialize ticker
+		timer.start().tick();
 
 		return this;
 	}

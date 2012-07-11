@@ -9,9 +9,10 @@ define([
 	'config/grid',
 	'models/channel',
 	'models/grid',
-	'modules/app'
+	'modules/app',
+	'utils/dom'
 
-], function ChannelBar(c, g, ChannelModel, GridModel, App) {
+], function ChannelBar(c, g, ChannelModel, GridModel, App, dom) {
 
 	var name = 'channelbar',
 
@@ -42,10 +43,15 @@ define([
 			channelImg.className = ''; // remove loading
 			channelImg.setAttribute('src', channelImg.getAttribute('data-src'));
 		}
+
+		// GC
+		channelImg = null;
 	}
 
 	function modelChanged(changes) {
+
 		if (typeof changes === 'undefined') { return; }
+
 		// if there changes on the position object, move the bar
 		if (changes.position) {
 			move(changes.position);
@@ -71,6 +77,8 @@ define([
 
 		// grab the channellist
 		_channellist = document.getElementById('channels-bar-list');
+
+		renderChannelsGroup();
 
 		return this;
 
@@ -122,51 +130,58 @@ define([
 	*/
 	function renderChannelsGroup() {
 
-		// DRY Alert!
-		// This function is needed in other components.
-		// NS: Maybe is a good idea to create a map of logos
-		//		and cache it on the channelModel something
-		//		easy like: ChannelModel.logos[ChannelID]...
-		function getLogo(channel) {
-			if (!channel.links) { return; }
-			var foundif = false, t = channel.links.length;
-			while (t--) { if (channel.links[t].rel === "logo") { foundit = channel.links[t]; } }
-			return foundit;
-		}
 		// grab selected channels from channel model
 		_channels = ChannelModel[c.GROUPS][ChannelModel[c.SELECTED_GROUP]];
 
-		// iterate channel collection
-		var channelId, name, i, t = _channels.length, item, picture, image, 
-			list = document.createDocumentFragment(), 
-			listItem = document.createElement('li'), 
-			div = document.createElement('div'), 
-			img = document.createElement('img');
+		_channellist = document.getElementById('channels-bar-list');
 
+		var channelId, name, i, t = _channels.length, item, picture, image, 
+			list = dom.create('fragment');
+
+		// wipe the dom
+		while (_channellist.firstChild) { _channellist.removeChild(_channellist.firstChild); }
+
+		// render the selected collection
 		for (i = 0; i < t; i++) {
 
 			channelId = _channels[i].id;
 			name = _channels[i].name;
 
-			image = img.cloneNode(false);
+			image = dom.create('img');
 			image.className = 'loading';
 			image.setAttribute('id', 'channelImg' + channelId);
 			image.setAttribute('title', name);
-			image.setAttribute('data-src', 'http://www.upc.nl' + getLogo(_channels[i]).href + '?size=medium');
+			image.setAttribute('data-src', 'http://www.upc.nl' + _channels[i].logo.href + '?size=medium');
 
-			picture = div.cloneNode(false);
+			picture = dom.create('div');
 			picture.className = 'picture';
 			picture.appendChild(image);
 
-			item = listItem.cloneNode(false);
+			item = dom.create('li');
 			item.appendChild(picture);
 			
 			list.appendChild(item);
 
+			// GC
+			image = null;
+			picture = null;
+			item = null;
 		}
 
 		// append to DOM
-		document.getElementById('channels-bar-list').appendChild(list);
+		_channellist.appendChild(list);
+
+		// GC
+		list = null;
+
+		delete i;
+		delete t;
+		delete name;
+		delete channelId;
+		delete list;
+		delete image;
+		delete picture;
+		delete item;
 
 		return;
 
@@ -180,8 +195,7 @@ define([
 		initialize	: initialize,
 		finalize	: finalize,
 		render		: render,
-		getSelectedChannels : getSelectedChannels,
-		renderChannelsGroup : renderChannelsGroup
+		getSelectedChannels : getSelectedChannels
 	};
 
 });

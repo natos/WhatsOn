@@ -17,9 +17,6 @@ define([
 
 /* private */
 
-	// shift
-	var shift = Array.prototype.shift;
-
 	/**
 	 * Process the channel collection, creates a 'groups' collection order by group id
 	 * to lighting-fast query channels information.
@@ -27,14 +24,29 @@ define([
 
 	function process(data) {
 
-		var groups = {}, group, channel, domain, i, domainIterator, groupIterator;
+		var groups = {}, byId = {}, group, channel, domain, i, domainIterator, groupIterator, dataLength = data.length;
+			// All Zenders collection
+			groups['000'] = [];
 
-		var dataLength = data.length;
-		for (i=0; i<dataLength; i++) {
+		for (i = 0; i < dataLength; i++) {
 			channel = data[i];
+			// save channel by id
+			byId[channel.id] = channel;
+			// logo easy access THANK YOU!
+			byId[channel.id].logo = getLogo(channel);
+			// save channel in All Zenders
+			groups['000'].push(channel);
+			// a little cleanning
+			delete channel._type;
+			delete channel.apiChannelGroupId;
+			delete channel.broadcastFormat;
+			delete channel.logoIMG;
+			delete channel.position;
+			// iterate domains
 			domainIterator = channel.domains.length;
 			while(domainIterator--) {
 				domain = channel.domains[domainIterator];
+				// domain cleanning
 				groupIterator = domain.groups.length;
 				while(groupIterator--) {
 					group = domain.groups[groupIterator];
@@ -46,8 +58,8 @@ define([
 
 		// TODO: sort channels 
 
-		// Save raw collection
-		ChannelModel.set(c.DATA, data);
+		// Save byId map
+		ChannelModel.set(c.BY_ID, byId);
 		// Save groups map
 		ChannelModel.set(c.GROUPS, groups);
 		// Set default selected group
@@ -56,6 +68,18 @@ define([
 
 		// return raw data
 		return data;
+	}
+
+	// DRY Alert!
+	// This function is needed in other components.
+	// NS: Maybe is a good idea to create a map of logos
+	//		and cache it on the channelModel something
+	//		easy like: ChannelModel.logos[ChannelID]...
+	function getLogo(channel) {
+		if (!channel.links) { return; }
+		var foundif = false, t = channel.links.length;
+		while (t--) { if (channel.links[t].rel === "logo") { foundit = channel.links[t]; } }
+		return foundit;
 	}
 
 /* public */
