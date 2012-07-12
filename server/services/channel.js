@@ -185,32 +185,53 @@ function(util, events, request, requestN, DomainService, BookingsService, TVTips
 
 		var self = this;
 
-		(new BookingsService()).once('getTopBookings', function(topBookings) {
-			(new TVTipsService()).once('getTVTips', function(tvTips){
+		(new ChannelService()).once('getChannels', function(allChannels) {
+			(new BookingsService()).once('getTopBookings', function(topBookings) {
+				(new TVTipsService()).once('getTVTips', function(tvTips){
 
-				var popularChannelIds = [];
-				var tvTipsCount = tvTips.length;
-				var topBookingsCount = topBookings.length;
-				var i, channelId;
+					var popularChannelIds = [];
 
-				for (i=0; i< topBookingsCount; i++) {
-					channelId = topBookings[i].channel.id;
-					if (popularChannelIds.indexOf(channelId) < 0) {
-						popularChannelIds.push(channelId);
+					// Find the SD equivalent for an HD channel,
+					// based on the (naive) assumption that the HD version
+					// will have the same name as the SD version, but with
+					// the string " HD" at the end.
+					function findSdEquivalentChannel(hdChannelName) {
+						var sdChannelName = channel.name.slice(0,-3);
+						var foundChannels = allChannels.filter(function(el, ix, arr){
+							return el.name === sdChannelName;
+						});
+						if (foundChannels.length > 0) {
+							return foundChannels[0];
+						} else {
+							return null;
+						} 
 					}
-				}
 
-				for (i=0; i< tvTipsCount; i++) {
-					channelId = tvTips[i].channel.id;
-					if (popularChannelIds.indexOf(channelId) < 0) {
-						popularChannelIds.push(channelId);
+					// Iterate over an array of events, and check the channel
+					// for each event. Add the channel ID to popularChannelIds
+					// if it is not there yet.
+					function extractChannelIdsFromEventsArray (eventsArray) {
+						eventsArray.forEach(function(el, ix, arr){
+							channel = el.channel;
+
+							if (channel.name.slice(-3) === ' HD') {
+								channel = findSdEquivalentChannel(channel.name) || channel;
+							}
+
+							if (popularChannelIds.indexOf(channel.id) < 0) {
+								popularChannelIds.push(channel.id);
+							}
+						});
 					}
-				}
 
-				self.emit('getPopularChannelIds', popularChannelIds);
+					extractChannelIdsFromEventsArray(topBookings);
+					extractChannelIdsFromEventsArray(tvTips);
 
-			}).getTVTips();
-		}).getTopBookings();
+					self.emit('getPopularChannelIds', popularChannelIds);
+
+				}).getTVTips();
+			}).getTopBookings();
+		}).getChannels();
 
 		return this;
 
