@@ -3,37 +3,9 @@
 		include ../components/featured
 	
 	section#on-now
-		h2 On popular channels now
-		table.events
-			each event in eventsOnPopularChannelsRightNow
-				tr.event
-					td(style="vertical-align:middle")
-						a(href="/channel/#{event.channel.id}", style="display:inline-block;height:30px;width:60px;line-height:30px;text-align:center;background-color:white;border:1px solid #999;border-radius:3px;")
-							img(src="http://www.upc.nl#{event.channel.logoImg}", title="#{event.channel.name}", style="max-width:100%;")
-					td(style="vertical-align:middle;padding:0 1em;")
-						a(href="/programme/#{event.programme.id}", style="font-weight:bold;font-size:1.2em") #{event.programme.title}
-					td(style="vertical-align:middle;white-space:nowrap;")
-						span.time(style="font-size:smaller;color:#444")
-							#{event.startTimeString}
-							span(style="display:inline-block;vertical-align:text-top;height:1em;width:6em;border:1px solid #999;border-radius:2px;margin:0 0.5em;")
-								span(style="display:block;height:100%;width:#{event.percentageComplete}%;background:blue;")
-							#{event.endTimeString}
-					td(style="vertical-align:middle;padding:0 1em;font-style:italic")
-						| next:
-						a(href="/programme/#{event.nextEvent.programme.id}") #{event.nextEvent.programme.title}
+		include ../components/on-now
 
 	section#top-bookings
-		h2 Most recorded
-		table.events
-			each event in topBookingsEvents
-				tr.event
-					td(style="vertical-align:middle")
-						a(href="/channel/#{event.channel.id}", style="display:inline-block;height:30px;width:60px;line-height:30px;text-align:center;background-color:white;border:1px solid #999;border-radius:3px;")
-							img(src="http://www.upc.nl#{channelsMap[event.channel.id].logoIMG}", title="#{event.channel.name}", style="max-width:100%;")
-					td(style="vertical-align:middle;padding:0 1em;")
-						a(href="/programme/#{event.programme.id}", style="font-weight:bold;font-size:1.2em") #{event.programme.title}
-					td(style="vertical-align:middle;white-space:nowrap;")
-						span.time(style="font-size:smaller;color:#444")
-							#{event.startTimeString} &ndash; #{event.endTimeString}
+		include ../components/most-recorded
 
 	section#top-lists

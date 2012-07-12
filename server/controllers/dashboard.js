@@ -42,7 +42,12 @@ function(ChannelService, BookingsService, TVTipsService, TopBookingsService, Now
 
 	var _app,
 
-		metadata = new Metadata();
+		metadata = new Metadata(),
+
+		weekdays = {
+			'nl' : ['Zondag','Maandag','Dinsdag','Woensdag','Donderdag','Vrijdag','Zaterdag'],
+			'en' : ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']
+		};
 
 	/** @public */
 
@@ -112,7 +117,7 @@ function(ChannelService, BookingsService, TVTipsService, TopBookingsService, Now
 						topBookingsEvents.forEach(function(el, ix, arr){
 							startTime = new Date(el.startDateTime); // UTC
 							endTime = new Date(el.endDateTime); // UTC
-							el.startTimeString = ('00' + startTime.getHours().toString()).slice(-2) + ':' + ('00' + startTime.getMinutes().toString()).slice(-2); // Local time FOR THE WEB SERVER
+							el.startTimeString = weekdays['nl'][startTime.getDay()] + ' ' + ('00' + startTime.getHours().toString()).slice(-2) + ':' + ('00' + startTime.getMinutes().toString()).slice(-2); // Local time FOR THE WEB SERVER
 							el.endTimeString = ('00' + endTime.getHours().toString()).slice(-2) + ':' + ('00' + endTime.getMinutes().toString()).slice(-2); // Local time FOR THE WEB SERVER
 						});
 

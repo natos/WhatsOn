@@ -204,7 +204,7 @@ function(util, events, request, requestN, DomainService, BookingsService, TVTips
 							return foundChannels[0];
 						} else {
 							return null;
-						} 
+						}
 					}
 
 					// Iterate over an array of events, and check the channel
