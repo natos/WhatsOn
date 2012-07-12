@@ -156,8 +156,8 @@ define([
 			cssText.push('#grid-container {height:' + g.GRID_HEIGHT + 'px;width:' + g.GRID_WIDTH + 'px;margin-left:' + g.CHANNEL_BAR_WIDTH + 'px;margin-top:' + g.TIMEBAR_HEIGHT + 'px;}');
 			cssText.push('#grid-container .grid-event {height:' + g.ROW_HEIGHT + 'px;}');
 			cssText.push('#channels-bar li {height:' + g.ROW_HEIGHT + 'px;}');
-			cssText.push('#time-bar ol {width:' + g.GRID_WIDTH + 'px;margin-left:' + g.CHANNEL_BAR_WIDTH + 'px;}');
-			cssText.push('#time-bar li {width:' + g.HOUR_WIDTH + 'px;}');
+			cssText.push('#time-bar-list {width:' + g.GRID_WIDTH + 'px;margin-left:' + g.CHANNEL_BAR_WIDTH + 'px;}');
+			cssText.push('#time-bar-list li {width:' + g.HOUR_WIDTH + 'px;}');
 			cssText.push('.channel-container {height:' + g.ROW_HEIGHT + 'px;}');
 
 		// insert styles
