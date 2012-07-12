@@ -142,7 +142,7 @@ define([
 		if (!style) {
 			style = dom.create('style');
 			style.id = 'grid-style';
-			document.getElementsByTagName('HEAD')[0].appendChild(style)
+			document.getElementsByTagName('HEAD')[0].appendChild(style);
 		}
 
 		// data data data!
@@ -248,19 +248,6 @@ define([
 		_gridcontainer = document.getElementById('grid-container');
 		_channelsbar = document.getElementById('channels-bar');
 		_timebar = document.getElementById('time-bar');
-
-/*
-		// detecting first render
-		// NS: maybe there's a better way
-		//     I'm thinking in define every variable CSS on config files
-		//	   to avoid dependencies
-		if ( document.getElementById('channels-bar-list').children.length === 0 ) {
-			// render channel rows and list
-			ChannelBar.renderChannelsGroup();
-			// attach some cool styles
-			appendCSSBlock(name + '-styles', defineStyles());
-		}
-*/
 
 		// initialize ticker
 		timer.start().tick();

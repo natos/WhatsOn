@@ -18,9 +18,9 @@ define([
 /* private */
 
 	/**
-	 * Process the channel collection, creates a 'groups' collection order by group id
-	 * to lighting-fast query channels information.
-	 */
+	* Process the channel collection, creates a 'groups' collection order by group id
+	* to lighting-fast query channels information.
+	*/
 
 	function process(data) {
 

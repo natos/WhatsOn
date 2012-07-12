@@ -205,7 +205,7 @@ define([
 	*/
 	function buildEventsForChannelSlice(channelId, events) {
 
-		var i, event, width, left, right, startDateTime, endDateTime, category, subcategory, eventId, programmeId, channelId, eventTitle, offset, content, eventElement,
+		var i, event, width, left, right, startDateTime, endDateTime, category, subcategory, eventId, programmeId, eventTitle, offset, content, eventElement,
 			channelRow = _channelsInShadow[channelId];
 
 		for (i = 0; i < events.length; i++) {
@@ -245,7 +245,7 @@ define([
 
 			// ids
 			programmeId = event.programme.id;
-			channelId = event.channel.id;
+//			channelId = event.channel.id; // we already have this data
 
 			// Category and subcategory
 			category = event.programme.subcategory.category.name;
@@ -440,7 +440,7 @@ define([
 
 		// this maybe help GC
 		// in some cases
-		emptyTheShadow()
+		emptyTheShadow();
 
 		App.off(g.GRID_MOVED, gridMoved);
 		App.off(g.GRID_FETCH_EVENTS, getEvents);
