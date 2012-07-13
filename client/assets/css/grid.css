@@ -284,6 +284,7 @@
 	-webkit-box-sizing:border-box;
 	box-sizing:border-box;
 	padding:5px;
+	text-shadow:0 1px 0px #ddd;
 }
 
 .grid-event:active {
