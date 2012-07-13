@@ -49,6 +49,19 @@ function(ChannelService, BookingsService, TVTipsService, TopBookingsService, Now
 			'en' : ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']
 		};
 
+	// Knuth-Fisher-Yates shuffle, via _underscore.js
+	var shuffleArray = function(arr) {
+		var rand;
+		var index = 0;
+		var shuffled = [];
+		arr.forEach(function(el){
+			rand = Math.floor(Math.random() * ++index);
+			shuffled[index - 1] = shuffled[rand];
+			shuffled[rand] = el;
+		});
+		return shuffled;
+	}
+
 	/** @public */
 
 	DashboardController.prototype.render = function(req, res) {
@@ -62,12 +75,14 @@ function(ChannelService, BookingsService, TVTipsService, TopBookingsService, Now
 			var channelsMap = {};
 			_app.channels.forEach(function(el, ix, arr){channelsMap[el.id] = el});
 
+			tvTipsEvents
+
 			res.render(template, {
 				metadata	: metadata.get(),
 				config		: _app.config,
 				channels	: _app.channels,
 				channelsMap : channelsMap,
-				tvTipsEvents : tvTipsEvents,
+				tvTipsEvents : shuffleArray(tvTipsEvents),
 				topBookingsEvents : topBookingsEvents,
 				eventsOnPopularChannelsRightNow : eventsOnPopularChannelsRightNow,
 				supports	: req.supports,
@@ -116,10 +131,16 @@ function(ChannelService, BookingsService, TVTipsService, TopBookingsService, Now
 
 						topBookingsEvents.forEach(function(el, ix, arr){
 							startTime = new Date(el.startDateTime); // UTC
+							el.startTime = startTime;
 							endTime = new Date(el.endDateTime); // UTC
+							el.endTime = endTime;
 							el.startTimeString = weekdays['nl'][startTime.getDay()] + ' ' + ('00' + startTime.getHours().toString()).slice(-2) + ':' + ('00' + startTime.getMinutes().toString()).slice(-2); // Local time FOR THE WEB SERVER
 							el.endTimeString = ('00' + endTime.getHours().toString()).slice(-2) + ':' + ('00' + endTime.getMinutes().toString()).slice(-2); // Local time FOR THE WEB SERVER
 						});
+
+						// Sort top bookings by start time
+						topBookingsEvents = topBookingsEvents.sort(function(a,b){return a.startTime.valueOf() - b.startTime.valueOf();});
+
 
 						render(tvTipsEvents, topBookingsEvents, eventsOnPopularChannelsRightNow);
 

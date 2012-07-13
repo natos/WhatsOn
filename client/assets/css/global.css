@@ -428,12 +428,78 @@ footer {
 
 
 /**
-*	featured
+*	featured programmes list.
+*   At load time, the #featured element has a .no-carousel
+*   class. This is removed, and a .carousel class is applied
+*   when the HTML5 carousel component is initialised.
+*   HTML structure:
+<div id="featured" class="[carousel | no-carousel]">
+	<ul class="show">
+		<li class="programme">
+			<img class="programme-bg" />
+			<div class="programme-details">
+				<h1><a href="/programme/123">Programme title</a></h1>
+				<p>12:00 on <a href="/channel/abc">Channel Name</a></p>
+			</div>
+		</li>
+	</ul>
+</div>
+
+  When the carousel component is initialized, JS code adds 
+  a pause/play button, and navigator controls.
 */
 
-#featured .btn {
-	margin-right: 10px; 
+/* Common styles for featured programme hero image: */
+
+.show .programme {
+	position: relative;
+	clear: both;
+	width:100%;
 }
+	.show .programme-bg {
+		float: left;
+		width:100%;
+	}
+
+	.show .programme-details {
+		position: absolute;
+		padding: 10px 20px;
+		-webkit-transition: font-size ease-in-out .3s;
+	}
+
+		.show .programme-details h1 {
+			font-size: 1.4em;
+		}
+
+		.show .programme-details p {
+			color: #eee;
+			font-size: 1em;
+		}
+
+		.show .programme-details a,
+		.show .programme-details a:hover,
+		.show .programme-details a:visited,
+		.show .programme-details a:active,
+		.show .programme-details p {
+			color: #fff;
+			text-shadow: 2px 2px 2px #000000;
+		}
+
+
+/* No-Carousel-specific */
+
+/* only show first item */
+.no-carousel .show .programme {
+	display:none;
+	overflow:hidden;
+	max-height:500px;
+}
+.no-carousel .show .programme:first-child {
+	display:block;
+}
+
+
+/* Carousel-specific */
 
 .carousel {
 	position: relative;
@@ -443,14 +509,24 @@ footer {
 	overflow: hidden;
 }
 
-.navigator {
-	position: absolute;
-	right: 20px;
-	left: 20px;
-	bottom: 10px;
-	text-align: center;
-	padding: 10px;
-}
+	.carousel .show {
+		display: block;
+		position: relative;
+		height: 100%; /* 100% of #featured parent container */
+		max-height: 550px;
+		overflow:visible;
+		-webkit-transition: 	left .3s ease-in-out;
+		-moz-transition: 		left .3s ease-in-out;
+		-o-transition: 			left .3s ease-in-out;
+		transition: 			left .3s ease-in-out;
+	}
+
+		.carousel .show .programme {
+			display:block;
+			position: absolute;
+			left: 0;
+			margin: 0;
+		}
 
 #playpause {
 	position: absolute;
@@ -480,109 +556,42 @@ footer {
 	100% { -webkit-transform: translate(1px, -2px) rotate(-1deg); }
 }
 
-.navigator .disc {
-
-	color: #eee;
-	font-size: 1em;
-	line-height: 1em;
-	display: inline-block;
-
-	text-shadow: .1em .1em .1em #000000;
-	margin-left: 1em;
-
-	-webkit-transition: all ease-in-out .3s;
-
-	opacity: .6;
+.navigator {
+	position: absolute;
+	right: 20px;
+	left: 20px;
+	bottom: 10px;
+	text-align: center;
+	padding: 10px;
 }
 
-.navigator .disc.selected {
-	color: #fff;
-	opacity: 1;
+	.navigator .disc {
 
-	-webkit-animation-name: shake;
-	-webkit-animation-duration: .5s;
-	-webkit-transform-origin: 50% 50%;
-	-webkit-animation-iteration-count: 1;
-	-webkit-animation-timing-function: linear;
-}
+		color: #eee;
+		font-size: 1em;
+		line-height: 1em;
+		display: inline-block;
 
-.carousel .show {
-	display: block;
-	position: relative;
-	height: 100%; /* 100% of #featured parent container */
-	max-height: 550px;
-	overflow:visible;
-	-webkit-transition: 	left .3s ease-in-out;
-	-moz-transition: 		left .3s ease-in-out;
-	-o-transition: 			left .3s ease-in-out;
-	transition: 			left .3s ease-in-out;
+		text-shadow: .1em .1em .1em #000000;
+		margin-left: 1em;
 
-}
+		-webkit-transition: all ease-in-out .3s;
 
-.show {
-
-}
-
-.show .btn {
-	opacity: .8; /* hipster buttons! */
-}
-
-	.show .programme {
-		position: relative;
-		clear: both;
+		opacity: .6;
 	}
 
-	.carousel .show .programme {
-		display:block;
-		position: absolute;
-		left: 0;
-		margin: 0;
-		width:100%;
+	.navigator .disc.selected {
+		color: #fff;
+		opacity: 1;
+
+		-webkit-animation-name: shake;
+		-webkit-animation-duration: .5s;
+		-webkit-transform-origin: 50% 50%;
+		-webkit-animation-iteration-count: 1;
+		-webkit-animation-timing-function: linear;
 	}
 
-		.show .programme button {
-			display: none;
-		}
 
-		.carousel .show .programme button {
-			display: inline;
-		}
-
-		.show .programme-bg {
-			float: left;
-		}
-
-		.carousel .show .programme-bg {
-			position: absolute;
-			width:100%;
-		}
-
-		.show .programme-details {
-		}
-
-		.carousel .show .programme-details {
-			position: absolute;
-			padding: 10px 20px;
-			-webkit-transition: font-size ease-in-out .3s;
-		}
-
-			.show .programme-details h1 {
-				font-size: 1.4em;
-			}
-
-			.show .programme-details p {
-				color: #eee;
-				font-size: 1em;
-			}
-
-			.show .programme-details a,
-			.show .programme-details a:hover,
-			.show .programme-details a:visited,
-			.show .programme-details a:active,
-			.show .programme-details p {
-				color: #fff;
-				text-shadow: 2px 2px 2px #000000;
-			}
 
 /**
 *	movies

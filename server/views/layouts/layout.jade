@@ -20,6 +20,9 @@ html.no-js.no-mustard
 					window.mustard = false;
 				}
 			}
+			// IE <10 cuts the mustard, but is not supported by Zepto.
+			// TODO: switch to jQuery for IE
+			if (navigator.appName==='Microsoft Internet Explorer') {window.mustard = false;}
 			if (window.mustard) {
 				document.documentElement.className = document.documentElement.className.replace('no-mustard', 'mustard');
 			}
