@@ -210,6 +210,37 @@ img {
 
 }
 
+#navigation i.sprite-home,
+#navigation i.sprite-film,
+#navigation i.sprite-time,
+#navigation i.sprite-th,
+#navigation i.sprite-user {
+	background:transparent url(/assets/images/icons-sprite.png) no-repeat;
+	display:inline-block;
+	width:23px;
+	height:100%;
+	margin:0 5px;
+}
+
+@media all  {
+	#navigation i.sprite-home,
+	#navigation i.sprite-film,
+	#navigation i.sprite-time,
+	#navigation i.sprite-th,
+	#navigation i.sprite-user {
+		background:transparent url(/assets/images/icons-sprite@2x.png) no-repeat;
+		background-size:150px 30px;
+	}
+}
+
+#navigation i.sprite-home{background-position:-3px 10px;}
+#navigation i.sprite-film{background-position:-34px 10px;}
+#navigation i.sprite-time{background-position:-64px 10px;}
+#navigation i.sprite-th{background-position:-95px 10px;}
+#navigation i.sprite-user{background-position:-125px 10px;}
+
+
+
 .login {
 	float: right;
 }

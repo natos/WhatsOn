@@ -30,7 +30,7 @@ define([
 	*	Add the grid just for HTML5 devices
 	*/
 	function addGridButton() {
-		$('.nav').append('<a href="/grid" class="grid"><i class="icon-th"></i><b class="label">TV Gids</b></a>');
+		$('.nav').append('<a href="/grid" class="grid"><i class="sprite-th"></i><b class="label">TV Gids</b></a>');
 	}
 
 	/**
