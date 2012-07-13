@@ -168,8 +168,9 @@ define([
 	*/
 	function buildEventsForChannelSlice(channelSliceEvents, cacheKey) {
 
-		var i, events, event, width, left, right, startDateTime, endDateTime, category, subcategory, eventId, programmeId, channelId, eventTitle, offset, content,
-			eventCollection = document.createDocumentFragment(), link = document.createElement('a'), eventElement, ids = [];
+		var i, events, event, width, left, right, startDateTime, endDateTime, category, subcategory, eventId, programmeId, channelId, eventTitle, right, content,
+			eventCollection = document.createDocumentFragment(), link = document.createElement('a'), eventElement, ids = [],
+			tinyWidthLimit = 50;
 
 		for (i = 0; i < channelSliceEvents.length; i++) {
 
@@ -189,12 +190,12 @@ define([
 			endDateTime = convert.parseApiDate(event.endDateTime);
 
 			// size data
-			width = convert.timeToPixels(endDateTime, startDateTime);
 			left = convert.timeToPixels(startDateTime, g.ZERO);
-			offset = left + width;
+			right = convert.timeToPixels(endDateTime, g.ZERO);
+			width = right - left;
 
 			// avoid events outside view
-			if (offset < 0) {
+			if (right < 0) {
 				continue;
 			}
 
@@ -214,19 +215,18 @@ define([
 			category = event.programme.subcategory.category.name;
 			subcategory = event.programme.subcategory.name;
 
-			// define content
-			eventTitle = document.createTextNode(eventTitle);
-
 			// define element
 			eventElement = link.cloneNode(false);
 			eventElement.id = 'event-' + eventId;
-			eventElement.className = 'grid-event';
+			eventElement.className = 'grid-event' + (width < tinyWidthLimit ? ' tiny' : '');
 			eventElement.href = '/programme/' + programmeId;
 			eventElement.style.width = width + 'px';
 			eventElement.style.left = left + 'px';
 			eventElement.setAttribute('data-category', category);
 			eventElement.setAttribute('data-subcategory', subcategory);
-			eventElement.appendChild(eventTitle);
+			if (width >= tinyWidthLimit) {
+				eventElement.appendChild(document.createTextNode(eventTitle));
+			}
 
 			// Insert			
 			eventCollection.appendChild(eventElement);
