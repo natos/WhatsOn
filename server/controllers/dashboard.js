@@ -78,8 +78,6 @@ function(ChannelService, BookingsService, TVTipsService, TopBookingsService, Now
 			var now = new Date();
 			var nowString = ('00' + now.getHours().toString()).slice(-2) + ':' + ('00' + now.getMinutes().toString()).slice(-2);
 
-			tvTipsEvents
-
 			res.render(template, {
 				metadata	: metadata.get(),
 				config		: _app.config,
