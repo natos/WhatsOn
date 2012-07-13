@@ -75,6 +75,9 @@ function(ChannelService, BookingsService, TVTipsService, TopBookingsService, Now
 			var channelsMap = {};
 			_app.channels.forEach(function(el, ix, arr){channelsMap[el.id] = el});
 
+			var now = new Date();
+			var nowString = ('00' + now.getHours().toString()).slice(-2) + ':' + ('00' + now.getMinutes().toString()).slice(-2);
+
 			tvTipsEvents
 
 			res.render(template, {
@@ -85,6 +88,7 @@ function(ChannelService, BookingsService, TVTipsService, TopBookingsService, Now
 				tvTipsEvents : shuffleArray(tvTipsEvents),
 				topBookingsEvents : topBookingsEvents,
 				eventsOnPopularChannelsRightNow : eventsOnPopularChannelsRightNow,
+				nowString : nowString,
 				supports	: req.supports,
 				xhr			: req.xhr
 			});

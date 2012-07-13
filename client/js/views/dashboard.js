@@ -17,6 +17,7 @@ define([
 
 /* private */
 
+	var everyMinuteTimer;
 
 /* public */
 
@@ -24,6 +25,12 @@ define([
 /* abstract */ 
 
 	function initialize() {
+
+		// Update the "on-now" section every minute
+		everyMinuteTimer = window.setInterval(function(){
+			$('#on-now').load('/dashboard #on-now');
+		}, 1000 * 60)
+
 
 		return this;
 
@@ -36,6 +43,8 @@ define([
 	}
 
 	function finalize() {
+
+		window.clearInterval(everyMinuteTimer);
 
 		return this;
 
