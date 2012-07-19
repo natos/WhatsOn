@@ -54,5 +54,7 @@
 	"Favorite Shows": "Favorite Shows",
 	"Favorite Channels": "Favorite Channels",
 	"Shows": "Shows",
-	"Favourites": "Favourites"
+	"Favourites": "Favourites",
+	"Your favourite shows": "Your favourite shows",
+	"Your favourite channels": "Your favourite channels"
 }

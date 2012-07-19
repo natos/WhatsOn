@@ -94,6 +94,10 @@ define([
 			$li = $list_item.clone().append($a).appendTo($list);
 		}
 
+		if ($list.children().length === 0) {
+			$list.append('<li>Save channels to your favourites, and we will show you what\'s showing now and next.</li>');
+		}
+
 		// add the list to the DOM
 		$list.appendTo($parent);
 		// remove the loading
@@ -103,7 +107,7 @@ define([
 	// iterate the favorites, for each of them
 	// fetch the now and next, and shows
 	// only the programmes with next information
-	function renderProgrames(programmes) {		
+	function renderProgrames(programmes) {
 
 		var url, programme, id, map = {}, query = [],
 			$a,	$li, $parent, $list = $('.favorites .programmes');
@@ -131,16 +135,22 @@ define([
 		}
 
 		// get the now and next for favorite programmes
-		$.getJSON('/programme/' + query.join('-') + '/next.json', function(response) {
-			for (var eventTime in response) {
-				var _id = response[eventTime].programme.id;
-				map[_id].prepend('<span>' + response[eventTime].prettyDate + '</span>').appendTo($list);
-			}
-			// add the list to the DOM
+		if (query.length > 0) {
+			$.getJSON('/programme/' + query.join('-') + '/next.json', function(response, status, xhr) {
+				for (var eventTime in response) {
+					var _id = response[eventTime].programme.id;
+					map[_id].prepend('<span>' + response[eventTime].prettyDate + '</span>').appendTo($list);
+				}
+				// add the list to the DOM
+				$list.appendTo($parent);
+				// remove the loading
+				$parent.removeClass('loading');
+			});
+		} else {
+			$list.append('<li>Save programmes to your favourites, and we will show you when they are next on TV.</li>');
 			$list.appendTo($parent);
-			// remove the loading
 			$parent.removeClass('loading');
-		});
+		}
 	}
 
 /* public */
