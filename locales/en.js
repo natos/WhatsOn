@@ -53,5 +53,6 @@
 	"Like": "Like",
 	"Favorite Shows": "Favorite Shows",
 	"Favorite Channels": "Favorite Channels",
-	"Shows": "Shows"
+	"Shows": "Shows",
+	"Favourites": "Favourites"
 }

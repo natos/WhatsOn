@@ -53,6 +53,16 @@ define([
 			return;
 		}
 
+		if (model['facebook-status']) {
+			if (model['facebook-status']['status'] === u.CONNECTED) {
+				$('#dashboard-invitation').hide();
+				$('#top-lists').html( $(template_name).text() ).show();
+			} else {
+				$('#top-lists').hide();
+				$('#dashboard-invitation').show();
+			}
+		}
+
 		if (model[FAVORITE_PROGRAMMES]) { renderProgrames(model[FAVORITE_PROGRAMMES]); }
 
 		if (model[FAVORITE_CHANNELS]) { renderChannels(model[FAVORITE_CHANNELS]); }
@@ -146,8 +156,7 @@ define([
 
 	function render(model) {
 
-		// load template
-		$('#top-lists').html( $(template_name).text() );
+		$('#dashboard-invitation').html( $('#dashboard-invitation-template').text() );
 
 		handleDataChanges(UserModel);
 
