@@ -17,4 +17,10 @@
 			h3
 				i.icon-star
 				| #{__i('Favourites')}
-			p Log in with Facebook to track your favourite programmes and channels here!
+			p
+				a(href="/login") Log in with Facebook 
+				to track your favourite programmes and channels here!
+
+	script(type="text/template")#favorites-template
+		include ../components/favorites
+
