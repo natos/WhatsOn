@@ -113,7 +113,7 @@ define([
 			query.push(id);
 		}
 
-		// get the now and next for favorite programmes
+		// Get upcoming events for favorite programmes
 		if (query.length > 0) {
 			$favoriteProgrammes
 				.addClass('loading').
@@ -127,8 +127,14 @@ define([
 					map[_id].prepend('<span>' + response[eventTime].prettyDate + '</span>').appendTo($list);
 				}
 				$favoriteProgrammes.removeClass('loading');
+
+				// User has favourites, but programmes not found in EPG
+				if ($list.find('li').length==0) {
+					$favoriteProgrammes.html($('#favorite-programmes-notfound-template').text());
+				}
 			});
 		} else {
+			// User has no favourites
 			$favoriteProgrammes.html($('#empty-favorite-programmes-template').text());
 		}
 	}
