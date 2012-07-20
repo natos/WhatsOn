@@ -29,6 +29,7 @@ define([
 		// Update the "on-now" section every minute
 		everyMinuteTimer = window.setInterval(function(){
 			$('#on-now').load('/dashboard #on-now');
+//			$('#on-now-by-category').load('/dashboard/on-now-by-category');
 		}, 1000 * 60)
 
 
@@ -37,6 +38,9 @@ define([
 	}
 
 	function render() {
+
+		// The "what's on now by category" data is too big for the dashboard (100K+)
+//		$('#on-now-by-category').load('/dashboard/on-now-by-category');
 
 		return this;
 

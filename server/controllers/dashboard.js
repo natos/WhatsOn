@@ -35,6 +35,7 @@ function(ChannelService, BookingsService, TVTipsService, TopBookingsService, Now
 
 		app.server.get('/dashboard', this.render);
 		app.server.get('/dashboard/on-now/:channelIds', this.renderOnNow);
+		app.server.get('/dashboard/on-now-by-category', this.renderOnNowByCategory);
 
 	};
 
@@ -63,8 +64,9 @@ function(ChannelService, BookingsService, TVTipsService, TopBookingsService, Now
 		return shuffled;
 	}
 
-	// Turn an event's (optional) category / subcategory information into a simple string
-	var getCategoryString = function(event) {
+	// Attach category, subcategory, & formatted "category (subcategory)" string
+	// to an event.
+	var attachCategoryInfo = function(event) {
 		var categoryString = "";
 		var subcategory, categoryName, subcategoryName;
 		var programme = event.programme;
@@ -87,7 +89,9 @@ function(ChannelService, BookingsService, TVTipsService, TopBookingsService, Now
 			categoryString = subcategoryName;
 		}
 
-		return categoryString;
+		event.categoryName = categoryName;
+		event.subcategoryName = subcategoryName;
+		event.categoryString = categoryString;
 	}
 
 	// Take a set of events returned from the now&next service, and normalize them 
@@ -112,7 +116,7 @@ function(ChannelService, BookingsService, TVTipsService, TopBookingsService, Now
 				event.startTimeString = ('00' + startTime.getHours().toString()).slice(-2) + ':' + ('00' + startTime.getMinutes().toString()).slice(-2); // Local time FOR THE WEB SERVER
 				event.endTimeString = ('00' + endTime.getHours().toString()).slice(-2) + ':' + ('00' + endTime.getMinutes().toString()).slice(-2); // Local time FOR THE WEB SERVER
 				event.percentageComplete = (100 * (nowTimeValue - startTimeValue)) / (endTimeValue - startTimeValue);
-				event.categoryString = getCategoryString(event);
+				attachCategoryInfo(event);
 				event.channel = {
 					id: channel.id,
 					name: channel.name,
@@ -167,6 +171,35 @@ function(ChannelService, BookingsService, TVTipsService, TopBookingsService, Now
 
 
 	}
+
+	DashboardController.prototype.renderOnNowByCategory = function(req, res) {
+
+		var channelIds = _app.channels.map(function(channel){return channel.id});
+		var nowTime = new Date();
+
+		(new NowAndNextService()).once('getNowAndNext', function(channelIds, channelEventsCollections){
+
+			var nowString = getTimeAsString(nowTime);
+			var onNowEvents = normalizeOnNowEvents(channelEventsCollections, nowTime);
+
+			var onNowCategories = {};
+			onNowEvents.forEach(function(event, ix, arr){
+				if (onNowCategories[event.categoryName]) {
+					onNowCategories[event.categoryName].push(event)
+				} else {
+					onNowCategories[event.categoryName] = [event]
+				}
+			});
+
+			res.render('components/on-now-by-category.jade', {
+				nowString : nowString,
+				onNowCategories : onNowCategories
+			});
+
+		}).getNowAndNext(nowTime, channelIds, true);
+
+	};
+
 
 	DashboardController.prototype.render = function(req, res) {
 
