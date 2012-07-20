@@ -146,7 +146,8 @@ define([
 
 	function render(model) {
 
-		$('#dashboard-invitation').html( $('#dashboard-invitation-template').text() );
+		$('#top-lists').hide();
+		$('#dashboard-invitation').hide();
 
 		handleDataChanges(UserModel);
 
