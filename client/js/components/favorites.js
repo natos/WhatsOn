@@ -18,13 +18,13 @@ define([
 
 /* private */
 
-	FAVORITE_PROGRAMMES = 'favorite-programmes',
+		FAVORITE_PROGRAMMES = 'favorite-programmes',
 
-	FAVORITE_CHANNELS = 'favorite-channels',
+		FAVORITE_CHANNELS = 'favorite-channels',
 
-	$list_item = $('<li>'),
+		$list_item = $('<li>'),
 
-	$anchor = $('<a>'),
+		$anchor = $('<a>');
 
 	// TODO: Update new aproach to get logos
 	function find_me_a_logo(id) {
