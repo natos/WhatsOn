@@ -102,6 +102,7 @@
 	.most-recorded-event__title {
 		display:table-cell;
 		min-height:30px;
+		padding-bottom:10px;
 		width:100%;
 	}
 	.on-now-event__title .category,

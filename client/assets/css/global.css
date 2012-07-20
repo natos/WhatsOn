@@ -725,20 +725,10 @@ footer {
 		display: inline-block;
 	}
 
-	#dashboard-content .favorites.loading h3 {
+	#dashboard-content .favorite-channels.loading,
+	#dashboard-content .favorite-programmes.loading {
 		background: url('/assets/images/ajax-loader.gif') 50% 50% no-repeat;
-	}
-
-	.favorites.loading ul {
-		opacity: 0;
-	    -webkit-transition: opacity .3s ease-in-out 0s;
-	    -moz-transition: opacity .3s ease-in-out 0s;
-	    -o-transition: opacity .3s ease-in-out 0s;
-	    transition: opacity .3s ease-in-out 0s;
-	}
-
-	.favorites ul {
-		opacity: 1;
+		height:40px;
 	}
 
 /* end dashboard quirks */

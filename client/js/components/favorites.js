@@ -152,10 +152,22 @@ define([
 
 	function render(model) {
 
-		$('#top-lists').hide();
-		$('#dashboard-invitation').hide();
+		var $topLists = $('#top-lists');
+		var $dashboardInvitation = $('#dashboard-invitation');
+		$topLists.hide();
+		$dashboardInvitation.hide();
 
 		handleDataChanges(UserModel);
+
+		// In development mode, the Facebook getLoginStatus call can sometimes fail,
+		// without calling its callback (see http://stackoverflow.com/questions/7522947/fb-getloginstatus-does-not-fires-callback-function)
+		// If we haven't shown either the #top-lists or #dashboard-invitation
+		// block after 2 seconds, assume that getLoginStatus is dead, and show the invitation block.
+		setTimeout(function(){
+			if ($topLists.css('display') === 'none' && $dashboardInvitation.css('display') === 'none') {
+				$dashboardInvitation.show();
+			}
+		}, 2000);
 
 		return this;
 
