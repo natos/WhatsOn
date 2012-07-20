@@ -2,15 +2,18 @@
 	#featured.no-carousel
 		include ../components/featured
 	
+	section#top-lists
+		article.favorite-programmes
+		article.favorite-channels
+
+	section#dashboard-invitation
+
 	section#on-now
 		include ../components/on-now
 
 	section#top-bookings
 		include ../components/most-recorded
 
-	section#top-lists
-
-	section#dashboard-invitation
 
 	script(type="text/template")#dashboard-invitation-template
 		article.favorites
@@ -21,6 +24,21 @@
 				a(href="/login") Log in with Facebook 
 				to track your favourite programmes and channels here!
 
-	script(type="text/template")#favorites-template
-		include ../components/favorites
+	script(type="text/template")#favorite-programmes-template
+		h3
+			i.icon-star
+			| #{__i('Your favourite shows')}
+		ul.programmes
+
+	script(type="text/template")#empty-favorite-programmes-template
+		h3
+			i.icon-star
+			| #{__i('Your favourite shows')}
+			Save your favourite shows, and we will show you when they are on TV next.
+
+	script(type="text/template")#empty-favorite-channels-template
+		h3
+			i.icon-star
+			| #{__i('Your favourite channels')}
+			p Save channels to your favourites, and we will show you what's showing now and next.
 

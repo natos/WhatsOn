@@ -134,7 +134,12 @@ function(ChannelService, util, events, request, RequestN, config) {
 
 	/** @public */
 
-	/** Get list of now-and-next events */
+	/** 
+	 * Get a list of now-and-next events for a list of channels
+	 * @param {Date} dt  The datetime at which the now&next information should be retrieved.
+	 * @param {Array} requestedChannelIds  An array of channel ID strings
+	 * @param {Boolean} exact  Whether you want to get the now&next events for the *exact* time specified. If false, the now&next will ignore the minutes & seconds of the datetime specified.
+	 */
 	NowAndNextService.prototype.getNowAndNext = function(dt, requestedChannelIds, exact) {
 
 		var self = this;

@@ -329,7 +329,7 @@ define([
 		};
 
 		// Check Facebook login status
-		//FB.getLoginStatus(facebookLoginStatus);
+		FB.getLoginStatus(facebookLoginStatus);
 
 		App.on(u.LOG_IN, login);
 		App.on(u.LOG_OUT, logout);

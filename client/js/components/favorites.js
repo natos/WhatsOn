@@ -18,8 +18,6 @@ define([
 
 /* private */
 
-	template_name = '#' + name + '-template',
-
 	FAVORITE_PROGRAMMES = 'favorite-programmes',
 
 	FAVORITE_CHANNELS = 'favorite-channels',
@@ -27,10 +25,6 @@ define([
 	$list_item = $('<li>'),
 
 	$anchor = $('<a>'),
-
-	$channel_list,
-
-	$programme_list;
 
 	// TODO: Update new aproach to get logos
 	function find_me_a_logo(id) {
@@ -45,6 +39,7 @@ define([
 	}
 
 	function handleDataChanges(model) {
+		var isConnectedToFacebook;
 
 		if (!model) { model = UserModel; }
 
@@ -54,13 +49,9 @@ define([
 		}
 
 		if (model['facebook-status']) {
-			if (model['facebook-status']['status'] === u.CONNECTED) {
-				$('#dashboard-invitation').hide();
-				$('#top-lists').html( $(template_name).text() ).show();
-			} else {
-				$('#top-lists').hide();
-				$('#dashboard-invitation').show();
-			}
+			isConnectedToFacebook = (model['facebook-status']['status'] === u.CONNECTED);
+			$('#dashboard-invitation').toggle(!isConnectedToFacebook);
+			$('#top-lists').toggle(isConnectedToFacebook);
 		}
 
 		if (model[FAVORITE_PROGRAMMES]) { renderProgrames(model[FAVORITE_PROGRAMMES]); }
@@ -73,35 +64,26 @@ define([
 
 	function renderChannels(channels) {
 
-		var url, channel, id,
-			$a,	$li, $parent, $list = $('.favorites .channels');
-			// save the list container
-			$parent = $list.parent();
-			// remove the list from DOM
-			$list.remove();
+		var url, channel, id;
+		var $favoriteChannels = $('.favorite-channels');
+		var favoriteChannelIds = [];
 
 		// for all the favorite channels
 		for (url in channels) {
 			channel = channels[url].data['tv_channel'];
 			id = channel.url.match(/\d+\w+/)[0];
-			// create a new anchor
-			$a = $anchor
-					.clone()
-					.attr('href', '/channel/' + id)
-					.attr('class', 'channel')
-					.html(find_me_a_logo(id));
-			// create a list item, append it to the list
-			$li = $list_item.clone().append($a).appendTo($list);
+			favoriteChannelIds.push(id);
 		}
 
-		if ($list.children().length === 0) {
-			$list.append('<li>Save channels to your favourites, and we will show you what\'s showing now and next.</li>');
+		if (favoriteChannelIds.length > 0) {
+			$favoriteChannels
+				.addClass('loading')
+				.load('/dashboard/on-now/' + favoriteChannelIds.join('|'), function(data, status, xhr){
+					$favoriteChannels.removeClass('loading');
+				});
+		} else {
+			$favoriteChannels.html($('#empty-favorite-channels-template').text());
 		}
-
-		// add the list to the DOM
-		$list.appendTo($parent);
-		// remove the loading
-		$parent.removeClass('loading');
 	}
 
 	// iterate the favorites, for each of them
@@ -110,11 +92,8 @@ define([
 	function renderProgrames(programmes) {
 
 		var url, programme, id, map = {}, query = [],
-			$a,	$li, $parent, $list = $('.favorites .programmes');
-			// save the list container
-			$parent = $list.parent();
-			// remove the list from DOM
-			$list.remove();
+			$a,	$li, $list;
+		var $favoriteProgrammes = $('.favorite-programmes');
 
 		// for all the favorite channels
 		for (url in programmes) {
@@ -136,20 +115,21 @@ define([
 
 		// get the now and next for favorite programmes
 		if (query.length > 0) {
+			$favoriteProgrammes
+				.addClass('loading').
+				html($('#favorite-programmes-template').text());
+
+			$list = $('.favorite-programmes .programmes');
+
 			$.getJSON('/programme/' + query.join('-') + '/next.json', function(response, status, xhr) {
 				for (var eventTime in response) {
 					var _id = response[eventTime].programme.id;
 					map[_id].prepend('<span>' + response[eventTime].prettyDate + '</span>').appendTo($list);
 				}
-				// add the list to the DOM
-				$list.appendTo($parent);
-				// remove the loading
-				$parent.removeClass('loading');
+				$favoriteProgrammes.removeClass('loading');
 			});
 		} else {
-			$list.append('<li>Save programmes to your favourites, and we will show you when they are next on TV.</li>');
-			$list.appendTo($parent);
-			$parent.removeClass('loading');
+			$favoriteProgrammes.html($('#empty-favorite-programmes-template').text());
 		}
 	}
 
