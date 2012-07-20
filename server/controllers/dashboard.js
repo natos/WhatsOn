@@ -62,6 +62,33 @@ function(ChannelService, BookingsService, TVTipsService, TopBookingsService, Now
 		return shuffled;
 	}
 
+	// Turn an event's (optional) category / subcategory information into a simple string
+	var getCategoryString = function(event) {
+		var categoryString = "";
+		var subcategory, categoryName, subcategoryName;
+		var programme = event.programme;
+
+		if (programme && programme.subcategory) {
+			subcategory = programme.subcategory;
+			subcategoryName = subcategory.name;
+			if (subcategory.category) {
+				categoryName = subcategory.category.name;
+			}
+		}
+
+		if (categoryName) {
+			if (categoryName === subcategoryName) {
+				categoryString = categoryName;
+			} else {
+				categoryString = categoryName + ' (' + subcategoryName + ')';
+			}
+		} else {
+			categoryString = subcategoryName;
+		}
+
+		return categoryString;
+	}
+
 	/** @public */
 
 	DashboardController.prototype.render = function(req, res) {
@@ -120,6 +147,7 @@ function(ChannelService, BookingsService, TVTipsService, TopBookingsService, Now
 								event.startTimeString = ('00' + startTime.getHours().toString()).slice(-2) + ':' + ('00' + startTime.getMinutes().toString()).slice(-2); // Local time FOR THE WEB SERVER
 								event.endTimeString = ('00' + endTime.getHours().toString()).slice(-2) + ':' + ('00' + endTime.getMinutes().toString()).slice(-2); // Local time FOR THE WEB SERVER
 								event.percentageComplete = (100 * (nowTimeValue - startTimeValue)) / (endTimeValue - startTimeValue);
+								event.categoryString = getCategoryString(event);
 								event.channel = {
 									id: channel.id,
 									name: channel.name,

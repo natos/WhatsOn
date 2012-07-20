@@ -182,7 +182,7 @@ function(ChannelService, util, events, request, RequestN, config) {
 
 			// For each channel batch, create an API request URL
 			for (i=0; i<channelIdBatches.length; i++) {
-				request = config.API_PREFIX + 'Channel/' + channelIdBatches[i].join('|') + '/events/NowAndNext_' + formattedSliceStartTime + '.json?batchSize=' + API_EVENTS_BATCH_SIZE + '&order=startDateTime';
+				request = config.API_PREFIX + 'Channel/' + channelIdBatches[i].join('|') + '/events/NowAndNext_' + formattedSliceStartTime + '.json?batchSize=' + API_EVENTS_BATCH_SIZE + '&order=startDateTime&optionalProperties=Programme.subcategory';
 				nowAndNextRequests.push(request);
 			}
 
