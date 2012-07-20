@@ -88,6 +88,12 @@ function(ChannelService, util, events, request, RequestN, config) {
 		return channelEventsCollections;
 	};
 
+	var cacheEventsForChannel = function(eventsForChannel, formattedSliceStartTime) {
+		if (eventsForChannel.length > 0) {
+			cacheKey = eventsForChannel[0].channel.id + "__" + formattedSliceStartTime;
+			_cache[cacheKey] = eventsForChannel;
+		}
+	}
 
 	var cacheNowAndNextApiResponses = function(nowAndNextRequests, responses, formattedSliceStartTime) {
 		var i, j,
@@ -97,23 +103,26 @@ function(ChannelService, util, events, request, RequestN, config) {
 
 		// Take the responses, extract the channelEvents, and put them in cache
 		for (i=0; i< nowAndNextRequests.length; i++) {
-			response = JSON.parse(responses[nowAndNextRequests[i]].body);
-			if (response && response.length > 0) {
-				// If only one channel was requested, the response is an array of events.
-				// If multiple channels were requested, the response in an array of channels, and each channel holds an array of events
-				// See also: http://christianheilmann.com/2010/09/22/the-annoying-thing-about-yqls-json-output-and-the-reason-for-it/
-				if (response[0]._type === 'Event') {
-					eventsForChannel = response;
-					if (eventsForChannel.length > 0) {
-						cacheKey = eventsForChannel[0].channel.id + "__" + formattedSliceStartTime;
-						_cache[cacheKey] = eventsForChannel;
-					}
-				} else {
-					for (j=0; j<response.length; j++) {
-						eventsForChannel = response[j];
-						if (eventsForChannel.length > 0) {
-							cacheKey = eventsForChannel[0].channel.id + "__" + formattedSliceStartTime;
-							_cache[cacheKey] = eventsForChannel;
+			// The now&next response sometimes goes wacky, and parsing can fail.
+			if (responses[nowAndNextRequests[i]] && responses[nowAndNextRequests[i]].body) {
+				try {
+					response = JSON.parse(responses[nowAndNextRequests[i]].body);
+				}
+				catch(e) {
+					// TODO: proper logging
+					console.log('Failed to parse response from ' + nowAndNextRequests[i]);
+					console.log(responses[nowAndNextRequests[i]])
+				}
+
+				if (response && response.length > 0) {
+					// If only one channel was requested, the response is an array of events.
+					// If multiple channels were requested, the response in an array of channels, and each channel holds an array of events
+					// See also: http://christianheilmann.com/2010/09/22/the-annoying-thing-about-yqls-json-output-and-the-reason-for-it/
+					if (response[0]._type === 'Event') {
+						cacheEventsForChannel(response, formattedSliceStartTime);
+					} else {
+						for (j=0; j<response.length; j++) {
+							cacheEventsForChannel(response[j], formattedSliceStartTime)
 						}
 					}
 				}
