@@ -148,6 +148,20 @@ define([
 
 	}
 
+	function toggleMenu(event) {
+
+		var $main = $('#main'),
+			$menu = $('.menu');
+
+		if ($main.hasClass('open')) {
+			$main.removeClass('open');
+			$menu.removeClass('active');
+		} else {
+			$main.addClass('open');
+			$menu.addClass('active');
+		}
+	}
+
 
 /* public */
 
@@ -166,6 +180,7 @@ define([
 		// remove transition
 		App.on(a.VIEW_RENDERED, endTransition);
 
+		$('.menu').on('click', toggleMenu);
 
 		// DEBUGGING Handlers
 		/* View live cycle
@@ -191,6 +206,8 @@ define([
 		App.off(a.NAVIGATE, navigate);
 		App.off(a.NAVIGATE, startTransition);
 		App.off(a.VIEW_RENDERED, endTransition);
+
+		$('.menu').off('click', toggleMenu);
 
 		return this;
 	}
