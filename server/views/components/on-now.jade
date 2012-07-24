@@ -1,0 +1,7 @@
+article
+	h3 
+		i.icon-star
+		| On popular channels now (#{nowString})
+	ul.on-now
+		each event in eventsOnPopularChannelsRightNow
+			include on-now-event

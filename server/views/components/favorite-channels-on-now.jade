@@ -1,0 +1,6 @@
+h3
+	i.icon-star
+	| On your favourite channels now (#{nowString})
+ul.channels
+	each event in onNowEvents
+		include on-now-event

@@ -121,11 +121,13 @@ function(util, events, request, DateUtils, requestN, config) {
 
 		request(tvTipsUrl, function(error, response, body) {
 
-			// API Error? Grab the mock
 			if ( !body || /404|500/.test(response.statusCode) ) {
 
-				// TODO: make this actually work
-				self.emit('getTVTips', JSON.parse(tvTipsMock));
+				// TODO: what can we return in the case of an api error?
+				// For now, just return an empty array (so we don't crash).
+				// This empty array is not cached, so we'll retry the api
+				// on the next request.
+				self.emit('getTVTips', []);
 
 			} else {
 

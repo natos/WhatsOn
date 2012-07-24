@@ -37,7 +37,6 @@ function(NowAndNextService, DomainService, Metadata, QS, config) {
 		app.server.get('/nowandnext/dt/:dt', this.render);
 		app.server.get('/nowandnext/group/:groupid', this.render);
 		app.server.get('/nowandnext/group/:groupid/dt/:dt', this.render);
-		app.server.get('/nowandnext/list/:list', this.renderList);
 
 	};
 

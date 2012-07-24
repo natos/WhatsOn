@@ -256,6 +256,7 @@
 	color: #fff;
 	/* height and width are set dynamically based by the view */
 	overflow: hidden;
+	background:#ddd;
 }
 
 /* A .channel-container is a container for all events in a channel.
@@ -263,29 +264,44 @@
 .channel-container {
 	position:absolute;
 	width:100%;
-	border-bottom: 1px solid #aaa;
+	border-bottom: 1px solid #bbc;
 }
 
 /* A .grid-event represents a single event in the programme grid.
 .grid-event elements are absolutely positioned inside a parent .channel-container */ 
 .grid-event {
 	font-weight: bold;
-	color: #000;
+	color: #333;
 	position:absolute;
 	overflow: hidden;
-	border-left: 1px solid #aaa;
-	border-right: 1px solid #aaa;
-	font-size: .9em;
+	border-right: 1px solid #bbc;
+	font-size: 14px;
 	cursor: pointer;
 	/* Use box-sizing:border-box to simplify calculations */;
 	-moz-box-sizing:border-box;
 	-webkit-box-sizing:border-box;
 	box-sizing:border-box;
 	padding:5px;
+	text-shadow:0 1px 0px #fff;
 }
-
 .grid-event:active {
 	background: #fff url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
+}
+
+.grid-event.tiny {
+	background:#d0d0d0;
+	text-align:center;
+	border-top:1px solid #bbc;
+	padding:0;
+}
+.grid-event.tiny:after {
+	font-family: "FontAwesome";
+	color:#aab;
+	font-size:18px;
+	text-shadow:0 1px 0 #ddd;
+	content:"\f05a";
+	display:inline-block;
+	margin-top:20px;
 }
 
 #timer-ticker {

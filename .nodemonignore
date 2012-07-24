@@ -12,6 +12,10 @@
 *.gif
 *.ico
 
+# Don't restart the server because of changes in client-side code
+/client/*
+/public/*
+
 # Ignore git commits
 .git/*
 

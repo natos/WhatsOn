@@ -312,24 +312,21 @@ define([
 			return;
 		}
 
+		// Listen for changes on Facebook login status
+		FB.Event.subscribe(AUTH_STATUS_CHANGE, facebookLoginStatus);
+
 		// FB init
 		FB.init({ 
 			appId		: u.APP_ID,
-			status		: true,
+			status		: true, // The user's login status will automatically be checked
 			cookie		: true,
 			xfbml		: true
 		});
-
-		// Lisent for changes on Facebook login status
-		FB.Event.subscribe(AUTH_STATUS_CHANGE, facebookLoginStatus);
 
 		// TODO: Improve this component
 		this.components = {
 			user: UserComponent.initialize()
 		};
-
-		// Check Facebook login status
-		//FB.getLoginStatus(facebookLoginStatus);
 
 		App.on(u.LOG_IN, login);
 		App.on(u.LOG_OUT, logout);

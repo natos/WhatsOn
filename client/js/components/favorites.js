@@ -18,27 +18,28 @@ define([
 
 /* private */
 
-	template_name = '#' + name + '-template',
+		FAVORITE_PROGRAMMES = 'favorite-programmes',
 
-	FAVORITE_PROGRAMMES = 'favorite-programmes',
+		FAVORITE_CHANNELS = 'favorite-channels',
 
-	FAVORITE_CHANNELS = 'favorite-channels',
+		$list_item = $('<li>'),
 
-	$list_item = $('<li>'),
-
-	$anchor = $('<a>'),
-
-	$channel_list,
-
-	$programme_list;
+		$anchor = $('<a>');
 
 	function handleDataChanges(model) {
+		var isConnectedToFacebook;
 
 		if (!model) { model = UserModel; }
 
 		if (typeof model === 'undefined') {
 			console.log('Warning!', 'Favorites', 'No model, skip rendering');
 			return;
+		}
+
+		if (model['facebook-status']) {
+			isConnectedToFacebook = (model['facebook-status']['status'] === u.CONNECTED);
+			$('#dashboard-invitation').toggle(!isConnectedToFacebook);
+			$('#top-lists').toggle(isConnectedToFacebook);
 		}
 
 		if (model[FAVORITE_PROGRAMMES]) { renderProgrames(model[FAVORITE_PROGRAMMES]); }
@@ -51,44 +52,37 @@ define([
 
 	function renderChannels(channels) {
 
-		var url, channel, id,
-			$a,	$li, $parent, $list = $('.favorites .channels');
-			// save the list container
-			$parent = $list.parent();
-			// remove the list from DOM
-			$list.remove();
+		var url, channel, id;
+		var $favoriteChannels = $('.favorite-channels');
+		var favoriteChannelIds = [];
 
 		// for all the favorite channels
 		for (url in channels) {
 			channel = channels[url].data['tv_channel'];
 			id = channel.url.match(/\d+\w+/)[0];
-			// create a new anchor
-			$a = $anchor
-					.clone()
-					.attr('href', '/channel/' + id)
-					.attr('class', 'channel')
-					.html('<img src="http://www.upc.nl/' + ChannelModel[c.BY_ID][id].logo.href + '">');
-			// create a list item, append it to the list
-			$li = $list_item.clone().append($a).appendTo($list);
+			favoriteChannelIds.push(id);
+
 		}
 
-		// add the list to the DOM
-		$list.appendTo($parent);
-		// remove the loading
-		$parent.removeClass('loading');
+		if (favoriteChannelIds.length > 0) {
+			$favoriteChannels
+				.addClass('loading')
+				.load('/dashboard/on-now/' + favoriteChannelIds.join('|'), function(data, status, xhr){
+					$favoriteChannels.removeClass('loading');
+				});
+		} else {
+			$favoriteChannels.html($('#empty-favorite-channels-template').text());
+		}
 	}
 
 	// iterate the favorites, for each of them
 	// fetch the now and next, and shows
 	// only the programmes with next information
-	function renderProgrames(programmes) {		
+	function renderProgrames(programmes) {
 
 		var url, programme, id, map = {}, query = [],
-			$a,	$li, $parent, $list = $('.favorites .programmes');
-			// save the list container
-			$parent = $list.parent();
-			// remove the list from DOM
-			$list.remove();
+			$a,	$li, $list;
+		var $favoriteProgrammes = $('.favorite-programmes');
 
 		// for all the favorite channels
 		for (url in programmes) {
@@ -108,17 +102,30 @@ define([
 			query.push(id);
 		}
 
-		// get the now and next for favorite programmes
-		$.getJSON('/programme/' + query.join('-') + '/next.json', function(response) {
-			for (var eventTime in response) {
-				var _id = response[eventTime].programme.id;
-				map[_id].prepend('<span>' + response[eventTime].prettyDate + '</span>').appendTo($list);
-			}
-			// add the list to the DOM
-			$list.appendTo($parent);
-			// remove the loading
-			$parent.removeClass('loading');
-		});
+		// Get upcoming events for favorite programmes
+		if (query.length > 0) {
+			$favoriteProgrammes
+				.addClass('loading').
+				html($('#favorite-programmes-template').text());
+
+			$list = $('.favorite-programmes .programmes');
+
+			$.getJSON('/programme/' + query.join('-') + '/next.json', function(response, status, xhr) {
+				for (var eventTime in response) {
+					var _id = response[eventTime].programme.id;
+					map[_id].prepend('<span>' + response[eventTime].prettyDate + '</span>').appendTo($list);
+				}
+				$favoriteProgrammes.removeClass('loading');
+
+				// User has favourites, but programmes not found in EPG
+				if ($list.find('li').length==0) {
+					$favoriteProgrammes.html($('#favorite-programmes-notfound-template').text());
+				}
+			});
+		} else {
+			// User has no favourites
+			$favoriteProgrammes.html($('#empty-favorite-programmes-template').text());
+		}
 	}
 
 /* public */
@@ -134,10 +141,22 @@ define([
 
 	function render(model) {
 
-		// load template
-		$('#top-lists').html( $(template_name).text() );
+		var $topLists = $('#top-lists');
+		var $dashboardInvitation = $('#dashboard-invitation');
+		$topLists.hide();
+		$dashboardInvitation.hide();
 
 		handleDataChanges(UserModel);
+
+		// In development mode, the Facebook getLoginStatus call can sometimes fail,
+		// without calling its callback (see http://stackoverflow.com/questions/7522947/fb-getloginstatus-does-not-fires-callback-function)
+		// If we haven't shown either the #top-lists or #dashboard-invitation
+		// block after 2 seconds, assume that getLoginStatus is dead, and show the invitation block.
+		setTimeout(function(){
+			if ($topLists.css('display') === 'none' && $dashboardInvitation.css('display') === 'none') {
+				$dashboardInvitation.show();
+			}
+		}, 2000);
 
 		return this;
 

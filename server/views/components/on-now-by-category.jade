@@ -1,0 +1,10 @@
+article
+	h3 
+		i.icon-star
+		| On now, by category (#{nowString})
+	ul.categories
+		each categoryEventList, categoryName in onNowCategories
+			h4 #{categoryName}
+			ul.on-now
+				each event in categoryEventList
+					include on-now-event

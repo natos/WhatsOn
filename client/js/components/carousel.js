@@ -183,7 +183,13 @@ define([
 
 	function render() {
 
-		el = $('#featured').addClass('carousel');
+		el = $('#featured').removeClass('no-carousel').addClass('carousel');
+		$('#featured .programme-bg').each(function(ix, el){
+			var $el = $(el);
+			if ($el.data('src') && !$el.attr('src')) {
+				$el.attr('src', $el.data('src'));
+			}
+		});
 
 		list = el.find('.show').addClass('slide');
 

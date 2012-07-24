@@ -1,7 +1,10 @@
 ul.show
-	each event in tvTipsEvents
+	each event, i in tvTipsEvents
 		li.programme
-			img.programme-bg(src="#{event.programme.imageUrl}")
+			if (i===0)
+				img.programme-bg(src="#{event.programme.imageUrl}")
+			else
+				img.programme-bg(data-src="#{event.programme.imageUrl}")
 			div.programme-details
 				h1
 					a(href="/programme/#{event.programme.id}") #{event.programme.title}
