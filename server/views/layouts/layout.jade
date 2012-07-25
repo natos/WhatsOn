@@ -34,18 +34,17 @@ html.no-js.no-mustard
 
 		#fb-root
 
-		#transition.background
-			.loading
-
 		#main
 			include ../assets/navigation
 			#content
 				block content
 
-		include ../assets/scripts
-		block scripts
-
 		#templates
-
 			include ../assets/templates
 			block templates
+
+		#transition.background
+			.loading
+
+		include ../assets/scripts
+			block scripts

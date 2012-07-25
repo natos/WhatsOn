@@ -19,6 +19,10 @@ define([
 
 	// shift
 	var shift = Array.prototype.shift,
+		// DOM
+		$content = $('#content'),
+		$main = $('#main'),
+		$menu = $('.menu'),
 		// current state
 		CURRENT_STATE = false,
 		// constants
@@ -29,7 +33,7 @@ define([
 	*	Transition 
 	*/
 	function startTransition() {
-		a.$transition.appendTo(a.$body).removeClass('hide'); 
+		a.$transition.appendTo($content).removeClass('hide'); 
 	}
 
 	function endTransition() { 
@@ -145,23 +149,28 @@ define([
 
 		unloadController(CURRENT_STATE);
 		loadController(State);
+		closeMenu();
 
 	}
 
 	function toggleMenu(event) {
 
-		var $main = $('#main'),
-			$menu = $('.menu');
-
 		if ($main.hasClass('open')) {
-			$main.removeClass('open');
-			$menu.removeClass('active');
+			closeMenu()
 		} else {
-			$main.addClass('open');
-			$menu.addClass('active');
+			openMenu()
 		}
 	}
 
+	function openMenu() {
+		$main.addClass('open');
+		$menu.addClass('active');
+	}
+
+	function closeMenu() {
+		$main.removeClass('open');
+		$menu.removeClass('active');
+	}
 
 /* public */
 
