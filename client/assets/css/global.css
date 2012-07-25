@@ -244,21 +244,34 @@ img {
 	background: #444;
 }
 
+
+.open .nav {
+	background: #333 url('/assets/images/bg-gradient-shadow-right.png') 100% 0 repeat-y;	
+}
+
 @media screen and (min-width:640px) {
+
+	.open #navigation,
+	.open #content,
+	.fixed-top .open #navigation,
+	.fixed-top .open #content {
+		-webkit-transform: translate3d(0, 0, 0);
+	}
+
 
 	.menu {
 		display: none;
 	}
 
 	.nav {
-		padding: 0;
-		width: 100%;
+		background: transparent;
 		z-index: 4000;
-		top: 0;
+		bottom: auto;
+		width: 100%;
+		padding: 0;
 		right: 0;
 		left: 0;
-		bottom: auto;
-		background: transparent;
+		top: 0;
 	}
 
 } /* end @media screen and (min-width:640px) */
@@ -272,12 +285,11 @@ img {
 }
 
 .user-control {
-	display: none;
+	background: #333 url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
 	overflow: hidden;
+	display: none;
 	right: 10px;
 	top: -50px;
-	background: #333 url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
-
     -webkit-transition: top .3s ease-in-out 0s;
     -moz-transition: top .3s ease-in-out 0s;
     -o-transition: top .3s ease-in-out 0s;
