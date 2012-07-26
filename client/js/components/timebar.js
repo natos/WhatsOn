@@ -17,7 +17,7 @@ define([
 
 /* private */
 
-	_content = document.getElementById('content'),
+	_content = document.getElementById('main'),
 	_template = document.getElementById('timebar-template'),
 	_timebar = document.createElement('div'),
 	_timelist,

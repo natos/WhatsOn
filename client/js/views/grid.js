@@ -276,8 +276,8 @@ define([
 		getSelectedChannels	: getSelectedChannels,
 		getSelectedTime		: getSelectedTime,
 		components			: {
-			timebar		: TimeBar,
-			channelbar	: ChannelBar
+			channelbar	: ChannelBar,
+			timebar		: TimeBar
 		}
 	});
 

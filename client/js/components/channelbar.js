@@ -18,7 +18,7 @@ define([
 
 /* private */
 		_template = document.getElementById('channelsbar-template'),
-		_content = document.getElementById('content'),
+		_content = document.getElementById('main'),
 		_channelbar = document.createElement('div'),
 		_channellist,
 
