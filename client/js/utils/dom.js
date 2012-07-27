@@ -20,6 +20,8 @@ define([
 
 	elements = {
 		a: doc.createElement('a'),
+		i: doc.createElement('i'),
+		b: doc.createElement('b'),
 		div: doc.createElement('div'),
 		span: doc.createElement('span'),
 		img: doc.createElement('img'),
