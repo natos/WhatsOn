@@ -1,20 +1,19 @@
-#navigation
-	#navigation-background
-	#navigation-content
-		.upc-logo #{config.APP_NAME}
-		.nav
-			a.dashboard(href="/dashboard", title="#{__i('Dashboard')}")
-				i.icon-home
-				b.label #{__i('Home')}
-			a.movies(href="/movies", title="#{__i('Movies')}",)
-				i.icon-film
-				b.label #{__i('Movies')}
-			a.nowandnext(href="/nowandnext", title="#{__i('Now &amp; Next')}")
-				i.icon-time
-				b.label #{__i('Now &amp; Next')}
-			a.login(href="/login", title="#{__i('Login')}")
-				i.icon-user
-				b.label #{__i('Login')}
+.nav
+	a.settings(href="/settings", title="#{__i('Settings')}")
+		i.icon-cog
+		b.label #{__i('Settings')}
+	a.login(href="/login", title="#{__i('Login')}")
+		i.icon-user
+		b.label #{__i('Login')}
+	a.dashboard(href="/dashboard", title="#{__i('Dashboard')}")
+		i.icon-home
+		b.label #{__i('Home')}
+	a.movies(href="/movies", title="#{__i('Movies')}",)
+		i.icon-film
+		b.label #{__i('Movies')}
+	a.nowandnext(href="/nowandnext", title="#{__i('Now &amp; Next')}")
+		i.icon-time
+		b.label #{__i('Now &amp; Next')}
 
 .user-control
 	a.settings(href="/settings")
@@ -23,3 +22,11 @@
 	a.logout(href="/logout")
 		i.icon-signout
 		b.label #{__i('Log Out')}
+		
+#navigation
+	#navigation-background
+	#navigation-content
+		.upc-logo #{config.APP_NAME}
+		.menu
+			i.icon-reorder
+			b.label #{__i('Menu')}

@@ -92,8 +92,8 @@ define([
 	function onTouchEnd(e) {
 
 		if (Math.abs(_touchVelocityX) > 200 || Math.abs(_touchVelocityY) > 200) {
-			_timebar.style.display = 'none';
-			_channelsbar.style.display = 'none';
+			if (_timebar) { _timebar.style.display = 'none'; }
+			if (_channelsbar) { _channelsbar.style.display = 'none'; }
 		}
 	}
 
@@ -103,8 +103,8 @@ define([
 		if (restoreHeadersExecutionTimer) { clearTimeout(restoreHeadersExecutionTimer);	}
 		// set a delay of 200ms to fetch events
 		restoreHeadersExecutionTimer = setTimeout(function emitSomeThingElse() {
-			_timebar.style.display = 'block';
-			_channelsbar.style.display = 'block';
+			if (_timebar) { _timebar.style.display = 'block'; }
+			if (_channelsbar) { _channelsbar.style.display = 'block'; }
 		}, 100);
 	}
 
@@ -136,14 +136,9 @@ define([
 	function drawStyles() {
 
 		// style element
-		var style = document.getElementById('grid-styles');
-
-		// if doesn't exist create the tag
-		if (!style) {
-			style = dom.create('style');
-			style.id = 'grid-style';
+		var style = style = dom.create('style');
+			style.id = 'grid-styles';
 			document.getElementsByTagName('HEAD')[0].appendChild(style);
-		}
 
 		// data data data!
 		g.CHANNELS_COUNT = ChannelModel[c.GROUPS][ChannelModel[c.SELECTED_GROUP]].length;
@@ -153,6 +148,7 @@ define([
 
 		var cssText = [];
 			// Generate style rules for the heights and widths specific to the current browser
+			cssText.push('.nav { z-index: 1; }'); // Hack the .nav z-index for the grid
 			cssText.push('#grid-container {height:' + g.GRID_HEIGHT + 'px;width:' + g.GRID_WIDTH + 'px;margin-left:' + g.CHANNEL_BAR_WIDTH + 'px;margin-top:' + g.TIMEBAR_HEIGHT + 'px;}');
 			cssText.push('#grid-container .grid-event {height:' + g.ROW_HEIGHT + 'px;}');
 			cssText.push('#channels-bar li {height:' + g.ROW_HEIGHT + 'px;}');
@@ -163,6 +159,13 @@ define([
 		// insert styles
 		// redraw and reflow here!
 		style.innerHTML = cssText.join('\n');
+
+	}
+
+	function removeStyles() {
+
+		var style = document.getElementById('grid-styles');
+		document.getElementsByTagName('head')[0].removeChild(style);
 
 	}
 
@@ -228,7 +231,7 @@ define([
 		// every time user scrolls, we want to load new events
 		a.$window.on('resize scroll touchmove', handleResizeAndScroll);
 
-		// NS: Do we need this for iOS??
+		// NS: We don't need this for desktop
 		a.$window.on('touchstart touchmove', updateTouchVelocity);
 		a.$window.on('scroll touchstart', restoreHeaders);
 		a.$window.on('touchend', onTouchEnd);
@@ -257,6 +260,8 @@ define([
 
 	function finalize() {
 
+		removeStyles();
+
 		a.$window.off('resize scroll touchmove', handleResizeAndScroll);
 
 		App.off(g.MODEL_CHANGED, modelChanged);
@@ -276,8 +281,8 @@ define([
 		getSelectedChannels	: getSelectedChannels,
 		getSelectedTime		: getSelectedTime,
 		components			: {
-			timebar		: TimeBar,
-			channelbar	: ChannelBar
+			channelbar	: ChannelBar,
+			timebar		: TimeBar
 		}
 	});
 

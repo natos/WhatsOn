@@ -17,7 +17,9 @@ define([
 
 /* private */
 
-	_timebar,
+	_content = document.getElementById('main'),
+	_template = document.getElementById('timebar-template'),
+	_timebar = document.createElement('div'),
 	_timelist,
 	_timecontrols = document.createElement('div'),
 	_timecontrolsTemplate = document.getElementById('timecontrols-template');
@@ -104,12 +106,11 @@ define([
 	function render() {
 
 		// expand time bar
-		_timebar = document.getElementById('time-bar');
+		_timebar.innerHTML = _template.innerHTML;
+		_timebar.id = "time-bar";
 		_timebar.appendChild(_timecontrols);
 		_timebar.addEventListener('click', toggleTimeControls);
 		_timecontrols.addEventListener('change', changeChannelSelection);
-
-		_timelist = document.getElementById('time-bar-list');
 
 		// Render the time intervals
 		var zeroTime = g.zeroTime,
@@ -122,6 +123,9 @@ define([
 			timeIntervalsHtml += "<li><span>" + ("0" + t.getHours()).slice(-2) + "hs</span></li>"; //":00 (" + daysOfWeek[t.getDay()] + ")</span></li>";
 		}
 
+		
+		_content.appendChild(_timebar);
+		_timelist = document.getElementById('time-bar-list');
 		_timelist.innerHTML = timeIntervalsHtml;
 
 		// scroll to now
@@ -136,6 +140,8 @@ define([
 		$('.upc-logo').off('click', centerViewPort);
 
 		App.off(g.MODEL_CHANGED, modelChanged);
+
+		_content.removeChild(_timebar);
 
 		return this;
 	}
