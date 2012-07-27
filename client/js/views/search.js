@@ -99,15 +99,14 @@ define([
 
 	function render() {
 
-		// TODO: we need to find a much better way to do this
-		if ($('#content').find('#search-container').length>0) {
-			// Grid container is already loaded
-
+		// Search results HTML is built on the server.
+		// Search results are rendered as a #search-content block,
+		// which is inserted into #content
+		if ($('#search-content').length==1) {
+			// Search content is available
 		} else {
 			// Get search container from server
-			$('#content').load('/search', function(data, status, xhr){
-
-			});
+			$('#content').load('/search?q=' + query, function(data, status, xhr){});
 		}
 
 		// scan all the possible filters
