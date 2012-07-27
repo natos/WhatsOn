@@ -151,11 +151,12 @@ define([
 
 /* export */
 
-	return {
+	return new View({
 		name		: name,
 		initialize	: initialize,
 		finalize	: finalize,
+		render		: render,
 		filters		: filters
-	};
+	});
 
 });
