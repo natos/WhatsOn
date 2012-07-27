@@ -76,11 +76,11 @@ define([
 
 		// if an anchor was found, just navigate to it
 		if (anchor.href) {
+			// and prevent anchor's default behavior
+			event.preventDefault();
 			// grab its data-*, title, and href attr
 			// and pass everithing to the router, he will pushState and whatever
 			navigate(anchor.dataset, anchor.title, anchor.href);
-			// and prevent anchor's default behavior
-			event.preventDefault();
 			//console.log(anchor.dataset, anchor.title, anchor.href);
 		}
 		// else, ingnore

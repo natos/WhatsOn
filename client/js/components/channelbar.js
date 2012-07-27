@@ -17,7 +17,9 @@ define([
 	var name = 'channelbar',
 
 /* private */
-
+		_template = document.getElementById('channelsbar-template'),
+		_content = document.getElementById('main'),
+		_channelbar = document.createElement('div'),
 		_channellist,
 
 	/**
@@ -76,6 +78,9 @@ define([
 	function render() {
 
 		// grab the channellist
+		_channelbar.id = 'channels-bar';
+		_channelbar.innerHTML = _template.innerHTML;
+		_content.appendChild(_channelbar);
 		_channellist = document.getElementById('channels-bar-list');
 
 		renderChannelsGroup();
@@ -85,6 +90,8 @@ define([
 	}
 
 	function finalize() {
+
+		_content.removeChild(_channelbar);
 
 		App.off(g.MODEL_CHANGED, modelChanged);
 
