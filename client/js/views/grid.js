@@ -148,7 +148,7 @@ define([
 
 		var cssText = [];
 			// Generate style rules for the heights and widths specific to the current browser
-			cssText.push('.nav { z-index: 1; }'); // Hack the .nav z-index for the grid
+			cssText.push('.nav { z-index: 1; } @media screen and (min-width:640px) { .nav { z-index: 100; } }'); // Hack the .nav z-index for the grid
 			cssText.push('#grid-container {height:' + g.GRID_HEIGHT + 'px;width:' + g.GRID_WIDTH + 'px;margin-left:' + g.CHANNEL_BAR_WIDTH + 'px;margin-top:' + g.TIMEBAR_HEIGHT + 'px;}');
 			cssText.push('#grid-container .grid-event {height:' + g.ROW_HEIGHT + 'px;}');
 			cssText.push('#channels-bar li {height:' + g.ROW_HEIGHT + 'px;}');
