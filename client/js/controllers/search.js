@@ -35,11 +35,11 @@ define([
 
 /* export */
 
-	return {
+	return new Controller({
 		name: name,
 		initialize: initialize,
 		finalize: finalize,
 		view: SearchView
-	};
+	});
 
 });

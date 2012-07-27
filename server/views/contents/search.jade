@@ -1,38 +1,48 @@
-#search-content
-	#filters
-		#datetimes
-			h4 Date Times
-			ul.selectable
-				each startDateTime, prettyDate in used_datetimes
-					li.datetime
-						input(type="checkbox", id="#{startDateTime}", value="#{prettyDate}") 
-						label(for="#{startDateTime}") #{prettyDate}
-	
-		#channels
-			h4 Channels
-			ul.selectable
-				each channel in used_channels
-					li.channel
-						input(type="checkbox", id="#{channel.id}", value="#{channel.id}") 
-						label(for="#{channel.id}") #{channel.name}
-	
-	
-	
-	#search-results
-		ul
-			each group in programmes
-				li.programme(data-channel="#{group[0].channel.id}", data-datetime="#{group[0].prettyDate}")
-					h3
-						a(href="/programme/#{group[0].programme.id}") #{group[0].programme.title}
-					.details
-						.icons
-							i.icon-star-empty
-							i.icon-time
-						ul
-							each event, i in group
-								//- if (i >= 3) break
-								li(data-channel="#{event.channel.id}", data-datetime="#{event.prettyDate}")
-									a(href="/programme/#{event.programme.id}") #{event.prettyDate}, 
-									|  on
-									span.channel
-										a(href="/channel/#{event.channel.id}") #{event.channel.name}
+#search-query(style="padding-top:60px")
+	form.search
+		label(for="q") Search for
+		input#q(name="q", type="search", value="#{query}")
+		button(type="submit") Search
+
+if (hasQuery)
+	#search-content
+		#filters
+			#datetimes
+				h4 Date Times
+				ul.selectable
+					each startDateTime, prettyDate in used_datetimes
+						li.datetime
+							input(type="checkbox", id="#{startDateTime}", value="#{prettyDate}") 
+							label(for="#{startDateTime}") #{prettyDate}
+		
+			#channels
+				h4 Channels
+				ul.selectable
+					each channel in used_channels
+						li.channel
+							input(type="checkbox", id="#{channel.id}", value="#{channel.id}") 
+							label(for="#{channel.id}") #{channel.name}
+		
+		
+		
+		#search-results
+			if (hasResults)
+				ul
+					each group in programmes
+						li.programme(data-channel="#{group[0].channel.id}", data-datetime="#{group[0].prettyDate}")
+							h3
+								a(href="/programme/#{group[0].programme.id}") #{group[0].programme.title}
+							.details
+								.icons
+									i.icon-star-empty
+									i.icon-time
+								ul
+									each event, i in group
+										//- if (i >= 3) break
+										li(data-channel="#{event.channel.id}", data-datetime="#{event.prettyDate}")
+											a(href="/programme/#{event.programme.id}") #{event.prettyDate}, 
+											|  on
+											span.channel
+												a(href="/channel/#{event.channel.id}") #{event.channel.name}
+			else
+				p No results found

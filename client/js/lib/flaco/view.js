@@ -32,9 +32,9 @@ define([
 
 	// returns template name for a given view
 	function templateName(view) {
-		var parts = getParts(view).replace('/','-');
+		var parts = getParts(view).replace(/\//g,'-');
 			parts = parts === "-" ? '' : parts;
-		return view.name + parts + '-template'; 
+		return view.name + parts + '-template';
 	}
 
 	function templateId(view) {	return '#' + templateName(view); }
