@@ -6,15 +6,19 @@
 
 define([
 
-], function() {
+	'utils/dom'
 
-	var name = 'carousel';
+], function(dom) {
+
+	var name = 'carousel',
 
 /* private */
 
-	var $window = $(window),
-
 	rowing = true,
+
+	// dom elements
+	_carousel,
+	_list,
 
 	timer = {
 		clock: void 0,
@@ -53,15 +57,19 @@ define([
 		// The images are in 16:9 aspect ratio. Limit height to no more than 400px.
 		// (Height limit is just so that the channel list remains visible even on very
 		// wide screens.)
-		list.css({'height': ($window.width() * 0.5625) + 'px' });
+		_list.style.height = (window.innerWidth * 0.5625) + 'px';
 	}
 
 	function discHandler(event) {
-		var $this = $(this);
 		event.stopPropagation();
-		list.css('left', $this.data('index') * -100 + '%' );
-		$('.disc').removeClass('selected');
-		$this.addClass('selected');
+		var target = event.target;
+		if ( /disc/.test(target.className) ) {
+			$('.disc').removeClass('selected');
+			_list.style.webkitTransform = 'translate3d(' + (target.dataset.index * -100) + '%, 0, 0)';
+			//_list.style.left = target.dataset.index * -100 + '%';
+			target.className = target.className + ' selected';
+			timer.restart();
+		}
 	}
 
 	function playpauseHandler() {
@@ -172,30 +180,61 @@ define([
 
 /* public */ 
 
-	var el, list, map = {};
-
 	function initialize() {
 
-		$window.on('resize orientationchange', sizeHandler);
+		window.addEventListener('resize', sizeHandler);
+		window.addEventListener('orientationchange', sizeHandler);
 
 		return this;
 	}
 
 	function render() {
 
-		el = $('#featured').removeClass('no-carousel').addClass('carousel');
-		$('#featured .programme-bg').each(function(ix, el){
-			var $el = $(el);
-			if ($el.data('src') && !$el.attr('src')) {
-				$el.attr('src', $el.data('src'));
-			}
-		});
+		_carousel = document.getElementById('featured');
+		_carousel.className = 'carousel';
+		_list = _carousel.getElementsByTagName('ul')[0];
+		_list.className = 'show slide';
 
-		list = el.find('.show').addClass('slide');
+		var dataset, i = 0, img, disc,
+			programme, programmes = _carousel.getElementsByTagName('li'),
+			_pauseIcon = dom.create('i'),
+			_playpause = dom.create('div'),
+			_navigator = dom.create('div'),
+			_disc = dom.create('i');
+
+			_pauseIcon.className = 'icon-pause';
+			_playpause.id = 'playpause';
+			_playpause.appendChild(_pauseIcon);
+			_playpause.addEventListener('click', playpauseHandler);
+			_disc.className = 'disc icon-certificate';
+			_navigator.className = 'navigator';
+
+		for (i; i < programmes.length; i++) {
+			programme = programmes[i];
+			// position the list element
+			programme.style.left = 100*i + '%';
+			// deal with background images
+			img = programme.getElementsByTagName('img')[0];
+			dataset = img.dataset;
+			if (dataset.src) {
+				console.log(dataset.src);
+				img.src = dataset.src;
+			}
+			// create a disc and addit to navigator
+			disc = _disc.cloneNode(true);
+			disc.setAttribute('data-index',i);
+			_navigator.appendChild(disc);
+		}
+
+		// select first
+		_navigator.firstChild.className = 'disc icon-certificate selected';
+		_navigator.addEventListener('click', discHandler);
+
+		// add navigator and playpause to carousel
+		_carousel.appendChild(_navigator);
+		_carousel.appendChild(_playpause);		
 
 		sizeHandler();
-
-		addButtons();
 
 		// start timer
 		timer.start();
@@ -208,7 +247,9 @@ define([
 		// stop timer
 		timer.stop();
 
-		$window.off('resize orientationchange', sizeHandler);
+		_navigator.removeEventListener('click', timer.restart);
+		window.removeEventListener('resize', sizeHandler);
+		window.removeEventListener('orientationchange', sizeHandler);
 
 		return this;
 
@@ -220,8 +261,7 @@ define([
 		name		: name,
 		initialize	: initialize,
 		finalize	: finalize,
-		render		: render,
-		map			: map
+		render		: render
 	};
 
 });
