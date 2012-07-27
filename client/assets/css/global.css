@@ -40,6 +40,31 @@ img {
 	max-width: 100%;
 }
 
+/* logo */
+.upc-logo {
+	display: block;
+
+	text-indent: -200%;
+	overflow:hidden;
+
+	padding: 0;
+	margin: 0;
+
+	width: 41px;
+	height: 41px;
+
+	top: 5px;
+	position: absolute;
+
+	left: 50%;
+	margin-left: -15px;
+
+	/* TODO: change UPC logo for LGI Logo */
+	background: transparent url('/assets/images/sprite.png') 0 0 no-repeat;
+
+	opacity: .7; /* hipster branding ;) */
+}
+
 
 /**
 *	button
@@ -81,10 +106,38 @@ img {
 }
 
 /**
+*	main
+*/
+
+#main {
+	left: 0;
+	margin: 0;
+	padding: 0;
+	z-index: 0;
+	width: 100%;
+	position: relative;
+}
+
+#content {
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	position: relative;
+	-webkit-backface-visibility: hidden;
+	-webkit-transition: -webkit-transform .3s ease-in-out;
+    -moz-transition: -moz-transform .3s ease-in-out;
+    -o-transition: -o-transform .3s ease-in-out;
+    transition: transform .3s ease-in-out;
+    z-index: 0;
+}
+
+/**
 *	navigation
 */
 
 #navigation {
+	position: fixed;
 	display: block;
 	left: 0;
 	right: 0;
@@ -93,9 +146,9 @@ img {
 	padding: 0;
 	-webkit-backface-visibility: hidden;
 	-webkit-transition: -webkit-transform .3s ease-in-out;
-    -moz-transition: -webkit-transform .3s ease-in-out;
-    -o-transition: -webkit-transform .3s ease-in-out;
-    transition: -webkit-transform .3s ease-in-out;
+    -moz-transition: -moz-transform .3s ease-in-out;
+    -o-transition: -o-transform .3s ease-in-out;
+    transition: transform .3s ease-in-out;
     z-index: 100;
 }
 
@@ -108,6 +161,9 @@ img {
 
 #navigation-content {
 	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
 	width: 100%;
 	height: 55px;
 	margin: 0;
@@ -115,69 +171,24 @@ img {
 	background: transparent url('/assets/images/bg-gradient-shadow-bottom.png') 0 50px repeat-x;
 }
 
-.fixed-top #navigation {
-	position: fixed;
+.nav {
 	top: 0;
 	left: 0;
-	right: 0;
-}
-
-/* logo */
-.upc-logo {
-	display: block;
-
-	text-indent: -200%;
-	overflow:hidden;
-
-	padding: 0;
-	margin: 0;
-
-	width: 41px;
-	height: 41px;
-
-	top: 5px;
-	position: absolute;
-
-	left: 50%;
-	margin-left: -15px;
-
-	/* TODO: change UPC logo for LGI Logo */
-	background: transparent url('/assets/images/sprite.png') 0 0 no-repeat;
-
-	opacity: .7; /* hipster branding ;) */
-}
-
-
-/**
-*	main
-*/
-
-#main {
-	width: 100%;
-	left: 0;
-	margin: 0;
-	padding: 0;
-	z-index: 0;
-	overflow: hidden;
-}
-
-.fixed-top #main {
-	margin-top: 50px;
-}
-
-#content {
-	top: 50px;
-	left: 0;
-	right: 0;
 	bottom: 0;
+	width: 50px;
+	background-color: #333;
 	position: absolute;
-	-webkit-backface-visibility: hidden;
-	-webkit-transition: -webkit-transform .3s ease-in-out;
-    -moz-transition: -webkit-transform .3s ease-in-out;
-    -o-transition: -webkit-transform .3s ease-in-out;
-    transition: -webkit-transform .3s ease-in-out;
+	position: fixed;
+	-webkit-transition: background-color .3s ease-in-out;
+    -moz-transition: background-color .3s ease-in-out;
+    -o-transition: background-color .3s ease-in-out;
+    transition: background-color .3s ease-in-out;
+    z-index: 0;
 }
 
+.open .nav {
+	background: #555 url('/assets/images/bg-gradient-shadow-left.png') 100% 0 repeat-y;
+}
 
 .open #navigation,
 .open #content,
@@ -186,11 +197,15 @@ img {
 .open #channels-bar,
 .open #time-bar
 {
-	-webkit-transform: translate3d(50px, 0, 0); /* transforms break fixed positioning */
+	-webkit-transform: translate3d(49px, 0, 0);
+	-moz-transform: translate3d(49px, 0, 0);
+	-ms-transform: translate3d(49px, 0, 0);
+	-o-transform: translate3d(49px, 0, 0);
+	-transform: translate3d(49px, 0, 0);
 }
 
-/* navbar links */
 
+/* navbar links */
 .nav a, .user-control a, .menu,
 .nav a:hover, .user-control a:hover, .menu,
 .nav a:visited, .user-control a:visited, .menu,
@@ -220,10 +235,6 @@ img {
 	color: yellowGreen;
 }
 
-.nav a.active b {
-
-}
-
 /* icons */
 
 .nav i, .menu i {
@@ -236,29 +247,6 @@ img {
 	font-weight: normal;
 	vertical-align: top;
 	display: none;
-}
-
-.nav, .user-control {
-	position: absolute;
-}
-
-.nav {
-	top: 0;
-	left: 0;
-	bottom: 0;
-	width: 50px;
-	background-color: #333;
-	position: absolute;
-	position: fixed;
-	-webkit-transition: background-color .3s ease-in-out;
-    -moz-transition: background-color .3s ease-in-out;
-    -o-transition: background-color .3s ease-in-out;
-    transition: background-color .3s ease-in-out;
-    z-index: 1;
-}
-
-.open .nav {
-	background: #555 url('/assets/images/bg-gradient-shadow-left.png') 100% 0 repeat-y;	
 }
 
 @media screen and (min-width:640px) {
@@ -288,6 +276,11 @@ img {
 		right: 0;
 		left: 0;
 		top: 0;
+	}
+
+	.nav,
+	.open .nav {
+		z-index: 100;
 	}
 
 	.open .nav {
@@ -405,6 +398,10 @@ img {
 	bottom: 0;
 	right: 0;
 	-webkit-transition: opacity ease-in-out 1s;
+	-moz-transition: opacity ease-in-out 1s;
+	-ms-transition: opacity ease-in-out 1s;
+	-o-transition: opacity ease-in-out 1s;
+	-transition: opacity ease-in-out 1s;
 }
 
 #transition .loading {
@@ -460,61 +457,6 @@ footer {
 
 
 /**
-*	modal
-*/
-.modal, .dimmer {
-    -webkit-transition: opacity .3s ease-in-out;
-    -moz-transition: opacity .3s ease-in-out;
-    -o-transition: opacity .3s ease-in-out;
-    transition: opacity .3s ease-in-out;
-}
-.modal {
-	top: 0;
-	left: 0;
-	position: fixed;
-	display: none;
-	opacity: 0;
-	width: 60%;
-	padding: 10px;
-}
-
-.modal.active {
-	display: block;
-}
-
-.modal.active.on {
-	opacity: 1;
-}
-
-.modal .icon-remove-sign {
-	position: absolute;
-	top: 10px;
-	right: 10px;
-	font-size: 1.5em;
-}
-
-.dimmer {
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	position: fixed;
-	background: white;
-	display: none;
-	opacity: 0;
-}
-
-.dimmer.active {
-	display: block;
-}
-
-.dimmer.active.on {
-	opacity: .8;
-}
-
-
-
-/**
 *	featured programmes list.
 *   At load time, the #featured element has a .no-carousel
 *   class. This is removed, and a .carousel class is applied
@@ -552,6 +494,10 @@ footer {
 		position: absolute;
 		padding: 10px 20px;
 		-webkit-transition: font-size ease-in-out .3s;
+		-moz-transition: font-size ease-in-out .3s;
+		-ms-transition: font-size ease-in-out .3s;
+		-o-transition: font-size ease-in-out .3s;
+		-transition: font-size ease-in-out .3s;
 	}
 
 		.show .programme-details h1 {
@@ -1070,8 +1016,59 @@ footer {
 
 }
 
+/*
+.channel-event-list represents a list of programmes for a single channel
+
+<ul class="channel-event-list">
+	<li class="programme">
+		<a href="/programme/0000000" class="event-link">
+			<div class="time">09:45 - 10:30</div>
+			<div class="title">My Little Pony - Friendship is Magic</div>
+			<div class="desc">Follow the adventures of Twilight Sparkle and her friends.</div>
+		</a>
+	<li>
+</ul>
+*/
+
+.channel-event-list {
+	padding:0;
+	margin:0;
+}
+
+	.channel-event-list .programme {
+		display:block;
+		list-style-type:none;
+	}
+	.channel-event-list .programme-link {
+		display:block;
+		padding:5px 0;
+		color:inherit;
+	}
+	.channel-event-list .programme-link:hover,
+	.channel-event-list .programme-link:active {
+		background-color:#f0f0f0;
+	}
+
+	.channel-event-list .time {
+		color:#666;
+		font-size:12px;
+		padding-top:5px;
+		float:left;
+	}
+	.channel-event-list .title {
+		margin:0 0 5px 80px;
+		font-size:16px;
+		font-weight:bold;
+	}
+	.channel-event-list .desc {
+		margin:0 0 0 80px;
+		line-height:1.231;
+		max-height:2.45em;
+		overflow:hidden;
+	}
+
 /**
-**	End programme & channel view
+**	End dashboard & programme & channel view
 **/
 
 
@@ -1080,7 +1077,7 @@ footer {
 **/
 
 /* Avoid text selection in the grid */
-#grid-container * {
+* {
 	-webkit-user-select: none;
 	-khtml-user-select: none;
 	-moz-user-select: none;
@@ -1131,9 +1128,6 @@ footer {
 	        transform:translate3d(0,0,0);
 }
 
-.open #time-bar {
-}
-
 #time-bar.expanded {
 	height: 165px;
 	opacity: .85;
@@ -1156,6 +1150,15 @@ footer {
 	bottom: -6px;
 }
 
+#time-bar .content {
+	overflow: hidden;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+}
+
 #time-bar-list {
 	position: absolute;
 	color: #ccc;
@@ -1165,7 +1168,6 @@ footer {
 }
 
 #time-bar-list li {
-	width: 200px;
 	position: relative;
 	display: inline-block;
 	height:100%;
@@ -1202,12 +1204,12 @@ footer {
 
 #time-controls #now + label {
 	background: #e6f0a3;
-	background: -moz-linear-gradient(top,  #e6f0a3 0%, #d2e638 50%, #c3d825 51%, #dbf043 100%);
+	background: -moz-linear-gradient(top, #e6f0a3 0%, #d2e638 50%, #c3d825 51%, #dbf043 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e6f0a3), color-stop(50%,#d2e638), color-stop(51%,#c3d825), color-stop(100%,#dbf043));
-	background: -webkit-linear-gradient(top,  #e6f0a3 0%,#d2e638 50%,#c3d825 51%,#dbf043 100%);
-	background: -o-linear-gradient(top,  #e6f0a3 0%,#d2e638 50%,#c3d825 51%,#dbf043 100%);
-	background: -ms-linear-gradient(top,  #e6f0a3 0%,#d2e638 50%,#c3d825 51%,#dbf043 100%);
-	background: linear-gradient(to bottom,  #e6f0a3 0%,#d2e638 50%,#c3d825 51%,#dbf043 100%);
+	background: -webkit-linear-gradient(top, #e6f0a3 0%,#d2e638 50%,#c3d825 51%,#dbf043 100%);
+	background: -o-linear-gradient(top, #e6f0a3 0%,#d2e638 50%,#c3d825 51%,#dbf043 100%);
+	background: -ms-linear-gradient(top, #e6f0a3 0%,#d2e638 50%,#c3d825 51%,#dbf043 100%);
+	background: linear-gradient(to bottom, #e6f0a3 0%,#d2e638 50%,#c3d825 51%,#dbf043 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e6f0a3', endColorstr='#dbf043',GradientType=0 );
 }
 
@@ -1430,6 +1432,7 @@ footer {
 	/* height and width are set dynamically based by the view */
 	overflow: hidden;
 	background:#ddd;
+	z-index: 0;
 }
 
 /* A .channel-container is a container for all events in a channel.
