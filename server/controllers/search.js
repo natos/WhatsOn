@@ -36,6 +36,7 @@ function(querystring, SearchService, Metadata, DateUtils, Channels) {
 		// Routing
 
 		app.server.get('/search', this.render);
+		app.server.get('/search/q/:q', this.render);
 
 	};
 
@@ -53,8 +54,15 @@ function(querystring, SearchService, Metadata, DateUtils, Channels) {
 
 	SearchController.prototype.render = function(req, res) {
 
-		var query = querystring.escape(req.query.q),
-			template = req.xhr ? 'contents/search.jade' : 'layouts/search.jade';
+		var template = req.xhr ? 'contents/search.jade' : 'layouts/search.jade';
+
+		var query = '';
+		// Query can be specified as '/search?q=monkey' or '/search/q/monkey'
+		if (req.query.q) {
+			query = querystring.escape(req.query.q);
+		} else if (req.params.q) {
+			query = querystring.escape(req.params.q);
+		}
 
 		// empty query
 		// just render a search box
@@ -65,6 +73,7 @@ function(querystring, SearchService, Metadata, DateUtils, Channels) {
 				config			: _app.config,
 				channels		: _app.channels,
 				query			: query,
+				hasQuery		: false,
 				used_channels	: {},
 				used_datetimes	: {},
 				programmes		: {},
@@ -77,7 +86,12 @@ function(querystring, SearchService, Metadata, DateUtils, Channels) {
 
 		new SearchService().once('search', function(error, response, body) {
 
-			var results = JSON.parse(body);
+			var results;
+			try {
+				results = JSON.parse(body);
+			} catch(e) {
+				results = [];
+			}
 
 			// Prettyfing dates
 			results = dateUtils.prettifyCollection(results, 'startDateTime');
@@ -121,6 +135,8 @@ function(querystring, SearchService, Metadata, DateUtils, Channels) {
 				config			: _app.config,
 				channels		: _app.channels,
 				query			: query,
+				hasQuery		: true,
+				hasResults		: results.length > 0,
 				used_channels	: used_channels,
 				used_datetimes	: used_datetimes,
 				programmes		: programmes,
