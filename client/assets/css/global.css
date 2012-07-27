@@ -119,7 +119,7 @@ img {
 }
 
 #content {
-	top: 0;
+	top: 50px;
 	left: 0;
 	right: 0;
 	bottom: 0;
@@ -192,8 +192,6 @@ img {
 
 .open #navigation,
 .open #content,
-.fixed-top .open #navigation,
-.fixed-top .open #content,
 .open #channels-bar,
 .open #time-bar
 {
@@ -548,10 +546,10 @@ footer {
 		height: 100%; /* 100% of #featured parent container */
 		max-height: 550px;
 		overflow:visible;
-		-webkit-transition: 	left .3s ease-in-out;
-		-moz-transition: 		left .3s ease-in-out;
-		-o-transition: 			left .3s ease-in-out;
-		transition: 			left .3s ease-in-out;
+		-webkit-transition: -webkit-transform .3s ease-in-out;
+		-moz-transition: -moz-transform .3s ease-in-out;
+		-o-transition: -o-transform .3s ease-in-out;
+		transition: transform .3s ease-in-out;
 	}
 
 		.carousel .show .programme {
