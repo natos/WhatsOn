@@ -1,4 +1,4 @@
-/* 
+/*
 * SearchView
 * --------------
 *
@@ -10,20 +10,14 @@ define([
 
 	'config/app',
 	'modules/app',
-	'lib/flaco/view'
+	'lib/flaco/view',
+	'modules/router'
 
-], function(a, App, View) {
+], function(a, App, View, Router) {
 
 	var name = 'search';
 
 /* private */
-
-	//TODO: Move this variables to a config file
-	var $window = $(window),
-
-	$filters = $('#filters'),
-
-	$results = $('#search-results');
 
 	function filterHandler(event) {
 
@@ -54,7 +48,8 @@ define([
 
 	function applyFilters() {
 
-		var _emptyChannels = isEmpty('channel'),
+		var $results = $('#search-results'),
+			_emptyChannels = isEmpty('channel'),
 			_emptyDatetimes = isEmpty('datetime');
 	
 		if (_emptyChannels && _emptyDatetimes) {
@@ -86,30 +81,10 @@ define([
 		});
 	}
 
-/* public */
+	function initResults() {
 
-	var filters = {};
-
-
-	function initialize() {
-
-		return this;
-
-	}
-
-	function render() {
-
-		// Search results HTML is built on the server.
-		// Search results are rendered as a #search-content block,
-		// which is inserted into #content
-		if ($('#search-content').length==1) {
-			// Search content is available
-		} else {
-			// Get search container from server
-			$('#content').load('/search?q=' + query, function(data, status, xhr){});
-		}
-
-		// scan all the possible filters
+		// scan the possible filters
+		var $filters = $('#filters');
 		$filters.find('input').each(function(index, item) {
 
 			var klass = $(item).parents('li').attr('class'),
@@ -123,17 +98,29 @@ define([
 
 		});
 
-		// filtrable
-		$filters.on('click', filterHandler);
+	}
 
-		// layout quirks
-		// min-heigth for results
-		$results.css('min-height', $filters.height());
-		// static positioning on the search box
-		$('.search-box').css({'top': '50px'});
-		$('.main').css({'margin-top': '95px'});
-		// Assign the query to the search box
-		$('#q').val(query);
+	function submitHandler(event) {
+		$('#content').load('/search?q=' + $('#q').val(), function(data, status, xhr){});
+		return false;
+	}
+
+/* public */
+
+	var filters = {};
+
+	function initialize() {
+
+		a.$window.on('click change', '#filters input', filterHandler);
+		a.$window.on('submit', 'form.search', submitHandler);
+
+		return this;
+
+	}
+
+	function render() {
+
+		initResults();
 
 		return this;
 
@@ -141,7 +128,8 @@ define([
 
 	function finalize() {
 
-		$filters.off('click', filterHandler);
+		a.$window.off('submit', 'form.search', submitHandler);
+		a.$window.off('click change', '#filters input', filterHandler);
 
 		return this;
 
