@@ -39,8 +39,19 @@ define([
 	function handleStateChange() {
 
 		var State = History.getState(); // Note: We are using History.getState() instead of event.state
-			State.parts = History.getShortUrl(State.url).match(/[\w\d\-:?\w\d]+/gi);
-			State.controller = (State.parts) ? shift.apply(State.parts) : '';
+
+		var path = History.getShortUrl(State.url);
+		// Remove the initial '/' from the path
+		if (path.slice(0,1)==='/') {
+			path = path.slice(1);
+		}
+		// Split the URL path (without protocol, hostname & port)
+		// into an array of strings. Split on path separator ('/'),
+		// querystring separators ('?', '&', '='), fragment separators,
+		State.parts = path.split(/[\/\?\&=\#]/gi);
+
+		// The controller to be loaded is the first element in the parts array
+		State.controller = (State.parts) ? shift.apply(State.parts) : '';
 
 		App.emit(a.NAVIGATE, State);
 	}
