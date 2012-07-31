@@ -40,8 +40,11 @@ define([
 		// just wait, so the view won't blink while rendering,
 		// better UX feedback with smoother transition
 		a._transition.className = 'background hide';
+
 		setTimeout(function removeTransition() { 
-			a._content.removeChild(a._transition);
+			if (a._transition.parentNode) {
+				a._transition.parentNode.removeChild(a._transition);
+			}
 		}, 500); 
 	}
 
