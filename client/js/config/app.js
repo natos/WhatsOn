@@ -23,6 +23,8 @@ define([], function AppConfigContext() {
 
 		NAVIGATE: 'app:navigate',
 
+		ACTION: 'app:action',
+
 		// controllers
 
 		CONTROLLER_INITIALIZING: 'app:controller_initializing',
@@ -49,15 +51,17 @@ define([], function AppConfigContext() {
 
 		/* DOM access */
 
-		$window: $(window),
-	
-		$body: $(document.body),
+		_doc: document,
 
-		$main: $('#main'),
+		_win: window,
 
-		$content: $('#content'),
+		_body: document.body,
 
-		$transition: $('#transition')
+		_main: document.getElementById('main'),
+
+		_content: document.getElementById('content'),
+
+		_transition: document.getElementById('transition'),
 
 	};
 
