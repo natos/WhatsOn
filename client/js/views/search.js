@@ -111,8 +111,9 @@ define([
 
 	function initialize() {
 
-		a.$window.on('click change', '#filters input', filterHandler);
-		a.$window.on('submit', 'form.search', submitHandler);
+		a._win.addEventListener('click', filterHandler, false);
+		a._win.addEventListener('change', filterHandler, false);
+		a._win.addEventListener('submit', submitHandler);
 
 		return this;
 
@@ -128,8 +129,9 @@ define([
 
 	function finalize() {
 
-		a.$window.off('submit', 'form.search', submitHandler);
-		a.$window.off('click change', '#filters input', filterHandler);
+		a._win.removeEventListener('click', filterHandler, false);
+		a._win.removeEventListener('change', filterHandler, false);
+		a._win.removeEventListener('submit', submitHandler, false);
 
 		return this;
 
