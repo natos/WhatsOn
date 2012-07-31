@@ -38,7 +38,7 @@ define([
 	*/
 	function resizeImages() {
 
-		var maxScreenWidth = Math.max(a.$window.width(), a.$window.height()),
+		var maxScreenWidth = Math.max(a._win.innerWidth, a._win.innerHeight),
 			imgSize, oldSrc, newSrc, $item;
 	
 		if (maxScreenWidth <= 865) {
@@ -65,7 +65,8 @@ define([
 
 	function initialize() {
 
-		a.$window.on('resize orientationchange', handleResize);
+		a._win.addEventListener('resize', handleResize, true);
+		a._win.addEventListener('orientationchange', handleResize, true);
 
 		handleResize();
 
@@ -81,7 +82,8 @@ define([
 
 	function finalize() {
 
-		a.$window.off('resize orientationchange', handleResize);
+		a._win.removeEventListener('resize', handleResize, true);
+		a._win.removeEventListener('orientationchange', handleResize, true);
 
 		return this;
 

@@ -62,7 +62,7 @@ define([
 	// renders the template
 	function setTemplate(view) {
 		// write the template in the DOM
-		a.$content.html( $( templateId(view) ).text() );
+		a._content.innerHTML = $( templateId(view) ).text();
 		// re write metadata content for this view
 		var metamap = {}, original, metadata, property, content;
 		// map original meta tags

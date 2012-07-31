@@ -15,7 +15,8 @@ if (window.mustard) {
 
 	require([
 
-		'modules/app'
+		'modules/app',
+		'/js/utils/requestAnimationFrame.js' // requestAnimationFrame pollyfill
 
 	],
 	function(App) {
