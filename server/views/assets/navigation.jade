@@ -2,11 +2,11 @@
 	#navigation-background
 	#navigation-content
 		.upc-logo #{config.APP_NAME}
-		.menu
+		.menu(data-action="TOGGLE-MENU")
 			i.icon-reorder
 			b.label #{__i('Menu')}
-.nav
-	a.settings(href="/settings", title="#{__i('Settings')}")
+nav.nav
+	a.settings(href="/settings", title="#{__i('Settings')}", data-action="TOGGLE-EDIT-MODE")
 		i.icon-cog
 		b.label #{__i('Settings')}
 	a.login(href="/login", title="#{__i('Login')}")
