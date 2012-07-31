@@ -86,14 +86,17 @@ define([
 
 	function discHandler(event) {
 		event.stopPropagation();
-		var target = event.target, transform, property, opera;
+		var target = event.target, transform, property, opera, i = 0;
 		if ( /disc/.test(target.className) ) {
+			// damn prefix!
 			transform = getTransformProperty(_list);
-			opera = (transform === 'OTransform'); // Opera doesn't support translate3d with JavaScript
+			// Opera doesn't support translate3d with JavaScript
+			opera = (transform === 'OTransform');
 			property = (opera) ? 'translateX' : 'translate3d';
-			_list.style[transform] = property + '(' + (target.dataset.index * -100) + (opera) ? '%)' : '%, 0, 0)';
-			//_list.style.left = target.dataset.index * -100 + '%';
-			$('.disc').removeClass('selected'); // remove selected class from all others
+			_list.style[transform] = property + '(' + (target.dataset.index * -100) + ((opera) ? '%)' : '%, 0, 0)');
+			// remove selected class from all others
+			for (i = 0; i < _navigator.children.length; i++) { _navigator.children[i].className = DISC_CLASS; }
+			// select current target
 			target.className = target.className + SELECTED_CLASS;
 			timer.restart();
 		}
@@ -127,7 +130,7 @@ define([
 		_list = _carousel.getElementsByTagName('ul')[0];
 		_list.className = 'show slide';
 
-		var dataset, i = 0, img, disc,
+		var dataset, i = 0, img, disc, transform, opera, property,
 			programme, programmes = _carousel.getElementsByTagName('li'),
 			_pauseIcon = dom.create('i'),
 			_playpause = dom.create('div'),
@@ -144,7 +147,13 @@ define([
 		for (i; i < programmes.length; i++) {
 			programme = programmes[i];
 			// position the list element
-			programme.style.left = 100*i + '%';
+				// damn prefix!
+				transform = getTransformProperty(_list);
+				// Opera doesn't support translate3d with JavaScript
+				opera = (transform === 'OTransform');
+				property = (opera) ? 'translateX' : 'translate3d';
+				programme.style[transform] = property + '(' + (100*i) + ((opera) ? '%)' : '%, 0, 0)');
+				//programme.style.left = 100*i + '%';
 			// deal with background images
 			img = programme.getElementsByTagName('img')[0];
 			dataset = img.dataset;
