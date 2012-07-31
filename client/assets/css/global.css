@@ -841,7 +841,12 @@ footer {
 	background: none;
 	position: absolute;
 	cursor: pointer;
+	top: 35px;
 	left: 15px;
+
+	-webkit-box-shadow: none;
+	   -moz-box-shadow: none;
+	        box-shadow: none;
 }
 
 #programme-content header h1 .favorite .icon-star,
