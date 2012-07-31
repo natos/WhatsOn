@@ -229,12 +229,20 @@ define([
 
 		// UI event handlers
 		// every time user scrolls, we want to load new events
-		a.$window.on('resize scroll touchmove', handleResizeAndScroll);
+		a._win.addEventListener('resize', handleResizeAndScroll);
+		a._win.addEventListener('scroll', handleResizeAndScroll);
+		a._win.addEventListener('touchmove', handleResizeAndScroll);
 
-		// NS: We don't need this for desktop
-		a.$window.on('touchstart touchmove', updateTouchVelocity);
-		a.$window.on('scroll touchstart', restoreHeaders);
-		a.$window.on('touchend', onTouchEnd);
+		// Update touch velocity
+		a._win.addEventListener('touchstart', updateTouchVelocity);
+		a._win.addEventListener('touchmove', updateTouchVelocity);
+
+		// restoreHeaders
+		a._win.addEventListener('scroll', restoreHeaders);
+		a._win.addEventListener('touchstart', restoreHeaders);
+
+		// touch end
+		a._win.addEventListener('touchend', onTouchEnd);
 
 		// The model recieves events
 		// we are listening to render new events
@@ -262,7 +270,9 @@ define([
 
 		removeStyles();
 
-		a.$window.off('resize scroll touchmove', handleResizeAndScroll);
+		a._win.removeEventListener('resize', handleResizeAndScroll);
+		a._win.removeEventListener('scroll');
+		a._win.removeEventListener('touchmove');
 
 		App.off(g.MODEL_CHANGED, modelChanged);
 

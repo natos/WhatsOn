@@ -15,9 +15,13 @@ define([
 
 /* private */
 
+	DISC_CLASS = 'disc icon-certificate',
+	SELECTED_CLASS = ' selected',
+
 	rowing = true,
 
 	// dom elements
+	_navigator,
 	_carousel,
 	_list,
 
@@ -54,6 +58,25 @@ define([
 		}
 	};
 
+	function getTransformProperty(element) {
+	    // Note that in some versions of IE9 it is critical that
+	    // msTransform appear in this list before MozTransform
+	    var properties = [
+	        'transform',
+	        'WebkitTransform',
+	        'msTransform',
+	        'MozTransform',
+	        'OTransform'
+	    ];
+	    var p;
+	    while (p = properties.shift()) {
+	        if (typeof element.style[p] != 'undefined') {
+	            return p;
+	        }
+	    }
+	    return false;
+	}
+
 	function sizeHandler() {
 		// The images are in 16:9 aspect ratio. Limit height to no more than 400px.
 		// (Height limit is just so that the channel list remains visible even on very
@@ -63,12 +86,15 @@ define([
 
 	function discHandler(event) {
 		event.stopPropagation();
-		var target = event.target;
+		var target = event.target, transform, property, opera;
 		if ( /disc/.test(target.className) ) {
-			$('.disc').removeClass('selected');
-			_list.style.webkitTransform = 'translate3d(' + (target.dataset.index * -100) + '%, 0, 0)';
+			transform = getTransformProperty(_list);
+			opera = (transform === 'OTransform'); // Opera doesn't support translate3d with JavaScript
+			property = (opera) ? 'translateX' : 'translate3d';
+			_list.style[transform] = property + '(' + (target.dataset.index * -100) + (opera) ? '%)' : '%, 0, 0)';
 			//_list.style.left = target.dataset.index * -100 + '%';
-			target.className = target.className + ' selected';
+			$('.disc').removeClass('selected'); // remove selected class from all others
+			target.className = target.className + SELECTED_CLASS;
 			timer.restart();
 		}
 	}
@@ -105,14 +131,14 @@ define([
 			programme, programmes = _carousel.getElementsByTagName('li'),
 			_pauseIcon = dom.create('i'),
 			_playpause = dom.create('div'),
-			_navigator = dom.create('div'),
 			_disc = dom.create('i');
+			_navigator = dom.create('div');
 
 			_pauseIcon.className = 'icon-pause';
 			_playpause.id = 'playpause';
 			_playpause.appendChild(_pauseIcon);
 			_playpause.addEventListener('click', playpauseHandler);
-			_disc.className = 'disc icon-certificate';
+			_disc.className = DISC_CLASS;
 			_navigator.className = 'navigator';
 
 		for (i; i < programmes.length; i++) {
@@ -133,7 +159,7 @@ define([
 		}
 
 		// select first
-		_navigator.firstChild.className = 'disc icon-certificate selected';
+		_navigator.firstChild.className = DISC_CLASS + SELECTED_CLASS;
 		_navigator.addEventListener('click', discHandler);
 
 		// add navigator and playpause to carousel
@@ -153,7 +179,9 @@ define([
 		// stop timer
 		timer.stop();
 
-		_navigator.removeEventListener('click', timer.restart);
+		if (_navigator) {
+			_navigator.removeEventListener('click', timer.restart);
+		}
 		window.removeEventListener('resize', sizeHandler);
 		window.removeEventListener('orientationchange', sizeHandler);
 

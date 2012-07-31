@@ -13,16 +13,15 @@ define([
 
 ], function CanvasModuleScope(a, App, Router) {
 
-	var name = 'canvas';
+	var name = 'canvas',
 
 /* private */
 
 	// shift
-	var shift = Array.prototype.shift,
+		shift = Array.prototype.shift,
 		// DOM
-		$content = $('#content'),
-		$main = $('#main'),
-		$menu = $('.menu'),
+		_main = a._doc.getElementById('main'),
+		_menu = a._doc.getElementsByTagName('nav')[0],
 		// current state
 		CURRENT_STATE = false,
 		// constants
@@ -33,15 +32,16 @@ define([
 	*	Transition 
 	*/
 	function startTransition() {
-		a.$transition.appendTo($content).removeClass('hide'); 
+		a._transition.className = 'background';
+		a._content.appendChild(a._transition);
 	}
 
 	function endTransition() { 
 		// just wait, so the view won't blink while rendering,
 		// better UX feedback with smoother transition
-		a.$transition.addClass('hide'); 
+		a._transition.className = 'background hide';
 		setTimeout(function removeTransition() { 
-			a.$transition.remove(); 
+			a._content.removeChild(a._transition);
 		}, 500); 
 	}
 
@@ -91,14 +91,10 @@ define([
 	// async load controllers with require
 	function fetchController(controller) {
 //		console.log(' ------------------ FETCH CONTROLLER: ' + controller + ' --------------------');
-		require([controller], mapController);
-	}
-
-	// Save the current state of the controller
-	// on a local map for later use
-	function mapController(controller) {
-		controllers[controller.name] = controller;
-		intializeController(controller);
+		require([controller], function mapController(controller) {
+			controllers[controller.name] = controller;
+			intializeController(controller);
+		});
 	}
 
 	// unload a controller
@@ -153,23 +149,29 @@ define([
 
 	}
 
-	function toggleMenu(event) {
+	function handleActions(action, dataset) {
+		switch (action) {
+			case 'TOGGLE-MENU': toggleMenu(); break;
+		}
+	}
 
-		if ($main.hasClass('open')) {
+	function toggleMenu() {
+		if (/open/.test(_main.className)) {
 			closeMenu()
 		} else {
 			openMenu()
 		}
+		console.log(_menu.className);
 	}
 
 	function openMenu() {
-		$main.addClass('open');
-		$menu.addClass('active');
+		_main.className = 'open';
+		_menu.className = 'nav active';
 	}
 
 	function closeMenu() {
-		$main.removeClass('open');
-		$menu.removeClass('active');
+		_main.className = '';
+		_menu.className = 'nav';
 	}
 
 /* public */
@@ -188,9 +190,8 @@ define([
 		// and when finish rendereding,
 		// remove transition
 		App.on(a.VIEW_RENDERED, endTransition);
-
-		$('.menu').on('click', toggleMenu);
-
+		// Listen for action
+		App.on(a.ACTION, handleActions);
 		// DEBUGGING Handlers
 		/* View live cycle
 		App.on(a.VIEW_INITIALIZING, function(view) { console.log('Canvas Module', view.name, 'VIEW_INITIALIZING'); });
@@ -206,6 +207,7 @@ define([
 		App.on(a.CONTROLLER_FINALIZING, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_FINALIZATING'); });
 		App.on(a.CONTROLLER_FINALIZED, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_FINALIZED'); });
 		*/
+
 		return this;
 	}
 
@@ -215,8 +217,7 @@ define([
 		App.off(a.NAVIGATE, navigate);
 		App.off(a.NAVIGATE, startTransition);
 		App.off(a.VIEW_RENDERED, endTransition);
-
-		$('.menu').off('click', toggleMenu);
+		App.off(a.ACTION, manageActions);
 
 		return this;
 	}
@@ -224,10 +225,10 @@ define([
 /* export */
 
 	return {
-		name: name,
-		controllers: controllers,
-		initialize: initialize,
-		finalize: finalize
+		name		: name,
+		controllers	: controllers,
+		initialize	: initialize,
+		finalize	: finalize
 	};
 
 });

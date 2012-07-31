@@ -25,7 +25,7 @@ define([
 
 		/* Modules namespace */
 		App.modules = {};
-		
+
 	/* constructor */
 	function initialize() {
 
@@ -39,6 +39,7 @@ define([
 			require(['modules/user', 'modules/canvas', 'modules/router'], function initializeModules() {
 				while (module = Array.prototype.shift.apply(arguments)) { App.modules[module.name] = module.initialize(); } 
 			});
+
 		});
 
 		return App;
