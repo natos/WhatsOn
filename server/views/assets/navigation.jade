@@ -2,11 +2,11 @@
 	#navigation-background
 	#navigation-content
 		.upc-logo #{config.APP_NAME}
-		.menu(data-action="TOGGLE-MENU")
+		.menu-item(data-action="TOGGLE-MENU")
 			i.icon-reorder
 			b.label #{__i('Menu')}
 nav.nav
-	a.settings(href="/settings", title="#{__i('Settings')}", data-action="TOGGLE-EDIT-MODE")
+	.menu-item(data-action="TOGGLE-EDIT-MODE")
 		i.icon-cog
 		b.label #{__i('Settings')}
 	a.login(href="/login", title="#{__i('Login')}")
@@ -15,7 +15,7 @@ nav.nav
 	a.dashboard(href="/dashboard", title="#{__i('Dashboard')}")
 		i.icon-home
 		b.label #{__i('Home')}
-	a.movies(href="/search", title="#{__i('Search')}",)
+	a.search(href="/search", title="#{__i('Search')}",)
 		i.icon-search
 		b.label #{__i('Search')}
 	a.nowandnext(href="/nowandnext", title="#{__i('Now &amp; Next')}")
