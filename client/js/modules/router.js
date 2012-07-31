@@ -12,13 +12,13 @@ define([
 
 ], function RouterModuleScope(a, App) {
 
-	var name = 'router';
+	var name = 'router',
 
 /* private */
 
 	// consts
 
-	var STATECHANGE = 'statechange',
+		STATECHANGE = 'statechange',
 
 	// shorcuts
 
@@ -63,7 +63,24 @@ define([
 	*/
 	function handleAnchors(event) {
 		// save the click target
-		var anchor = event.target;
+		var element = anchor = event.target;
+		
+		// Find actions on clicked elements, this
+		// actions are hidden on the data-action
+		// attribute, its value defines the action
+		// to be trigger.
+		while (!element.dataset.action) {
+			// break if the #main is reached
+			if (element === this) { break; }
+			// walk up the DOM
+			element = element.parentNode;
+		}
+		// found a data-action attribute?
+		if (element.dataset.action) {
+			// trigger the action
+			App.emit(a.ACTION, element.dataset.action, element.dataset);
+		}
+
 		// Keep bubbling up through DOM until you find an anchor,
 		// you might have clicked the icon or the label element,
 		// and not the proper <a> tag
@@ -98,10 +115,11 @@ define([
 		// Listen to every click on #main, 
 		// to override its default behavior
 		// and use our own Router to navigate
-		a.$main.on('click', handleAnchors);
+		a._main.addEventListener('click', handleAnchors, false);
 
 		// First load
 		handleStateChange();
+
 		if (App.allowGrid()) {
 			addGridButton();
 		}
@@ -114,6 +132,9 @@ define([
 		History.Adapter.unbind(window, STATECHANGE, handleStateChange);
 		// stop activating links
 		App.off(a.VIEW_INITIALIZING, activeAnchors);
+
+		a._main.removeEventListener('click', handleAnchors, false);
+
 		return this;
 	}
 
