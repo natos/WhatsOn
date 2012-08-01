@@ -555,6 +555,9 @@ footer {
 
 
 /* Carousel-specific */
+#featured {
+	margin-bottom: 10px;
+}
 
 .carousel {
 	position: relative;
