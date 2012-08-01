@@ -18,6 +18,7 @@ define([
 	DISC_CLASS = 'disc icon-certificate',
 	SELECTED_CLASS = ' selected',
 
+	transform,
 	rowing = true,
 
 	// dom elements
@@ -34,19 +35,21 @@ define([
 			timer.clock = setTimeout(timer.tick, timer.time);
 		},
 		tick: function() {
-
+			// avoid ticking if we are off
 			if (!timer.status) { return; }
-
-			var disc = $('.disc.selected').next();
-
-			if (!disc[0]) {
-				$('.disc').first().trigger('click');
-			} else {
-				disc.trigger('click');
+			// grab the selected disc
+			var disc, i = 0;
+			for (i = 0; i < _navigator.children.length; i++) {
+				if (/selected/.test(_navigator.children[i].className)) {
+					disc = _navigator.children[i];
+				}
 			}
 
-			timer.restart();
-
+			var disc = $('.disc.selected').next();
+				// get the next disc
+				disc = (!disc[0]) ? $('.disc').first()[0] : disc[0];
+				// trigger click on the disc
+				disc.click(); 
 		},
 		restart: function() {
 			timer.stop();
@@ -61,19 +64,8 @@ define([
 	function getTransformProperty(element) {
 	    // Note that in some versions of IE9 it is critical that
 	    // msTransform appear in this list before MozTransform
-	    var properties = [
-	        'transform',
-	        'WebkitTransform',
-	        'msTransform',
-	        'MozTransform',
-	        'OTransform'
-	    ];
-	    var p;
-	    while (p = properties.shift()) {
-	        if (typeof element.style[p] != 'undefined') {
-	            return p;
-	        }
-	    }
+	    var p, properties = ['transform', 'WebkitTransform', 'msTransform', 'MozTransform', 'OTransform'];
+	    while (p = properties.shift()) { if (typeof element.style[p] != 'undefined') { return p; } }
 	    return false;
 	}
 
@@ -88,12 +80,9 @@ define([
 		event.stopPropagation();
 		var target = event.target, transform, property, opera, i = 0;
 		if ( /disc/.test(target.className) ) {
-			// damn prefix!
-			transform = getTransformProperty(_list);
-			// Opera doesn't support translate3d with JavaScript
-			opera = (transform === 'OTransform');
-			property = (opera) ? 'translateX' : 'translate3d';
-			_list.style[transform] = property + '(' + (target.dataset.index * -100) + ((opera) ? '%)' : '%, 0, 0)');
+			// slide list to the disc index * -1 * 100%
+			// just because I need a negative number
+			slide(_list).to(target.dataset.index * -1); // I need a negative value
 			// remove selected class from all others
 			for (i = 0; i < _navigator.children.length; i++) { _navigator.children[i].className = DISC_CLASS; }
 			// select current target
@@ -105,12 +94,33 @@ define([
 	function playpauseHandler() {
 		if (rowing) { 
 			timer.stop();
-			$(this).find('.icon-pause').removeClass('icon-pause').addClass('icon-play');
+			this.getElementsByTagName('i')[0].className = 'icon-play';
+			//$(this).find('.icon-pause').removeClass('icon-pause').addClass('icon-play');
 		} else {
 			timer.start();
-			$(this).find('.icon-play').removeClass('icon-play').addClass('icon-pause');
+			this.getElementsByTagName('i')[0].className = 'icon-pause';
+			//$(this).find('.icon-play').removeClass('icon-play').addClass('icon-pause');
 		}
 		rowing = !rowing;
+	}
+
+	/*
+	*	Slide an element, to a percentage point
+	*	Use: slide(DOMElement).to(int);
+	*/
+	function slide(element) {
+		var opera, property;
+		// Opera doesn't support translate3d with JavaScript
+		opera = (transform === 'OTransform');
+		property = (opera) ? 'translateX' : 'translate3d';
+
+		function toPoint(point) {
+			element.style[transform] = property + '(' + (100*point) + ((opera) ? '%)' : '%, 0, 0)');
+		}
+
+		return { // yeah, I like currying
+			to: toPoint
+		}
 	}
 
 /* public */ 
@@ -126,55 +136,61 @@ define([
 	function render() {
 
 		_carousel = document.getElementById('featured');
-		_carousel.className = 'carousel';
-		_list = _carousel.getElementsByTagName('ul')[0];
-		_list.className = 'show slide';
 
-		var dataset, i = 0, img, disc, transform, opera, property,
-			programme, programmes = _carousel.getElementsByTagName('li'),
-			_pauseIcon = dom.create('i'),
-			_playpause = dom.create('div'),
-			_disc = dom.create('i');
-			_navigator = dom.create('div');
+		// first time load render the component
+		// avoid re-renderings, templating is in
+		// charge of saving the DOMFragment
+		if (_carousel.className === 'no-carousel') {
+			_carousel.className = 'carousel';
+			_list = _carousel.getElementsByTagName('ul')[0];
+			_list.className = 'show slide';
 
-			_pauseIcon.className = 'icon-pause';
-			_playpause.id = 'playpause';
-			_playpause.appendChild(_pauseIcon);
-			_playpause.addEventListener('click', playpauseHandler);
-			_disc.className = DISC_CLASS;
-			_navigator.className = 'navigator';
+			// define the kind of transformation
+			// this is because we normally use
+			// translate3d and opera doesn't support it
+			transform = getTransformProperty(_list);
 
-		for (i; i < programmes.length; i++) {
-			programme = programmes[i];
-			// position the list element
-				// damn prefix!
-				transform = getTransformProperty(_list);
-				// Opera doesn't support translate3d with JavaScript
-				opera = (transform === 'OTransform');
-				property = (opera) ? 'translateX' : 'translate3d';
-				programme.style[transform] = property + '(' + (100*i) + ((opera) ? '%)' : '%, 0, 0)');
-				//programme.style.left = 100*i + '%';
-			// deal with background images
-			img = programme.getElementsByTagName('img')[0];
-			dataset = img.dataset;
-			if (dataset.src) {
-				console.log(dataset.src);
-				img.src = dataset.src;
+			var dataset, i = 0, img, disc,
+				programme, programmes = _carousel.getElementsByTagName('li'),
+				_pauseIcon = dom.create('i'),
+				_playpause = dom.create('div'),
+				_disc = dom.create('i');
+				_navigator = dom.create('div');
+
+				_pauseIcon.className = 'icon-pause';
+				_playpause.id = 'playpause';
+				_playpause.appendChild(_pauseIcon);
+				_playpause.addEventListener('click', playpauseHandler);
+				_disc.className = DISC_CLASS;
+				_navigator.className = 'navigator';
+
+			for (i; i < programmes.length; i++) {
+				programme = programmes[i];
+				// position the list element
+				//programme.style[transform] = property + '(' + (100*i) + ((opera) ? '%)' : '%, 0, 0)');
+				slide(programme).to(i); // nice eh?
+				// deal with background images
+				img = programme.getElementsByTagName('img')[0];
+				dataset = img.dataset;
+				if (dataset.src) { img.src = dataset.src; }
+				// create a disc and addit to navigator
+				disc = _disc.cloneNode(true);
+				disc.setAttribute('data-index',i);
+				_navigator.appendChild(disc);
 			}
-			// create a disc and addit to navigator
-			disc = _disc.cloneNode(true);
-			disc.setAttribute('data-index',i);
-			_navigator.appendChild(disc);
-		}
 
-		// select first
-		_navigator.firstChild.className = DISC_CLASS + SELECTED_CLASS;
+			// select first
+			_navigator.firstChild.className = DISC_CLASS + SELECTED_CLASS;
+
+			// add navigator and playpause to carousel
+			_carousel.appendChild(_navigator);
+			_carousel.appendChild(_playpause);	
+		}	
+
+		// Add a click handler for navigation
 		_navigator.addEventListener('click', discHandler);
 
-		// add navigator and playpause to carousel
-		_carousel.appendChild(_navigator);
-		_carousel.appendChild(_playpause);		
-
+		// check the viewport size
 		sizeHandler();
 
 		// start timer
