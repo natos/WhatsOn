@@ -154,8 +154,11 @@ define([
 
 	function render(model) {
 
-		// render template
-		$content.find('header').append($template.html());
+		if (!$('#social')[0]) {
+			// render template
+			$content.find('header').append($template.html());
+		}
+		
 		// listent for user behavior
 		$social = $('#social');
 		$content.on('click', userActionHandler);
