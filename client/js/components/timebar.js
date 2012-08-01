@@ -5,13 +5,15 @@
 
 define([
 
+	'config/app',
 	'config/grid',
 	'config/channel',
 	'modules/app',
 	'models/channel',
-	'utils/convert'
+	'utils/convert',
+	'utils/dom'
 
-], function TimeBar(g, c, App, ChannelModel, convert) {
+], function TimeBar(a, g, c, App, ChannelModel, convert, dom) {
 
 	var name = 'timebar',
 
@@ -19,9 +21,9 @@ define([
 
 	_content = document.getElementById('main'),
 	_template = document.getElementById('timebar-template'),
-	_timebar = document.createElement('div'),
+	_timebar = dom.create('div'),
 	_timelist,
-	_timecontrols = document.createElement('div'),
+	_timecontrols = dom.create('div'),
 	_timecontrolsTemplate = document.getElementById('timecontrols-template');
 
 	_timecontrols.id = 'time-controls';
@@ -30,10 +32,10 @@ define([
 	function centerViewPort() {
 
 		var left = convert.timeToPixels( new Date() );
-			left = left - ( document.body.clientWidth / 2 ) + g.CHANNEL_BAR_WIDTH;
+			left = left - ( a._doc.body.clientWidth / 2 ) + g.CHANNEL_BAR_WIDTH;
 
 		// move the window left, but the same distance top
-		window.scroll(left, document.body.scrollTop);
+		a._win.scroll(left, a._doc.body.scrollTop);
 
 		return this;
 
@@ -69,24 +71,14 @@ define([
 		}
 	}
 
-	function toggleTimeControls(event) {
+	function toggleTimeControls() {
+		_timebar.className = (_timebar.className === '') ? 'expanded' : '';
+	}
 
-		event.stopPropagation();
-
-		var target = event.target;
-
-		while (target.id === 'time-controls') {
-			target = target.parentNode;
+	function handleActions(action) {
+		if (action === 'TOGGLE-EDIT-MODE') {
+			toggleTimeControls();
 		}
-
-		// close time controls
-		if (_timebar.className) {
-			_timebar.className = '';
-			return;
-		}
-
-		_timebar.className = 'expanded';
-
 	}
 
 /* public */
@@ -99,6 +91,8 @@ define([
 		// move with the grid
 		App.on(g.MODEL_CHANGED, modelChanged);
 
+		App.on(a.ACTION, handleActions);
+
 		return this;
 
 	}
@@ -109,7 +103,7 @@ define([
 		_timebar.innerHTML = _template.innerHTML;
 		_timebar.id = "time-bar";
 		_timebar.appendChild(_timecontrols);
-		_timebar.addEventListener('click', toggleTimeControls);
+		//_timebar.addEventListener('click', toggleTimeControls);
 		_timecontrols.addEventListener('change', changeChannelSelection);
 
 		// Render the time intervals
@@ -140,6 +134,8 @@ define([
 		$('.upc-logo').off('click', centerViewPort);
 
 		App.off(g.MODEL_CHANGED, modelChanged);
+
+		App.off(a.ACTION, handleActions);
 
 		_content.removeChild(_timebar);
 

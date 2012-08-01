@@ -5,6 +5,7 @@
 
 define([
 
+	'config/app',
 	'config/channel',
 	'config/grid',
 	'models/channel',
@@ -12,7 +13,7 @@ define([
 	'modules/app',
 	'utils/dom'
 
-], function ChannelBar(c, g, ChannelModel, GridModel, App, dom) {
+], function ChannelBar(a, c, g, ChannelModel, GridModel, App, dom) {
 
 	var name = 'channelbar',
 
@@ -65,12 +66,24 @@ define([
 		}
 	}
 
+	function toggleChannelControls() {
+		_channelbar.className = (_channelbar.className === '') ? 'expanded' : '';
+	}
+
+	function handleActions(action) {
+		if (action === 'TOGGLE-EDIT-MODE') {
+			toggleChannelControls();
+		}
+	}
+
 /* public */
 
 	function initialize() {
 
 		// move with the grid
 		App.on(g.MODEL_CHANGED, modelChanged);
+
+		App.on(a.ACTION, handleActions);
 
 		return this;
 	}
@@ -94,6 +107,8 @@ define([
 		_content.removeChild(_channelbar);
 
 		App.off(g.MODEL_CHANGED, modelChanged);
+
+		App.off(a.ACTION, handleActions);
 
 		return this;
 
@@ -142,7 +157,7 @@ define([
 
 		_channellist = document.getElementById('channels-bar-list');
 
-		var channelId, name, i, t = _channels.length, item, picture, image, 
+		var channelId, name, i, t = _channels.length, item, picture, image, favorite, favIcon,
 			list = dom.create('fragment');
 
 		// wipe the dom
@@ -164,8 +179,15 @@ define([
 			picture.className = 'picture';
 			picture.appendChild(image);
 
+			favIcon = dom.create('i');
+			favIcon.className = 'icon-star-empty';
+			favorite = dom.create('button');
+			favorite.className = 'favorite';
+			favorite.appendChild(favIcon);
+
 			item = dom.create('li');
 			item.appendChild(picture);
+			item.appendChild(favorite);
 			
 			list.appendChild(item);
 

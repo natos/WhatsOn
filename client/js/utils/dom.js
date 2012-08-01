@@ -22,11 +22,12 @@ define([
 		a: doc.createElement('a'),
 		i: doc.createElement('i'),
 		b: doc.createElement('b'),
-		div: doc.createElement('div'),
-		span: doc.createElement('span'),
-		img: doc.createElement('img'),
 		li: doc.createElement('li'),
+		div: doc.createElement('div'),
+		img: doc.createElement('img'),
+		span: doc.createElement('span'),
 		style: doc.createElement('style'),
+		button: doc.createElement('button'),
 		fragment: doc.createDocumentFragment()
 	};
 

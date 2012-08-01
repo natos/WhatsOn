@@ -273,6 +273,8 @@ define([
 
 		// Not sure if this use case is necessary, I don't think an unknown user
 		// would be able to remove a favorite, because he don't have any.
+		
+
 		// When user is not logued in, get its credentials and delay the action
 		if (!getAuthStatus()) { 
 			login(function afterLogin() { removeFavorite(id); });
