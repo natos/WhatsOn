@@ -46,6 +46,13 @@ define([
 		if (path.slice(0,1)==='/') {
 			path = path.slice(1);
 		}
+
+		// In some cases (Android 4.0.x), History.js returns a value starting with './'
+		// We don't want that, either:
+		if (path.slice(0,2)==='./') {
+			path = path.slice(2);
+		}
+
 		// Split the URL path (without protocol, hostname & port)
 		// into an array of strings. Split on path separator ('/'),
 		// querystring separators ('?', '&', '='), fragment separators,

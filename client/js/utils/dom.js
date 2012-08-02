@@ -35,7 +35,7 @@ define([
 	}
 
 	/**
-	* Not all browser support the .dataset property
+	* Not all browsers support the .dataset property
 	* for DOM elements. This function performs the same
 	* function: it gathers all the data-* attributes of a
 	* DOM element, and returns them as a hash.
