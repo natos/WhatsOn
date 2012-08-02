@@ -89,7 +89,7 @@ define([
 		// found a data-action attribute?
 		if (element.dataset.action) {
 			// trigger the action
-			App.emit(a.ACTION, element.dataset.action, element.dataset);
+			App.emit(a.ACTION, element.dataset.action, element);
 		}
 
 		// Keep bubbling up through DOM until you find an anchor,
