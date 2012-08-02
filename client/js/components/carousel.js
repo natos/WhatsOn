@@ -50,9 +50,9 @@ define([
 			// if there's a next sibling
 			// else use the first disc
 			if (disc.nextSibling) {
-				disc.nextSibling.click();
+				showCarouselItemForDisc(disc.nextSibling);
 			} else {
-				_navigator.firstChild.click();
+				showCarouselItemForDisc(_navigator.firstChild);
 			}
 
 		},
@@ -83,8 +83,11 @@ define([
 
 	function discHandler(event) {
 		event.stopPropagation();
-		var target = event.target, transform, property, opera, i = 0;
-		var dataset;
+		showCarouselItemForDisc(event.target);
+	}
+
+	function showCarouselItemForDisc(target) {
+		var transform, property, opera, i, dataset;
 		if ( /disc/.test(target.className) ) {
 			// slide list to the disc index * -1 * 100%
 			// just because I need a negative number
