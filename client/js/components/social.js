@@ -7,10 +7,11 @@ define([
 
 	'config/app',
 	'config/user',
+	'config/channel',
 	'modules/app',
 	'models/user'
 
-], function(a, u, App, UserModel) {
+], function SocialComponentScope(a, u, App, UserModel) {
 
 	var name = 'social',
 
