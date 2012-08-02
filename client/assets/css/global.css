@@ -1425,12 +1425,13 @@ footer {
 
 #channels-bar {
 	overflow: hidden;
-	left: 0;
-	bottom:0;
-	top: 70px;
-	width: 55px;
 	position: fixed;
-	background-color: white;
+	width: 55px;
+	top: 66px;
+	bottom:0;
+	left: 0;
+
+	background: #fff;
 
 	z-index: 2;
 
@@ -1490,7 +1491,7 @@ footer {
 	position: absolute;
 	background:#fff;
 	width: 90px;
-	left: 3px;
+	padding-left: 3px;
 
 	-webkit-backface-visibility: hidden;
 	-webkit-transform:translate3d(0,0,0);
@@ -1522,6 +1523,7 @@ footer {
 }
 
 #channels-bar .favorite {
+	color: #999;
 	position: absolute;
 	background: none;
 	box-shadow: none;
@@ -1529,6 +1531,14 @@ footer {
 	left: 40px;
 	top: 20px;
 	font-size: 1.5em;
+}
+
+#channels-bar .icon-star {
+	color: #D9D919;
+}
+
+#channels-bar .icon-star:hover {
+	color: #CFB52B;
 }
 
 /* ==============

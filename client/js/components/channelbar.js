@@ -8,19 +8,25 @@ define([
 	'config/app',
 	'config/channel',
 	'config/grid',
+	'config/user',
 	'models/channel',
 	'models/grid',
+	'models/user',
 	'modules/app',
 	'utils/dom'
 
-], function ChannelBar(a, c, g, ChannelModel, GridModel, App, dom) {
+], function ChannelBarComponentScope(a, c, g, u, ChannelModel, GridModel, UserModel, App, dom) {
 
 	var name = 'channelbar',
 
 /* private */
+		FAVORITE_CHANNELS = 'favorite-channels',
+		TOGGLE_FAVORITE = 'TOGGLE-FAVORITE',
+		TOGGLE_EDITMODE = 'TOGGLE-EDIT-MODE',
+
 		_template = document.getElementById('channelsbar-template'),
 		_content = document.getElementById('main'),
-		_channelbar = document.createElement('div'),
+		_channelsbar = document.createElement('div'),
 		_channellist,
 
 	/**
@@ -51,7 +57,7 @@ define([
 		channelImg = null;
 	}
 
-	function modelChanged(changes) {
+	function handleGridModelChanges(changes) {
 
 		if (typeof changes === 'undefined') { return; }
 
@@ -66,13 +72,45 @@ define([
 		}
 	}
 
-	function toggleChannelControls() {
-		_channelbar.className = (_channelbar.className === '') ? 'expanded' : '';
+	function handleUserModelChanges(changes) {
+
+		if (typeof changes === 'undefined') { return; }
+
+		if (changes[FAVORITE_CHANNELS]) { renderChannelsGroup(); }
+
 	}
 
-	function handleActions(action) {
-		if (action === 'TOGGLE-EDIT-MODE') {
-			toggleChannelControls();
+	function handleActions(action, element) {
+		switch (action) {
+			case TOGGLE_EDITMODE:
+				toggleChannelControls();
+				break;
+			case TOGGLE_FAVORITE:
+				toggleFavorite(element);
+				break;
+		}
+	}
+
+	function toggleChannelControls() {
+		_channelsbar.className = (_channelsbar.className === '') ? 'expanded' : '';
+	}
+
+	function toggleFavorite(element) {
+
+		var type = 'upcsocial:tv_channel',
+			id = element.dataset.id,
+			url = element.dataset.url,
+			favorite = element.getElementsByTagName('i')[0],
+			isFavorite = favorite.className === 'icon-star';
+
+		if (!url) { return; }
+
+		if (isFavorite) {
+			favorite.className = 'icon-star-empty';
+			App.emit(u.REMOVE_FAVORITE, id);
+		} else {
+			favorite.className = 'icon-star';
+			App.emit(u.ADD_FAVORITE, type, url);
 		}
 	}
 
@@ -81,8 +119,8 @@ define([
 	function initialize() {
 
 		// move with the grid
-		App.on(g.MODEL_CHANGED, modelChanged);
-
+		App.on(g.MODEL_CHANGED, handleGridModelChanges);
+		App.on(u.MODEL_CHANGED, handleUserModelChanges);
 		App.on(a.ACTION, handleActions);
 
 		return this;
@@ -91,9 +129,9 @@ define([
 	function render() {
 
 		// grab the channellist
-		_channelbar.id = 'channels-bar';
-		_channelbar.innerHTML = _template.innerHTML;
-		_content.appendChild(_channelbar);
+		_channelsbar.id = 'channels-bar';
+		_channelsbar.innerHTML = _template.innerHTML;
+		_content.appendChild(_channelsbar);
 		_channellist = document.getElementById('channels-bar-list');
 
 		renderChannelsGroup();
@@ -104,10 +142,10 @@ define([
 
 	function finalize() {
 
-		_content.removeChild(_channelbar);
+		_content.removeChild(_channelsbar);
 
-		App.off(g.MODEL_CHANGED, modelChanged);
-
+		App.off(g.MODEL_CHANGED, handleGridModelChanges);
+		App.off(u.MODEL_CHANGED, handleUserModelChanges);
 		App.off(a.ACTION, handleActions);
 
 		return this;
@@ -157,7 +195,7 @@ define([
 
 		_channellist = document.getElementById('channels-bar-list');
 
-		var channelId, name, i, t = _channels.length, item, picture, image, favorite, favIcon,
+		var channelId, name, i, t = _channels.length, item, picture, image, favorite, favIcon, isFavorite,
 			list = dom.create('fragment');
 
 		// wipe the dom
@@ -169,20 +207,34 @@ define([
 			channelId = _channels[i].id;
 			name = _channels[i].name;
 
+			// check Favorite info
+			isFavorite = (UserModel[FAVORITE_CHANNELS]) ? UserModel[FAVORITE_CHANNELS]['http://upcsocial.herokuapp.com/channel/' + channelId] : false;
+
+			// create logo image
 			image = dom.create('img');
 			image.className = 'loading';
 			image.setAttribute('id', 'channelImg' + channelId);
 			image.setAttribute('title', name);
 			image.setAttribute('data-src', 'http://www.upc.nl' + _channels[i].logo.href + '?size=medium');
 
+			// create logo container
 			picture = dom.create('div');
 			picture.className = 'picture';
 			picture.appendChild(image);
 
+			// favorite icon
 			favIcon = dom.create('i');
-			favIcon.className = 'icon-star-empty';
+			favIcon.className = (isFavorite) ? 'icon-star' : 'icon-star-empty';
+			// favorite button
 			favorite = dom.create('button');
 			favorite.className = 'favorite';
+			favorite.setAttribute('data-action', TOGGLE_FAVORITE);
+			favorite.setAttribute('data-url', 'http://upcsocial.herokuapp.com/channel/' + channelId);
+			// favorite node id from the open graph
+			// we need this to delete the favorite
+			// in the future
+			if (isFavorite) { favorite.setAttribute('data-id', isFavorite.id); }
+			// add content the button
 			favorite.appendChild(favIcon);
 
 			item = dom.create('li');
@@ -192,13 +244,20 @@ define([
 			list.appendChild(item);
 
 			// GC
+			isFavorite = null;
 			image = null;
 			picture = null;
+			favIcon = null;
+			favorite = null;
 			item = null;
 		}
 
 		// append to DOM
 		_channellist.appendChild(list);
+
+		// make sure that all the visible
+		// channels have logos
+		renderLogos(getSelectedChannels());
 
 		// GC
 		list = null;
