@@ -45,7 +45,7 @@ define([], function GridConfigContext() {
 	
 		MILLISECONDS_IN_HOUR: 3600000,
 	
-		TIMEBAR_HEIGHT: 30,
+		TIMEBAR_HEIGHT: 25,
 	
 		CHANNEL_BAR_WIDTH: 55,
 	
