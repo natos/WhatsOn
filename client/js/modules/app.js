@@ -17,14 +17,14 @@ define([
 ], function AppModuleScope(EventEmitter, ChannelUtils, ChannelModel, GridModel, UserModel) {
 
 /* private */
-
+	var shift = Array.prototype.shift,
 /* public */
 
 	/* App extends EventEmitter */
-	var App = new EventEmitter();
+	App = new EventEmitter();
 
-		/* Modules namespace */
-		App.modules = {};
+	/* Modules namespace */
+	App.modules = {};
 
 	/* constructor */
 	function initialize() {
@@ -37,7 +37,7 @@ define([
 			// Load the primary modules for the app.
 			// Each module must have an "initialize" method that returns the module itself.
 			require(['modules/user', 'modules/canvas', 'modules/router'], function initializeModules() {
-				while (module = Array.prototype.shift.apply(arguments)) { App.modules[module.name] = module.initialize(); } 
+				while (module = shift.apply(arguments)) { App.modules[module.name] = module.initialize(); } 
 			});
 
 		});
