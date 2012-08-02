@@ -27,6 +27,8 @@ define([
 		var groups = {}, byId = {}, group, channel, domain, i, domainIterator, groupIterator, dataLength = data.length;
 			// All Zenders collection
 			groups['000'] = [];
+			// Favorite channels collection
+			groups['001'] = [];
 
 		for (i = 0; i < dataLength; i++) {
 			channel = data[i];
@@ -34,7 +36,7 @@ define([
 			byId[channel.id] = channel;
 			// logo easy access THANK YOU!
 			byId[channel.id].logo = getLogo(channel);
-			// save channel in All Zenders
+			// save channels on All Zenders collection
 			groups['000'].push(channel);
 			// a little cleanning
 			delete channel._type;
@@ -70,11 +72,7 @@ define([
 		return data;
 	}
 
-	// DRY Alert!
-	// This function is needed in other components.
-	// NS: Maybe is a good idea to create a map of logos
-	//		and cache it on the channelModel something
-	//		easy like: ChannelModel.logos[ChannelID]...
+	// Get the logo of a channel
 	function getLogo(channel) {
 		if (!channel.links) { return; }
 		var foundif = false, t = channel.links.length;
