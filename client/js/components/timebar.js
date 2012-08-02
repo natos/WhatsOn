@@ -13,7 +13,7 @@ define([
 	'utils/convert',
 	'utils/dom'
 
-], function TimeBar(a, g, c, App, ChannelModel, convert, dom) {
+], function TimeBarComponentScope(a, g, c, App, ChannelModel, convert, dom) {
 
 	var name = 'timebar',
 
@@ -60,7 +60,11 @@ define([
 
 		switch(event.target.name) {
 			case 'channelSelector':
-				// change channel selection 
+				// change channel selection
+				if (!ChannelModel[c.GROUPS][event.target.value]) {
+					console.log('The selected groun doesn\'t exist');
+					return;
+				}
 				ChannelModel.set(c.SELECTED_GROUP, event.target.value);
 				break;
 
