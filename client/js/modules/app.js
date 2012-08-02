@@ -98,10 +98,20 @@ define([
 	 * - Android browser < 2.3
 	 */
 	function allowGrid() {
-		var blacklist = "(Android 1\.5)|(Android 1\.6)|(Android 2\.1)|(Android 2\.2)" // Exclude Android browser before 2.3
+		var blacklist = "(Android 1\.5)|(Android 1\.6)|(Android 2\.1)|(Android 2\.2)"; // Exclude Android browser before 2.3
 			+ "|(CPU OS|iPhone OS) (1|2|3|4)" // Exclude Mobile Safari on iOS before 5.0
 		var blacklistRE = new RegExp(blacklist);
 
+		return !blacklistRE.test(navigator.userAgent);
+	}
+
+	/**
+	* Android 2.x does not apply 3D transformations to position:fixed elements.
+	* Use this test for adding an extra className to the root element.
+	*/
+	function can3DTransformPositionFixed() {
+		var blacklist = "(Android 1\.5)|(Android 1\.6)|(Android 2\.1)|(Android 2\.2)|(Android 2\.3)"; // Exclude Android browser 2.3 and earlier
+		var blacklistRE = new RegExp(blacklist);
 		return !blacklistRE.test(navigator.userAgent);
 	}
 
@@ -117,6 +127,7 @@ define([
 		user	: UserModel
 	}
 	App.allowGrid = allowGrid;
+	App.can3DTransformPositionFixed = can3DTransformPositionFixed;
 
 	return App;
 

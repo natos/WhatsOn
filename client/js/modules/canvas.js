@@ -210,6 +210,9 @@ define([
 		App.on(a.CONTROLLER_FINALIZED, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_FINALIZED'); });
 		*/
 
+		if (!App.can3DTransformPositionFixed()) {
+			document.documentElement.className += ' css-no-3d-transform-position-fixed';
+		}
 		return this;
 	}
 
