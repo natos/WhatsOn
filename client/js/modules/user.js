@@ -8,11 +8,13 @@
 define([
 
 	'config/user',
+	'config/channel',
 	'modules/app',
 	'models/user',
+	'models/channel',
 	'components/user'
 
-], function UserModuleScope(u, App, UserModel, UserComponent) {
+], function UserModuleScope(u, c, App, UserModel, ChannelModel, UserComponent) {
 
 	var name = 'user',
 
@@ -80,6 +82,8 @@ define([
 		UserModel.set(FAVORITE_PROGRAMMES, false);
 		UserModel.set(FAVORITE_CHANNELS, false);
 //		UserModel.set(RECORDINGS, false);
+		// Remove favorites?
+		ChannelModel[c.GROUPS]['001'].length = 0;
 	}
 
 	/**
@@ -186,7 +190,8 @@ define([
 			var TV_PROGRAMME = 'tv_show',
 				TV_CHANNEL = 'tv_channel',
 				_programmes = {},
-				_channels = {};
+				_channels = {},
+				_id;
 
 			obj.response.data.forEach(function(favorite) {
 
@@ -196,6 +201,8 @@ define([
 
 				if (TV_CHANNEL in favorite.data && favorite.data[TV_CHANNEL].url) {
 					_channels[favorite.data[TV_CHANNEL].url] = favorite;
+					_id = favorite.data[TV_CHANNEL].url.split('http://upcsocial.herokuapp.com/channel/')[1]; // this is so ugly, sorry
+					ChannelModel[c.GROUPS]['001'].push(ChannelModel[c.BY_ID][_id]);
 				}
 
 			});
