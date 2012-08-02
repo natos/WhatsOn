@@ -28,8 +28,8 @@ define([
 		INITIALIZE = 'initialize',
 		FINALIZE = 'finalize';
 
-	/* 
-	*	Transition 
+	/*
+	*	Transition
 	*/
 	function startTransition() {
 		a._transition.className = 'background';
@@ -114,7 +114,7 @@ define([
 	function finalizeController(controller) {
 		if (typeof controller[FINALIZE] !== "function") {
 			console.log('Canvas Module', controller.name + ' can\'t be finalized, \'finalize\' method is not a function.');
-			return;	
+			return;
 		}
 		// finalize controller
 //		console.log(' ------------------ FINALIZE CONTROLLER: ' + controller.name + ' --------------------');
@@ -122,7 +122,7 @@ define([
 	}
 
 
-	/* 
+	/*
 	*	Navigate
 	*/
 	function navigate(State) {
@@ -159,9 +159,9 @@ define([
 
 	function toggleMenu() {
 		if (/open/.test(_main.className)) {
-			closeMenu()
+			closeMenu();
 		} else {
-			openMenu()
+			openMenu();
 		}
 		console.log(_menu.className);
 	}
@@ -203,7 +203,7 @@ define([
 		App.on(a.VIEW_FINALIZING, function(view) { console.log('Canvas Module', view.name, 'VIEW_FINALIZING'); });
 		App.on(a.VIEW_FINALIZED, function(view) { console.log('Canvas Module', view.name, 'VIEW_FINALIZED'); });
 		*/
-		/* Controller live cycle 
+		/* Controller live cycle
 		App.on(a.CONTROLLER_INITIALIZING, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_INITIALIZATING'); });
 		App.on(a.CONTROLLER_INITIALIZED, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_INITIALIZATED'); });
 		App.on(a.CONTROLLER_FINALIZING, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_FINALIZATING'); });
