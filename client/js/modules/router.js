@@ -1,5 +1,5 @@
-/* 
-* RouterModule 
+/*
+* RouterModule
 * ------
 * Using HTML5 pushState API with a little help of History.js (http://balupton.github.com/history.js/demo/)
 */
@@ -8,9 +8,10 @@ define([
 
 	'config/app',
 	'modules/app',
+	'utils/dom',
 	'/js/lib/history/1.7.1-r2/bundled/html4+html5/native.history.js'
 
-], function RouterModuleScope(a, App) {
+], function RouterModuleScope(a, App, dom) {
 
 	var name = 'router',
 
@@ -68,28 +69,32 @@ define([
 	}
 
 	/**
-	*	Listen to every click on #main, 
+	*	Listen to every click on #main,
 	*	to override its default behavior
 	*	and use our own Router to navigate
 	*/
 	function handleAnchors(event) {
 		// save the click target
 		var element = anchor = event.target;
-		
+		var dataset;
+
 		// Find actions on clicked elements, this
 		// actions are hidden on the data-action
 		// attribute, its value defines the action
 		// to be trigger.
-		while (!element.dataset.action) {
+		dataset = dom.getDataset(element);
+		while (!dataset.action) {
 			// break if the #main is reached
 			if (element === this) { break; }
 			// walk up the DOM
 			element = element.parentNode;
+			dataset = dom.getDataset(element);
 		}
+
 		// found a data-action attribute?
-		if (element.dataset.action) {
+		if (dataset.action) {
 			// trigger the action
-			App.emit(a.ACTION, element.dataset.action, element.dataset);
+			App.emit(a.ACTION, dataset.action, dataset);
 		}
 
 		// Keep bubbling up through DOM until you find an anchor,
@@ -108,8 +113,9 @@ define([
 			event.preventDefault();
 			// grab its data-*, title, and href attr
 			// and pass everithing to the router, he will pushState and whatever
-			navigate(anchor.dataset, anchor.title, anchor.href);
-			//console.log(anchor.dataset, anchor.title, anchor.href);
+			dataset = dom.getDataset(anchor);
+			navigate(dataset, anchor.title, anchor.href);
+			//console.log(dataset, anchor.title, anchor.href);
 		}
 		// else, ingnore
 		// let the event continue
@@ -120,10 +126,10 @@ define([
 
 	function initialize() {
 		// Bind to StateChange Event
-		History.Adapter.bind(window, STATECHANGE, handleStateChange); 
+		History.Adapter.bind(window, STATECHANGE, handleStateChange);
 		// Active links
 		App.on(a.VIEW_INITIALIZING, activeAnchors);
-		// Listen to every click on #main, 
+		// Listen to every click on #main,
 		// to override its default behavior
 		// and use our own Router to navigate
 		a._main.addEventListener('click', handleAnchors, false);

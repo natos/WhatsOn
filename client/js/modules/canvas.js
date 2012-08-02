@@ -36,19 +36,19 @@ define([
 		a._content.appendChild(a._transition);
 	}
 
-	function endTransition() { 
+	function endTransition() {
 		// just wait, so the view won't blink while rendering,
 		// better UX feedback with smoother transition
 		a._transition.className = 'background hide';
 
-		setTimeout(function removeTransition() { 
+		setTimeout(function removeTransition() {
 			if (a._transition.parentNode) {
 				a._transition.parentNode.removeChild(a._transition);
 			}
-		}, 500); 
+		}, 500);
 	}
 
-	/* 
+	/*
 	*	Load controllers
 	*/
 	function loadController(State) {
@@ -83,7 +83,6 @@ define([
 		// Initialize controller
 //		console.log(' ------------------ LOAD CONTROLLER: ' + cachedController.name + ' --------------------');
 		intializeController(cachedController);
-		
 	}
 
 	function intializeController(controller) {

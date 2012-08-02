@@ -84,10 +84,12 @@ define([
 	function discHandler(event) {
 		event.stopPropagation();
 		var target = event.target, transform, property, opera, i = 0;
+		var dataset;
 		if ( /disc/.test(target.className) ) {
 			// slide list to the disc index * -1 * 100%
 			// just because I need a negative number
-			slide(_list).to(target.dataset.index * -1); // I need a negative value
+			dataset = dom.getDataset(target);
+			slide(_list).to(dataset.index * -1); // I need a negative value
 			// remove selected class from all others
 			for (i = 0; i < _navigator.children.length; i++) { _navigator.children[i].className = DISC_CLASS; }
 			// select current target
@@ -97,7 +99,7 @@ define([
 	}
 
 	function playpauseHandler() {
-		if (rowing) { 
+		if (rowing) {
 			timer.stop();
 			this.getElementsByTagName('i')[0].className = 'icon-play';
 			//$(this).find('.icon-pause').removeClass('icon-pause').addClass('icon-play');
@@ -176,7 +178,7 @@ define([
 				slide(programme).to(i); // nice eh?
 				// deal with background images
 				img = programme.getElementsByTagName('img')[0];
-				dataset = img.dataset;
+				dataset = dom.getDataset(img);
 				if (dataset.src) { img.src = dataset.src; }
 				// create a disc and addit to navigator
 				disc = _disc.cloneNode(true);
