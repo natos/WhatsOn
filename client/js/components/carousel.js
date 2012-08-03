@@ -44,12 +44,17 @@ define([
 					disc = _navigator.children[i];
 				}
 			}
+			// if somehow the reference is lost return
+			if (!disc) { return; }
 
-			var disc = $('.disc.selected').next();
-				// get the next disc
-				disc = (!disc[0]) ? $('.disc').first()[0] : disc[0];
-				// trigger click on the disc
-				disc.click(); 
+			// if there's a next sibling
+			// else use the first disc
+			if (disc.nextSibling) {
+				disc.nextSibling.click();
+			} else {
+				_navigator.firstChild.click();
+			}
+
 		},
 		restart: function() {
 			timer.stop();
