@@ -210,6 +210,21 @@ img {
 	-o-transform: translate(49px, 0); /* Using translate(X,Y) here because opera doesn't support translate3d */
 	-transform: translate3d(49px, 0, 0);
 }
+/* If the browser does not support 3d transforms on fixed position elements,
+ override the transform, and position the elements using left edge instead.
+ Note: the transform MUST be overridden. Android 2 reacts unpredictably
+ if the 3d transform is in place, and the left position is also set.
+*/
+.css-no-3d-transform-position-fixed .open #navigation,
+.css-no-3d-transform-position-fixed .open #channels-bar,
+.css-no-3d-transform-position-fixed .open #time-bar {
+	-webkit-transform: none;
+	-moz-transform: none;
+	-ms-transform: none;
+	-o-transform: none;
+	-transform: none;
+	left:49px;
+}
 
 
 /* navbar links */
@@ -266,6 +281,21 @@ img {
 		-ms-transform: translate3d(0, 0, 0);
 		-o-transform: translate(0, 0); /* Using translate(X,Y) here because opera doesn't support translate3d */
 		-transform: translate3d(0, 0, 0);
+	}
+	/* If the browser does not support 3d transforms on fixed position elements,
+	 override the transform, and position the elements using left edge instead.
+	 Note: the transform MUST be overridden. Android 2 reacts unpredictably
+	 if the 3d transform is in place, and the left position is also set.
+	*/
+	.css-no-3d-transform-position-fixed .open #navigation,
+	.css-no-3d-transform-position-fixed .open #channels-bar,
+	.css-no-3d-transform-position-fixed .open #time-bar {
+		-webkit-transform: none;
+		-moz-transform: none;
+		-ms-transform: none;
+		-o-transform: none;
+		-transform: none;
+		left:0;
 	}
 
 	.open .nav a.active {

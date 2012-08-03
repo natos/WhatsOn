@@ -28,27 +28,27 @@ define([
 		INITIALIZE = 'initialize',
 		FINALIZE = 'finalize';
 
-	/* 
-	*	Transition 
+	/*
+	*	Transition
 	*/
 	function startTransition() {
 		a._transition.className = 'background';
 		a._content.appendChild(a._transition);
 	}
 
-	function endTransition() { 
+	function endTransition() {
 		// just wait, so the view won't blink while rendering,
 		// better UX feedback with smoother transition
 		a._transition.className = 'background hide';
 
-		setTimeout(function removeTransition() { 
+		setTimeout(function removeTransition() {
 			if (a._transition.parentNode) {
 				a._transition.parentNode.removeChild(a._transition);
 			}
-		}, 500); 
+		}, 500);
 	}
 
-	/* 
+	/*
 	*	Load controllers
 	*/
 	function loadController(State) {
@@ -83,7 +83,6 @@ define([
 		// Initialize controller
 //		console.log(' ------------------ LOAD CONTROLLER: ' + cachedController.name + ' --------------------');
 		intializeController(cachedController);
-		
 	}
 
 	function intializeController(controller) {
@@ -115,7 +114,7 @@ define([
 	function finalizeController(controller) {
 		if (typeof controller[FINALIZE] !== "function") {
 			console.log('Canvas Module', controller.name + ' can\'t be finalized, \'finalize\' method is not a function.');
-			return;	
+			return;
 		}
 		// finalize controller
 //		console.log(' ------------------ FINALIZE CONTROLLER: ' + controller.name + ' --------------------');
@@ -123,7 +122,7 @@ define([
 	}
 
 
-	/* 
+	/*
 	*	Navigate
 	*/
 	function navigate(State) {
@@ -160,9 +159,9 @@ define([
 
 	function toggleMenu() {
 		if (/open/.test(_main.className)) {
-			closeMenu()
+			closeMenu();
 		} else {
-			openMenu()
+			openMenu();
 		}
 		console.log(_menu.className);
 	}
@@ -204,13 +203,16 @@ define([
 		App.on(a.VIEW_FINALIZING, function(view) { console.log('Canvas Module', view.name, 'VIEW_FINALIZING'); });
 		App.on(a.VIEW_FINALIZED, function(view) { console.log('Canvas Module', view.name, 'VIEW_FINALIZED'); });
 		*/
-		/* Controller live cycle 
+		/* Controller live cycle
 		App.on(a.CONTROLLER_INITIALIZING, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_INITIALIZATING'); });
 		App.on(a.CONTROLLER_INITIALIZED, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_INITIALIZATED'); });
 		App.on(a.CONTROLLER_FINALIZING, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_FINALIZATING'); });
 		App.on(a.CONTROLLER_FINALIZED, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_FINALIZED'); });
 		*/
 
+		if (!App.can3DTransformPositionFixed()) {
+			document.documentElement.className += ' css-no-3d-transform-position-fixed';
+		}
 		return this;
 	}
 
