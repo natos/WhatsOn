@@ -19,6 +19,8 @@ define([], function AppConfigContext() {
 
 		NAMESPACE: 'upsocial',
 
+		ROOT_URL: 'http://upcsocial.herokuapp.com/',
+
 		/* events */
 
 		NAVIGATE: 'app:navigate',

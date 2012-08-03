@@ -59,9 +59,8 @@ define([
 		// for all the favorite channels
 		for (url in channels) {
 			channel = channels[url].data['tv_channel'];
-			id = channel.url.match(/\d+\w+/)[0];
+			id = channel.url.split(a.ROOT_URL + 'channel/')[1];
 			favoriteChannelIds.push(id);
-
 		}
 
 		if (favoriteChannelIds.length > 0) {
@@ -87,7 +86,7 @@ define([
 		// for all the favorite channels
 		for (url in programmes) {
 			programme = programmes[url].data['tv_show'];
-			id = programme.url.match(/\d+\w+/)[0];
+			id = programme.url.split(a.ROOT_URL + 'programme/')[1];
 			// create a new anchor
 			$a = $anchor
 					.clone()
