@@ -7,7 +7,6 @@ define([
 
 	'config/app',
 	'config/user',
-	'config/channel',
 	'modules/app',
 	'models/user'
 
@@ -157,7 +156,7 @@ define([
 
 		if (!$('#social')[0]) {
 			// render template
-			$content.find('header').append($template.html());
+			$content.find('header').first().append($template.html());
 		}
 		
 		// listent for user behavior
