@@ -120,7 +120,7 @@ function(util, events, request, requestN, cache, DomainService, BookingsService,
 						});
 
 						// Cache the channels
-						cache.set('channels-list', allChannels, 30);
+						cache.set('channels-list', allChannels, 3600); // 1 hour
 						self.emit('getChannels', allChannels);
 
 					}).getDomains();

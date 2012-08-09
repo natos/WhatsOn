@@ -13,6 +13,7 @@ define([
 
 	// utils
 	'utils/requestn',
+	'utils/cache',
 
 	// config
 	'config/global.config'
@@ -23,13 +24,13 @@ define([
 *	@class DomainService
 */
 
-function(util, events, request, requestN, config) {
+function(util, events, request, requestN, cache, config) {
 
 	/** @constructor */
 
 	var DomainService = function() {
 
-		/** @borrow EventEmitter.constructor */ 
+		/** @borrow EventEmitter.constructor */
 		events.EventEmitter.call(this);
 
 		return this;
@@ -46,26 +47,17 @@ function(util, events, request, requestN, config) {
 		DOMAIN_GROUPS_URL = config.API_PREFIX + 'Domain/%%domainid%%/groups.json',
 		DOMAIN_GROUP_CHANNELS_URL = config.API_PREFIX + 'Domain/%%domainid%%/groups/%%groupid%%/channels.json';
 
-	var DOMAINS_CACHE = {
-		list		: [],
-		timestamp	: null,
-		duration	: 60 * 60 * 1000 // cache for 1 hour
-	};
-
 
 	/** @public */
 
 	/** Get list of all domains, with associated channels */
 	DomainService.prototype.getDomains = function() {
 
-		var self = this,
-			allDomains = DOMAINS_CACHE.list,
-			allDomains_timestamp = DOMAINS_CACHE.timestamp,
-			now = new Date(),
-			cacheDurationMilliseconds = DOMAINS_CACHE.duration;
+		var self = this;
 
 		// Return domains from cache, if available
-		if (allDomains && allDomains.length > 0 && allDomains_timestamp && typeof(allDomains_timestamp.valueOf)==='function' && (now.valueOf() - allDomains_timestamp.valueOf() < cacheDurationMilliseconds)) {
+		var allDomains = cache.get('domains-list');
+		if (allDomains) {
 			// from cache
 			self.emit('getDomains', allDomains);
 		} else {
@@ -102,14 +94,13 @@ function(util, events, request, requestN, config) {
 									var groupChannelsUrl = DOMAIN_GROUP_CHANNELS_URL.replace('%%domainid%%', domain.id).replace('%%groupid%%', group.id);
 									if (responses[groupChannelsUrl] && !responses[groupChannelsUrl].error) {
 										var channels = JSON.parse(responses[groupChannelsUrl].body);
-										group.channelIds = channels.map(function(el){return el.id});
+										group.channelIds = channels.map(function(el){return el.id;});
 									}
 								});
 							});
 
 							// Cache the domains
-							DOMAINS_CACHE.list = allDomains;
-							DOMAINS_CACHE.timestamp = now;
+							cache.set('domains-list', allDomains, 3600); // cache for 1 hour
 							self.emit('getDomains', allDomains);
 
 						});
