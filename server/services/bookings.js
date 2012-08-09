@@ -16,6 +16,7 @@ define([
 
 	// utils
 	'utils/dateutils',
+	'utils/cache',
 
 	// mock
 	'mocks/topbookings'
@@ -27,13 +28,13 @@ define([
  *	@class BookingsService
  */
 
-function(util, events, request, config, DateUtils, TOP_BOOKINGS_MOCK) {
+function(util, events, request, config, DateUtils, cache, TOP_BOOKINGS_MOCK) {
 
 	/** @constructor */
 
 	var BookingsService = function() {
 
-		/** @borrow EventEmitter.constructor */ 
+		/** @borrow EventEmitter.constructor */
 		events.EventEmitter.call(this);
 
 		return this;
@@ -48,13 +49,10 @@ function(util, events, request, config, DateUtils, TOP_BOOKINGS_MOCK) {
 
 	var _dateUtils = new DateUtils();
 
-	var _topBookingsCache;
-	var _topBookingsCacheTimestamp;
-
 	/**
-	 * Turn the JS object from the top bookings feed into a 
-	 * flattened, normalized array of events.
-	 */
+	* Turn the JS object from the top bookings feed into a
+	* flattened, normalized array of events.
+	*/
 	var normalizeTopBookings = function(topBookings) {
 
 		var normalizedEvents = [];
@@ -87,10 +85,10 @@ function(util, events, request, config, DateUtils, TOP_BOOKINGS_MOCK) {
 	};
 
 	/**
-	 * Retrieve, normalize, and cache the Top Bookings feed.
-	 * Raise an event when complete.
-	 */
-	 var populateTopBookingsCache = function(self) {
+	* Retrieve, normalize, and cache the Top Bookings feed.
+	* Raise an event when complete.
+	*/
+	var populateTopBookingsCache = function(self) {
 
 		// TODO: choose URL from config based on marketId
 		var topBookingsUrl = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGBooking.woa/wa/topBookings';
@@ -108,8 +106,7 @@ function(util, events, request, config, DateUtils, TOP_BOOKINGS_MOCK) {
 				try {
 					topBookings = JSON.parse(body);
 					topBookings = normalizeTopBookings(topBookings);
-					_topBookingsCache = topBookings;
-					_topBookingsCacheTimestamp = new Date();
+					cache.set('top-bookings', topBookings, 900); // Cache for 15 minutes
 				} catch(e) {
 					// Error - do not update cache
 					topBookings = [];
@@ -123,7 +120,7 @@ function(util, events, request, config, DateUtils, TOP_BOOKINGS_MOCK) {
 		});
 
 
-	 }
+	};
 
 
 	/** @public */
@@ -134,8 +131,9 @@ function(util, events, request, config, DateUtils, TOP_BOOKINGS_MOCK) {
 		var self = this;
 
 		// Use cached Top Bookings for up to 15 minutes
-		if (_topBookingsCache && _topBookingsCacheTimestamp && (new Date().valueOf() - _topBookingsCacheTimestamp.valueOf()) < (1000 * 60 * 15)) {
-			self.emit('getTopBookings', _topBookingsCache);
+		var topBookings = cache.get('top-bookings');
+		if (topBookings) {
+			self.emit('getTopBookings', topBookings);
 		} else {
 			populateTopBookingsCache(self);
 		}
