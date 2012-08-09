@@ -14,6 +14,7 @@ define([
 	// utils
 	'utils/dateutils',
 	'utils/requestn',
+	'utils/cache',
 
 	// config
 	'config/global.config'
@@ -24,14 +25,14 @@ define([
  *	@class TVTipsService
  */
 
-function(util, events, request, DateUtils, requestN, config) {
+function(util, events, request, DateUtils, requestN, cache, config) {
 	'use strict';
 
 	/** @constructor */
 
 	var TVTipsService = function() {
 
-		/** @borrow EventEmitter.constructor */ 
+		/** @borrow EventEmitter.constructor */
 		events.EventEmitter.call(this);
 
 		return this;
@@ -46,19 +47,13 @@ function(util, events, request, DateUtils, requestN, config) {
 
 	var _dateUtils = new DateUtils();
 	var EVENT_DETAILS_URL = config.API_PREFIX + 'Event/%%id%%.json';
-	var _tvTipsCache;
-	var _tvTipsCacheTimestamp;
-
-	// The event cache holds a map of event.id:eventdetails,
-	// so that we don't always have to retrieve the details for an event.
-	var _eventDetailsCache = {};
 
 
 	/**
-	 * The TVTips feed is XML. The xml2js parser turns this
-	 * into a simple object. Now we want to take that object,
-	 * and turn it into a flattened array of events.
-	 */
+	* The TVTips feed is XML. The xml2js parser turns this
+	* into a simple object. Now we want to take that object,
+	* and turn it into a flattened array of events.
+	*/
 	var normalizeTVTips = function(tvTips) {
 		var normalizedEvents = [],
 			normalizedEvent,
@@ -147,7 +142,7 @@ function(util, events, request, DateUtils, requestN, config) {
 					// Note: this will REMOVE events for which we cannot find a programme ID.
 					var requestUrls = [];
 					for(var i=0; i<normalizedEvents.length; i++) {
-						if (!_eventDetailsCache[normalizedEvents[i].id]) {
+						if (!cache.get(normalizedEvents[i].id)) {
 							requestUrls.push(EVENT_DETAILS_URL.replace(/%%id%%/, normalizedEvents[i].id));
 						}
 					}
@@ -159,24 +154,22 @@ function(util, events, request, DateUtils, requestN, config) {
 						for (i=0; i<requestUrls.length; i++) {
 							if (!responses[requestUrls[i]].error && responses[requestUrls[i]].response.statusCode == 200) {
 								eventDetails = JSON.parse(responses[requestUrls[i]].body);
-								_eventDetailsCache[eventDetails.id] = eventDetails;
+								cache.set(eventDetails.id, eventDetails, 3600);
 							}
 						}
 
 						// Attach programme ID to normalized events
 						var normalizedEventsWithProgrammeIds = [];
 						for (i=0; i<normalizedEvents.length; i++) {
-							eventDetails = _eventDetailsCache[normalizedEvents[i].id];
+							eventDetails = cache.get(normalizedEvents[i].id);
 							if (eventDetails && eventDetails.programme && eventDetails.programme.id) {
 								normalizedEvents[i].programme.id = eventDetails.programme.id;
 								normalizedEventsWithProgrammeIds.push(normalizedEvents[i]);
 							}
 						}
 
-						_tvTipsCache = normalizedEventsWithProgrammeIds;
-						_tvTipsCacheTimestamp = new Date();
-
-						self.emit('getTVTips', _tvTipsCache);
+						cache.set('tv-tips-normalized-events-with-programme-ids', normalizedEventsWithProgrammeIds, 3600); // Cache for 1 hour
+						self.emit('getTVTips', normalizedEventsWithProgrammeIds);
 					});
 
 				});
@@ -184,7 +177,7 @@ function(util, events, request, DateUtils, requestN, config) {
 
 		});
 
-	 }
+	};
 
 	/** @public */
 
@@ -194,8 +187,9 @@ function(util, events, request, DateUtils, requestN, config) {
 		var self = this;
 
 		// Use cached tvTips for up to 1 hour
-		if (_tvTipsCache && _tvTipsCacheTimestamp && (new Date().valueOf() - _tvTipsCacheTimestamp.valueOf()) < (1000 * 60 * 60)) {
-			self.emit('getTVTips', _tvTipsCache);
+		var normalizedEventsWithProgrammeIds = cache.get('tv-tips-normalized-events-with-programme-ids');
+		if (normalizedEventsWithProgrammeIds) {
+			self.emit('getTVTips', normalizedEventsWithProgrammeIds);
 		} else {
 			populateTvTipsCache(self);
 		}
