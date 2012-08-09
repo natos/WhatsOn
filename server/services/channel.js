@@ -13,6 +13,7 @@ define([
 
 	// utils
 	'utils/requestn',
+	'utils/cache',
 
 	// services
 	'services/domain',
@@ -28,7 +29,7 @@ define([
 *	@class ChannelService
 */
 
-function(util, events, request, requestN, DomainService, BookingsService, TVTipsService, config) {
+function(util, events, request, requestN, cache, DomainService, BookingsService, TVTipsService, config) {
 
 	/** @constructor */
 
@@ -53,25 +54,16 @@ function(util, events, request, requestN, DomainService, BookingsService, TVTips
 		CHANNEL_DETAILS	= config.API_PREFIX + 'Channel/%%id%%.json',
 		CHANNEL_EVENTS	= config.API_PREFIX + 'Channel/%%id%%/events/NowAndNext.json?order=startDateTime';
 
-	var CHANNELS_CACHE = {
-		list		: [],
-		timestamp	: null,
-		duration	: 60 * 60 * 1000 // cache for 1 hour
-	};
-
 	/** @public */
 
 	/** Get list of all channels */
 	ChannelService.prototype.getChannels = function() {
 
-		var self = this,
-			allChannels = CHANNELS_CACHE.list,
-			allChannels_timestamp = CHANNELS_CACHE.timestamp,
-			now = new Date(),
-			cacheDurationMilliseconds = CHANNELS_CACHE.duration;
+		var self = this;
 
 		// Return channels from cache, if available
-		if (allChannels && allChannels.length > 0 && allChannels_timestamp && typeof(allChannels_timestamp.valueOf)==='function' && (now.valueOf() - allChannels_timestamp.valueOf() < cacheDurationMilliseconds)) {
+		var allChannels = cache.get('channels-list');
+		if (allChannels) {
 			// from cache
 			self.emit('getChannels', allChannels);
 		} else {
@@ -128,8 +120,7 @@ function(util, events, request, requestN, DomainService, BookingsService, TVTips
 						});
 
 						// Cache the channels
-						CHANNELS_CACHE.list = allChannels;
-						CHANNELS_CACHE.timestamp = now;
+						cache.set('channels-list', allChannels, 30);
 						self.emit('getChannels', allChannels);
 
 					}).getDomains();
