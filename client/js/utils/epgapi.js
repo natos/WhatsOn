@@ -83,14 +83,17 @@ define([
 		var startDate = new Date(paramStartDate.valueOf());
 		var endDate = new Date(paramEndDate.valueOf());
 
-		// Adjust the start and end dates, so that the align with slice boundaries
+		// Adjust the start and end dates, so that they align with slice boundaries.
+
+		// Round the start date DOWN to the last whole hour
 		startDate.setMinutes(0);
 		startDate.setSeconds(0);
 		startDate.setMilliseconds(0);
 		var startSliceIndex = Math.floor(startDate.getHours() / HOURS_PER_SLICE);
 		startDate.setHours(startSliceIndex * HOURS_PER_SLICE);
 
-		endDate.setMinutes(0);
+		// Round the end time UP to the next whole hour
+		endDate.setMinutes(60);
 		endDate.setSeconds(0);
 		endDate.setMilliseconds(0);
 		var endSliceIndex = Math.ceil(endDate.getHours() / HOURS_PER_SLICE);
