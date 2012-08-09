@@ -16,6 +16,7 @@ define([
 
 	// utils
 	'utils/requestn',
+	'utils/cache',
 
 	// config
 	'config/global.config'
@@ -27,13 +28,13 @@ define([
  *	@class NowAndNextService
  */
 
-function(ChannelService, util, events, request, RequestN, config) {
+function(ChannelService, util, events, request, RequestN, cache, config) {
 
 	/** @constructor */
 
 	var NowAndNextService = function() {
 
-		/** @borrow EventEmitter.constructor */ 
+		/** @borrow EventEmitter.constructor */
 		events.EventEmitter.call(this);
 
 		return this;
@@ -73,14 +74,16 @@ function(ChannelService, util, events, request, RequestN, config) {
 		// Compose a list of channelEventsCollections, ordered according to the original channel list
 		var channelEventsCollections = [],
 			cacheKey,
+			cacheValue,
 			i;
 
 		for (i=0; i<channels.length; i++) {
 			cacheKey = channels[i].id + "__" + formattedSliceStartTime;
-			if (_cache[cacheKey]) {
+			cacheValue = cache.get(cacheKey);
+			if (cacheValue) {
 				channelEventsCollections.push({
 					'channel' : channels[i],
-					'channelEvents' : _cache[cacheKey]
+					'channelEvents' : cacheValue
 				});
 			}
 		}
@@ -89,16 +92,17 @@ function(ChannelService, util, events, request, RequestN, config) {
 	};
 
 	var cacheEventsForChannel = function(eventsForChannel, formattedSliceStartTime) {
+		var cacheKey;
 		if (eventsForChannel.length > 0) {
 			cacheKey = eventsForChannel[0].channel.id + "__" + formattedSliceStartTime;
-			_cache[cacheKey] = eventsForChannel;
+			cache.set(cacheKey, eventsForChannel, 3600); // Cache for 1 hour
 		}
-	}
+	};
 
 	var cacheNowAndNextApiResponses = function(nowAndNextRequests, responses, formattedSliceStartTime) {
 		var i, j,
 			response,
-			eventsForChannel, 
+			eventsForChannel,
 			cacheKey;
 
 		// Take the responses, extract the channelEvents, and put them in cache
@@ -111,7 +115,7 @@ function(ChannelService, util, events, request, RequestN, config) {
 				catch(e) {
 					// TODO: proper logging
 					console.log('Failed to parse response from ' + nowAndNextRequests[i]);
-					console.log(responses[nowAndNextRequests[i]])
+					console.log(responses[nowAndNextRequests[i]]);
 				}
 
 				if (response && response.length > 0) {
@@ -122,7 +126,7 @@ function(ChannelService, util, events, request, RequestN, config) {
 						cacheEventsForChannel(response, formattedSliceStartTime);
 					} else {
 						for (j=0; j<response.length; j++) {
-							cacheEventsForChannel(response[j], formattedSliceStartTime)
+							cacheEventsForChannel(response[j], formattedSliceStartTime);
 						}
 					}
 				}
@@ -169,12 +173,12 @@ function(ChannelService, util, events, request, RequestN, config) {
 				requestedChannels = channels;
 			}
 
-			// First, check the cache for this time slice. 
+			// First, check the cache for this time slice.
 			// If we do not have events for a [channel + timeslice],
-			// then add the channel to a list of channels to fetch from the API. 
+			// then add the channel to a list of channels to fetch from the API.
 			for (i=0; i<requestedChannels.length; i++) {
 				cacheKey = requestedChannels[i].id + "__" + formattedSliceStartTime;
-				if (!_cache[cacheKey]) {
+				if (!cache.get(cacheKey)) {
 					channelIdsToFetch.push(requestedChannels[i].id);
 				}
 			}
