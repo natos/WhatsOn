@@ -36,21 +36,32 @@ define([
 	*/
 		_channels = [];
 
-	function move(position) { 
-		if (_channellist) { 
+	function move(position) {
+		if (_channellist) {
 			_channellist.style.top = position.top + 'px';
 		}
 	}
 
+	function removeLoadingClassName() {
+		this.className = '';
+	}
+
 	function renderLogos(selectedChannels) {
 
-		var channelimg, 
+		var channelimg,
 			t = selectedChannels.length;
 
 		while (t--) {
 			channelImg = document.getElementById('channelImg'+selectedChannels[t]);
-			channelImg.className = ''; // remove loading
-			channelImg.setAttribute('src', channelImg.getAttribute('data-src'));
+			// If the image doesn't have a src, set the src from the data-src attribute
+			if (!channelImg.getAttribute('src')) {
+				channelImg.setAttribute('src', channelImg.getAttribute('data-src'));
+
+				// Temporarily give the image a "loading" className.
+				// Remove this className when the image has loaded.
+				channelImg.className = 'loading';
+				channelImg.onload = removeLoadingClassName;
+			}
 		}
 
 		// GC
@@ -212,7 +223,6 @@ define([
 
 			// create logo image
 			image = dom.create('img');
-			image.className = 'loading';
 			image.setAttribute('id', 'channelImg' + channelId);
 			image.setAttribute('title', name);
 			image.setAttribute('data-src', 'http://www.upc.nl' + _channels[i].logo.href + '?size=medium');
