@@ -4,7 +4,7 @@
 			li.type(class="#{filterGroup.selected ? 'selected' : ''}", style="width:#{100 / availableFilterGroups.length}%")
 				a.group(href="#{filterGroup.url}") #{filterGroup.text}
 
-	ul.nowandnext-list
+	ul.nowandnext-event-list
 		each channelEventsCollection in channelEventsCollections
 			li
 				a.channel-row(href="/channel/#{channelEventsCollection.channel.id}")
@@ -31,4 +31,3 @@
 								div.progressbar(style="width:#{percentageComplete}%")
 								h1.event-title #{event.programme.title}
 							aside.event-channel(style="background-image: url(http://www.upc.nl#{channelEventsCollection.channel.logoIMG});") on Nederland 2
-					.icon-chevron-right

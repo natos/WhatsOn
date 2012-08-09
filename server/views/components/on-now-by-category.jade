@@ -1,7 +1,8 @@
 article
-	h3 
-		i.icon-star
-		| On now, by category (#{nowString})
+	header
+		h1
+			i.icon-star
+			| On now, by category (#{nowString})
 	ul.categories
 		each categoryEventList, categoryName in onNowCategories
 			h4 #{categoryName}
