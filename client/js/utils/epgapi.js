@@ -57,8 +57,7 @@ define([
 	* @return  {string} YYYY-MM-DDTHH:00Z
 	*/
 	var formatTimeForApiRequest = function(dt) {
-		// TODO: take account of time zones?
-		var formattedTime = dt.getFullYear().toString() + '-' + ('00' + (dt.getMonth() + 1).toString()).slice(-2) + '-' + ('00' + dt.getDate().toString()).slice(-2) + 'T' + ('00' + dt.getHours().toString()).slice(-2) + ':00' + 'Z';
+		var formattedTime = dt.getUTCFullYear().toString() + '-' + ('00' + (dt.getUTCMonth() + 1).toString()).slice(-2) + '-' + ('00' + dt.getUTCDate().toString()).slice(-2) + 'T' + ('00' + dt.getUTCHours().toString()).slice(-2) + ':00' + 'Z';
 		return formattedTime;
 	};
 
@@ -69,7 +68,7 @@ define([
 	* @private
 	* @return  Array of time slices: [[slice1StartTime, slice1EndTime], [slice2StartTime, slice2EndTime], ...]
 	*/
-	var getTimeSlices = function(startDate, endDate) {
+	var getTimeSlices = function(paramStartDate, paramEndDate) {
 		// Time slices: each slice is HOURS_PER_SLICE hours wide.
 		// If HOURS_PER_SLICE = 4, then the slices are:
 		// [
@@ -78,6 +77,11 @@ define([
 		//		08:00 - 12:00,
 		//		...
 		// ]
+
+		// Take copies of the startDate and endDate input so we don't modify the original
+		// input values by reference:
+		var startDate = new Date(paramStartDate.valueOf());
+		var endDate = new Date(paramEndDate.valueOf());
 
 		// Adjust the start and end dates, so that the align with slice boundaries
 		startDate.setMinutes(0);

@@ -96,15 +96,15 @@ define([
 	* Redraw the grid channel-by-channel because new event data has been received.
 	* The grid *might* have moved since the last time.
 	*
-	* Iterate through the channels, and determine what action is required: 
-	*  CHANNEL VISIBILITY 
+	* Iterate through the channels, and determine what action is required:
+	*  CHANNEL VISIBILITY
 	* PREVIOUS  |  CURRENT  |  ACTION REQUIRED
 	*    Y            Y        No change - do not re-render channel
-	*    Y            Y        If the events received are for this channel, render the channel. Otherwise, do nothing. 
+	*    Y            Y        If the events received are for this channel, render the channel. Otherwise, do nothing.
 	*    Y            N        Set channel to blank
 	*    N            Y        Render channel events
 	*    N            N        No change - do not re-render channel
-	* 
+	*
 	* @private
 	*/
 
@@ -187,7 +187,8 @@ define([
 		// Note: the channelSliceCache is undefined until the first data has been received
 		if (channelSliceCache) {
 			// Get a list of ALL time slices for the grid:
-			var timeSlices = EpgApi.getTimeSlices(g.ZERO, g.END), cacheKey, timeSlice, i, events;
+			var timeSlices = EpgApi.getTimeSlices(g.ZERO, g.END);
+			var cacheKey, timeSlice, i, events;
 			for (i = 0; i < timeSlices.length; i++) {
 				timeSlice = timeSlices[i];
 				cacheKey = EpgApi.getCacheKey(channelId, timeSlice);
@@ -205,7 +206,7 @@ define([
 	*/
 	function buildEventsForChannelSlice(channelId, events) {
 
-		var i, event, width, left, right, startDateTime, endDateTime, category, subcategory, eventId, programmeId, eventTitle, offset, content, eventElement,
+		var i, event, width, left, right, startDateTimeMilliseconds, endDateTimeMilliseconds, category, subcategory, eventId, programmeId, eventTitle, offset, content, eventElement,
 			channelRow = _channelsInShadow[channelId], tinyWidthLimit = 50;
 
 		for (i = 0; i < events.length; i++) {
@@ -222,12 +223,12 @@ define([
 			eventTitle = event.programme.title;
 
 			// Time data
-			startDateTime = convert.parseApiDate(event.startDateTime);
-			endDateTime = convert.parseApiDate(event.endDateTime);
+			startDateTimeMilliseconds = convert.parseApiDateStringAsMilliseconds(event.startDateTime);
+			endDateTimeMilliseconds = convert.parseApiDateStringAsMilliseconds(event.endDateTime);
 
 			// size data
-			left = convert.timeToPixels(startDateTime, g.ZERO);
-			right = convert.timeToPixels(endDateTime, g.ZERO);
+			left = convert.timeToPixels(startDateTimeMilliseconds, g.ZERO);
+			right = convert.timeToPixels(endDateTimeMilliseconds, g.ZERO);
 			width = right - left;
 
 			// avoid events outside view
@@ -235,7 +236,7 @@ define([
 				continue;
 			}
 
-			// adjust left 
+			// adjust left
 			if (left < 0) {
 				right = left + width;
 				left = 0;
@@ -245,7 +246,6 @@ define([
 
 			// ids
 			programmeId = event.programme.id;
-//			channelId = event.channel.id; // we already have this data
 
 			// Category and subcategory
 			category = event.programme.subcategory.category.name;
@@ -264,10 +264,10 @@ define([
 				eventElement.appendChild(document.createTextNode(eventTitle));
 			}
 
-			// Insert			
+			// Insert
 			channelRow.appendChild(eventElement);
 
-			// GC			
+			// GC
 			eventElement = null;
 			eventTitle = null;
 
@@ -303,7 +303,7 @@ define([
 	function gridMoved() {
 		// Update model UI data:
 
-		// Update position immediately; this is used for updating 
+		// Update position immediately; this is used for updating
 		// the channelbar and timebar scroll positions
 		GridModel.set(g.POSITION, { 'top': window.pageYOffset * -1, 'left': window.pageXOffset * -1 });
 
@@ -320,7 +320,7 @@ define([
 	}
 
 	/**
-	* Fires gridMoved 
+	* Fires gridMoved
 	* Saves selected channels, and selected time.
 	*/
 	function changeSelection() {
@@ -385,7 +385,7 @@ define([
 			timeSlices = EpgApi.getTimeSlices(startTime, endTime),
 			slicesCount = timeSlices.length,
 			channelsCount = channels.length,
-			i, e, cacheKey, 
+			i, e, cacheKey,
 			uncachedChannels;
 
 		// for each slice

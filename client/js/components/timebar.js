@@ -31,8 +31,9 @@ define([
 
 	function centerViewPort() {
 
-		var left = convert.timeToPixels( new Date() );
-			left = left - ( a._doc.body.clientWidth / 2 ) + g.CHANNEL_BAR_WIDTH;
+		var left = convert.timeToPixels( (new Date()).valueOf() );
+
+		left = left - ( a._doc.body.clientWidth / 2 ) + g.CHANNEL_BAR_WIDTH;
 
 		// move the window left, but the same distance top
 		a._win.scroll(left, a._doc.body.scrollTop);
@@ -118,7 +119,11 @@ define([
 
 		for (var i=0; i<24; i++) {
 			t = new Date(zeroTime.valueOf() + (i * 60 * 60 * 1000));
-			timeIntervalsHtml += "<li><span>" + ("0" + t.getHours()).slice(-2) + "hs</span></li>"; //":00 (" + daysOfWeek[t.getDay()] + ")</span></li>";
+			// All the grid date/time/position calculations are done in UTC.
+			// To adjust the display for the user's actual time zone, all we
+			// have to do is show the USER LOCAL time version of the UTC datetime
+			// in the timebar.
+			timeIntervalsHtml += "<li><span>" + ("0" + t.getHours()).slice(-2) + ":00</span></li>"; //":00 (" + daysOfWeek[t.getDay()] + ")</span></li>";
 		}
 
 		
