@@ -57,17 +57,8 @@ define([
 	* @return  {string} YYYY-MM-DDTHH:00Z
 	*/
 	var formatTimeForApiRequest = function(dt) {
-		// TODO: take account of time zones?
-		var formattedTime = dt.getFullYear().toString() + '-' + ('00' + (dt.getMonth() + 1).toString()).slice(-2) + '-' + ('00' + dt.getDate().toString()).slice(-2) + 'T' + ('00' + dt.getHours().toString()).slice(-2) + ':00' + 'Z';
+		var formattedTime = dt.getUTCFullYear().toString() + '-' + ('00' + (dt.getUTCMonth() + 1).toString()).slice(-2) + '-' + ('00' + dt.getUTCDate().toString()).slice(-2) + 'T' + ('00' + dt.getUTCHours().toString()).slice(-2) + ':00' + 'Z';
 		return formattedTime;
-	};
-
-	var getCacheKey = function(channelGroup, timeSlice) {
-
-		var formattedStartTime = formatTimeForApiRequest(timeSlice[0]),
-			formattedEndTime = formatTimeForApiRequest(timeSlice[1]);
-
-		return channelGroup + '|' + formattedStartTime + '|' + formattedEndTime;
 	};
 
 	/**
@@ -77,7 +68,7 @@ define([
 	* @private
 	* @return  Array of time slices: [[slice1StartTime, slice1EndTime], [slice2StartTime, slice2EndTime], ...]
 	*/
-	var getTimeSlices = function(startDate, endDate) {
+	var getTimeSlices = function(paramStartDate, paramEndDate) {
 		// Time slices: each slice is HOURS_PER_SLICE hours wide.
 		// If HOURS_PER_SLICE = 4, then the slices are:
 		// [
@@ -87,14 +78,22 @@ define([
 		//		...
 		// ]
 
-		// Adjust the start and end dates, so that the align with slice boundaries
+		// Take copies of the startDate and endDate input so we don't modify the original
+		// input values by reference:
+		var startDate = new Date(paramStartDate.valueOf());
+		var endDate = new Date(paramEndDate.valueOf());
+
+		// Adjust the start and end dates, so that they align with slice boundaries.
+
+		// Round the start date DOWN to the last whole hour
 		startDate.setMinutes(0);
 		startDate.setSeconds(0);
 		startDate.setMilliseconds(0);
 		var startSliceIndex = Math.floor(startDate.getHours() / HOURS_PER_SLICE);
 		startDate.setHours(startSliceIndex * HOURS_PER_SLICE);
 
-		endDate.setMinutes(0);
+		// Round the end time UP to the next whole hour
+		endDate.setMinutes(60);
 		endDate.setSeconds(0);
 		endDate.setMilliseconds(0);
 		var endSliceIndex = Math.ceil(endDate.getHours() / HOURS_PER_SLICE);
@@ -118,7 +117,7 @@ define([
 	* @async
 	* @return void
 	*/
-	var getEventsForSliceFromApi = function(channelIds, timeSlice, eventsPerSlice) {
+	var getEventsForSliceFromApi = function(channelIds, timeSlice) {
 		// Split channels to fetch into batches of 5. The API only handles max 5 channels at once.
 		var channelIdBatches = [],
 			batchSize = 5,
@@ -128,8 +127,6 @@ define([
 			formattedEndTime = formatTimeForApiRequest(timeSlice[1]),
 			channelIdBatchesCount,
 			channelIdBatch,
-			// for recursive calling more events;
-			eventsPerSlice = eventsPerSlice || EVENTS_PER_SLICE,
 			request;
 
 		for (i = 0; i < batchesCount; i++) {
@@ -149,10 +146,9 @@ var timer = new Timer('getEventsForSliceFromApi Time Track').off();
 			// Use "&optionalProperties=Programme.subcategory" to get category data
 			request = API_PREFIX + 'Channel/' + channelIdBatch.join('|') + '/events.json?qualifier=endDateTime%3E=@{timestamp%20' + formattedStartTime + '}%20and%20startDateTime%3C@{timestamp%20' + formattedEndTime + '}' + '&order=startDateTime&optionalProperties=Programme.subcategory&callback=?';
 
-			//request = API_PREFIX + 'Channel/' + channelIdBatch.join('|') + '/events/NowAndNext_' + formattedStartTime + '.json?batchSize=' + eventsPerSlice + '&order=startDateTime&optionalProperties=Programme.subcategory&callback=?'; 
 			// TODO: Don't create functions inside a loop! (JSHint)
 			$.getJSON(request, function(apiResponse) {
-				handleApiResponse_EventsForSliceFromApi(apiResponse, timeSlice, eventsPerSlice, timer);
+				handleApiResponse_EventsForSliceFromApi(apiResponse, timeSlice, timer);
 			});
 		}
 	};
@@ -166,7 +162,7 @@ var timer = new Timer('getEventsForSliceFromApi Time Track').off();
 	* @return void
 	*/
 
-	var handleApiResponse_EventsForSliceFromApi = function(apiResponse, timeSlice, eventsPerSlice, timer) {
+	var handleApiResponse_EventsForSliceFromApi = function(apiResponse, timeSlice, timer) {
 
 /* for performance tests */
 timer.track('API Response');
@@ -176,9 +172,7 @@ average(timer.timeDiff);
 
 		var eventsForChannelCollection = [],
 			cacheKey,
-			channelId,
-			lastEventEndDate;/*,
-			repeatChannelIds = [];*/
+			channelId;
 
 		if ($.isArray(apiResponse) && apiResponse.length > 0 && $.isArray(apiResponse[0])) {
 			// response is an array of channels; each channel contains an array of events
@@ -202,39 +196,7 @@ average(timer.timeDiff);
 
 			// > Emit the event here !!!
 			$CUSTOM_EVENT_ROOT.emit(CHANNEL_EVENTS_RECEIVED_EVENT, eventsForChannel, cacheKey);
-
-			// Check if the API has returned enough events for us to "fill up"
-			// the cache for this channel's time slice
-			/*lastEventEndDate = convert.parseApiDate(eventsForChannel[eventsForChannel.length - 1].endDateTime);
-			channelId = eventsForChannel[0].channel.id;
-			if (lastEventEndDate > timeSlice[1]) {
-				// Cache the event collection by channel ID and timeslice index
-				cacheKey = getCacheKey(channelId, timeSlice);
-
-				// this loop we don't need it
-				//eventsToBeCached = [];
-				for(var i=eventsForChannel.length - 1; i>=0; i--) {
-					// Only cache events in this slice that actually *belong* in the current slice.
-					// Note (MS 22/6/2012): Once we have Jędrzej's new API that guarantees to
-					// return only the events in a slice, we won't need this check any more.
-					if (convert.parseApiDate(eventsForChannel[i].startDateTime).valueOf() >= timeSlice[1].valueOf() ) {
-						eventsForChannel.pop();
-					}
-				}
-
-				$CUSTOM_EVENT_ROOT.emit(CHANNEL_EVENTS_RECEIVED_EVENT, eventsForChannel, cacheKey);
-			} else {
-				// Not enough events for this channel and time slice.
-				// Add the channel to the repeatChannelIds array
-				repeatChannelIds.push(channelId);
-			}*/
-
 		});
-
-		// Re-request channels that were not fully populated
-		/*if (repeatChannelIds.length>0) {
-			getEventsForSliceFromApi(repeatChannelIds, timeSlice, 2*eventsPerSlice);
-		}*/
 
 	};
 
@@ -245,7 +207,7 @@ average(timer.timeDiff);
 	* it will try to retrieve the events from cache or from the API.
 	* Whenever results become available, an "eventsReceived" message will
 	* be raised.
-	* 
+	*
 	* Usage:
 
 		// Start listening for eventsReceived event
@@ -277,7 +239,7 @@ average(timer.timeDiff);
 	/**
 	* Perform an EPG search for events. Raises an "searchResultsReceived"
 	* message when the eventsd have been returned.
-	* 
+	*
 	* Usage:
 
 		// Start listening for searchResultsReceived event

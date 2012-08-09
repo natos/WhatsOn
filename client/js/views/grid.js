@@ -1,10 +1,10 @@
-/* 
-* GridView 
+/*
+* GridView
 * --------------
 *
 * Emitting events, UI changes
 * Listen to the model for data changes
-* 
+*
 * IMPORTANT: This component calculates the dimensions of the grid
 * based on the size of other elements on the page (e.g. the channel bar)
 * that are only sized correctly is the CSS is loaded already. If the CSS
@@ -37,7 +37,7 @@ define([
 /* private */
 
 	// Objects
-	_timebar, 
+	_timebar,
 	_channelsbar,
 	_gridcontainer,
 	_ticker,
@@ -136,7 +136,7 @@ define([
 	function drawStyles() {
 
 		// style element
-		var style = style = dom.create('style');
+		var style = dom.create('style');
 			style.id = 'grid-styles';
 			document.getElementsByTagName('HEAD')[0].appendChild(style);
 
@@ -211,7 +211,7 @@ define([
 	function timer_run() {
 		if (!timer.status) { return; }
 		if (typeof _ticker === 'undefined') { return; }
-		_ticker.style.left = convert.timeToPixels( new Date() ) + 'px';
+		_ticker.style.left = convert.timeToPixels( (new Date()).valueOf() ) + 'px';
 		timer.stop();
 		timer.start();
 		return this;

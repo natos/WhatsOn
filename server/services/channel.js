@@ -83,8 +83,9 @@ function(util, events, request, requestN, DomainService, BookingsService, TVTips
 				function(responses) {
 					var errorsCount = 0;
 					var channelsBatch;
+					var i;
 
-					for (var i=0; i<requestUrls.length; i++) {
+					for (i=0; i<requestUrls.length; i++) {
 						if (!responses[requestUrls[i]] || responses[requestUrls[i]].error) {
 							// TODO: Review this, because it crash when responses[thingy] is empty
 							console.log("Error requesting " + requestUrls[i] + ": " + responses[requestUrls[i]].error);
@@ -93,7 +94,8 @@ function(util, events, request, requestN, DomainService, BookingsService, TVTips
 					}
 
 					if (errorsCount===0) {
-						for (var i=0; i<requestUrls.length; i++) {
+						allChannels = []; // Reset the allChannels array; don't add to the existing list.
+						for (i=0; i<requestUrls.length; i++) {
 							if (!responses[requestUrls[i]].error && responses[requestUrls[i]].response.statusCode == 200) {
 								channelsBatch = JSON.parse(responses[requestUrls[i]].body);
 								allChannels = allChannels.concat(channelsBatch);
@@ -101,18 +103,12 @@ function(util, events, request, requestN, DomainService, BookingsService, TVTips
 						}
 					}
 
-					// UPDATE 26/06/2012 NS: This is the new way of getting logos.
-					// Remove the "links" property for channels. This property is not used, and only takes up space.
-//					allChannels.forEach(function(channel){
-//						delete channel.links;
-//					});
-
 					// Attach domain information to each channel
 					(new DomainService()).once('getDomains', function(domains){
 
 						var channelFilterIds = [];
 						var channelThemeIds = [];
-						var channelDomains
+						var channelDomains;
 						allChannels.forEach(function(channel){
 							var channelDomains = domains.map(function(domain){
 								var channelDomainGroups = [];
