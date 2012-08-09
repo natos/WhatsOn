@@ -749,54 +749,6 @@ footer {
 		animation-timing-function: linear;
 	}
 
-
-
-/**
-*	movies
-*/
-
-.movies {
-	margin: 0;
-	padding: 0;
-	list-style: none;
-}
-
-.movie {
-	margin: 0;
-	padding: 0;
-	width: 48%;
-	display: inline-block;
-	position: relative;
-	vertical-align: top;
-	padding: 1%;
-}
-
-.movie p {
-	white-space: nowrap;
-	width: 100%;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	margin-bottom: 0;
-}
-
-.movie .score {
-	float: right;
-	color: #333;
-	background-color: #eee;
-	border: 1px solid #ccc;
-	border-radius: 5px;
-	padding: 5px;
-	position: absolute;
-	top: 5px;
-	right: 5px;
-	opacity: .8;
-}
-
-.movie .poster {
-	position: relative;
-}
-
-
 /**
 *	#social buttons
 */
@@ -843,21 +795,17 @@ footer {
 
 /* dashboard quirks */
 
-	#dashboard-content section article h3 {
+	#dashboard-content > section > article h3 {
 		margin: 5px 0;
 	}
 
-	#dashboard-content section article h3 i {
+	#dashboard-content > section > article h3 i {
 		margin-right: 8px;
 	}
 
 	#dashboard-content .programmes span {
 		margin: 5px;
 		font-size: .8em;
-	}
-
-	#dashboard-content .channels li {
-		display: inline-block;
 	}
 
 	#dashboard-content .favorite-channels.loading,
@@ -876,8 +824,8 @@ footer {
 	background: none;
 	position: absolute;
 	cursor: pointer;
-	top: 35px;
-	left: 15px;
+	top: 20px;
+	left: 13px;
 
 	-webkit-box-shadow: none;
 	   -moz-box-shadow: none;
@@ -908,8 +856,8 @@ footer {
 	margin: 0;
 }
 
-#programme-content header,
-#channel-content header {
+#programme-content > header,
+#channel-content > header {
 	border-bottom:1px solid #ccc;
 	position:relative;
 	margin: 0;
@@ -941,8 +889,8 @@ footer {
 }
 /* end channel logos */
 
-#programme-content header,
-#channel-content header {
+#programme-content > header,
+#channel-content > header {
 	padding-left: 50px;
 	border-top: 1px #bbb solid;
 	border-bottom: 2px #bbb solid;
@@ -950,33 +898,33 @@ footer {
 	border-radius: 3px;
 }
 
-#programme-content header h1,
-#channel-content header h1 {
+#programme-content > header h1,
+#channel-content > header h1 {
 	margin: 5px 0;
 }
 
-#programme-content header .category,
-#channel-content header .category {
+#programme-content > header .category,
+#channel-content > header .category {
 	color: #999;
 	margin: 0;
 	font-weight: normal;
 	font-size: 12px;
 }
 
-#programme-content header p,
-#channel-content header p {
+#programme-content > header p,
+#channel-content > header p {
 	margin: 10px 0;
 }
 
-#dashboard-content section,
-#programme-content section,
-#channel-content section {
+#dashboard-content > section,
+#programme-content > section,
+#channel-content > section {
 	margin: 0;
 }
 
-#dashboard-content section article,
-#programme-content section article,
-#channel-content section article {
+#dashboard-content > section > article,
+#programme-content > section > article,
+#channel-content > section > article {
 	margin: 0;
 	padding: 5px 10px;
 	border-top: 1px #bbb solid;
@@ -1006,7 +954,7 @@ footer {
 		position: relative;
 	}
 	
-	#programme-content .event,
+	/*#programme-content .event,*/
 	#channel-content .programme {
 		margin-left: 60px;
 		margin-bottom: 10px;
@@ -1112,6 +1060,12 @@ footer {
 		left: 20px;
 	}
 
+	#programme-content > header h1 .favorite,
+	#channel-content > header h1 .favorite {
+		top: 35px;
+	}
+
+
 }
 
 @media (min-width: 980px) {
@@ -1135,7 +1089,7 @@ footer {
 		</a>
 	<li>
 </ul>
-*/
+
 
 .channel-event-list {
 	padding:0;
@@ -1173,7 +1127,7 @@ footer {
 		max-height:2.45em;
 		overflow:hidden;
 	}
-
+*/
 /**
 **	End dashboard & programme & channel view
 **/
@@ -1609,6 +1563,7 @@ footer {
 	padding:5px;
 	text-shadow:0 1px 0px #fff;
 }
+
 .grid-event:active {
 	background: #fff url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
 }
@@ -1619,6 +1574,7 @@ footer {
 	border-top:1px solid #bbc;
 	padding:0;
 }
+
 .grid-event.tiny:after {
 	font-family: "FontAwesome";
 	color:#aab;
@@ -1647,24 +1603,229 @@ footer {
 	background:url('/assets/images/bg-timer-ticker.png') repeat-y 0 0;
 }
 
-#timer-ticker {
-	position: absolute;
-	height: 100%;
-	width: 4px;
-	margin-left: -2px;
-	top:0px;
-
-	background: yellowGreen;
-	
-	-webkit-box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, .3);
-	   -moz-box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, .3);
-	        box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, .3);
-
-	opacity: .9;
-
-	background:url('/assets/images/bg-timer-ticker.png') repeat-y 0 0;
-}
-
 /**
 **	End THE GRID
 **/
+
+
+/**
+**	EVENT LISTS
+**/
+
+/* GENERIC FOR ALL EVENT-LISTS */
+
+[class*=event-list] > li {
+	background: #eee url('/assets/images/bg-gradient-headers.png') 0 0 repeat-x;
+	position: relative;
+	padding: 5px 0;
+border: 1px solid #ccc;
+}
+
+[class*=event-list] > li:active {
+	background-position: 0 -10px;
+	box-shadow: inset 0px 0px 5px 1px #333;
+	padding: 4px 0 6px 0;
+}
+
+[class*=event-list] .event:after {
+	font-family: "FontAwesome";
+	position: absolute;
+	display: block;
+	content: "\f054";
+	font-size: 1.6em;
+	color: #333;
+	height: 100%;
+	right: 0;
+	top: 0;
+	display: table-cell;
+	vertical-align: middle;
+}
+
+[class*=event-list] .event.now:after {
+	top: 5px;
+}
+
+/* make the links inside the list a block */
+[class*=event-list] a {
+	display: block;
+}
+
+/* EVENT ROW */
+
+.event {
+	position: relative;
+	color: #555;
+ 	margin: 10px;
+ 	height: 20px;
+}
+
+.event .event-time-box,
+.event .event-header,
+.event .event-channel {
+	position: relative;
+	display: inline-block;
+}
+
+.event .progressbar,
+.event-category {
+	display: none;
+}
+
+.event-channel {
+	background-repeat: no-repeat;
+	background-position: -200% -200%;
+}
+
+.event-header {
+	height: 100%;
+	border-radius: 3px;
+	-webkit-box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	box-sizing:border-box;
+}
+
+.event-title {
+	position: relative;
+	margin: 0;
+	width: 100%;
+	padding: .1em;
+	font-size: 1em;
+	text-indent: .1em;
+	font-weight: bold;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* NOW EVENT QUIRKS */
+
+.now {
+	height: 35px;
+}
+
+.event.now {
+	color: #333;
+}
+
+.now .event-time-box,
+.now .event-header,
+.now .event-channel,
+.now .progressbar {
+	position: absolute;
+}
+
+.now .event-day,
+.now .event-starttime,
+.now .event-channel { 
+	display: none; 
+}
+
+.now .event-header {
+	left: 0;
+	right: 30px;
+	font-size: 1.2em;
+	overflow: hidden;
+	border: 1px solid #aaa;
+	box-shadow: inset 0px 0px 2px 1px #eee;
+}
+
+.now .event-title {
+	height: 100%;
+	line-height: 1.7;
+	text-indent: 0.3em;
+	text-shadow: 0px -1px 0px rgba(000,000,000,0.2), 0px 1px 0px rgba(255,255,255,1);
+}
+
+.now .progressbar {
+	display: block;
+	top: 0;
+	left: 0;
+	width: 0%;
+	height: 100%;
+	opacity: .5;
+	box-shadow: 2px 0px 4px 0px #528000;
+	background: #bfd255;
+	background: -moz-linear-gradient(top,  #bfd255 0%, #8eb92a 50%, #72aa00 51%, #9ecb2d 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#bfd255), color-stop(50%,#8eb92a), color-stop(51%,#72aa00), color-stop(100%,#9ecb2d));
+	background: -webkit-linear-gradient(top,  #bfd255 0%,#8eb92a 50%,#72aa00 51%,#9ecb2d 100%);
+	background: -o-linear-gradient(top,  #bfd255 0%,#8eb92a 50%,#72aa00 51%,#9ecb2d 100%);
+	background: -ms-linear-gradient(top,  #bfd255 0%,#8eb92a 50%,#72aa00 51%,#9ecb2d 100%);
+	background: linear-gradient(to bottom,  #bfd255 0%,#8eb92a 50%,#72aa00 51%,#9ecb2d 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#bfd255', endColorstr='#9ecb2d',GradientType=0 );
+}
+
+a:active .now .progressbar {
+	opacity: 1;
+}
+
+/* 
+ * CHANNEL EVENT LIST 
+ */
+
+.channel-event-list .event-day, 
+.channel-event-list .event-channel {
+	display: none;
+}
+
+/* 
+ * PROGRAMME EVENT LIST 
+ */
+
+.programme-event-list .event-header {
+	display: none;
+}
+
+/*
+ * NOWANDNEXT LIST 
+ */
+
+.nowandnext-event-list .channel-row {
+	display: block;
+	position: relative;
+}
+
+.nowandnext-event-list .event-day,
+.nowandnext-event-list .event-channel,
+.nowandnext-event-list .event-category {
+	display: none;
+}
+
+.nowandnext-event-list .event {
+	margin-left: 55px;
+}
+
+/* 
+ * Small events doesn't have chevron
+ * hidde it by change foreground color
+ * this assets are typography
+ */
+.nowandnext-event-list .event:after {
+	color: transparent;
+}
+
+/* 
+ * Now events have Chevron
+ */
+.nowandnext-event-list .event.now:after {
+	color: #333;
+}
+
+.nowandnext-event-list .event-starttime {
+	line-height: 1.6em;
+}
+
+.nowandnext-event-list .now .event-header {
+	left: 0;
+}
+
+.nowandnext-event-list .now .event-channel {
+	display: block;
+	right: none;
+	left: -50px;
+	width: 43px;
+	height: 43px;
+	text-indent: -200%;
+	overflow: hidden;
+	background-repeat: no-repeat;
+	background-position: 50% 50%;
+}

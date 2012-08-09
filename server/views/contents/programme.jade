@@ -21,11 +21,15 @@ if (xhr)
 				h2.watch-title
 					i.icon-time
 					#{__i('Watch it')}
-				ul.channel-event-list
+				ul.programme-event-list
 					each event in data.events
-						li.event
-							.time #{event.simpleTime}
-							h3.title #{event.prettyDate}
-							a.channel(href="/channel/#{event.channel.id}", data-channelid="#{event.channel.id}")
-								|  on 
-								| #{event.channel.name}
+						li
+							a(href="/channel/#{event.channel.id}")
+								article.event
+									.event-time-box
+										time.event-day #{event.prettyDate} 
+										time.event-starttime #{event.simpleTime} 
+									header.event-header
+										.progressbar
+										h1.event-title #{title}
+									aside.event-channel &nbsp;on #{event.channel.name}

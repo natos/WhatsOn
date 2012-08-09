@@ -93,6 +93,8 @@ function(NowAndNextService, DomainService, Metadata, QS, config) {
 	/** @public */
 
 	NowAndNextController.prototype.render = function(req, res) {
+		
+		// *** 6/10/2012 NS: Do we really need to pull this service on every request?
 
 		// We first need to get details of the "Filter" domain
 		(new DomainService()).once('getDomainDetails', function(domainDetails){

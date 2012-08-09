@@ -1,14 +1,9 @@
-li.on-now-event
-	a.on-now-event__channel(href="/channel/#{event.channel.id}", title="#{event.channel.name})
-		div.img(style="background-image:url(http://www.upc.nl#{event.channel.logoImg})")
-	.on-now-event__title
-		a(href="/programme/#{event.programme.id}") #{event.programme.title}
-		span.category #{event.categoryString}
-	.on-now-event__timeline
-		#{event.startTimeString}
-		span.bar
-			span.inner(style="width:#{event.percentageComplete}%;")
-		#{event.endTimeString}
-	.on-now-event__next
-		| Next:
-		a(href="/programme/#{event.nextEvent.programme.id}") #{event.nextEvent.programme.title}
+li
+	a.channel-row(href="/programme/#{event.programme.id}")
+		article.event.now
+			div.event-time-box
+				time.event-starttime #{event.startTimeString}
+			header.event-header
+				div.progressbar(style="width:#{event.percentageComplete}%")
+				h1.event-title #{event.programme.title}
+			aside.event-channel(style="background-image: url(http://www.upc.nl#{event.channel.logoImg});") on #{event.channel.name}

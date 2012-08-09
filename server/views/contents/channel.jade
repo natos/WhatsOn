@@ -25,8 +25,13 @@ if (xhr)
 						#{date.dateText}
 					ul.channel-event-list
 						each event in date.events
-							li.programme
-								a.programme-link(href="/programme/#{event.programme.id}", data-programmeid="#{event.programme.id}")	
-									.time #{event.simpleTime}
-									h3.title
-										| #{event.programme.title}
+							li
+								a(href="/programme/#{event.programme.id}")
+									article.event
+										.event-time-box
+											time.event-day #{event.prettyDate} 
+											time.event-starttime #{event.simpleTime} 
+										header.event-header
+											.progressbar
+											h1.event-title #{event.programme.title}
+										aside.event-channel &nbsp;on #{title}
