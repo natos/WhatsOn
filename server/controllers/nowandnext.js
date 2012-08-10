@@ -49,44 +49,9 @@ function(NowAndNextService, DomainService, Metadata, QS, config) {
 
 	// Given a date, return a string in the format 'YYYY-MM-DDTHH:00Z',
 	// which is the format the EPG api accepts for marking the start time.
-	// Note that we ignore that MINUTES of the specified time, so that we
-	// always ask the EPG api for data starting at the top of each hour.
 	var getFormattedSliceStartTime = function(dt) {
-		var str = dt.getFullYear().toString() + '-' + ('00' + (dt.getMonth() + 1).toString()).slice(-2) + '-' + ('00' + dt.getDate().toString()).slice(-2) + 'T' + ('00' + dt.getHours().toString()).slice(-2) + ':00Z';
+		var str = dt.getUTCFullYear().toString() + '-' + ('00' + (dt.getUTCMonth() + 1).toString()).slice(-2) + '-' + ('00' + dt.getUTCDate().toString()).slice(-2) + 'T' + ('00' + dt.getUTCHours().toString()).slice(-2) + ':' + ('00' + dt.getUTCMinutes().toString()).slice(-2) + 'Z';
 		return str;
-	};
-
-	// TODO: Use Date.parse() for simpler way of parsing date in query string?
-	// (Check timezone handling.)
-	var getStartDate = function(req) {
-		var dt,
-			nowDt = new Date(),
-			dtString = req.params.dt,
-			parts,
-			dateParts,
-			timeParts;
-
-		nowDt.setMinutes(0);
-		nowDt.setSeconds(0);
-
-		if (dtString) {
-			try {
-				parts = dtString.split('T');
-				dateParts = parts[0].split('-');
-				timeParts = parts[1].split(':');
-				dt = new Date(dateParts[0], dateParts[1] - 1, dateParts[2], timeParts[0], 0);
-				if (isNaN(dt.getFullYear())) {
-					throw (new Exception('','unable to construct date'));
-				}
-			}
-			catch (err) {
-				dt = nowDt;
-			}
-		} else {
-			dt = nowDt;
-		}
-
-		return dt;
 	};
 
 
@@ -99,7 +64,7 @@ function(NowAndNextService, DomainService, Metadata, QS, config) {
 		// We first need to get details of the "Filter" domain
 		(new DomainService()).once('getDomainDetails', function(domainDetails){
 
-			var dt = getStartDate(req),
+			var dt = new Date(),
 				channelIds = [],
 				dtPreviousSlice = new Date(dt.valueOf() - (60 * 60 * 1000)),
 				dtNextSlice = new Date(dt.valueOf() + (60 * 60 * 1000)),
@@ -161,7 +126,7 @@ function(NowAndNextService, DomainService, Metadata, QS, config) {
 					xhr			: req.xhr
 				});
 
-			}).getNowAndNext(dt, channelIds, false);
+			}).getNowAndNext(dt, channelIds, true);
 
 
 		}).getDomainDetails('Filter');
