@@ -1,0 +1,1 @@
+define(["config/grid","lib/flaco/model"],function(a,b){var c="grid";return new b({name:c,event:a.MODEL_CHANGED})})

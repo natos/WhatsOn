@@ -1,0 +1,45 @@
+.channelpage {
+	background:#fff;
+	border-top:1px solid #ccc;
+	border-bottom:1px solid #ccc;
+}
+	.channelpage .hd {
+		border-bottom:1px solid #ccc;
+		position:relative;
+		padding:5px 10px 5px 90px;
+		min-height:115px;
+	}
+	.channelpage .hd .logo {
+		position:absolute;
+		left:10px;
+		top:12px;
+	}
+	.channelpage .hd h1 {
+		margin:5px 0;
+	}
+	.channelpage .hd .like {
+		position:absolute;
+		left:10px;
+		top:50px;
+	}
+	.channelpage .bd {
+		padding:5px 10px;
+	}
+	.channelpage .bd .date-title {
+		color:#f00;
+		margin-left:80px;
+		position:relative;
+	}
+	.channelpage .bd .icon-calendar {
+		position:absolute;
+		left:-80px;
+		font-size:36px;
+		top:-10px;
+		color:#f00;
+	}
+@media screen and (min-width:640px) {
+	.channelpage {
+		margin:10px;
+		border:1px solid #ccc;
+	}
+}

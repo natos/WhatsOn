@@ -1,0 +1,1 @@
+define(["config/app","modules/app","lib/flaco/controller","views/settings"],function(a,b,c,d){function e(){return this}function f(){return this}var g="settings";return{name:g,initialize:e,finalize:f,view:d}})

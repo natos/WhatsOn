@@ -1,0 +1,1 @@
+(function(){if(!window.mustard){var a=$("#nowandnext-content");a.on("click","a.earlier, a.later, a.group",function(b){b.preventDefault(),b.stopPropagation(),a.load(b.target.href)})}})()

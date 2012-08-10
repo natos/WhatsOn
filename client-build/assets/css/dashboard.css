@@ -1,0 +1,121 @@
+
+.on-now,
+.most-recorded {
+	margin-top:1em;
+}
+.on-now-event,
+.most-recorded-event {
+	padding-left:68px;
+	position:relative;
+	min-height:35px;
+}
+.on-now-event__channel,
+.most-recorded-event__channel {
+	position:absolute;
+	top:4px;
+	left:0;
+	display:table-cell;
+	vertical-align:middle;
+	text-align:center;
+	height:30px;
+	width:60px;
+	background-color:white;
+	border:1px solid #999;
+	border-radius:3px;
+}
+	.on-now-event__channel .img,
+	.most-recorded-event__channel .img {
+		
+		background-position:50% 50%;
+		position:absolute;
+		width:100%;
+		height:100%;
+		background-repeat:no-repeat;
+	}
+.on-now-event__title,
+.most-recorded-event__title {
+	display:block;
+}
+	.on-now-event__title a,
+	.most-recorded-event__title a {
+		font-weight:bold;
+		font-size:1.2em;
+		color:#333;
+		text-shadow:0 1px 1px #fff;
+	}
+	.on-now-event__title .category,
+	.most-recorded-event__title .category {
+		font-size:0.8em;
+		font-weight:normal;
+		display:none;
+	}
+.on-now-event__timeline,
+.most-recorded-event__timeline {
+	display:block;
+	white-space:nowrap;
+	padding-bottom:10px;
+	font-size:0.85em;
+	color:#444;
+}
+	.on-now-event__timeline .bar {
+		display:inline-block;
+		vertical-align:text-top;
+		height:1em;
+		width:6em;
+		border:1px solid #999;
+		border-radius:2px;
+		margin:0 0.5em;
+		overflow:hidden;
+	}
+	.on-now-event__timeline .inner {
+		display:block;
+		height:100%;
+		background:powderblue;
+		-moz-box-shadow:1px 0px 6px #669;
+		-webkit-box-shadow:1px 0px 6px #669;
+		box-shadow:1px 0px 6px #669;
+		
+	}
+.on-now-event__next {
+	display:none;
+	padding:0 1em;
+	font-style:italic;
+	color:#444;
+	text-shadow:0 1px 1px #fff;
+}
+	.on-now-event__next a {
+		font-weight:bold;
+		color:#333;
+	}
+@media (min-width:480px) {
+	.on-now-event__channel,
+	.most-recorded-event__channel {
+		top:0;
+	}
+	.on-now-event__title,
+	.most-recorded-event__title {
+		display:table-cell;
+		min-height:30px;
+		padding-bottom:10px;
+		width:100%;
+	}
+	.on-now-event__title .category,
+	.most-recorded-event__title .category {
+		display:block;
+	}
+	.on-now-event__timeline,
+	.most-recorded-event__timeline {
+		display:table-cell;
+		height:30px;
+		min-width:170px;
+	}
+}
+@media (min-width:768px) {
+	.most-recorded-event__timeline {
+		min-width:400px;
+	}
+	.on-now-event__next {
+		display:table-cell;
+		min-width:200px;
+	}
+}

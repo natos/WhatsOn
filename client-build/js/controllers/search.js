@@ -1,0 +1,1 @@
+define(["config/app","modules/app","lib/flaco/controller","views/search"],function(a,b,c,d){function e(){return this}function f(){return this}var g="search";return new c({name:g,initialize:e,finalize:f,view:d})})

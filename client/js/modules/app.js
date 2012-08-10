@@ -8,7 +8,7 @@
 
 define([
 
-	'/js/lib/event/event.js',
+	'lib/event/event',
 	'utils/channel',
 	'models/channel',
 	'models/grid',

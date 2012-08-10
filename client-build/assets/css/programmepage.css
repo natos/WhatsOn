@@ -1,0 +1,52 @@
+.programmepage {
+	border-top:1px solid #ccc;
+	border-bottom:1px solid #ccc;
+}
+	.programmepage .hd {
+		border-bottom:1px solid #ccc;
+		position:relative;
+		padding:5px 10px 5px 90px;
+		min-height:115px;
+	}
+	.programmepage .hd h1 {
+		margin:5px 0;
+	}
+	.programmepage .hd .category {
+		color:#999;
+		margin:0 0 0.5em;
+		font-weight:normal;
+		font-size:12px;
+	}
+	.programmepage .hd .like {
+		position:absolute;
+		left:10px;
+		top:50px;
+	}
+	.programmepage .bd {
+		padding:5px 10px 40px 10px;
+	}
+	.programmepage .bd .watch-title {
+		margin-left: 40px;
+	}
+	.programmepage .bd #events {
+		margin-left: 40px;
+		position:relative;
+	}
+	.programmepage .bd #events li {
+		list-style-type:none;
+		position:relative;
+		margin:0.7em 0;
+	}
+	.programmepage .bd #events .icon-time {
+		position:absolute;
+		left:-40px;
+		top:-8px;
+		font-size:28px;
+		color:green;
+	}
+@media screen and (min-width:640px) {
+	.programmepage {
+		margin:10px;
+		border:1px solid #ccc;
+	}
+}

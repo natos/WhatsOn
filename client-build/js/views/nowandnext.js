@@ -1,0 +1,1 @@
+define(["config/app","modules/app","lib/flaco/view"],function(a,b,c){function d(){return b.loadCss("/assets/css/nowandnext.css"),b.loadCss("/assets/css/channel-event-list.css"),this}function e(){return this}function f(){return this}var g="nowandnext";return new c({name:g,initialize:d,finalize:f,render:e})})

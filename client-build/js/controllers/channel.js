@@ -1,0 +1,1 @@
+define(["lib/flaco/controller","views/channel"],function(a,b){function c(){return this}function d(){return this}var e="channel";return new a({name:e,initialize:c,finalize:d,view:b})})

@@ -140,18 +140,19 @@ function(request, express, i18n, config, Supports, ChannelService, Login, Dashbo
 				server.use(server.router);
 				server.use(express.bodyParser());
 				server.use(express.methodOverride());
-				server.use(express['static']('client')); // static is a reserved word?
 				server.use(i18n.init);
 				server.set('views', 'server/views');
 				server.set('view options', { layout: false });
 			});
 
 			server.configure('development', function() {
-				server.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
+				server.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+				server.use(express['static']('client')); // static is a reserved word?
 			});
 
 			server.configure('production', function() {
 				server.use(express.errorHandler());
+				server.use(express['static']('client-build')); // directory /client-build is generated from /client by r.js -- see notes in readme.md
 			});
 
 			// register i18n helpers for use in templates
@@ -164,7 +165,7 @@ function(request, express, i18n, config, Supports, ChannelService, Login, Dashbo
 
 		return server;
 
-	};
+	}
 
 
 	/** @public */

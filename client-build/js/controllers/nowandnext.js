@@ -1,0 +1,1 @@
+define(["config/app","modules/app","lib/flaco/controller","views/nowandnext"],function(a,b,c,d){function e(){return this}function f(){return this}var g="nowandnext";return new c({name:g,initialize:e,finalize:f,view:d})})

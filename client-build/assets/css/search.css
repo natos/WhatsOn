@@ -1,0 +1,50 @@
+
+ul {
+	list-style: none;
+}
+#search-results {
+	background-color: white;
+	border-left: 1px solid #CCC;
+	margin-left: 15%;
+	padding: 0 10px;
+	overflow: hidden;
+}
+.programme {
+	margin: 10px;
+}
+.programme h3 {
+	font-size: 1.6em;
+	margin-bottom: 10px;
+}
+.programme .details {
+	position: relative;
+	border-top: 1px solid #ccc;
+}
+.programme .details .icons {
+	color: #666;
+	font-size: 1.3em;
+	position: absolute;
+	top: 10px;
+}
+.programme .details ul {
+	padding: 10px;
+	padding-left: 50px;
+}
+#filters {
+	font-size: .9em;
+	width: 15%;
+	position: absolute;
+	padding: 0 10px;
+	margin: 0;
+}
+#filters h4 {
+	margin-bottom: 5px;
+}
+#channels,
+#datetimes {
+	margin: 0 10px;
+}
+#channels input,
+#datetimes input {
+	margin-right: 10px;
+}

@@ -1,0 +1,1 @@
+define([],function(){function a(a){function c(a){return["set","get"].indexOf(a)>=0}function d(b){c(b)||(e[b]=a[b])}var e={},f=a.event,g;for(g in a)d(g);return e.set=function(a,c){e[a]=c;var d={};return d[a]=c,f&&require([b],function(a){a.emit(f,d)}),d},e}var b="modules/app";return a})

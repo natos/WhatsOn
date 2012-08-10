@@ -1,0 +1,1 @@
+define([],function(){return{DEFAULT_GROUP:"986",DATA:"data",BY_ID:"byId",GROUPS:"groups",SELECTED_GROUP:"selected_group",MODEL_CHANGED:"channel:model_changed"}})

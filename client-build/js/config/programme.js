@@ -1,0 +1,1 @@
+define([],function(){return{$window:$(window),$body:$(document.body),$userAction:$("#user-action"),$record:$(".record"),$favorite:$(".favorite")}})
