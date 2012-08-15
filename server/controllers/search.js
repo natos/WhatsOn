@@ -87,6 +87,7 @@ function(querystring, SearchService, Metadata, DateUtils, Channels) {
 		new SearchService().once('search', function(error, response, body) {
 
 			var results;
+
 			try {
 				results = JSON.parse(body);
 			} catch(e) {
@@ -101,11 +102,10 @@ function(querystring, SearchService, Metadata, DateUtils, Channels) {
 				return new Date(a.startDateTime).valueOf() - new Date(b.startDateTime).valueOf();
 			});
 
-
-			// Group results by Programme id
-			var i = 0,
+			var i = 0, c = 0,
 				t = results.length,
 				_id, _title,
+				date, now, diff,
 				programmes = {},
 				used_channels = {},
 				used_datetimes = {};
@@ -114,17 +114,37 @@ function(querystring, SearchService, Metadata, DateUtils, Channels) {
 
 				_id = results[i].programme.id;
 				_title = results[i].programme.title;
+				_startDateTime = results[i].startDateTime;
 
-				if (programmes[_title]) {
-					programmes[_title].push(results[i]);
-				} else {
-					programmes[_title] = [results[i]];
+				date = new Date( _startDateTime.replace(/-/g,"/").replace(/[TZ]/g," ") );
+				now = new Date( new Date().toJSON().replace(/-/g,"/").replace(/[TZ]/g," ") );
+				diff = ((now.getTime() - date.getTime()) / 1000);
+				day_diff = Math.round( diff / 86400);
+
+				// is the event is happening in less than 24hs?
+				if (day_diff === 0) {
+
+					// Get the channel logo
+					for (c = 0; c < _app.channels.length; c++) {
+						if (_app.channels[c].id === results[i].channel.id) {
+							results[i].channel.logoIMG = _app.channels[c].logoIMG;
+						}
+					}
+
+					// group by title
+					if (programmes[_title]) {
+						programmes[_title].push(results[i]);
+					} else {
+						programmes[_title] = [results[i]];
+					}
+
+					// Get used channels and times, you know, maps.
+					// this will be help the filters later
+					used_channels[results[i].channel.id] = results[i].channel;
+					used_datetimes[results[i].prettyDate] = results[i].startDateTime;
+				} else if (day_diff) {
+
 				}
-
-				// Get used channels and times, you know, maps.
-				// this will be help the filters later
-				used_channels[results[i].channel.id] = results[i].channel;
-				used_datetimes[results[i].prettyDate] = results[i].startDateTime;
 
 			}
 
