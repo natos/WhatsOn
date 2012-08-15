@@ -114,7 +114,8 @@ img {
 	padding: 0;
 	z-index: 0;
 	width: 100%;
-	position: relative;
+	height: 100%;
+	position: absolute;
 }
 
 #content {
@@ -122,6 +123,7 @@ img {
 	left: 0;
 	right: 0;
 	bottom: 0;
+	min-height: 100%;
 	position: relative;
 	-webkit-backface-visibility: hidden;
 	-webkit-transition: -webkit-transform .3s ease-in-out;
@@ -386,47 +388,6 @@ img {
 	font-size: 24px;
 }
 
-/**
-*	search-box
-*/
-.search-box input[type="search"] {
-    border: 1px solid #d1d1d1;
-    color: #333;
-    width: 230px;
-	margin: 0;
-    padding: 3px;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    text-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
-    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) inset;
-    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) inset;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) inset;
-    -webkit-backface-visibility: hidden;
-    -webkit-transition: width 0.7s ease 0s;
-    -moz-transition: width 0.7s ease 0s;
-    -o-transition: width 0.7s ease 0s;
-    transition: width 0.7s ease 0s;
-
-	opacity: .8;
-
-	outline-style: none;
-
-	background-color: #eee;
-}
-
-.search-box input[type="search"]:focus {
-	width: 230px;
-	opacity: 1;
-    border: 1px solid #fff;
-}
-
-
-
-/**
-*	transition
-*/
-
 /* For the no-mustard case, don't display the transition overlay at all */
 .no-mustard #transition {
 	display:none;
@@ -446,6 +407,7 @@ img {
 	-ms-transition: opacity ease-in-out 1s;
 	-o-transition: opacity ease-in-out 1s;
 	-transition: opacity ease-in-out 1s;
+	z-index: 100;
 }
 
 #transition .loading {
@@ -859,25 +821,6 @@ margin-right: 10px;
 	display: none;
 }
 /* end buttons */
-
-#programme-content > header,
-#programme-content > section,
-#channel-content > header,
-#channel-content > section {
-	margin: 0;
-}
-
-#programme-content > header,
-#channel-content > header {
-	border-bottom:1px solid #ccc;
-	position:relative;
-	margin: 0;
-	padding: 5px 10px;
-	min-height: 100px;
-	background-color: #eee;
-}
-
-
 /* channel logos */
 #programme-content .logo,
 #channel-content .logo {
@@ -900,9 +843,21 @@ margin-right: 10px;
 }
 /* end channel logos */
 
+#search-content > header,
+#search-content > section,
+#programme-content > header,
+#programme-content > section,
+#channel-content > header,
+#channel-content > section {
+	margin: 0;
+}
+
+#search-content > header,
 #programme-content > header,
 #channel-content > header {
-	padding-left: 50px;
+	position:relative;
+	padding: 5px 10px 20px 50px;
+	min-height: 100px;
 	border-top: 1px #bbb solid;
 	border-bottom: 2px #bbb solid;
 	border-radius: 3px;
@@ -910,6 +865,11 @@ margin-right: 10px;
 
 }
 
+#search-content > header {
+	min-height: 50px;
+}
+
+#search-content > header h1,
 #programme-content > header h1,
 #channel-content > header h1 {
 	margin: 5px 0;
@@ -928,12 +888,14 @@ margin-right: 10px;
 	margin: 10px 0;
 }
 
+#search-content > section,
 #dashboard-content > section,
 #programme-content > section,
 #channel-content > section {
 	margin: 0;
 }
 
+#search-content > section > article,
 #dashboard-content > section > article,
 #programme-content > section > article,
 #channel-content > section > article {
@@ -1033,6 +995,12 @@ margin-right: 10px;
 
 @media screen and (min-width:640px) {
 
+	#search-content > header {
+		min-height: 40px;
+	}
+
+	#search-content > section,
+	#search-content > header,
 	#dashboard-content > section,
 	#programme-content > header,
 	#programme-content > section,
@@ -1041,11 +1009,13 @@ margin-right: 10px;
 		margin: 0 10px 10px;
 	}
 
+	#search-content > header,
 	#programme-content > header,
 	#channel-content > header {
 		padding-top: 20px;
 	}
 
+	#search-content > section > article,
 	#dashboard-content > section > article,
 	#programme-content > section > article,
 	#channel-content > section > article {
@@ -1637,10 +1607,8 @@ margin-right: 10px;
 	background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(241,241,241,1) 50%,rgba(225,225,225,1) 51%,rgba(246,246,246,1) 100%);
 	background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(241,241,241,1) 50%,rgba(225,225,225,1) 51%,rgba(246,246,246,1) 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f6f6f6',GradientType=0 );
-
 }
 
-[class*=event-list] > li:active,
 [class*=event-list] > li.active {
 	background-position: 0 -1px;
 	box-shadow: inset 2px 1px 5px 1px #666;
@@ -1656,8 +1624,6 @@ margin-right: 10px;
 	height: 100%;
 	right: 0;
 	top: 0;
-	display: table-cell;
-	vertical-align: middle;
 }
 
 [class*=event-list] .event.now:after {
@@ -1675,6 +1641,7 @@ margin-right: 10px;
 }
 
 @media screen and (min-width:640px) {
+
 	[class*=event-list] > li {
 		background: transparent;
 		border: none;
@@ -1715,6 +1682,9 @@ margin-right: 10px;
 	color: #555;
  	margin: 10px;
  	height: 20px;
+	-webkit-box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	box-sizing:border-box;
 }
 
 .event .event-time-box,
@@ -1725,13 +1695,14 @@ margin-right: 10px;
 }
 
 .event .progressbar,
+.event-prettyDate,
 .event-category {
 	display: none;
 }
 
 .event-channel {
 	background-repeat: no-repeat;
-	background-position: -200% -200%;
+	background-position: -300% -300%;
 }
 
 .event-header {
@@ -1763,6 +1734,7 @@ margin-right: 10px;
 
 .event.now {
 	color: #333;
+	display: block;
 }
 
 .now .event-time-box,
@@ -1774,6 +1746,7 @@ margin-right: 10px;
 
 .now .event-day,
 .now .event-starttime,
+.now .event-prettyDate,
 .now .event-channel { 
 	display: none; 
 }
@@ -1785,7 +1758,6 @@ margin-right: 10px;
 	overflow: hidden;
 	border: 1px solid #aaa;
 	box-shadow: inset 0px 0px 2px 1px #eee;
-
 	background: rgb(255,255,255);
 	background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(241,241,241,1) 50%, rgba(225,225,225,1) 51%, rgba(246,246,246,1) 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(50%,rgba(241,241,241,1)), color-stop(51%,rgba(225,225,225,1)), color-stop(100%,rgba(246,246,246,1)));
@@ -1855,14 +1827,19 @@ a:active .now .progressbar {
 }
 
 /*
- * NOWANDNEXT LIST 
+ * SEARCH and NOWANDNEXT LIST 
  */
 
+.search-event-list .channel-row,
 .nowandnext-event-list .channel-row {
 	display: block;
 	position: relative;
 }
 
+.search-event-list .event-day,
+.search-event-list .now .event-channel,
+.search-event-list .event-category,
+.search-event-list .event-header,
 .nowandnext-event-list .event-day,
 .nowandnext-event-list .event-channel,
 .nowandnext-event-list .event-category {
@@ -1881,38 +1858,211 @@ a:active .now .progressbar {
 /* 
  * Now events have Chevron
  */
+	.search-event-list .event.now:after,
 .nowandnext-event-list .event.now:after {
 	color: #333;
 }
 
+	.search-event-list .event-starttime,
 .nowandnext-event-list .event-starttime {
 	line-height: 1.6em;
 }
 
 /* normal events are indented */
+.search-event-list .event {
+	padding-left: 60px;
+}
+
 .nowandnext-event-list .event {
-	left: 50px;
+	padding-left: 50px;
 }
 /* we need the space to promote the now
 	reset the indent  */
+	.search-event-list .now,
 .nowandnext-event-list .now {
 	left: 0px;
 }
 
 /* but the header need to make space
 	for the channel logo */
+	.search-event-list .now .event-header,
 .nowandnext-event-list .now .event-header {
+	display: block;
 	left: 50px;
 }
 
+	.search-event-list .now .event-channel,
 .nowandnext-event-list .now .event-channel {
 	display: block;
 	right: none;
-	left: 0px;
+	left: -5px;
 	width: 43px;
 	height: 43px;
-	text-indent: -200%;
+	text-indent: -400%;
 	overflow: hidden;
 	background-repeat: no-repeat;
 	background-position: 50% 50%;
+}
+
+/* search event lists quirkrs */
+
+.search-event-list .channel-row a {
+	padding: 1px;
+}
+
+.search-event-list .now .event-header h1 {
+	text-indent: 50px;
+}
+
+.search-event-list .event-channel {
+	margin-left: 5px;
+	font-weight: bold;
+}
+
+	.search-event-list .now .event-time-box {
+		display: block;
+		position: absolute;
+		right: 0;
+		left: 0;
+	}
+
+	.search-event-list .now .event-prettyDate,
+	.search-event-list .now .event-starttime {
+		display: block;
+		position: absolute;
+		top: 10px;
+		left: 50px;
+		z-index: 1;
+		text-indent: 10px;
+	}
+
+	.search-event-list .now .event-prettyDate {
+		display: none;
+	}
+
+@media screen and (min-width:640px) {
+
+	.search-event-list .now .event-prettyDate {
+		display: block;
+		left: auto;
+		right: 10px;
+		top: 15px;
+		font-size: .8em;
+	}
+
+}
+
+/* ==============
+   Search View
+   ============== */
+
+ul {
+	list-style: none;
+}
+
+
+/**
+*	search-box
+*/
+.search-form {
+    position: absolute;
+    display: block;
+    right: 20px;
+    left: 20px;
+    top: 20px;
+}
+
+#q {
+	position: absolute;
+
+	left: 0;
+	right: 50px;
+	padding: 3px;
+	font-size: 1.4em;
+
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    text-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+
+    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) inset;
+    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) inset;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) inset;
+
+
+	-webkit-box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	box-sizing:border-box;
+}
+
+#q:before {
+	font-family: "FontAwesome";
+	content:"\f002";
+	left: 0;
+	top: 0;
+	background: red;
+	width: 22px;
+	height: 22px;
+}
+
+.search-btn {
+	position: absolute;
+	right: 0px;
+	width: 38px;
+	border-radius: 5px;
+}
+
+.search-btn .icon-search {
+	font-size: 1.2em;
+}
+
+.search-btn .label {
+	display: none;
+}
+
+@media screen and (min-width:640px) {
+
+	#q {
+		right: 100px;
+	}
+
+	.search-btn {
+		width: 90px;
+	}
+
+	.search-btn .label {
+		display: inline;
+	}
+
+	.search-btn .icon-search {
+		display: none;
+	}
+
+}
+
+/**
+*	Search
+*/
+
+#filters {
+	position: absolute;
+	display: none;
+	font-size: .9em;	
+	padding: 0 10px;
+	width: 15%;
+	margin: 0;
+}
+
+#filters h4 {
+	margin-bottom: 5px;
+}
+
+#channels,
+#datetimes {
+	margin: 0 10px;
+}
+
+#channels input,
+#datetimes input {
+	margin-right: 10px;
 }
