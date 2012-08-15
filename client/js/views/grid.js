@@ -27,10 +27,11 @@ define([
 	'lib/flaco/view',
 	'components/timebar',
 	'components/channelbar',
+	'components/highlight',
 	'utils/convert',
 	'utils/dom'
 
-], function GridViewScope(a, g, c, App, ChannelModel, View, TimeBar, ChannelBar, convert, dom) {
+], function GridViewScope(a, g, c, App, ChannelModel, View, TimeBar, ChannelBar, Highlight, convert, dom) {
 
 	var name = "grid",
 
@@ -292,7 +293,8 @@ define([
 		getSelectedTime		: getSelectedTime,
 		components			: {
 			channelbar	: ChannelBar,
-			timebar		: TimeBar
+			timebar		: TimeBar,
+			highlight	: Highlight
 		}
 	});
 
