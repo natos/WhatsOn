@@ -198,6 +198,11 @@ average(timer.timeDiff);
 			$CUSTOM_EVENT_ROOT.emit(CHANNEL_EVENTS_RECEIVED_EVENT, eventsForChannel, cacheKey);
 		});
 
+		// GC Friendly ;)
+		// We are inside a closure, so all the data inside here
+		// will remain until the garbage collector cleans it
+		apiResponse = null;
+
 	};
 
 
