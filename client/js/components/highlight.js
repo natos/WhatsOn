@@ -28,6 +28,12 @@ define([
  			// style element
 			style = document.getElementById('highlight-styles');
 
+		// if selection is no selection
+		// remove styles
+		if (selection === 'highlight') {
+			removeStyles();
+		}
+
 		if (!style) {
 			style = dom.create('style');
 			style.id = 'highlight-styles';
@@ -60,6 +66,9 @@ define([
 
 			_select = dom.create('select');
 			_select.addEventListener('change', selectChangeHandler);
+
+		// add the first option (not-selectable)
+		_categories['highlight'] = 'highlight';
 
 		var name, category, subcategory, i,
 			option, optionElement = dom.create('option');
