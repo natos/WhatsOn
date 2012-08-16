@@ -17,6 +17,7 @@ define([
 
 	_raw = false,
 	_categories = {},
+	_form,
 	_select;
 
 	function selectChangeHandler(event) {
@@ -86,7 +87,10 @@ define([
 	function removeStyles() {
 
 		var style = document.getElementById('highlight-styles');
-		document.getElementsByTagName('head')[0].removeChild(style);
+
+		if (style) {
+			style.parentNode.removeChild(style);
+		}
 
 	}
 
@@ -112,24 +116,20 @@ define([
 	function render() {
 
 		if (!_select) {
-			console.log('cant renderyet ')
 			return this;
 		}
 
-		console.log('rendering');
-
-		var form = document.getElementsByTagName('form')[0];
-
-			form.appendChild(_select);
-
-		console.log('rendered');
+		form = document.getElementsByTagName('form')[0];
+		form.appendChild(_select);
 
 		return this;
 	}
 
 	function finalize() {
 
-		removeStyles();
+		// do I really  want to remove styles?
+		// or leave it and remember the selection...
+		//removeStyles();
 
 		return this;
 
