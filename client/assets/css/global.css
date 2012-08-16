@@ -1176,7 +1176,6 @@ margin-right: 10px;
 
 #time-bar.expanded {
 	height: 165px;
-	opacity: .85;
 }
 
 #time-bar-list {
@@ -1240,7 +1239,6 @@ margin-right: 10px;
 	bottom: 25px;
 	left: 0;
 	right: 0;
-	opacity: .8;
 
 	-webkit-backface-visibility: hidden;
 	-webkit-transform:translate3d(0,0,0);
