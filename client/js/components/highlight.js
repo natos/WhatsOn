@@ -21,20 +21,32 @@ define([
 
 	function selectChangeHandler(event) {
 
-		var selection = event.target[event.target.selectedIndex].innerHTML;
- 		
- 		// style element
- 		var style = document.getElementById('highlight-styles');
- 		
+		var cssText = [],
+			// read the selecteed category
+			selection = event.target[event.target.selectedIndex].innerHTML,
+ 			// style element
+			style = document.getElementById('highlight-styles');
+
 		if (!style) {
 			style = dom.create('style');
 			style.id = 'highlight-styles';
 			document.getElementsByTagName('HEAD')[0].appendChild(style);
 		}
 
-		var cssText = [];
-			// Generate style rules for the heights and widths specific to the current browser
-			cssText.push('#grid-container a[data-category='+selection+'] { background-color: yellow; }'); // Hack the .nav z-index for the grid
+		// Generate style rules for the heights and widths specific to the current browser
+		cssText.push('#grid-container .grid-event[data-category='+selection+'] {');
+		cssText.push('\tbackground: rgb(230,240,163);');
+		cssText.push('\tbackground: -moz-linear-gradient(top,  rgba(230,240,163,1) 0%, rgba(210,230,56,1) 50%, rgba(195,216,37,1) 51%, rgba(219,240,67,1) 100%);');
+		cssText.push('\tbackground: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(230,240,163,1)), color-stop(50%,rgba(210,230,56,1)), color-stop(51%,rgba(195,216,37,1)), color-stop(100%,rgba(219,240,67,1)));');
+		cssText.push('\tbackground: -webkit-linear-gradient(top,  rgba(230,240,163,1) 0%,rgba(210,230,56,1) 50%,rgba(195,216,37,1) 51%,rgba(219,240,67,1) 100%);');
+		cssText.push('\tbackground: -o-linear-gradient(top,  rgba(230,240,163,1) 0%,rgba(210,230,56,1) 50%,rgba(195,216,37,1) 51%,rgba(219,240,67,1) 100%);');
+		cssText.push('\tbackground: -ms-linear-gradient(top,  rgba(230,240,163,1) 0%,rgba(210,230,56,1) 50%,rgba(195,216,37,1) 51%,rgba(219,240,67,1) 100%);');
+		cssText.push('\tbackground: linear-gradient(to bottom,  rgba(230,240,163,1) 0%,rgba(210,230,56,1) 50%,rgba(195,216,37,1) 51%,rgba(219,240,67,1) 100%);');
+		cssText.push('\tfilter: progid:DXImageTransform.Microsoft.gradient( startColorstr=\'#e6f0a3\', endColorstr=\'#dbf043\',GradientType=0 );');
+		cssText.push('}');
+		cssText.push('#grid-container .grid-event[data-category='+selection+'].tiny:after {');
+		cssText.push('\tcolor: yellowgreen');
+		cssText.push('}');
 
 		// insert styles
 		// redraw and reflow here!
@@ -46,24 +58,33 @@ define([
 			_select = dom.create('select');
 			_select.addEventListener('change', selectChangeHandler);
 
-		var category, subcategory, i,
+		var name, category, subcategory, i,
 			option, optionElement = dom.create('option');
 
 		for (i = 0; i < _raw.length; i++) {
+			name = _raw[i].category.name;
+			name = name.replace('/','-'); // the '/' is not interperted by CSS
 
-			if (!_categories[_raw[i].category.name]) {
-				_categories[_raw[i].category.name] = _raw[i].category;
+			if (!_categories[name]) {
+				_categories[name] = _raw[i].category;
 			}
 		}
 
 		for (category in _categories) {
-			console.log(category);
 			option = optionElement.cloneNode(false);
 			option.innerHTML = category;
 			_select.appendChild(option);
 		}
 
 		render();
+
+	}
+
+
+	function removeStyles() {
+
+		var style = document.getElementById('highlight-styles');
+		document.getElementsByTagName('head')[0].removeChild(style);
 
 	}
 
@@ -105,6 +126,8 @@ define([
 	}
 
 	function finalize() {
+
+		removeStyles();
 
 		return this;
 

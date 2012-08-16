@@ -258,8 +258,8 @@ define([
 			eventElement.href = '/programme/' + programmeId;
 			eventElement.style.width = width + 'px';
 			eventElement.style.left = left + 'px';
-			eventElement.setAttribute('data-category', category);
-			eventElement.setAttribute('data-subcategory', subcategory);
+			eventElement.setAttribute('data-category', category.replace('/','-')); // the '/' is not interperted by CSS, needed for highlighting
+			eventElement.setAttribute('data-subcategory', subcategory.replace('/','-')); // the '/' is not interperted by CSS, needed for highlighting
 			if (width >= tinyWidthLimit) {
 				eventElement.appendChild(document.createTextNode(eventTitle));
 			}

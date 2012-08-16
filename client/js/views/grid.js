@@ -170,6 +170,17 @@ define([
 
 	}
 
+	function toggleTimeControls() {
+		_gridcontainer.className = (_gridcontainer.className === '') ? 'expanded' : '';
+	}
+
+	function handleActions(action) {
+		if (action === 'TOGGLE-EDIT-MODE') {
+			toggleTimeControls();
+		}
+	}
+
+
 /* public */
 
 	/**
@@ -249,6 +260,8 @@ define([
 		// we are listening to render new events
 		App.on(g.MODEL_CHANGED, modelChanged);
 
+		App.on(a.ACTION, handleActions);
+
 		return this;
 
 	}
@@ -272,10 +285,19 @@ define([
 		removeStyles();
 
 		a._win.removeEventListener('resize', handleResizeAndScroll);
-		a._win.removeEventListener('scroll');
-		a._win.removeEventListener('touchmove');
+		a._win.removeEventListener('scroll', handleResizeAndScroll);
+		a._win.removeEventListener('touchmove', handleResizeAndScroll);
+
+		a._win.removeEventListener('touchstart', updateTouchVelocity);
+		a._win.removeEventListener('touchmove', updateTouchVelocity);
+
+		a._win.removeEventListener('scroll', restoreHeaders);
+		a._win.removeEventListener('touchstart', restoreHeaders);
+
+		a._win.removeEventListener('touchend', onTouchEnd);
 
 		App.off(g.MODEL_CHANGED, modelChanged);
+		App.off(a.ACTION, handleActions);
 
 		return this;
 
