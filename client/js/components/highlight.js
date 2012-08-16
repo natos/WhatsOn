@@ -43,6 +43,8 @@ define([
 		cssText.push('\tbackground: -ms-linear-gradient(top,  rgba(230,240,163,1) 0%,rgba(210,230,56,1) 50%,rgba(195,216,37,1) 51%,rgba(219,240,67,1) 100%);');
 		cssText.push('\tbackground: linear-gradient(to bottom,  rgba(230,240,163,1) 0%,rgba(210,230,56,1) 50%,rgba(195,216,37,1) 51%,rgba(219,240,67,1) 100%);');
 		cssText.push('\tfilter: progid:DXImageTransform.Microsoft.gradient( startColorstr=\'#e6f0a3\', endColorstr=\'#dbf043\',GradientType=0 );');
+		cssText.push('\tborder-top: 1px solid yellowGreen;');
+		cssText.push('\tbox-shadow: inset 0px 0px 10px yellowGreen;');
 		cssText.push('}');
 		cssText.push('#grid-container .grid-event[data-category='+selection+'].tiny:after {');
 		cssText.push('\tcolor: yellowgreen');
