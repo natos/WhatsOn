@@ -262,6 +262,8 @@ define([
 			eventElement.setAttribute('data-subcategory', subcategory.replace('/','-')); // the '/' is not interperted by CSS, needed for highlighting
 			if (width >= tinyWidthLimit) {
 				eventElement.appendChild(document.createTextNode(eventTitle));
+			} else {
+				eventElement.title = eventTitle;
 			}
 
 			// Insert
