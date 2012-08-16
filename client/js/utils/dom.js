@@ -28,6 +28,8 @@ define([
 		span: doc.createElement('span'),
 		style: doc.createElement('style'),
 		button: doc.createElement('button'),
+		select: doc.createElement('select'),
+		option: doc.createElement('option'),
 		fragment: doc.createDocumentFragment()
 	};
 
