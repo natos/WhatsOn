@@ -250,7 +250,6 @@ img {
 .user-control a:active, .menu-item:active, .menu-item.active {
 	color: #ccc;
 	background: #333 url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
-	border-bottom: solid 1px #000;
 }
 
 .nav a.active i, .user-control a.active i, .menu-item.active i {
