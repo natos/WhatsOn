@@ -1,10 +1,3 @@
-/* reset lists */
-ul, ol, li {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-}
-
 html {
 	/* Avoids flickers on fonts when animations occur */
 	-webkit-font-smoothing: antialiased;
@@ -33,9 +26,14 @@ a:visited {
 	text-decoration: none;
 }
 
-/**
-*	fluid images
-*/
+/* reset lists */
+ul, ol, li {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+/* fluid images */
 
 img {
 	max-width: 100%;
