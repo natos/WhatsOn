@@ -32,8 +32,7 @@ define([
 	function centerViewPort() {
 
 		var left = convert.timeToPixels( (new Date()).valueOf() );
-
-		left = left - ( a._doc.body.clientWidth / 2 ) + g.CHANNEL_BAR_WIDTH;
+			left = left - ( a._doc.body.clientWidth / 2 ) + g.CHANNEL_BAR_WIDTH;
 
 		// move the window left, but the same distance top
 		a._win.scroll(left, a._doc.body.scrollTop);
@@ -58,19 +57,21 @@ define([
 	}
 
 	function changeChannelSelection(event) {
+		
+		var name = event.target.name,
+			value = event.target.value;
 
-		switch(event.target.name) {
+		switch(name) {
 			case 'channelSelector':
 				// change channel selection
-				if (!ChannelModel[c.GROUPS][event.target.value]) {
+				if (!ChannelModel[c.GROUPS][value]) {
 					console.log('The selected groun doesn\'t exist');
 					return;
 				}
-				ChannelModel.set(c.SELECTED_GROUP, event.target.value);
+				ChannelModel.set(c.SELECTED_GROUP, value);
 				break;
 
 			case 'timeSelector':
-				console.log(event.target.id);
 				centerViewPort();
 				break;
 		}
