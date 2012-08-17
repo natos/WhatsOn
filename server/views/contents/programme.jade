@@ -25,11 +25,25 @@ if (xhr)
 					each event in data.events
 						li
 							a(href="/channel/#{event.channel.id}")
-								article.event
+								- var nowTimeValue = new Date();
+								- var startDateTime = new Date(event.startDateTime);
+								- var endDateTime = new Date(event.endDateTime);
+								- var day = startDateTime.getDay();
+								- var hours = startDateTime.getHours();
+								- hours = (hours < 10)? '0' + hours : hours;
+								- var minutes = startDateTime.getMinutes();
+								- minutes = (minutes < 10)? '0' + minutes : minutes;
+								- var time = (hours + ':' + minutes);
+								- var startTimeValue = startDateTime.valueOf();
+								- var endTimeValue = endDateTime.valueOf();
+								- var percentageComplete = (100 * (nowTimeValue - startTimeValue)) / (endTimeValue - startTimeValue);
+								article.event(class="#{percentageComplete>0&&percentageComplete<=100?'now':''}")
 									.event-time-box
-										time.event-day #{event.prettyDate} 
+										time.event-day #{event.day}
+										time.event-prettyDate #{event.prettyDate}
 										time.event-starttime #{event.simpleTime} 
 									header.event-header
-										.progressbar
+										.progressbar(style="width:#{percentageComplete}%")
 										h1.event-title #{title}
-									aside.event-channel &nbsp;on #{event.channel.name}
+									aside.event-channel(style="background-image: url(http://www.upc.nl/#{event.channel.logoIMG})")
+										| on #{event.channel.name}
