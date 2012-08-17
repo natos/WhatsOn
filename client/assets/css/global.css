@@ -1186,15 +1186,6 @@ margin-right: 10px;
 	        transform:translate3d(0,0,0);
 }
 
-#time-bar .shade {
-	/* Fake box-shadow. CSS box-shadow can decrease scrolling performance on old iOS and Android browsers. */ 
-	background:url('/assets/images/bg-gradient-shadow-bottom.png') repeat-x 0 100%;
-	width: 100%;
-	height: 100%;
-	position: absolute;
-	bottom: -6px;
-}
-
 #time-bar .content {
 	overflow: hidden;
 	position: absolute;
@@ -1233,7 +1224,7 @@ margin-right: 10px;
 	color: #fff;
 	position: absolute;
 	overflow: hidden;
-	background: #666;
+	background: #333;
 	top: 0;
 	bottom: 25px;
 	left: 0;
@@ -1248,18 +1239,19 @@ margin-right: 10px;
 }
 
 #time-controls #now + label {
-	background: #e6f0a3;
-	background: -moz-linear-gradient(top, #e6f0a3 0%, #d2e638 50%, #c3d825 51%, #dbf043 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e6f0a3), color-stop(50%,#d2e638), color-stop(51%,#c3d825), color-stop(100%,#dbf043));
-	background: -webkit-linear-gradient(top, #e6f0a3 0%,#d2e638 50%,#c3d825 51%,#dbf043 100%);
-	background: -o-linear-gradient(top, #e6f0a3 0%,#d2e638 50%,#c3d825 51%,#dbf043 100%);
-	background: -ms-linear-gradient(top, #e6f0a3 0%,#d2e638 50%,#c3d825 51%,#dbf043 100%);
-	background: linear-gradient(to bottom, #e6f0a3 0%,#d2e638 50%,#c3d825 51%,#dbf043 100%);
+	color: #333;
+	background: rgb(230,240,163);
+	background: -moz-linear-gradient(top,  rgba(230,240,163,1) 0%, rgba(210,230,56,1) 50%, rgba(195,216,37,1) 51%, rgba(219,240,67,1) 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(230,240,163,1)), color-stop(50%,rgba(210,230,56,1)), color-stop(51%,rgba(195,216,37,1)), color-stop(100%,rgba(219,240,67,1)));
+	background: -webkit-linear-gradient(top,  rgba(230,240,163,1) 0%,rgba(210,230,56,1) 50%,rgba(195,216,37,1) 51%,rgba(219,240,67,1) 100%);
+	background: -o-linear-gradient(top,  rgba(230,240,163,1) 0%,rgba(210,230,56,1) 50%,rgba(195,216,37,1) 51%,rgba(219,240,67,1) 100%);
+	background: -ms-linear-gradient(top,  rgba(230,240,163,1) 0%,rgba(210,230,56,1) 50%,rgba(195,216,37,1) 51%,rgba(219,240,67,1) 100%);
+	background: linear-gradient(to bottom,  rgba(230,240,163,1) 0%,rgba(210,230,56,1) 50%,rgba(195,216,37,1) 51%,rgba(219,240,67,1) 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e6f0a3', endColorstr='#dbf043',GradientType=0 );
 }
 
 #time-controls #now:checked + label {
-	color: #fff;
+	color: green;
 }
 
 #time-controls ul { 
