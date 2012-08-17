@@ -848,13 +848,16 @@ margin-right: 10px;
 #programme-content > header,
 #programme-content > section,
 #channel-content > header,
-#channel-content > section {
+#channel-content > section 
+#nowandnext-content > header,
+#nowandnext-content > section {
 	margin: 0;
 }
 
 #search-content > header,
 #programme-content > header,
-#channel-content > header {
+#channel-content > header,
+#nowandnext-content > header {
 	position:relative;
 	padding: 5px 10px 20px 50px;
 	min-height: 100px;
@@ -871,7 +874,8 @@ margin-right: 10px;
 
 #search-content > header h1,
 #programme-content > header h1,
-#channel-content > header h1 {
+#channel-content > header h1,
+#nowandnext-content > header h1 {
 	margin: 5px 0;
 }
 
@@ -891,14 +895,16 @@ margin-right: 10px;
 #search-content > section,
 #dashboard-content > section,
 #programme-content > section,
-#channel-content > section {
+#channel-content > section,
+#nowandnext-content > section {
 	margin: 0;
 }
 
 #search-content > section > article,
 #dashboard-content > section > article,
 #programme-content > section > article,
-#channel-content > section > article {
+#channel-content > section > article,
+#nowandnext-content > section > article {
 	margin: 0;
 	padding: 0;
 	border-top: 1px #bbb solid;
@@ -940,45 +946,6 @@ margin-right: 10px;
 		margin: 0;
 	}
 
-	#programme-content .time,
-	#channel-content .time {
-		position: absolute;
-		font-size: .8em;
-		padding: 4px 6px;
-		left: 15px;
-		color: #aaa;
-		border: 1px solid transparent;
-	}
-
-	#programme-content .event:hover .time,
-	#channel-content .programme:hover .time {
-		border: 1px solid #666;
-		color: #666;
-	}
-
-	#programme-content .event a,
-	#programme-content .event a:visited {
-		display: inline;
-		color: #333;
-	}
-
-	#channel-content .programme a,
-	#channel-content .programme a:visited {
-		display: block;
-		color: #333;
-	}
-
-	#programme-content .event a:hover,
-	#channel-content .programme a:hover {
-		color: #000;
-	}
-
-	#programme-content .event a:active,
-	#channel-content .programme a:active {
-		color: #00f;
-	}
-	/* end channel events list */
-
 
 @media (min-width: 480px) {
 
@@ -1005,20 +972,24 @@ margin-right: 10px;
 	#programme-content > header,
 	#programme-content > section,
 	#channel-content > header,
-	#channel-content > section {
+	#channel-content > section,
+	#nowandnext-content > header,
+	#nowandnext-content > section {
 		margin: 0 10px 10px;
 	}
 
 	#search-content > header,
 	#programme-content > header,
-	#channel-content > header {
+	#channel-content > header,
+	#nowandnext-content > header {
 		padding-top: 20px;
 	}
 
 	#search-content > section > article,
 	#dashboard-content > section > article,
 	#programme-content > section > article,
-	#channel-content > section > article {
+	#channel-content > section > article,
+	#nowandnext-content > section > article {
 		padding: 5px 10px;
 		margin-bottom: 10px;
 	}
@@ -1033,14 +1004,6 @@ margin-right: 10px;
 	#programme-content h2 i,
 	#channel-content h2 i {
 		left: 28px;
-	}
-
-	#programme-content .time,
-	#channel-content .time {
-		position: absolute;
-		font-size: 1em;
-		padding: 2px 4px;
-		left: 20px;
 	}
 
 	#programme-content > header h1 .favorite,
@@ -1680,7 +1643,6 @@ margin-right: 10px;
 **/
 
 /* GENERIC FOR ALL EVENT-LISTS */
-
 [class*=event-list] > li {
 	position: relative;
 	background: rgb(255,255,255);
@@ -1693,11 +1655,13 @@ margin-right: 10px;
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f6f6f6',GradientType=0 );
 }
 
+/* active effect */
 [class*=event-list] > li.active {
 	background-position: 0 -1px;
 	box-shadow: inset 2px 1px 5px 1px #666;
 }
 
+/* chevron */
 [class*=event-list] .event:after {
 	font-family: "FontAwesome";
 	position: absolute;
@@ -1710,6 +1674,7 @@ margin-right: 10px;
 	top: 0;
 }
 
+/* shift the position of the chevron */
 [class*=event-list] .event.now:after {
 	top: 11px;
 }
@@ -1720,6 +1685,7 @@ margin-right: 10px;
 	padding: 5px 0;
 }
 
+/* active effect */
 [class*=event-list] a:active {
 	padding: 4px 0 6px 0;
 }
@@ -1750,14 +1716,20 @@ margin-right: 10px;
 	[class*=event-list] a:active {
 		padding: 0;
 	}
-
+	/* remove the chevron */
 	[class*=event-list] .event:after {
 		content: '';
 	}
 }
 
 /* EVENT ROW */
+/* relative container */
+.channel-row {
+	display: block;
+	position: relative;
+}
 
+/* generic event */
 .event {
 	position: relative;
 	white-space: nowrap;
@@ -1776,12 +1748,6 @@ margin-right: 10px;
 .event .event-channel {
 	position: relative;
 	display: inline-block;
-}
-
-.event .progressbar,
-.event-prettyDate,
-.event-category {
-	display: none;
 }
 
 .event-channel {
@@ -1810,29 +1776,67 @@ margin-right: 10px;
 	text-overflow: ellipsis;
 }
 
+.event-day,
+.event-prettyDate,
+.event .progressbar,
+
+.now .event-day,
+.now .event-channel,
+
+.channel-event-list .event-day, 
+.channel-event-list .event-channel,
+
+.search-event-list .event-day,
+.search-event-list .now .event-channel,
+.search-event-list .event-category,
+.search-event-list .event-header,
+
+.nowandnext-event-list .event-day,
+.nowandnext-event-list .event-channel,
+.nowandnext-event-list .event-category,
+.nowandnext-event-list .now .event-starttime,
+
+.programme-event-list .now .event-day,
+.programme-event-list .event-header { 
+	display: none; 
+}
+
+
 /* NOW EVENT QUIRKS */
 
 .now {
+	color: #333;
 	height: 43px;
 }
 
-.event.now {
-	color: #333;
-	display: block;
-}
-
 .now .event-time-box,
+.now .event-starttime,
 .now .event-header,
 .now .event-channel,
 .now .progressbar {
 	position: absolute;
 }
 
-.now .event-day,
-.now .event-starttime,
-.now .event-prettyDate,
-.now .event-channel { 
-	display: none; 
+.now .event-time-box {
+	display: block;
+	right: 0;
+	left: 0;
+}
+
+.now .event-starttime {
+	display: block;
+	top: 10px;
+	z-index: 1;
+	text-indent: 10px;
+	line-height: 1.6em;
+}
+
+.now .event-prettyDate {
+	position: absolute;
+	left: auto;
+	top: 15px;
+	font-size: .8em;
+	z-index: 1;
 }
 
 .now .event-header {
@@ -1856,7 +1860,7 @@ margin-right: 10px;
 .now .event-title {
 	height: 100%;
 	line-height: 2.2;
-	text-indent: 0.3em;
+	text-indent: 50px;
 	text-shadow: 0px -1px 0px rgba(000,000,000,0.2), 0px 1px 0px rgba(255,255,255,1);
 }
 
@@ -1878,6 +1882,18 @@ margin-right: 10px;
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#bfd255', endColorstr='#9ecb2d',GradientType=0 );
 }
 
+/*	channel logo display */
+.now .event-channel {
+	right: none;
+	left: -5px;
+	width: 43px;
+	height: 43px;
+	text-indent: -400%;
+	overflow: hidden;
+	background-repeat: no-repeat;
+	background-position: 50% 50%;
+}
+
 a:active .now .progressbar {
 	opacity: 1;
 }
@@ -1889,149 +1905,93 @@ a:active .now .progressbar {
 
 }
 
-/* 
- * CHANNEL EVENT LIST 
- */
+/*	QUIRKS for Channel, Programme,
+	Search and Now And Next lists */
 
-.channel-event-list .event-day, 
-.channel-event-list .event-channel {
-	display: none;
+/* small indent for small events */
+.channel-event-list .event,
+.programme-event-list .event {
+	padding-left: 9px;
 }
 
-/* 
- * PROGRAMME EVENT LIST 
- */
-
-.programme-event-list .event-header {
-	display: none;
-}
-
+/* highlight the channel name */
 .programme-event-list .event-channel {
 	font-weight: bold;
 }
 
-/*
- * SEARCH and NOWANDNEXT LIST 
- */
-
-.search-event-list .channel-row,
-.nowandnext-event-list .channel-row {
+/* show the event title */
+.programme-event-list .now .event-header {
 	display: block;
-	position: relative;
 }
 
-.search-event-list .event-day,
-.search-event-list .now .event-channel,
-.search-event-list .event-category,
-.search-event-list .event-header,
-.nowandnext-event-list .event-day,
-.nowandnext-event-list .event-channel,
-.nowandnext-event-list .event-category {
-	display: none;
+/* 	now and next doesn't need
+	space to show startime */
+.nowandnext-event-list .event-title {
+	text-indent: 0.5em;
 }
 
-/* 
- * Small events doesn't have chevron
- * hidde it by change foreground color
- * this assets are typography
- */
+/*	Small events doesn't have chevron
+	hidde it by change foreground color
+	this assets are typography */
 .nowandnext-event-list .event:after {
 	color: transparent;
 }
 
-/* 
- * Now events have Chevron
- */
-	.search-event-list .event.now:after,
-.nowandnext-event-list .event.now:after {
+/*	big events does have chevron */
+.nowandnext-event-list .now:after {
 	color: #333;
 }
 
-	.search-event-list .event-starttime,
-.nowandnext-event-list .event-starttime {
-	line-height: 1.6em;
-}
-
-/* normal events are indented */
-.search-event-list .event {
+/* 	normal events are indented 
+	to keep the alignment of
+	the first letter */
+.search-event-list .event,
+.nowandnext-event-list .event {
 	padding-left: 60px;
 }
 
-.nowandnext-event-list .event {
-	padding-left: 50px;
-}
-/* we need the space to promote the now
-	reset the indent  */
-	.search-event-list .now,
-.nowandnext-event-list .now {
-	left: 0px;
-}
-
-/* but the header need to make space
-	for the channel logo */
-	.search-event-list .now .event-header,
-.nowandnext-event-list .now .event-header {
+/* 	need to make space for the
+	channel logo */
+.search-event-list .now .event-header,
+.nowandnext-event-list .now .event-header,
+.programme-event-list .now .event-header {
 	display: block;
 	left: 50px;
 }
 
-	.search-event-list .now .event-channel,
-.nowandnext-event-list .now .event-channel {
+/* logo visible for */
+.search-event-list .now .event-channel,
+.nowandnext-event-list .now .event-channel,
+.programme-event-list .now .event-channel {
 	display: block;
-	right: none;
-	left: -5px;
-	width: 43px;
-	height: 43px;
-	text-indent: -400%;
-	overflow: hidden;
-	background-repeat: no-repeat;
-	background-position: 50% 50%;
 }
 
 /* search event lists quirkrs */
-
-.search-event-list .channel-row a {
-	padding: 1px;
-}
-
-.search-event-list .now .event-header h1 {
-	text-indent: 50px;
-}
-
-.search-event-list .event-channel {
+.search-event-list .event-channel,
+.programme-event-list .event-channel {
 	margin-left: 5px;
 	font-weight: bold;
 }
 
-	.search-event-list .now .event-time-box {
-		display: block;
-		position: absolute;
-		right: 0;
-		left: 0;
-	}
 
-	.search-event-list .now .event-prettyDate,
-	.search-event-list .now .event-starttime {
-		display: block;
-		position: absolute;
-		top: 10px;
-		left: 50px;
-		z-index: 1;
-		text-indent: 10px;
-	}
+.programme-event-list .event-day {
+	display: inline-block;
+	margin-right: 5px;
+}
 
-	.search-event-list .now .event-prettyDate {
-		display: none;
-	}
+/* 	need to shift the startime
+	because the logo is on the left 
+	and is not pushing the flow */
+.search-event-list .now .event-starttime,
+.programme-event-list .now .event-starttime {
+	left: 50px;	
+}
 
 @media screen and (min-width:640px) {
 
-	.search-event-list .now .event-prettyDate {
+	.now .event-prettyDate {
 		display: block;
-		left: auto;
-		right: 10px;
-		top: 15px;
-		font-size: .8em;
+		right: 15px;
 	}
 
 }

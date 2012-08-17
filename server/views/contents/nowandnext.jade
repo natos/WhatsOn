@@ -1,33 +1,35 @@
-#content-nowandnext
-	ul.channels-list-types
-		each filterGroup in availableFilterGroups
-			li.type(class="#{filterGroup.selected ? 'selected' : ''}", style="width:#{100 / availableFilterGroups.length}%")
-				a.group(href="#{filterGroup.url}") #{filterGroup.text}
-
-	ul.nowandnext-event-list
+#nowandnext-content
+	section#filters
+		ul.channels-list-types
+			each filterGroup in availableFilterGroups
+				li.type(class="#{filterGroup.selected ? 'selected' : ''}", style="width:#{100 / availableFilterGroups.length}%")
+					a.group(href="#{filterGroup.url}") #{filterGroup.text}
+	section
 		each channelEventsCollection in channelEventsCollections
-			li
-				a.channel-row(href="/channel/#{channelEventsCollection.channel.id}")
-					each event, i in channelEventsCollection.channelEvents
-						article.event(class="#{(i === 0) ? "now" : ""}")
-							div.event-time-box
-								- var nowTimeValue = new Date();
-								- var startDateTime = new Date(event.startDateTime);
-								- var endDateTime = new Date(event.endDateTime);
-								- var day = startDateTime.getDay();
-								- var hours = startDateTime.getHours();
-								- hours = (hours < 10)? '0' + hours : hours;
-								- var minutes = startDateTime.getMinutes();
-								- minutes = (minutes < 10)? '0' + minutes : minutes;
-								- var time = (hours + ':' + minutes);
+			article
+				ul.nowandnext-event-list
+					li.channel-row
+						a(href="/channel/#{channelEventsCollection.channel.id}")
+							each event, i in channelEventsCollection.channelEvents
+								article.event(class="#{(i === 0) ? "now" : ""}")
+									div.event-time-box
+										- var nowTimeValue = new Date();
+										- var startDateTime = new Date(event.startDateTime);
+										- var endDateTime = new Date(event.endDateTime);
+										- var day = startDateTime.getDay();
+										- var hours = startDateTime.getHours();
+										- hours = (hours < 10)? '0' + hours : hours;
+										- var minutes = startDateTime.getMinutes();
+										- minutes = (minutes < 10)? '0' + minutes : minutes;
+										- var time = (hours + ':' + minutes);
 
-								- var startTimeValue = startDateTime.valueOf();
-								- var endTimeValue = endDateTime.valueOf();
-								- var percentageComplete = (100 * (nowTimeValue - startTimeValue)) / (endTimeValue - startTimeValue);
+										- var startTimeValue = startDateTime.valueOf();
+										- var endTimeValue = endDateTime.valueOf();
+										- var percentageComplete = (100 * (nowTimeValue - startTimeValue)) / (endTimeValue - startTimeValue);
 
-								time.event-day #{day}
-								time.event-starttime #{time}
-							header.event-header
-								div.progressbar(style="width:#{percentageComplete}%")
-								h1.event-title #{event.programme.title}
-							aside.event-channel(style="background-image: url(http://www.upc.nl#{channelEventsCollection.channel.logoIMG});") on Nederland 2
+										time.event-day #{day}
+										time.event-starttime #{time}
+									header.event-header
+										div.progressbar(style="width:#{percentageComplete}%")
+										h1.event-title #{event.programme.title}
+									aside.event-channel(style="background-image: url(http://www.upc.nl#{channelEventsCollection.channel.logoIMG});") on Nederland 2

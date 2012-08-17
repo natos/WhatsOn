@@ -46,6 +46,7 @@
 										- var percentageComplete = (100 * (nowTimeValue - startTimeValue)) / (endTimeValue - startTimeValue);
 										article.event(class="#{i===0||percentageComplete>0?'now':''}")
 											div.event-time-box
+												time.event-day #{day}
 												time.event-starttime #{time}
 												time.event-prettyDate #{event.prettyDate}
 											header.event-header

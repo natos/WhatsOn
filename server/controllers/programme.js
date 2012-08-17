@@ -176,7 +176,7 @@ function(ProgrammeService, Metadata, DateUtils, Requestn, PrettyDate, Channels) 
 
 		new ProgrammeService().once('getEvents', function(error, response, body) {
 
-			var programme_events = [], now = new Date();
+			var programme_events = [], now = new Date(), c;
 
 			if ( !response || /500|404/.test(response.statusCode) ) {
 				programme_events = [{ "statusCode" : "404" }];
@@ -185,6 +185,13 @@ function(ProgrammeService, Metadata, DateUtils, Requestn, PrettyDate, Channels) 
 				programme_events = dateUtils.prettifyCollection(programme_events, 'startDateTime');
 				programme_events.forEach(function(el, ix, arr) {
 					el.simpleTime = strftime(new Date(Date.parse(el.startDateTime)), '%R');
+					el.day = strftime(new Date(Date.parse(el.startDateTime)), '%A');
+					// Get the channel logo
+					for (c = 0; c < _app.channels.length; c++) {
+						if (_app.channels[c].id === el.channel.id) {
+							el.channel.logoIMG = _app.channels[c].logoIMG;
+						}
+					}
 				});
 
 			}
