@@ -82,24 +82,29 @@ function(ChannelService, Metadata, DateUtils, Requestn, PrettyDate, Channels) {
 				}
 
 				var _channel_details = JSON.parse( response[CHANNEL_DETAILS].body ),
-					_channel_events = JSON.parse( response[CHANNEL_EVENTS].body );
+					_channel_events = JSON.parse( response[CHANNEL_EVENTS].body ),
 
 				// Add date offset and formatted start-end time range to events.
 				// Group events by date.
-				var strftime = PrettyDate.strftime;
-				var now = new Date();
-				var dateGroups = [];
-				var previousDay = 0;
-				_channel_events.forEach(function(el, ix, arr){
-					var startDate = new Date(Date.parse(el.startDateTime));
-					var endDate = new Date(Date.parse(el.endDateTime));
+				 	strftime = PrettyDate.strftime,
+					now = new Date(),
+					dateGroups = [],
+					previousDay = 0,
+					today = now.getDay();
+
+				_channel_events.forEach(function(el, ix, arr) {
+
+					var startDate = new Date(Date.parse(el.startDateTime)),
+						endDate = new Date(Date.parse(el.endDateTime));
+
 					el.timeRange = strftime(startDate, '%R') + ' - ' + strftime(endDate, '%R');
 					el.simpleTime = strftime(startDate, '%R');
+					el.day = strftime(startDate, '%A');
 
 					var day = startDate.getDay();
 					if (day !== previousDay) {
 						dateGroups.push({
-							dateText : strftime(startDate, '%A %e %B'),
+							dateText : (day !== today) ? strftime(startDate, '%A %e %B') : 'Today',
 							events : []
 						});
 						previousDay = day;

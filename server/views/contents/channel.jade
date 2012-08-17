@@ -24,14 +24,26 @@ if (xhr)
 						i.icon-time
 						#{date.dateText}
 					ul.channel-event-list
-						each event in date.events
+						each event, i in date.events
 							li
 								a(href="/programme/#{event.programme.id}")
-									article.event
-										.event-time-box
-											time.event-day #{event.prettyDate} 
+									- var nowTimeValue = new Date();
+									- var startDateTime = new Date(event.startDateTime);
+									- var endDateTime = new Date(event.endDateTime);
+									- var day = startDateTime.getDay();
+									- var hours = startDateTime.getHours();
+									- hours = (hours < 10)? '0' + hours : hours;
+									- var minutes = startDateTime.getMinutes();
+									- minutes = (minutes < 10)? '0' + minutes : minutes;
+									- var time = (hours + ':' + minutes);
+									- var startTimeValue = startDateTime.valueOf();
+									- var endTimeValue = endDateTime.valueOf();
+									- var percentageComplete = (100 * (nowTimeValue - startTimeValue)) / (endTimeValue - startTimeValue);
+									article.event(class="#{percentageComplete>0?'now':''}")
+										div.event-time-box
+											time.event-day #{event.day} 
 											time.event-starttime #{event.simpleTime} 
+											time.event-prettyDate #{event.prettyDate}
 										header.event-header
-											.progressbar
+											.progressbar(style="width:#{percentageComplete}%")
 											h1.event-title #{event.programme.title}
-										aside.event-channel &nbsp;on #{title}
