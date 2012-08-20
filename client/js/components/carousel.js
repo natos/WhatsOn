@@ -190,7 +190,9 @@ define([
 			}
 
 			// select first
-			_navigator.firstChild.className = DISC_CLASS + SELECTED_CLASS;
+			if (_navigator.firstChild) {
+				_navigator.firstChild.className = DISC_CLASS + SELECTED_CLASS;
+			}
 
 			// add navigator and playpause to carousel
 			_carousel.appendChild(_navigator);
