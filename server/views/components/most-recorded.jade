@@ -3,12 +3,6 @@ article
 		h1
 			i.icon-star
 			| Most recorded
-	ul.most-recorded
+	ul.channel-event-list
 		each event in topBookingsEvents
-			li.most-recorded-event
-				a.most-recorded-event__channel(href="/channel/#{event.channel.id}", title="#{event.channel.name}")
-					div.img(style="background-image:url(http://www.upc.nl#{channelsMap[event.channel.id].logoIMG});")
-				.most-recorded-event__title
-					a(href="/programme/#{event.programme.id}") #{event.programme.title}
-				.most-recorded-event__timeline
-					#{event.startTimeString}
+			include on-now-event

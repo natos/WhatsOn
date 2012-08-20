@@ -14,7 +14,8 @@ define([
 	'services/nowandnext',
 
 	// utils
-	'utils/metadata'
+	'utils/metadata',
+	'utils/dateutils'
 
 ],
 
@@ -23,7 +24,7 @@ define([
  *	@class DashboardController
  */
 
-function(ChannelService, BookingsService, TVTipsService, TopBookingsService, NowAndNextService, Metadata) {
+function(ChannelService, BookingsService, TVTipsService, TopBookingsService, NowAndNextService, Metadata, DateUtils) {
 
 	/** @constructor */
 
@@ -34,7 +35,8 @@ function(ChannelService, BookingsService, TVTipsService, TopBookingsService, Now
 		// Routing
 
 		app.server.get('/dashboard', this.render);
-		app.server.get('/dashboard/on-now/:channelIds', this.renderOnNow);
+		app.server.get('/dashboard/on-now/channels/:channelIds', this.renderFavoriteChannelsOnNow);
+		app.server.get('/dashboard/on-now/programmes/:programmeIds', this.renderFavoriteProgrammesOnNow);
 		app.server.get('/dashboard/on-now-by-category', this.renderOnNowByCategory);
 
 	};
@@ -94,6 +96,47 @@ function(ChannelService, BookingsService, TVTipsService, TopBookingsService, Now
 		event.categoryString = categoryString;
 	}
 
+	function sortByStartDateTime(a, b) {
+		return new Date( (a.startDateTime).replace(/-/g,"/").replace(/[TZ]/g," ") ) - new Date( (b.startDateTime).replace(/-/g,"/").replace(/[TZ]/g," ") );
+	}
+
+	function normalizeOnNowEventsForFavoriteProgrammes(programmeEventsCollection, nowTime) {
+
+		var onNowEvents = [],
+			nowTimeValue = nowTime.valueOf(),
+			eventsCount, id, i, channel, event, item, startTimeValue, endTimeValue;
+
+			// TODO: Handle Time Zones!
+
+			for (id in programmeEventsCollection) {
+				item = programmeEventsCollection[id];
+				startTime = new Date(item.startDateTime); // UTC
+				startTimeValue = startTime.valueOf();
+				endTime = new Date(item.endDateTime); // UTC
+				endTimeValue = endTime.valueOf();
+				item.startTimeString = ('00' + startTime.getHours().toString()).slice(-2) + ':' + ('00' + startTime.getMinutes().toString()).slice(-2); // Local time FOR THE WEB SERVER
+				item.endTimeString = ('00' + endTime.getHours().toString()).slice(-2) + ':' + ('00' + endTime.getMinutes().toString()).slice(-2); // Local time FOR THE WEB SERVER
+				item.percentageComplete = (100 * (nowTimeValue - startTimeValue)) / (endTimeValue - startTimeValue);
+				item.prettyDate = new DateUtils().prettify(item.startDateTime);
+
+				// Get the channel logo
+				for (c = 0; c < _app.channels.length; c++) {
+					if (_app.channels[c].id === item.channel.id) {
+						item.channel.logoIMG = _app.channels[c].logoIMG;
+					}
+				}
+
+				onNowEvents.push(item);
+
+			}
+
+			onNowEvents.sort(sortByStartDateTime);
+
+		return onNowEvents;
+
+	}
+
+
 	// Take a set of events returned from the now&next service, and normalize them 
 	// so they can be passed on to an on-now template.
 	var normalizeOnNowEvents = function(channelEventsCollection, nowTime) {
@@ -120,7 +163,7 @@ function(ChannelService, BookingsService, TVTipsService, TopBookingsService, Now
 				event.channel = {
 					id: channel.id,
 					name: channel.name,
-					logoImg: channel.logoIMG
+					logoIMG: channel.logoIMG
 				}
 				event.nextEvent = item.channelEvents[1];
 
@@ -152,11 +195,12 @@ function(ChannelService, BookingsService, TVTipsService, TopBookingsService, Now
 
 	/** @public */
 
-	DashboardController.prototype.renderOnNow = function(req, res) {
+	DashboardController.prototype.renderFavoriteChannelsOnNow = function(req, res) {
 
 		var channelIds = (req.params.channelIds || '').split('|');
 		var nowTime = new Date();
 
+		// bad semantics, getNowAndNext is for channels groups, could be used also for programmes
 		(new NowAndNextService()).once('getNowAndNext', function(channelIds, channelEventsCollection) {
 
 			var nowString = getTimeAsString(nowTime);
@@ -167,10 +211,29 @@ function(ChannelService, BookingsService, TVTipsService, TopBookingsService, Now
 				onNowEvents : onNowEvents
 			});
 
-		}).getNowAndNext(nowTime, channelIds, true)
-
+		}).getNowAndNext(nowTime, channelIds, true);
 
 	}
+
+	DashboardController.prototype.renderFavoriteProgrammesOnNow = function(req, res) {
+
+		var programmeIds = (req.params.programmeIds || '').split('|');
+		var nowTime = new Date();
+
+		(new NowAndNextService()).once('getNowAndNextForFavoriteProgrammes', function(programmeIds, programmeEventsCollection) {
+
+			var nowString = getTimeAsString(nowTime);
+			var onNowEvents = normalizeOnNowEventsForFavoriteProgrammes(programmeEventsCollection, nowTime);
+
+			res.render('components/favorite-programmes-on-now.jade', {
+				nowString : nowString,
+				onNowEvents : onNowEvents
+			});
+
+		}).getNowAndNextForFavoriteProgrammes(nowTime, programmeIds, true);
+
+	};
+
 
 	DashboardController.prototype.renderOnNowByCategory = function(req, res) {
 
@@ -214,6 +277,15 @@ function(ChannelService, BookingsService, TVTipsService, TopBookingsService, Now
 			var channelsMap = {};
 			_app.channels.forEach(function(el, ix, arr){channelsMap[el.id] = el});
 
+			topBookingsEvents.forEach(function(el) {
+				// Get the channel logo
+				for (c = 0; c < _app.channels.length; c++) {
+					if (_app.channels[c].id === el.channel.id) {
+						el.channel.logoIMG = _app.channels[c].logoIMG;
+					}
+				}
+			});
+			
 			var nowString = getTimeAsString(nowTime);
 
 			res.render(template, {
@@ -235,16 +307,11 @@ function(ChannelService, BookingsService, TVTipsService, TopBookingsService, Now
 			(new TopBookingsService()).once('getTopBookings', function(topBookingsEvents) {
 				(new ChannelService()).once('getPopularChannelIds', function(popularChannelIds){
 					(new NowAndNextService()).once('getNowAndNext', function(popularChannels, channelEventsCollection) {
-
 						var eventsOnPopularChannelsRightNow = normalizeOnNowEvents(channelEventsCollection, nowTime);
-
 						topBookingsEvents = normalizeTopBookingsEvents(topBookingsEvents);
-
 						// Sort top bookings by start time
 						topBookingsEvents = topBookingsEvents.sort(function(a,b){return a.startTime.valueOf() - b.startTime.valueOf();});
-
 						render(tvTipsEvents, topBookingsEvents, eventsOnPopularChannelsRightNow);
-
 					}).getNowAndNext(nowTime, popularChannelIds, true)
 				}).getPopularChannelIds();
 			}).getTopBookings('nl');

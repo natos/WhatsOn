@@ -1,9 +1,10 @@
 li
 	a.channel-row(href="/programme/#{event.programme.id}")
-		article.event.now
+		article.event(class="#{(event.percentageComplete>=0)?'now':''}")
 			div.event-time-box
 				time.event-starttime #{event.startTimeString}
+				time.event-prettyDate #{event.prettyDate}
 			header.event-header
 				div.progressbar(style="width:#{event.percentageComplete}%")
 				h1.event-title #{event.programme.title}
-			aside.event-channel(style="background-image: url(http://www.upc.nl#{event.channel.logoImg});") on #{event.channel.name}
+			aside.event-channel(style="background-image: url(http://www.upc.nl#{event.channel.logoIMG});") on #{event.channel.name}

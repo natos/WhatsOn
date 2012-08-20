@@ -8,6 +8,7 @@ define([
 
 	// services
 	'services/channel',
+	'services/programme',
 
 	//modules
 	'util',
@@ -28,7 +29,7 @@ define([
  *	@class NowAndNextService
  */
 
-function(ChannelService, util, events, request, RequestN, cache, config) {
+function(ChannelService, ProgrammeService, util, events, request, RequestN, cache, config) {
 
 	/** @constructor */
 
@@ -210,6 +211,81 @@ function(ChannelService, util, events, request, RequestN, cache, config) {
 
 		return this;
 	};
+
+
+	/** 
+	 * Get a list of now-and-next events for a list of programmes
+	 * @param {Date} dt  The datetime at which the now&next information should be retrieved.
+	 * @param {Array} requestedProgrammeIds  An array of programme ID strings
+	 * @param {Boolean} exact  Whether you want to get the now&next events for the *exact* time specified. If false, the now&next will ignore the minutes & seconds of the datetime specified.
+	 */
+	NowAndNextService.prototype.getNowAndNextForFavoriteProgrammes = function(dt, requestedProgrammeIds, exact) {
+
+		var self = this,
+			service = new ProgrammeService(),
+			total = requestedProgrammeIds.length,
+			iteration = 0, i, t, _events, _event, _startDateTime,
+			date, diff, day_diff,
+			now = new Date( new Date(dt).toJSON().replace(/-/g,"/").replace(/[TZ]/g," ") ),
+			_temp = [],
+			_response = {};
+
+		function sortFunction(a, b) {
+			return new Date( (a.startDateTime).replace(/-/g,"/").replace(/[TZ]/g," ") ) - new Date( (b.startDateTime).replace(/-/g,"/").replace(/[TZ]/g," ") );
+		}
+
+		function processEvents(error, response, body) {
+				
+			if ( /404|500/.test(response.statusCode) ) {
+				// ignore errors
+				iteration += 1;
+				return;
+			}
+
+			// erase  temp arr
+			_temp.length = 0;
+
+			_events = JSON.parse(body);
+			_events.sort(sortFunction);
+
+			t = _events.length;
+
+			for (i = 0; i < t; i++) {
+
+				_event = _events[i];
+
+				_startDateTime = new Date((_event.startDateTime).replace(/-/g,"/").replace(/[TZ]/g," "));
+				diff = ((now.getTime() - _startDateTime.getTime()) / 1000);
+				day_diff = Math.round( diff / 86400);
+
+				if (day_diff === 0) { // today?
+					_response[_event.programme.id] = _event;
+				}
+
+			};
+
+			// conditional end process
+			if ( (iteration += 1 )  === total) {
+				// remove listener
+				service.removeListener('getEvents', processEvents);
+				// return collection
+				self.emit('getNowAndNextForFavoriteProgrammes', requestedProgrammeIds, _response);
+			}
+
+		}
+
+		
+
+		// start process
+		service.on('getEvents', processEvents);
+		// id param is a querystring with programmes ids divided by '-'
+		requestedProgrammeIds.map(function forEachProgramme(id) { 
+			service.getEvents(id);
+		});
+
+		return this;
+	
+	}
 
 	/** @return */
 
