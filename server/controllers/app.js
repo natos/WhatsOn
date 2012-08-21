@@ -93,7 +93,7 @@ function(request, express, i18n, config, Supports, ChannelService, Login, Dashbo
 				self.channels = channels;
 
 				// start the server
-				self.server.listen(process.env.PORT || config.PORT, function listening() {
+				self.server.listen(process.argv[2] || process.env.PORT || config.PORT, function listening() {
 					console.log("Express server listening on port %d", server.address().port);
 					console.log("Express server ready!");
 				});
