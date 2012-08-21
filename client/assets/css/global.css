@@ -994,13 +994,6 @@ margin-right: 10px;
 		margin-bottom: 10px;
 	}
 
-	#programme-content #social,
-	#channel-content #social {
-		position: absolute;
-		top: 10px;
-		right: 10px;
-	}
-
 	#programme-content h2 i,
 	#channel-content h2 i {
 		left: 28px;
