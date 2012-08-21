@@ -8,9 +8,10 @@ define([
 	'config/app',
 	'config/user',
 	'modules/app',
-	'models/user'
+	'models/user',
+	'utils/dom'
 
-], function SocialComponentScope(a, u, App, UserModel) {
+], function SocialComponentScope(a, u, App, UserModel, dom) {
 
 	var name = 'social',
 
@@ -30,17 +31,19 @@ define([
 
 	FAVORITE_COLLECTION,
 
-	// naming
-
-	template_id = '#' + name + '-template',
-
 	// DOM access
 
-	$template = $(template_id),
+	_social,
 
-	$content = $('#content'),
+	_favorite,
 
-	$social;
+	_content = document.getElementById('content'),
+
+	// Template
+
+	_template = dom.create('div');
+	_template.id = name;
+	_template.innerHTML = document.getElementById(name + '-template').innerHTML;
 
 	/* State handler */
 	function handleModelChanges(changes) {
@@ -63,15 +66,26 @@ define([
 	}
 
 	function thisIsAFavorite(favorite) {
-		console.log('found a favorite');
-		$('.favorite', '#content').attr('disable','disable').addClass('disable').data('favorite-id', favorite.id);
-		$('.favorite i', '#content').attr('class','icon-star');
+		var i = 0, t = _favorite.length;
+		for (i; i < t; i += 1) {
+			_favorite[i].className = 'favorite disable';
+			_favorite[i].setAttribute('disable', 'disable');
+			_favorite[i].setAttribute('data-favorite-id', favorite.id);
+			_favorite[i].getElementsByTagName('i')[0].className = 'icon-star';
+		}
 	}
 
 	function thisIsNotLonguerAFavorite() {
 		console.log('didn\'t found a favorite');
-		$('.favorite', '#content').removeAttr('disable').removeClass('disable').removeAttr('data-favorite-id');
-		$('.favorite i', '#content').attr('class','icon-star-empty');
+		var i = 0, t = _favorite.length;
+		for (i; i < t; i += 1) {
+			_favorite[i].className = 'favorite';
+			_favorite[i].removeAttribute('disable');
+			_favorite[i].removeAttribute('data-favorite-id');
+			_favorite[i].getElementsByTagName('i')[0].className = 'icon-star-empty';
+		}
+		//$('.favorite', '#content').removeAttr('disable').removeClass('disable').removeAttr('data-favorite-id');
+		//$('.favorite i', '#content').attr('class','icon-star-empty');
 	}
 
 	/* Action Handler, for User Interaction */
@@ -84,7 +98,7 @@ define([
 
 	/* Find a button */
 
-		var button = event.target, $button = $(button), isDisabled, favoriteId, share;
+		var button = event.target, favoriteId, share;
 
 		// so, grab a parent element
 		while (button.tagName !== "BUTTON") {
@@ -95,17 +109,9 @@ define([
 			button = button.parentNode;
 		}
 
-		// wrap it
-		$button = $(button);
-		// the button is disabled
-		isDisabled = $button.hasClass('disable');
+	/* Handle different actions */
 
-
-	/* Define the action */
-
-		action = $button.pluck('className')[0];
-
-		switch (action) {
+		switch (button.className) {
 
 			case 'like':
 				App.emit(u.ADD_LIKE, url);
@@ -121,7 +127,7 @@ define([
 				break;
 
 			case 'favorite disable':
-				favoriteId = $button.data('favorite-id');
+				favoriteId = button.getAttribute('data-favorite-id');
 				App.emit(u.REMOVE_FAVORITE, favoriteId);
 				thisIsNotLonguerAFavorite(); // Update UI, don't wait for the response
 				break;
@@ -138,7 +144,6 @@ define([
 /* public */
 
 	function initialize(State) {
-
 		// subscribe to get favorites
 		App.on(u.MODEL_CHANGED, handleModelChanges);
 		// save basic data for this favorite
@@ -149,32 +154,29 @@ define([
 		// define which collection we gonna use
 		// favorite programmes or channels
 		FAVORITE_COLLECTION = /programme/.test(State.url) ? FAVORITE_PROGRAMMES : FAVORITE_CHANNELS;
-
 	}
 
 	function render(model) {
 
-		if (!$('#social')[0]) {
-			// render template
-			$content.find('header').first().append($template.html());
-		}
-		
+		// get the component
+		_social = document.getElementById('social');
+		// check if necessary render template
+		if (!_social) { _content.getElementsByTagName('header')[0].appendChild(_template); }
+		// grab favorite buttons
+		_favorite = _content.querySelectorAll('.favorite');
 		// listent for user behavior
-		$social = $('#social');
-		$content.on('click', userActionHandler);
+		_content.addEventListener('click', userActionHandler, false);
 		// force checks
 		handleModelChanges(UserModel);
-
 	}
 
 	function finalize() {
-
 		// remove the buttons
-		$social.remove();
-		$content.off('click', userActionHandler);
+		_social = document.getElementById('social');
+		_social.parentNode.removeChild(_social);
+		_content.removeEventListener('click', userActionHandler, false);
 		// remove model handler
 		App.off(u.MODEL_CHANGED, handleModelChanges);
-
 	}
 
 /* export */
