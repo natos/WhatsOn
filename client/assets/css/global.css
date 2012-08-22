@@ -549,10 +549,6 @@ footer {
 
 
 /* Carousel-specific */
-#featured {
-	margin-bottom: 10px;
-}
-
 .carousel {
 	position: relative;
 	margin: 0;
@@ -961,6 +957,10 @@ margin-right: 10px;
 }
 
 @media screen and (min-width:640px) {
+
+	#featured {
+		margin-bottom: 10px;
+	}
 
 	#search-content > header {
 		min-height: 40px;
