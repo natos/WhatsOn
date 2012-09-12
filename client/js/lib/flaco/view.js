@@ -136,8 +136,8 @@ define([
 	// when any view finish initialization
 	App.on(a.VIEW_INITIALIZED, loadTemplate);
 	// unload template,
-	// when any view is being finalized
-	App.on(a.VIEW_FINALIZING, unloadTemplate);
+	// when any view finalized
+	App.on(a.VIEW_FINALIZED, unloadTemplate);
 
 /* public */
 

@@ -19,26 +19,47 @@ define([
 
 /* private */
 
+		// constants 
+
+		FACEBOOK_STATUS = 'facebook-status',
+
 		FAVORITE_PROGRAMMES = 'favorite-programmes',
 
-		FAVORITE_CHANNELS = 'favorite-channels';
+		FAVORITE_CHANNELS = 'favorite-channels',
+
+		// flags
+
+		isConnectedToFacebook = false,
+
+		// dom 
+
+		_dashboardContent = document.getElementById('dashboard-content'),
+
+		_invitation = dom.create('section');
+
+		_invitation.id = 'invitation';
+
+		_invitation.innerHTML = document.getElementById('invitation-template').innerHTML;
 
 
 	function handleDataChanges(model) {
 
-		var isConnectedToFacebook;
-
 		if (!model) { model = UserModel; }
 
 		if (typeof model === 'undefined') {
-			console.log('Warning!', 'Favorites', 'No model, skip rendering');
+			console.log('Warning!', 'Favorites', 'No UserModel available, skip rendering!');
 			return;
 		}
 
-		if (model['facebook-status']) {
-			isConnectedToFacebook = (model['facebook-status']['status'] === u.CONNECTED);
-			// $('#dashboard-invitation').toggle(!isConnectedToFacebook);
-			// $('#top-lists').toggle(isConnectedToFacebook);
+		if (model[FACEBOOK_STATUS]) {
+
+			isConnectedToFacebook = (model[FACEBOOK_STATUS]['status'] === u.CONNECTED);
+
+			if (!isConnectedToFacebook) {
+				renderInvitation();
+			} else {
+				removeInvitation();
+			}
 		}
 
 		if (model[FAVORITE_PROGRAMMES]) { renderProgrames(model[FAVORITE_PROGRAMMES]); }
@@ -47,6 +68,17 @@ define([
 
 		return;
 
+	}
+
+	function renderInvitation() { 
+		_dashboardContent.insertBefore(_invitation, document.getElementById('featured').nextSibling); 
+	}
+
+	function removeInvitation() { 
+		var __invitation = document.getElementById('invitation');
+		if (__invitation) {
+			__invitation.parentNode.removeChild(__invitation);
+		}
 	}
 
 	function renderChannels(channels) {
@@ -70,7 +102,10 @@ define([
 			});
 		} else {
 			favoriteChannels.innerHTML = document.getElementById('empty-favorite-channels-template').innerHTML;
+			console.log('Favorite channels not found man, sorry!');
 		}
+
+		console.log('finish rendering channels');
 	}
 
 	// iterate the favorites, for each of them
@@ -97,7 +132,10 @@ define([
 			});
 		} else {
 			favoriteProgrammes.innerHTML = document.getElementById('favorite-programmes-notfound-template').innerHTML;
+			console.log('Favorite progames not found man, sorry!');
 		}
+
+		console.log('finish rendering programmes');
 	}
 
 /* public */
@@ -115,16 +153,19 @@ define([
 
 		handleDataChanges(UserModel);
 
-		// TODO: 	Define messages for each state
-		//			when user is logged show his favorites
-		//			if is logged but doesn't have any, offer to add some
-		//			is is not logged in, try to explain the feature
+		if (!isConnectedToFacebook) {
+			renderInvitation();
+		} else {
+			removeInvitation();
+		}
 
 		return this;
 
 	}
 
 	function finalize() {
+
+		removeInvitation();
 
 		App.off(u.MODEL_CHANGED, handleDataChanges);
 

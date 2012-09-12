@@ -206,7 +206,7 @@ define([
 
 		_channellist = document.getElementById('channels-bar-list');
 
-		var channelId, name, i, t = _channels.length, item, picture, image, favorite, favIcon, isFavorite,
+		var channelId, name, i, t = _channels.length, item, picture, image, logohref, favorite, favIcon, isFavorite,
 			list = dom.create('fragment');
 
 		// wipe the dom
@@ -221,11 +221,14 @@ define([
 			// check Favorite info
 			isFavorite = (UserModel[FAVORITE_CHANNELS]) ? UserModel[FAVORITE_CHANNELS]['http://upcsocial.herokuapp.com/channel/' + channelId] : false;
 
+			// don't know why, some logos are missing
+			logohref = _channels[i].logo && _channels[i].logo.href || '';
+
 			// create logo image
 			image = dom.create('img');
 			image.setAttribute('id', 'channelImg' + channelId);
 			image.setAttribute('title', name);
-			image.setAttribute('data-src', 'http://www.upc.nl' + _channels[i].logo.href + '?size=medium');
+			image.setAttribute('data-src', 'http://www.upc.nl' + logohref + '?size=medium');
 
 			// create logo container
 			picture = dom.create('div');

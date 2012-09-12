@@ -22,6 +22,7 @@ define([
 	rowing = true,
 
 	// dom elements
+	_playpause,
 	_navigator,
 	_carousel,
 	_list,
@@ -146,58 +147,64 @@ define([
 	function render() {
 
 		_carousel = document.getElementById('featured');
+		_carousel.className = 'carousel';
+		_list = _carousel.getElementsByTagName('ul')[0]; // the UL comes with the template... 
+		_list.className = 'show slide';
 
-		// first time load render the component
-		// avoid re-renderings, templating is in
-		// charge of saving the DOMFragment
-		if (_carousel.className === 'no-carousel') {
-			_carousel.className = 'carousel';
-			_list = _carousel.getElementsByTagName('ul')[0];
-			_list.className = 'show slide';
+		// reset position
+		slide(_list).to(0);
 
-			// define the kind of transformation
-			// this is because we normally use
-			// translate3d and opera doesn't support it
-			transform = getTransformProperty(_list);
+		// define the kind of transformation
+		// this is because we normally use
+		// translate3d and opera doesn't support it
+		transform = getTransformProperty(_list);
 
-			var dataset, i = 0, img, disc,
-				programme, programmes = _carousel.getElementsByTagName('li'),
-				_pauseIcon = dom.create('i'),
-				_playpause = dom.create('div'),
-				_disc = dom.create('i');
-				_navigator = dom.create('div');
+		var dataset, i = 0, img, disc,
+			programme, programmes = _carousel.getElementsByTagName('li'),
+			_pauseIcon = dom.create('i'),
+			_disc = dom.create('i');
+			_navigator = dom.create('div');
 
-				_pauseIcon.className = 'icon-pause';
-				_playpause.id = 'playpause';
-				_playpause.appendChild(_pauseIcon);
-				_playpause.addEventListener('click', playpauseHandler);
-				_disc.className = DISC_CLASS;
-				_navigator.className = 'navigator';
+		// have no programmes?
+		if (programmes.length <= 0) {
+			console.log('Carousel','No TV Tips available.');
+			// force finalization
+			finalize();
+			return;
+		}
 
-			for (i; i < programmes.length; i++) {
-				programme = programmes[i];
-				// position the list element
-				//programme.style[transform] = property + '(' + (100*i) + ((opera) ? '%)' : '%, 0, 0)');
-				slide(programme).to(i); // nice eh?
-				// deal with background images
-				img = programme.getElementsByTagName('img')[0];
-				dataset = dom.getDataset(img);
-				if (dataset.src) { img.src = dataset.src; }
-				// create a disc and addit to navigator
-				disc = _disc.cloneNode(true);
-				disc.setAttribute('data-index',i);
-				_navigator.appendChild(disc);
-			}
+		_navigator.id = 'carouselNavigator';
+		_navigator.className = 'navigator';
+		_playpause = dom.create('div');
+		_playpause.id = 'playpause';
+		_playpause.appendChild(_pauseIcon);
+		_playpause.addEventListener('click', playpauseHandler);
+		_pauseIcon.className = 'icon-pause';
+		_disc.className = DISC_CLASS;
 
-			// select first
-			if (_navigator.firstChild) {
-				_navigator.firstChild.className = DISC_CLASS + SELECTED_CLASS;
-			}
+		for (i; i < programmes.length; i++) {
+			programme = programmes[i];
+			// position the list element
+			//programme.style[transform] = property + '(' + (100*i) + ((opera) ? '%)' : '%, 0, 0)');
+			slide(programme).to(i); // nice eh?
+			// deal with background images
+			img = programme.getElementsByTagName('img')[0];
+			dataset = dom.getDataset(img);
+			if (dataset.src) { img.src = dataset.src; }
+			// create a disc and addit to navigator
+			disc = _disc.cloneNode(true);
+			disc.setAttribute('data-index',i);
+			_navigator.appendChild(disc);
+		}
 
-			// add navigator and playpause to carousel
-			_carousel.appendChild(_navigator);
-			_carousel.appendChild(_playpause);	
-		}	
+		// select first
+		if (_navigator.firstChild) {
+			_navigator.firstChild.className = DISC_CLASS + SELECTED_CLASS;
+		}
+
+		// add navigator and playpause to carousel
+		_carousel.appendChild(_navigator);
+		_carousel.appendChild(_playpause);
 
 		// Add a click handler for navigation
 		_navigator.addEventListener('click', discHandler);
@@ -216,11 +223,23 @@ define([
 		// stop timer
 		timer.stop();
 
-		if (_navigator) {
-			_navigator.removeEventListener('click', timer.restart);
-		}
+		// remove UI listeners
+		_playpause.removeEventListener('click', playpauseHandler);
+		_navigator.removeEventListener('click', timer.restart);
+
+		// remove browser listeners
 		window.removeEventListener('resize', sizeHandler);
 		window.removeEventListener('orientationchange', sizeHandler);
+
+		// reset carousel className
+		_carousel = document.getElementById('featured');
+		_carousel.className = 'no-carousel';
+
+		// We need to remove UI buttons, because when it re-renders,
+		// we loose reference to DOM Interfaces, they are created
+		// every time the component starts
+		if (_navigator) { _carousel.removeChild(_navigator); }
+		if (_playpause) { _carousel.removeChild(_playpause); }
 
 		return this;
 

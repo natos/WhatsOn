@@ -1,51 +1,11 @@
 #dashboard-content
-	#featured.no-carousel
+	section#featured.no-carousel
 		include ../components/featured
 	
 	section#favorite-programmes
 	section#favorite-channels
-	section#dashboard-invitation(style="display:none;")
-		article.favorites
-			h3
-				i.icon-star
-				| #{__i('Favourites')}
-			p
-				a(href="#",onclick="FB.login();return false;") Log in with Facebook 
-				| to track your favourite programmes and channels here!
-
 	section#on-now
 		include ../components/on-now
 
 	section#top-bookings
 		include ../components/most-recorded
-
-	section#on-now-by-category
-
-	script(type="text/template")#favorite-programmes-template
-		header
-			h1
-				i.icon-star
-				| #{__i('Your favourite shows')}
-		ul.programmes
-
-	script(type="text/template")#empty-favorite-programmes-template
-		header
-			h1
-				i.icon-star
-				| #{__i('Your favourite shows')}
-		p Save your favourite shows, and we will show you when they are on TV next.
-
-	script(type="text/template")#favorite-programmes-notfound-template
-		header
-			h1
-				i.icon-star
-				| #{__i('Your favourite shows')}
-		p We can't find any of your favorite shows on TV right now.
-
-	script(type="text/template")#empty-favorite-channels-template
-		header
-			h1
-				i.icon-star
-				| #{__i('Your favourite channels')}
-		p Save channels to your favourites, and we will show you what's showing now and next.
-

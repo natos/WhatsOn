@@ -3,10 +3,11 @@ if (xhr)
 
 #programme-content
 	header
-		if (data.subcategory.category.name != data.subcategory.name)
-			p.category #{data.subcategory.category.name} > #{data.subcategory.name}
-		else
-			p.category #{data.subcategory.name}
+		if (data.subcategory)
+			if (data.subcategory.category.name != data.subcategory.name)
+				p.category #{data.subcategory.category.name} > #{data.subcategory.name}
+			else
+				p.category #{data.subcategory.name}
 
 		h1 
 			button.favorite

@@ -137,7 +137,8 @@ define([
 	function finalize() {
 
 		// do I really  want to remove styles?
-		// or leave it and remember the selection...
+		// or remember the selection...
+		// remove or not to remove... 
 		//removeStyles();
 
 		return this;
