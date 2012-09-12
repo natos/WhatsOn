@@ -6,10 +6,12 @@
 
 define([
 
+	'config/app',
 	'config/user',
+	'modules/app',
 	'models/user'
 
-], function UserControl(u, UserModel) {
+], function UserControl(a, u, App, UserModel) {
 
 /* private */
 
@@ -17,24 +19,26 @@ define([
 
 	var	CURRENT_STATUS = u.UNKNOWN,
 
-	// pulldown
+// DOM access
+
+	loginButton = a._doc.querySelectorAll('.menu-item.login'),
+
+	userControl = a._doc.getElementById('user-control'),
+
+// pulldown
 	pulldown = {
-
-		toggle: function() { 
-			if (u.$userControl.hasClass('active')) { this.hide(); } else { this.show(); } 
+		toggle: function() {
+			if (/active/.test(userControl.className)) { this.hide(); } else { this.show(); }
+			return this;
+		},
+		show: function() {
+			userControl.className = 'active';
 			return this; 
 		},
-
-		show: function() {	
-			u.$body.one('click', function(event) { pulldown.hide(); });
-			u.$userControl.addClass('active'); 
-			return this; 
-		},
-
-		hide: function() {	
-			u.$userControl.removeClass('active'); return this; 
+		hide: function() {
+			userControl.className = '';
+			return this;
 		}
-
 	};
 
 // functions
@@ -43,11 +47,10 @@ define([
 	function initialize() {
 
 		// Handle when the user model change
-		upc.on(u.MODEL_CHANGED, manageModelChanges);
+		App.on(u.MODEL_CHANGED, manageModelChanges);
 
-		// UI Events
-		u.$userControl.on('click', 'a', handleUserControlClick);
-		u.$loginButton.on('click', handleLoginButtonClick);
+		// Listen to actions
+		App.on(a.ACTION, manageActions);
 
 		return this;
 
@@ -67,12 +70,12 @@ define([
 		switch (event.status) {
 
 			case u.CONNECTED:
-				u.$loginButton.html('<img class="picture" src="https://graph.facebook.com/' + event.authResponse.userID + '/picture" />');
+				a._doc.querySelectorAll('.menu-item.login')[0].innerHTML = '<img class="picture" src="https://graph.facebook.com/' + event.authResponse.userID + '/picture" />';
 				break;
 
 			case u.NOT_AUTHORIZED:
 			case u.UNKNOWN:
-				u.$loginButton.html('<i class="icon-user"></i><b class="label">Login</b>');
+				a._doc.querySelectorAll('.menu-item.login')[0].innerHTML = '<i class="icon-user"></i><b class="label">Login</b>';
 				break;
 		}
 
@@ -82,10 +85,7 @@ define([
 	}
 
 	// handle a.login behavior
-	function handleLoginButtonClick(event) {
-
-		event.preventDefault();
-		event.stopPropagation();
+	function handleLogin() {
 
 		switch (CURRENT_STATUS) {
 
@@ -95,30 +95,45 @@ define([
 
 			case u.NOT_AUTHORIZED:
 			case u.UNKNOWN:
-				upc.emit(u.LOG_IN);
+				App.emit(u.LOG_IN);
 				break;
 
 		}
+	}
 
+	function handleLogout() {
+
+		switch (CURRENT_STATUS) {
+
+			case u.CONNECTED:
+				App.emit(u.LOG_OUT);
+
+			case u.NOT_AUTHORIZED:
+			case u.UNKNOWN:
+				break;
+
+		}
 	}
 
 	// handle usercontrol behavior
-	function handleUserControlClick(event) {
+	function manageActions(action) {
 
-		switch (this.className) {
+		switch (action) {
 
-			case "settings":
-				console.log('settings');
+			case 'LOGIN':
+				handleLogin();
 				break;
 
-			case "logout":
-				event.preventDefault();
-				event.stopPropagation();
-				upc.emit(u.LOG_OUT);
-				// TODO: Redirect to homepage
-//				UserController.logout();
+			// hide the menu on logout
+			case 'LOGOUT': handleLogout();
+			// hide the menu when navigate
+			case a.NAVIGATE:
+			// a VOID action is triggered when clicks in any non-interactive content
+			// in that case, we want to close the menu
+			case a.VOID:
+			default:
+				pulldown.hide();
 				break;
-
 		}
 
 	}
@@ -126,6 +141,6 @@ define([
 /* public */
 	return {
 		initialize: initialize
-	};
+	}
 
 });

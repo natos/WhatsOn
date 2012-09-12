@@ -230,41 +230,41 @@ img {
 
 
 /* navbar links */
-.nav a, .user-control a, .menu-item,
-.nav a:hover, .user-control a:hover, .menu-item,
-.nav a:visited, .user-control a:visited, .menu-item,
-.nav a:active, .user-control a:active, .menu-item {
+.nav a, #user-control a, .menu-item,
+.nav a:hover, #user-control a:hover, .menu-item,
+.nav a:visited, #user-control a:visited, .menu-item,
+.nav a:active, #user-control a:active, .menu-item {
 	color: #999;
 	height: 48px;
 	padding: 0 10px;
 	line-height: 48px;
 	display: inline-block;
 	text-shadow: 0px -1px 0px rgba(000,000,000,0.2), 0px 1px 0px rgba(000,000,000,1);
-
+	cursor: pointer;
 }
 
 .nav a.active, .nav a:active {
 	background-color: #333 url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
 }
 
-.user-control a:active, .menu-item:active, .menu-item.active {
+#user-control a:active, .menu-item:active, .menu-item.active {
 	color: #ccc;
 	background: #333 url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
 }
 
-.nav a.active i, .user-control a.active i, .menu-item.active i {
+.nav a.active i, #user-control a.active i, .menu-item.active i {
 	color: yellowGreen;
 }
 
 /* icons */
 
-.nav i, .menu-item i {
+.nav i, .menu-item i, #user-control i {
 	color: #999;
 	font-size: 24px;
 	margin: 0 5px;
 }
 
-.nav b, .menu-item b {
+.nav b, .menu-item b, #user-control b {
 	font-weight: normal;
 	vertical-align: top;
 	display: none;
@@ -328,7 +328,7 @@ img {
 		background: transparent;
 	}
 
-	.login, .menu-item {
+	.menu-item {
 		position: absolute;
 	}
 
@@ -336,7 +336,7 @@ img {
 		right: 0;
 	}
 	
-	.menu-item {
+	.settings {
 		right: 50px;
 	}
 
@@ -352,7 +352,7 @@ img {
 		height: 100%;
 	}
 
-	.menu-item {
+	.settings {
 		right: 80px;
 	}
 
@@ -362,12 +362,15 @@ img {
 	width: 100%;	
 }
 
-.user-control {
-	background: #333 url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
+#user-control {
+	background: #333;
+	position: absolute;
 	overflow: hidden;
 	display: none;
-	right: 10px;
-	top: -50px;
+	right: auto;
+	left: 60px;
+	top: 10px;
+	z-index: 1000;
 	-webkit-backface-visibility: hidden;
     -webkit-transition: top .3s ease-in-out 0s;
     -moz-transition: top .3s ease-in-out 0s;
@@ -375,17 +378,29 @@ img {
     transition: top .3s ease-in-out 0s;
 }
 
-.user-control.active {
-	display: block;
-	top: 50px;
-}
-
-.user-control a {
+#user-control.active {
 	display: block;
 }
 
-.user-control i {
+#user-control .menu-item {
+	display: block;
+}
+
+#user-control i {
 	font-size: 24px;
+}
+
+#user-control b {
+	display: inline-block;
+}
+
+@media screen and (min-width:640px) {
+
+	#user-control {
+		left: auto;
+		right: 10px;
+	}
+
 }
 
 /* For the no-mustard case, don't display the transition overlay at all */
@@ -857,9 +872,10 @@ margin-right: 10px;
 	position:relative;
 	padding: 5px 10px 20px 50px;
 	min-height: 100px;
+	border: 1px #ccc solid;
 	border-top: 1px #bbb solid;
 	border-bottom: 2px #bbb solid;
-	border-radius: 3px;
+	border-radius: 5px;
 	background: #eee url('/assets/images/bg-gradient-headers.png') 0 -5px repeat-x;
 
 }
@@ -958,17 +974,12 @@ margin-right: 10px;
 
 @media screen and (min-width:640px) {
 
-	#featured {
-		margin-bottom: 10px;
-	}
-
 	#search-content > header {
 		min-height: 40px;
 	}
 
 	#search-content > section,
 	#search-content > header,
-	#dashboard-content > section,
 	#programme-content > header,
 	#programme-content > section,
 	#channel-content > header,
@@ -976,6 +987,23 @@ margin-right: 10px;
 	#nowandnext-content > header,
 	#nowandnext-content > section {
 		margin: 0 10px 10px;
+	}
+
+	/* dashboard quirks */
+
+	/* apply margin to all boxes */
+	#dashboard-content > section {
+		margin: 10px;
+	}
+
+	/* remove top and bottom margin for siblings */
+	#dashboard-content article ~ article {
+		margin: 0 10px;
+	}
+
+	/* avoid margins on carousel */
+	#dashboard-content .carousel {
+		margin: 0;
 	}
 
 	#search-content > header,

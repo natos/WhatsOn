@@ -30,6 +30,7 @@ define([
 		button: doc.createElement('button'),
 		select: doc.createElement('select'),
 		option: doc.createElement('option'),
+		section: doc.createElement('section'),
 		fragment: doc.createDocumentFragment()
 	};
 

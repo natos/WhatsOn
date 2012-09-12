@@ -70,7 +70,7 @@ define([], function UserConfigContext() {
 
 		$loginButton: $('.login'),
 	
-		$userControl: $('.user-control')
+		$userControl: $('#user-control')
 
 	};
 

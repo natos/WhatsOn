@@ -6,10 +6,10 @@
 			i.icon-reorder
 			b.label #{__i('Menu')}
 nav.nav
-	.menu-item(data-action="TOGGLE-EDIT-MODE")
+	.menu-item.settings(data-action="TOGGLE-EDIT-MODE")
 		i.icon-cog
 		b.label #{__i('Settings')}
-	a.login(href="/login", title="#{__i('Login')}")
+	.menu-item.login(data-action="LOGIN", title="#{__i('Login')}")
 		i.icon-user
 		b.label #{__i('Login')}
 	a.dashboard(href="/dashboard", title="#{__i('Dashboard')}")
@@ -22,11 +22,11 @@ nav.nav
 		i.icon-time
 		b.label #{__i('Now &amp; Next')}
 
-.user-control
-	a.settings(href="/settings")
+#user-control
+	.menu-item.settings(data-action="SETTINGS", title="#{__i('Settings')}")
 		i.icon-cog
 		b.label #{__i('Settings')}
-	a.logout(href="/logout")
+	.menu-item.logout(data-action="LOGOUT", title="#{__i('Log Oaut')}")
 		i.icon-signout
 		b.label #{__i('Log Out')}
 		

@@ -27,6 +27,8 @@ define([], function AppConfigContext() {
 
 		ACTION: 'app:action',
 
+		VOID: 'app:action:void',
+
 		// controllers
 
 		CONTROLLER_INITIALIZING: 'app:controller_initializing',

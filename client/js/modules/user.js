@@ -210,6 +210,12 @@ define([
 			obj.model.set(FAVORITE_PROGRAMMES, _programmes);
 			obj.model.set(FAVORITE_CHANNELS, _channels);
 
+			// GC
+			_programmes = null;
+			_channels = null;
+			delete _programmes;
+			delete _channels;
+
 		});
 	}
 
@@ -332,7 +338,6 @@ define([
 			xfbml		: true
 		});
 
-		// TODO: Improve this component
 		this.components = {
 			user: UserComponent.initialize()
 		};

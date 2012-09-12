@@ -58,5 +58,6 @@
 	"Your favourite shows": "Your favourite shows",
 	"Your favourite channels": "Your favourite channels",
 	"Menu": "Menu",
-	"More": "More"
+	"More": "More",
+	"Log Oaut": "Log Oaut"
 }

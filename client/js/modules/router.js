@@ -86,7 +86,7 @@ define([
 		var dataset;
 
 		// Find actions on clicked elements, this
-		// actions are hidden on the data-action
+		// actions are declared on the data-action
 		// attribute, its value defines the action
 		// to be trigger.
 		dataset = dom.getDataset(element);
@@ -122,9 +122,18 @@ define([
 			// and pass everithing to the router, he will pushState and whatever
 			dataset = dom.getDataset(anchor);
 			navigate(dataset, anchor.title, anchor.href);
-			//console.log(dataset, anchor.title, anchor.href);
+			// let know everyone that we are navigating
+			App.emit(a.ACTION, a.NAVIGATE);
 		}
-		// else, ingnore
+
+		// else, trigger an void action event it is
+		// used as empty click event to hide stuff
+		// or act when the users click nothing
+		if (!dataset.action && !anchor.href) {
+			// trigger void action
+			App.emit(a.ACTION, a.VOID);
+		}
+
 		// let the event continue
 		// - "Bubble event! Bubble!"
 	}

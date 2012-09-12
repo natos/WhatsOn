@@ -8,10 +8,11 @@
 define([
 
 	'config/app',
+	'config/user',
 	'modules/app',
 	'modules/router'
 
-], function CanvasModuleScope(a, App, Router) {
+], function CanvasModuleScope(a, u, App, Router) {
 
 	var name = 'canvas',
 
@@ -153,7 +154,8 @@ define([
 
 	function handleActions(action, dataset) {
 		switch (action) {
-			case 'TOGGLE-MENU': toggleMenu(); break;
+			case 'TOGGLE-MENU': 
+				toggleMenu(); break;
 		}
 	}
 
