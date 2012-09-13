@@ -100,7 +100,8 @@ function(util, events, request, config, DateUtils, cache, logger, TOP_BOOKINGS_M
 			if ( !body || /404|500/.test(response.statusCode) ) {
 
 				logger.error('Response code ' + response.statusCode + ' returned from Top Bookings URL: ' + topBookingsUrl);
-				self.emit('getTopBookings', normalizeTopBookings(TOP_BOOKINGS_MOCK));
+				self.emit('getTopBookings', []);
+//				self.emit('getTopBookings', normalizeTopBookings(TOP_BOOKINGS_MOCK));
 
 			} else {
 
