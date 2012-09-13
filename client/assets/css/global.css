@@ -328,7 +328,7 @@ img {
 		background: transparent;
 	}
 
-	.menu-item {
+	.nav .menu-item {
 		position: absolute;
 	}
 
@@ -378,10 +378,7 @@ img {
     transition: top .3s ease-in-out 0s;
 }
 
-#user-control.active {
-	display: block;
-}
-
+#user-control.active,
 #user-control .menu-item {
 	display: block;
 }
