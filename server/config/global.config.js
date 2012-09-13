@@ -9,7 +9,9 @@ var env = process.env.NODE_ENV || 'development';
 define([
 
 	/** @require */
-	'config/' + env + '.config'
+	'config/' + env + '.config',
+	'utils/logger'
+
 ],
 
 
@@ -17,7 +19,11 @@ define([
  *	config
  */
 
-function(config) {
+function(config, logger) {
+
+	logger.log('config: ' + config['ENV']);
+	logger.log('logging messages at level ' + config['LOG_LEVEL'] + ' and higher');
+	logger.logLevel = config['LOG_LEVEL'];
 
 	return config;
 

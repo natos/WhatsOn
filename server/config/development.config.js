@@ -5,6 +5,7 @@
 define([
 
 	/** @require */
+	'utils/logger'
 
 ],
 
@@ -13,7 +14,7 @@ define([
  *	@static
  */
 
-function() {
+function(logger) {
 
 	var config = {
 
@@ -32,7 +33,9 @@ function() {
 			'app-id'		: '290742221014129',
 			'app-secret'	: '80fc861d131b1dc7a2bed84df09ac32c'
 		},
-		'PORT'			: 3000
+		'PORT'			: 3000,
+		'LOG_LEVEL'		: logger.LOG
+
 	};
 
 	/** @return */
