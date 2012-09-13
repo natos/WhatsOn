@@ -17,6 +17,7 @@ define([
 	// utils
 	'utils/dateutils',
 	'utils/cache',
+	'utils/logger',
 
 	// mock
 	'mocks/topbookings'
@@ -28,7 +29,7 @@ define([
  *	@class BookingsService
  */
 
-function(util, events, request, config, DateUtils, cache, TOP_BOOKINGS_MOCK) {
+function(util, events, request, config, DateUtils, cache, logger, TOP_BOOKINGS_MOCK) {
 
 	/** @constructor */
 
@@ -98,6 +99,7 @@ function(util, events, request, config, DateUtils, cache, TOP_BOOKINGS_MOCK) {
 			// API Error? Grab the mock
 			if ( !body || /404|500/.test(response.statusCode) ) {
 
+				logger.error('Response code ' + response.statusCode + ' returned from Top Bookings URL: ' + topBookingsUrl);
 				self.emit('getTopBookings', normalizeTopBookings(TOP_BOOKINGS_MOCK));
 
 			} else {

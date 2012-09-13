@@ -5,6 +5,7 @@
 define([
 
 	/** @require */
+	'utils/logger'
 
 ],
 
@@ -27,7 +28,9 @@ function() {
 			'app-id'		: '290742221014129',
 			'app-secret'	: '80fc861d131b1dc7a2bed84df09ac32c'
 		},
-		'PORT'			: 3000
+		'PORT'			: 3000,
+		'LOG_LEVEL'		: logger.WARN
+
 	};
 
 	/** @return */
