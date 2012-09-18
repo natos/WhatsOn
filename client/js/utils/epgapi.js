@@ -48,6 +48,52 @@ define([
 		SEARCH_RESULTS_RECEIVED_EVENT = 'searchResultsReceived',
 		CACHE_DURATION = 60 * 24; // 1 day
 
+
+	function getEventsFromAPI(channelsIds, startTime, endTime) {
+		// I'm trying to trick the recursivity here...
+		var start = formatTimeForApiRequest(startTime),
+			end = formatTimeForApiRequest(endTime),
+			cacheKey = getCacheKey(channelsIds, [start, end]),
+			collection = [],
+		// fix the request URL
+			request = API_PREFIX 
+		// get events for services
+			+ '/linear/services/' + channelsIds.join(',') + '/events.json'
+		// properties
+			+ '?show=start,end,service.id,programme.title'
+		// filters
+			+ '&maxBatchSize=400&sort=start&start%3E=' + start + '&end%3E=' + end;
+
+		// first request
+			requestEvents(request);
+
+		function requestEvents(url) {
+
+			$.getJSON(url + '&callback=?', handleEventsFromAPI);
+
+		}
+
+		function handleEventsFromAPI(response) {
+
+			console.log('processing', response);
+			
+			collection.push(response);
+
+			$CUSTOM_EVENT_ROOT.emit(CHANNEL_EVENTS_RECEIVED_EVENT, response, cacheKey);
+
+			if (response && response.nextBatchLink && response.nextBatchLink.href) {
+				console.log('EpgApi', 'Requesting next batch');
+				//requestEvents(response.nextBatchLink.href);
+			} else {
+				console.log('EpgApi', 'Done Requesting');
+				//$CUSTOM_EVENT_ROOT.emit(CHANNEL_EVENTS_RECEIVED_EVENT, eventsForChannel, cacheKey);
+			}
+
+		}
+		
+		
+	}
+
 	/**
 	* Format a date as a string YYYY-MM-DDTHH:00Z
 	* Note that this ignores the minutes part of the date, and
@@ -56,7 +102,8 @@ define([
 	* @private
 	* @return  {string} YYYY-MM-DDTHH:00Z
 	*/
-	var formatTimeForApiRequest = function(dt) {
+	var formatTimeForApiRequest = function(date) {
+		var dt = new Date(date);
 		var formattedTime = dt.getUTCFullYear().toString() + '-' + ('00' + (dt.getUTCMonth() + 1).toString()).slice(-2) + '-' + ('00' + dt.getUTCDate().toString()).slice(-2) + 'T' + ('00' + dt.getUTCHours().toString()).slice(-2) + ':00' + 'Z';
 		return formattedTime;
 	};
@@ -144,7 +191,8 @@ var timer = new Timer('getEventsForSliceFromApi Time Track').off();
 
 			// Use "&order=startDateTime" to get results in order
 			// Use "&optionalProperties=Programme.subcategory" to get category data
-			request = API_PREFIX + 'Channel/' + channelIdBatch.join('|') + '/events.json?qualifier=endDateTime%3E=@{timestamp%20' + formattedStartTime + '}%20and%20startDateTime%3C@{timestamp%20' + formattedEndTime + '}' + '&order=startDateTime&optionalProperties=Programme.subcategory&callback=?';
+			//request = API_PREFIX + 'Channel/' + channelIdBatch.join('|') + '/events.json?qualifier=endDateTime%3E=@{timestamp%20' + formattedStartTime + '}%20and%20startDateTime%3C@{timestamp%20' + formattedEndTime + '}' + '&order=startDateTime&optionalProperties=Programme.subcategory&callback=?';
+			request = API_PREFIX + '/linear/services/' + channelIdBatch.join(',') + '/events.json?show=start,end,service.selfLink,programme.selfLink,selfLink&maxBatchSize=4&sort=start&start%3E2012-09-13T09:00Z&end%3E2012-09-13T11:00Z&callback=?';
 
 			// TODO: Don't create functions inside a loop! (JSHint)
 			$.getJSON(request, function(apiResponse) {
@@ -236,6 +284,8 @@ average(timer.timeDiff);
 			slicesCount = timeSlices.length,
 			i;
 
+			console.log(startTime, endTime);
+
 		for (i=0; i<slicesCount; i++) {
 			getEventsForSliceFromApi(channelIds, timeSlices[i]);
 		}
@@ -266,12 +316,12 @@ average(timer.timeDiff);
 		});
 	};
 
-	var getCacheKey = function(channelId, timeSlice) {
-		return channelId + '|' + timeSlice[0].valueOf() + '|' + timeSlice[1].valueOf();
+	var getCacheKey = function(channelId, start, end) {
+		return channelId + '|' + new Date(start).valueOf() + '|' + new Date(end).valueOf();
 	};
 
 	return {
-
+		getEventsFromAPI 			: getEventsFromAPI, // new API
 		getEventsForChannels		: getEventsForChannels,
 		getEventsForSliceFromApi	: getEventsForSliceFromApi,
 //		searchForEvents				: searchForEvents,

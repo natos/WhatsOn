@@ -32,18 +32,19 @@ define([
 
 		for (i = 0; i < dataLength; i++) {
 			channel = data[i];
+			channel.channelId = channel.channel.id;
 			// save channel by id
 			byId[channel.id] = channel;
 			// logo easy access THANK YOU!
-			byId[channel.id].logo = getLogo(channel);
+			byId[channel.id].logo = channel.logoLink.href;
 			// save channels on All Zenders collection
 			groups['000'].push(channel);
 			// a little cleanning
-			delete channel._type;
-			delete channel.apiChannelGroupId;
-			delete channel.broadcastFormat;
-			delete channel.logoIMG;
-			delete channel.position;
+			delete channel.logoLink;
+			delete channel.logicalPosition;
+			delete channel.channel;
+			
+			/*
 			// iterate domains
 			domainIterator = channel.domains.length;
 			while(domainIterator--) {
@@ -55,7 +56,7 @@ define([
 					if (!groups[group]) { groups[group] = []; }
 					groups[group].push(channel);
 				}
-			}
+			}*/
 		}
 
 		// TODO: sort channels 

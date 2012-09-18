@@ -7,12 +7,10 @@ define([
 	/** @require */
 
 	// services
+	'services/grid',
 
 	// utils
-	'utils/metadata',
-
-	// mocks
-	'mocks/channels'
+	'utils/metadata'
 
 ],
 
@@ -21,7 +19,7 @@ define([
  *	@class GridController
  */
 
-function(Metadata, Channels) {
+function(GridService, Metadata) {
 
 	/** @constructor */
 
@@ -32,6 +30,8 @@ function(Metadata, Channels) {
 		// Routing
 
 		app.server.get('/grid', this.render);
+
+		app.server.get('/grid/events/:channels/:start/:end', this.events);
 
 	};
 
@@ -55,6 +55,25 @@ function(Metadata, Channels) {
 			supports	: req.supports,
 			xhr			: req.xhr
 		});
+
+	};
+
+	GridController.prototype.events = function(req, res) {
+
+		console.log(req.params);
+
+		new GridService().once('getEvents', function(error, response, body) {
+
+			if ( !response || /500|404/.test(response.statusCode) ) {
+				res.statusCode = 404;
+			} else {
+				events = JSON.parse(body);
+				res.send(events);
+			}
+
+			res.end();
+
+		}).getEvents(req.params.channels, req.params.start, req.params.end);
 
 	};
 

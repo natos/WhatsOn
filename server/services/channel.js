@@ -48,18 +48,79 @@ function(util, events, request, requestN, cache, DomainService, BookingsService,
 
 	/** @private */
 
-	var ALL_CHANNELS_0  = config.API_PREFIX + 'Channel.json?order=position&batch=0',
+	//constants
+	var CHANNELS_BACH = config.API_PREFIX + '/linear/lineups/generic-upc.nl/services.json?show=name,channel,logicalPosition,logoLink&maxBatchSize=400',
+		/* 
+			### For the old API ####
+
+		ALL_CHANNELS_0  = config.API_PREFIX + 'Channel.json?order=position&batch=0',
 		ALL_CHANNELS_1  = config.API_PREFIX + 'Channel.json?order=position&batch=1',
 		ALL_CHANNELS_2  = config.API_PREFIX + 'Channel.json?order=position&batch=2',
 		CHANNEL_DETAILS	= config.API_PREFIX + 'Channel/%%id%%.json',
-		CHANNEL_EVENTS	= config.API_PREFIX + 'Channel/%%id%%/events/NowAndNext.json?order=startDateTime';
+		CHANNEL_EVENTS	= config.API_PREFIX + 'Channel/%%id%%/events/NowAndNext.json?order=startDateTime',
+		*/
+		COLLECTION = [];
 
+	
 	/** @public */
 
 	/** Get list of all channels */
 	ChannelService.prototype.getChannels = function() {
 
-		var self = this;
+		var self = this,
+
+		// get channels from cache
+		allChannels = cache.get('channels-list');
+
+		// get Batch of channels
+		function getChannelBatch(URL) {
+
+			var partial;
+
+			request(URL, function(error, response, body) {
+
+				// Describe errors
+				if (error) {
+					console.log('<Channel Service>','ERROR:', error);
+				}
+
+				// Parse string response
+				partial = JSON.parse(body);
+
+				// save each channel object
+				partial.data.forEach(function(item){
+					COLLECTION.push(item);
+				})
+
+				// check if there more batches to request
+				if (partial.nextBatchLink && partial.nextBatchLink.href) {
+					console.log('<Channel Service>','Getting new Batch.','Total channels: ', COLLECTION.length);
+					// more batches? Recursivly get more 
+					getChannelBatch(partial.nextBatchLink.href);
+				} else {
+					console.log('<Channel Service>','FINISH.','Total channels: ', COLLECTION.length);
+					cache.set('channels-list', COLLECTION, 3600); // 1 hour
+					self.emit('getChannels', COLLECTION);
+				}
+
+			});
+		}
+
+		// respond from cache
+		if (allChannels) {
+			// from cache
+			self.emit('getChannels', allChannels);
+
+			return this;
+		}
+
+		// start getting batches
+		getChannelBatch(CHANNELS_BACH);
+
+		return this;
+
+/* 
+	### For the old API ####
 
 		// Return channels from cache, if available
 		var allChannels = cache.get('channels-list');
@@ -132,7 +193,7 @@ function(util, events, request, requestN, cache, DomainService, BookingsService,
 		}
 
 		return this;
-
+*/
 	};
 
 	/** Get data from a channel */

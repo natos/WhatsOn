@@ -222,13 +222,13 @@ define([
 			isFavorite = (UserModel[FAVORITE_CHANNELS]) ? UserModel[FAVORITE_CHANNELS]['http://upcsocial.herokuapp.com/channel/' + channelId] : false;
 
 			// don't know why, some logos are missing
-			logohref = _channels[i].logo && _channels[i].logo.href || '';
+			logohref = _channels[i].logo || '';
 
 			// create logo image
 			image = dom.create('img');
 			image.setAttribute('id', 'channelImg' + channelId);
 			image.setAttribute('title', name);
-			image.setAttribute('data-src', 'http://www.upc.nl' + logohref + '?size=medium');
+			image.setAttribute('data-src', logohref);
 
 			// create logo container
 			picture = dom.create('div');
