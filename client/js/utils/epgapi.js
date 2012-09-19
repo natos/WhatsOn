@@ -92,7 +92,7 @@ define([
 				// the API remembers the callback parameter
 				// and this causes a mess with Zepto and the
 				// AJAX callbacks
-				var callbackName = /\&callback=jsonp\d/gi;
+				var callbackName = /\&callback=jsonp\d+/gi;
 				var url = response.nextBatchLink.href.replace(callbackName, '');
 
 				// Ask for next Batch
