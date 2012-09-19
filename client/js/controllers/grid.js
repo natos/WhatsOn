@@ -91,11 +91,6 @@ define([
 		}
 	}
 
-	function drawGrid() {
-		window.requestAnimationFrame(drawGrid);
-		redrawGrid();
-	}
-
 	/**
 	* Redraw the grid channel-by-channel because new event data has been received.
 	* The grid *might* have moved since the last time.
@@ -182,20 +177,19 @@ define([
 	* @private
 	*/
 	function renderChannel(channelId) {
-		var _channelSliceCache = GridModel[g.CHANNEL_SLICE_CACHE];
+		var _cache = GridModel[g.CHANNEL_SLICE_CACHE];
 		// Note: the channelSliceCache is undefined until the first data has been received
-		if (_channelSliceCache) {
+		if (_cache) {
 			
 			// Get a list of ALL time slices for the grid:
 			var startTime = EpgApi.formatTimeForApiRequest(GridModel.selectedTime.startTime),
 				endTime = EpgApi.formatTimeForApiRequest(GridModel.selectedTime.endTime),
 				cacheKey = EpgApi.getCacheKey(channelId, startTime, endTime),
-				events = _channelSliceCache[cacheKey];
+				events;
 
-			if (events) {
-				buildEventsForChannelSlice(channelId, events);
+			if (_cache[channelId] && _cache[channelId][cacheKey]) {	
+				buildEventsForChannelSlice(channelId, _cache[channelId][cacheKey]);
 			}
-
 		}
 	}
 
@@ -208,17 +202,17 @@ define([
 		var i, event, width, left, right, startDateTimeMilliseconds, endDateTimeMilliseconds, category, subcategory, eventTitle, offset, content, eventElement,
 			channelRow = _channelsInShadow[channelId], tinyWidthLimit = 50;
 
-		if (!events.data) {
+		if (!events) {
 			console.log('<GridController>', 'buildEventsForChannelSlice(channelId, events)','No "data" inside collection.', events);
 		}
 
-		for (i = 0; i < events.data.length; i++) {
+		for (i = 0; i < events.length; i++) {
 
-			event = events.data[i];
+			event = events[i];
 
 			// avoid duplicate events ;)
 			if (channelRow.querySelectorAll('#event-' + event.id)[0]) {
-				console.log('duplicated',event.id);
+				//console.log('duplicated',event.id);
 				continue;
 			}
 
@@ -338,13 +332,20 @@ define([
 	*/
 	function setEvents(events) {
 
-		if (!events.data) {
-			console.log('<GridController>', 'setEvents(events, cacheKey)','No "data" inside collection.', events);
+		if (!events) {
+			console.log('<GridController>', 'setEvents(events)','No "Events" inside collection.');
 		}
 
-		var e, event, count, start, end, filter, cacheKey, _data, _cache = {};
+		/* When events come from Cache */
 
-		var a = {}
+		if (events.cache) {
+			redrawGrid();
+			return;
+		}
+
+		/* When events come from API */
+
+		var e, event, channel, channelId, count, start, end, filter, cacheKey, _data, _cache = {};
 
 		// snif the time filter
 		if (events.filter && events.filter.length) {
@@ -361,63 +362,50 @@ define([
 			// for each event
 			for (e = 0; e < count; e++) {
 				event = events.data[e];
-				// generate a cacheKey
+				channel = event.service.id;
 				cacheKey = EpgApi.getCacheKey(event.service.id, start, end);
-				// if the collection exist, just merge
-				a[cacheKey] = (a && a[cacheKey])? a[cacheKey] += 1 : 1;
 
-				if (_cache && _cache[cacheKey] && _cache[cacheKey].data) {
-					_cache[cacheKey].data.push(event);
+				if (_cache && _cache[channel]) {
+					if (_cache[channel][cacheKey]) {
+						_cache[channel][cacheKey].push(event);
+					}
 				} else {
-					// create the collection
-					_cache[cacheKey] = {
-						data: events.data,
-						filter: events.filter	
-					};
+					_cache[channel] = {};
+					_cache[channel][cacheKey] = [event];
 				}
 			}
 		}
 
-		console.log(a);
+		// add the stuff to the cache
+		var GRID_CACHE = GridModel[g.CHANNEL_SLICE_CACHE] || {};
 
-		GridModel.set(g.CHANNEL_SLICE_CACHE, _cache); // no need to store this again, you know, memory
-	
-		redrawGrid();
+		for (channelId in _cache) {
 
-		return this;
-/*
-		var e;
+			channel = _cache[channelId];
 
-		for (e = 0; e < events.length; e++) {
-
-			delete events[e]._type;
-			delete events[e].channel._type;
-			delete events[e].channel.name;
-			delete events[e].programme._type;
-			delete events[e].programme.shortDescription;
-
-			if (events[e].programme.subcategory) {
-				delete events[e].programme.subcategory._type;
-				delete events[e].programme.subcategory.id;
-				delete events[e].programme.subcategory.category._type;
-				delete events[e].programme.subcategory.category.id;
+			if (!GRID_CACHE.hasOwnProperty(channelId)) {
+				GRID_CACHE[channelId] = {};
 			}
 
-			if (events[e].programme.category) {
-				delete events[e].programme.category._type;
-				delete events[e].programme.category.id;
+			for (cacheKey in channel) {
+				
+				if (!GRID_CACHE[channelId][cacheKey]) {
+					GRID_CACHE[channelId][cacheKey] = _cache[channelId][cacheKey];
+				} else {
+					GRID_CACHE[channelId][cacheKey] = [];
+					for (var i = 0; i < _cache[channelId][cacheKey].length; i++) {
+						GRID_CACHE[channelId][cacheKey].push(_cache[channelId][cacheKey][i]);
+					}
+				}
 			}
 		}
 
-
-		_eventsForChannelCache[cacheKey] = events;
-
-		redrawGrid(events);
-
-		GridModel.set(g.CHANNEL_SLICE_CACHE, _eventsForChannelCache); // no need to store this again, you know, memory
-	
+		GridModel.set(g.CHANNEL_SLICE_CACHE, GRID_CACHE); // no need to store this again, you know, memory
+			
+		// render
+		redrawGrid();
+		
 		return this;
-*/
 	
 	}
 
@@ -434,21 +422,24 @@ define([
 			channels = GridModel.selectedChannels,
 			startTime = EpgApi.formatTimeForApiRequest(GridModel.selectedTime.startTime),
 			endTime = EpgApi.formatTimeForApiRequest(GridModel.selectedTime.endTime),
-			channelsCount = channels.length,
-			i, cacheKey,
-			uncachedChannels = [];
+			channelsCount = channels.length, i, cacheKey, channel, uncachedChannels = [];
+
+			console.log(GridModel.selectedTime.startTime, startTime);
+			console.log(GridModel.selectedTime.endTime, endTime);
 
 		// find uncached channels
 		for (i = 0; i < channelsCount; i++) {
-			// create cachekey
-			//cacheKey = EpgApi.getCacheKey(channels[i], startTime, endTime);
 
-			//if (_cache && _cache.hasOwnProperty(cacheKey)) {
-				//console.log('exist on cache');
-		//		setEvents(_cache[cacheKey], cacheKey);
-		//		console.log('Found in cache');
+		//	channel = channels[i];
+			// create cachekey
+		//	cacheKey = EpgApi.getCacheKey(channel, startTime, endTime);
+
+		//	if (_cache && _cache[channel] && _cache[channel][cacheKey]) {
+				// setEvents from Cache
+				//setEvents({ cache: _cache[channel][cacheKey] });
+				//redrawGrid();
+				//console.log('from cache')
 		//	} else {
-				//console.log('doesn\' exist on cache');
 				uncachedChannels.push(channels[i]);
 		//	}
 		}
@@ -456,8 +447,10 @@ define([
 		// get events for uncached channels
 		if (uncachedChannels.length > 0) {
 			EpgApi.getEventsFromAPI(uncachedChannels, startTime, endTime);
-		//	console.log('Get', uncachedChannels, startTime, endTime);
+			console.log(uncachedChannels, startTime, endTime);
 		}
+
+		//console.log(_cache)
 
 		return this;
 	}

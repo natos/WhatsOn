@@ -53,7 +53,6 @@ define([
 		// I'm trying to trick the recursivity here...
 		var start = formatTimeForApiRequest(startTime),
 			end = formatTimeForApiRequest(endTime),
-			cacheKey = getCacheKey(channelsIds, [start, end]),
 			collection = [],
 		// fix the request URL
 			request = API_PREFIX 
@@ -62,36 +61,46 @@ define([
 		// properties
 			+ '?show=start,end,service.id,programme.title'
 		// filters
-			+ '&maxBatchSize=400&sort=start&start%3E=' + start + '&end%3E=' + end;
+			+ '&maxBatchSize=200&sort=start&start>=' + start + '&end<=' + end;
 
 		// first request
-			requestEvents(request);
+			requestEvents(request);		
+		
+	}
 
-		function requestEvents(url) {
+	function requestEvents(url) {
 
-			$.getJSON(url + '&callback=?', handleEventsFromAPI);
+		//console.log('requestEvents',url);
 
-		}
+		$.getJSON(url + '&callback=?', handleEventsFromAPI);
 
-		function handleEventsFromAPI(response) {
+	}
 
-			console.log('processing', response);
+	function handleEventsFromAPI(response) {
+
+		//console.log('processing', response);
+
+		if (response) {
+
+			$CUSTOM_EVENT_ROOT.emit(CHANNEL_EVENTS_RECEIVED_EVENT, response);
 			
-			collection.push(response);
+			if (response.nextBatchLink && response.nextBatchLink.href) {
 
-			$CUSTOM_EVENT_ROOT.emit(CHANNEL_EVENTS_RECEIVED_EVENT, response, cacheKey);
+				//console.log('EpgApi', 'Requesting next batch');
+				// FIX
+				// this URL re-write is necessary because
+				// the API remembers the callback parameter
+				// and this causes a mess with Zepto and the
+				// AJAX callbacks
+				var callbackName = /\&callback=jsonp\d/gi;
+				var url = response.nextBatchLink.href.replace(callbackName, '');
 
-			if (response && response.nextBatchLink && response.nextBatchLink.href) {
-				console.log('EpgApi', 'Requesting next batch');
-				//requestEvents(response.nextBatchLink.href);
-			} else {
-				console.log('EpgApi', 'Done Requesting');
-				//$CUSTOM_EVENT_ROOT.emit(CHANNEL_EVENTS_RECEIVED_EVENT, eventsForChannel, cacheKey);
+				// Ask for next Batch
+				requestEvents(url);
 			}
 
 		}
-		
-		
+
 	}
 
 	/**
@@ -317,7 +326,8 @@ average(timer.timeDiff);
 	};
 
 	var getCacheKey = function(channelId, start, end) {
-		return channelId + '|' + new Date(start).valueOf() + '|' + new Date(end).valueOf();
+		//return channelId + '|' + new Date(start).valueOf() + '|' + new Date(end).valueOf();
+		return channelId + '|' + new Date(start).getUTCHours().toString();
 	};
 
 	return {
