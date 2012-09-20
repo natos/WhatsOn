@@ -15,5 +15,4 @@ Run the tests
 Running versions
 ----------------
 
-	upcwhatson.herokuapp.com
 	upcsocial.herokuapp.com
