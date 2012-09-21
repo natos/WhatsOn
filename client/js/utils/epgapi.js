@@ -39,7 +39,7 @@ define([
 	}
 
 	// constants
-	var	HOURS_PER_SLICE = 4, // Hours per slice must be: 1, 2, 3, 4, 6, 8, 12, 24.
+	var	HOURS_PER_SLICE = 6, // Hours per slice must be: 1, 2, 3, 4, 6, 8, 12, 24.
 		ESTIMATED_AVERAGE_EVENTS_PER_HOUR = 2,
 		EVENTS_PER_SLICE = ESTIMATED_AVERAGE_EVENTS_PER_HOUR * HOURS_PER_SLICE,
 		API_PREFIX = $('head').attr('data-api'),
@@ -49,19 +49,19 @@ define([
 		CACHE_DURATION = 60 * 24; // 1 day
 
 
-	function getEventsFromAPI(channelsIds, startTime, endTime) {
+	function getEventBatchFromAPI(channelsIds, timeSlice) {
+
 		// I'm trying to trick the recursivity here...
-		var start = formatTimeForApiRequest(startTime),
-			end = formatTimeForApiRequest(endTime),
-			collection = [],
+		var start = formatTimeForApiRequest(timeSlice.start),
+			end = formatTimeForApiRequest(timeSlice.end),
 		// fix the request URL
 			request = API_PREFIX 
 		// get events for services
-			+ '/linear/services/' + channelsIds.join(',') + '/events.json'
+			+ '/linear/services/' + channelsIds + '/events.json'
 		// properties
 			+ '?show=start,end,service.id,programme.title'
 		// filters
-			+ '&maxBatchSize=200&sort=start&start>=' + start + '&end<=' + end;
+			+ '&maxBatchSize=200&sort=start&start<=' + end + '&end>=' + start;
 
 		// first request
 			requestEvents(request);		
@@ -70,19 +70,21 @@ define([
 
 	function requestEvents(url) {
 
-		//console.log('requestEvents',url);
+//		console.log('requestEvents',url);
 
-		$.getJSON(url + '&callback=?', handleEventsFromAPI);
+		$.getJSON(url + '&callback=?', function(response) {
+			handleEventsFromAPI(response, url);
+		});
 
 	}
 
-	function handleEventsFromAPI(response) {
+	function handleEventsFromAPI(response, url) {
 
 		//console.log('processing', response);
 
 		if (response) {
 
-			$CUSTOM_EVENT_ROOT.emit(CHANNEL_EVENTS_RECEIVED_EVENT, response);
+			$CUSTOM_EVENT_ROOT.emit(CHANNEL_EVENTS_RECEIVED_EVENT, response, url);
 			
 			if (response.nextBatchLink && response.nextBatchLink.href) {
 
@@ -93,10 +95,9 @@ define([
 				// and this causes a mess with Zepto and the
 				// AJAX callbacks
 				var callbackName = /\&callback=jsonp\d+/gi;
-				var url = response.nextBatchLink.href.replace(callbackName, '');
-
+				var nextUrl = response.nextBatchLink.href.replace(callbackName, '');
 				// Ask for next Batch
-				requestEvents(url);
+				requestEvents(nextUrl);
 			}
 
 		}
@@ -174,6 +175,7 @@ define([
 	* @return void
 	*/
 	var getEventsForSliceFromApi = function(channelIds, timeSlice) {
+
 		// Split channels to fetch into batches of 5. The API only handles max 5 channels at once.
 		var channelIdBatches = [],
 			batchSize = 5,
@@ -325,13 +327,12 @@ average(timer.timeDiff);
 		});
 	};
 
-	var getCacheKey = function(channelId, start, end) {
-		//return channelId + '|' + new Date(start).valueOf() + '|' + new Date(end).valueOf();
-		return channelId + '|' + new Date(start).getUTCHours().toString();
+	var getCacheKey = function(channelId, timeSlice) {
+		return channelId + '|' + new Date(timeSlice.start).valueOf() + '|' + new Date(timeSlice.end).valueOf();
 	};
 
 	return {
-		getEventsFromAPI 			: getEventsFromAPI, // new API
+		getEventBatchFromAPI 		: getEventBatchFromAPI, // new API
 		getEventsForChannels		: getEventsForChannels,
 		getEventsForSliceFromApi	: getEventsForSliceFromApi,
 //		searchForEvents				: searchForEvents,
