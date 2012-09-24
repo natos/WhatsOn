@@ -2,8 +2,18 @@
 * GridController 
 * --------------
 *
-* Listen to the views
-* Updates the model
+* The GridController is in charge of every data change on the
+* Grid. Every time the GridView is moved by user interaction,
+* it triggers an event called 'GRID_MOVED', then the GridCon-
+* troller uses some timers to decide when is the best time to
+* change GridModel's data. 
+* GridController uses a DocumentFragment (also knwon as _shadow)
+* as a render tree in memory, to store events data. Also uses
+* the DocumentFragment, to calculate visibles areas on the
+* device's viewport and keep the DOM tree clean of invisible
+* data. Every time the DocumentFragment is modified, is saved
+* on the GridModel, triggering a MODEL_CHANGE event. That's
+* the way in wich the GridView is notified of all data changes.
 *
 */
 
@@ -30,72 +40,144 @@ define([
 	gridMoveExecutionTimer,
 	gridMoveExecutionDelay = 100,
 
+	// grid slice size
+	// 6 hours x 15 channels
 	HOURS_PER_SLICE = 6,
 	CHANNELS_PER_SLICE = 15,
 
 	// grab selected channels from channel model
 	_channels = ChannelModel[c.GROUPS][ChannelModel[c.SELECTED_GROUP]],
 	
-	// cache
+	// channel group cache
 	_channelGroupsMap = {},
+	_timeSlicesMap,
 
+	// current visible slice map
 	_currentVisibleChannelGroup = {},
 	_currentVisibleTimeSlices = {},
 
+	// previous visible slice map
 	_previousVisibleChannelGroup = {},
 	_previousVisibleTimeSlices = {},
 	
-	// builders
+	// DOM builders
 	_shadow = dom.create('fragment'),
 	_tick = dom.create('div'),
 
-	// map of channel rows references
-	// inside shadowdom, we need this
-	// references because the DocumentFragment
-	// interface doesn't have any element or
-	// document API available
+	// channel rows containers reference,
+	// the DocumentFragment doesn't have
+	// element or document API available
+	// we use this map to quick find rows
+	// inside the shadow DOM
 	_channelsInShadow = {};
 
-
+	// helper functions
+	function isObject(obj) { return Object.prototype.toString.call(obj) === '[object Object]'; }
+	function isArray(arr) { return Object.prototype.toString.call(arr) === '[object Array]'; }
+	function isEmpty(map) { for (var key in map) { if (map.hasOwnProperty(key)) { return false; } } return true; }
+	// compares two objects for equality
+	// returns true if they are equal
 	function isEqual(x, y) {
 		var p;
-		for (p in x) {
-			if(typeof(y[p])=='undefined') { return false; }
-		}
-
+		for (p in x) { if(typeof(y[p])=='undefined') { return false; } }
 		for (p in x) {
 			if (x[p]) {
 				switch(typeof(x[p])) {
 					case 'object':
-						if (!isEqual(x[p],y[p])) { 
-							return false; 
-						} 
+						if (!isEqual(x[p],y[p])) { return false; } 
 						break;
 					case 'function':
-						if (typeof(y[p])=='undefined' || (p != 'equals' && x[p].toString() != y[p].toString())) {
-							return false;
-						}
+						if (typeof(y[p])=='undefined' || (p != 'equals' && x[p].toString() != y[p].toString())) { return false; }
 						break;
 					default:
 						if (x[p] != y[p]) { return false; }
 				}
 			} else {
-				if (y[p])
-				return false;
+				if (y[p]) { return false; }
 			}
 		}
+		for (p in y) { if(typeof(x[p])=='undefined') { return false; } }
+		return true;
+	}
 
-		for(p in y) {
-			if(typeof(x[p])=='undefined') { return false; }
+	// get the difference between
+	// arrays or objects
+	function difference(x, y) {
+
+		var i, t, lbl, xc = {}, yc = {}, diff = false;
+
+		if (isArray(x) && isArray(y)) {
+
+			diff = [];
+
+			for (i = 0, t = x.length; i < t; i++) { xc[JSON.stringify(x[i])] = true; }
+			for (i = 0, t = y.length; i < t; i++) { yc[JSON.stringify(y[i])] = true; }
+
+			for (lbl in xc) { if (!(lbl in yc)) { diff.push(JSON.parse(lbl)); } }
+			for (lbl in yc) { if (!(lbl in xc)) { diff.push(JSON.parse(lbl)); } }
+
 		}
 
-		return true;
+		if (isObject(x) && isObject(y)) {
+
+			diff = {};
+
+			for (lbl in x) { if (!(lbl in y)) { diff[lbl] = x[lbl]; } }
+			for (lbl in y) { if (!(lbl in x)) { diff[lbl] = y[lbl]; } }
+
+		}
+
+		return diff;
+
+	}
+
+	// merge two arrays or two objects
+	function merge(x, y) {
+
+		var i, t, lbl, xc = {}, yc = {}, merge = false;
+
+		if (isArray(x) && isArray(y)) {
+			
+			merge = [];
+			
+			for (i = 0, t = x.length; i < t; i++) { merge.push(x[i]); }
+			for (i = 0, t = y.length; i < t; i++) { merge.push(y[i]); }
+
+		}
+
+		if (isObject(x) && isObject(y)) {
+			
+			merge = {};
+
+			for (lbl in x) { merge[lbl] = x[lbl]; }
+			for (lbl in y) { merge[lbl] = y[lbl]; }
+		}
+
+		return merge;
 	}
 
 	function emptyTheShadow() {
 		// empty previous rows
 		while (_shadow.firstChild) { _shadow.removeChild(_shadow.firstChild); }
 	}
+
+	function getCacheKey(channelId, timeSlice) {
+		return channelId + '|' + new Date(timeSlice.start).getUTCHours() + '|' + new Date(timeSlice.end).getUTCHours();
+	};
+
+	/**
+	* Format a date as a string YYYY-MM-DDTHH:00Z
+	* Note that this ignores the minutes part of the date, and
+	* always places the formatted date at the top of the hour.
+	*
+	* @private
+	* @return  {string} YYYY-MM-DDTHH:00Z
+	*/
+	function formatTimeForApiRequest(date) {
+		var dt = new Date(date);
+		var formattedTime = dt.getUTCFullYear().toString() + '-' + ('00' + (dt.getUTCMonth() + 1).toString()).slice(-2) + '-' + ('00' + dt.getUTCDate().toString()).slice(-2) + 'T' + ('00' + dt.getUTCHours().toString()).slice(-2) + ':00' + 'Z';
+		return formattedTime;
+	};
 
 	function fillTheShadow() {
 
@@ -163,14 +245,6 @@ define([
 
 		return;
 
-	}
-
-	function blankSlice(cacheKey) {
-		
-		var _cache = GridModel[g.CHANNEL_SLICE_CACHE];
-		if (!_cache[cacheKey]) { return; }
-
-		console.log('Blank',cacheKey)
 	}
 
 	/**
@@ -266,28 +340,6 @@ define([
 
 	}
 
-	// TODO: Erase this
-	function getCurrentChannelVisibility() {
-
-		var channelsInViewport = GridModel[g.SELECTED_CHANNELS],
-			channelsInGrid = ChannelModel[c.GROUPS][ChannelModel[c.SELECTED_GROUP]],
-			channelVisibility = {},
-			channelId,
-			channel;
-		
-		// For each channel in the grid, add an entry to the channelVisibility hash,
-		// with a true/false value to represent its visibility.
-		// Example: {"6x":true,"7y":true,"7s":false, ...}
-		for (channel in channelsInGrid) {
-			if (channelsInGrid.hasOwnProperty(channel)) {
-				channelId = channelsInGrid[channel].id;
-				channelVisibility[channelId] = (channelsInViewport.indexOf(channelId) >= 0);
-			}
-		}
-
-		return channelVisibility;
-	}
-
 	/**
 	* Handler for the GRID_MOVED event.
 	* GRID_MOVED is raised by the grid view whenever the visible channel range
@@ -346,12 +398,13 @@ define([
 		if (events.filter && events.filter.length) {
 			for (e = 0; e < events.filter.length; e++) {
 				filter = events.filter[e];
-				if (/start/.test(filter)) { timeSlices.start = filter.split(' ')[2]; }
-				if (/end/.test(filter)) { timeSlices.end = filter.split(' ')[2]; }
+				// inverted start end times
+				if (/start/.test(filter)) { timeSlices.end = filter.split(' ')[2]; }
+				if (/end/.test(filter)) { timeSlices.start = filter.split(' ')[2]; }
 			}
 		}
 
-		cacheKey = EpgApi.getCacheKey(channelGroup, timeSlices);
+		cacheKey = getCacheKey(channelGroup, timeSlices);
 
 		// create a empty object
 		if (!_cache) { _cache = {}; }
@@ -361,7 +414,7 @@ define([
 			// save the entire slice
 			_cache[cacheKey] = events;
 		} else {
-			// it is possible that a data slice comes in, into two
+			// it is possible that a data slice comes in late, in
 			// differents request, and they are async. So we need to
 			// check if the cached request, have a 'nextBatchLink'
 			// property, and compare it with the actual request URL.
@@ -369,19 +422,24 @@ define([
 			// actual request is the nextBatch and we need to merge
 			// events.
 
-	// TODO: Maybe a bug here, we are only supporting two times requests.
-	//		 We need to check because there maybe more request
-
 			if (_cache[cacheKey].nextBatchLink && _cache[cacheKey].nextBatchLink.href) {
-				// remove callback name
+				
+				// the API is returning all the filters on the URL,
+				// including the callback name of the JSONP, this is
+				// messing up with jQuery or Zepto. Is necessaty to
+				// remove the callback name from the URL to avoid
+				// crashes and empty slots of data.
 				var callbackName = /\&callback=jsonp\d+/gi;
 				var nextUrl = _cache[cacheKey].nextBatchLink.href.replace(callbackName, '');
 
 				if (nextUrl === url) {
+					// here we know the actual request is a nextBatch
+					// then is necessary merge events and change
+					// the nextBatch property if there is a new one.
 					for (var i = 0; i < events.data.length; i += 1) {
 						_cache[cacheKey].data.push(events.data[i]);
 					}
-					// new nextBatchLink? store it to make it recursive
+					// new nextBatchLink? store it and make it fully recursive
 					if (events.nextBatchLink && events.nextBatchLink.href) {
 						_cache[cacheKey].nextBatchLink = events.nextBatchLink;
 					}
@@ -398,6 +456,49 @@ define([
 	
 	}
 
+
+	// Helper function that iterates slices data
+	// crossing channel groups and time slices.
+	// Optional processFunction to manipulate
+	// slice data before operations.
+	function processSlice(channelGroup, timeSlice, processFunction) {
+		var group, e, t, cacheKey;
+		for (group in channelGroup) {
+			for (e = 0, t = timeSlice.length; e < t; e++) {				
+				cacheKey = getCacheKey(group, timeSlice[e]);
+				processFunction(cacheKey, group, timeSlice[e]);
+			}
+		}
+	}
+
+	// Iterate all events from a slice
+	// and tries to remove it from DOM 
+	function blankSlice(cacheKey) {	
+		
+		var _cache = GridModel[g.CHANNEL_SLICE_CACHE],
+			cacheKey, i, t, channelRow, event, slice;
+
+		// no cache available
+		if (!_cache) { return; }
+
+		if (_cache && _cache[cacheKey]) { 
+			// grab slice from cache
+			slice = _cache[cacheKey];
+			// itearate all its events
+			for (i = 0, t = slice.data.length; i < t; i++) {
+				// select event
+				event = slice.data[i];
+				// identify channelRow on Shadow DOM
+				channelRow = _channelsInShadow[event.service.id];
+				// check if exist on the tree
+				if (channelRow.querySelectorAll('#event-' + event.id)[0]) {
+					// erase the node from the Shadow DOM
+					channelRow.removeChild(channelRow.querySelectorAll('#event-' + event.id)[0]);
+				}
+			}
+		}
+
+	}
 	/**
 	* Handler for the GRID_FETCH_EVENTS event.
 	* GRID_FETCH_EVENTS is raised by the grid view at the *end* of a resize or scroll
@@ -411,9 +512,11 @@ define([
 		_currentVisibleTimeSlices = getSelectedTimeSlices();
 
 		var _cache = GridModel[g.CHANNEL_SLICE_CACHE],
+			removeChannelGroup, removeTimeSlice, channelGroupDifference, timeSliceDifference,
 			timeSlicesCount = _currentVisibleTimeSlices.length, e, cacheKey, channel, group, uncachedChannels = [];
 	
-		// trying to avoid redraws here
+		// trying to avoid redraws here by understanding if
+		// there is a new slice visible on the screen
 		if (isEqual(_currentVisibleChannelGroup, _previousVisibleChannelGroup) 
 		 && isEqual(_currentVisibleTimeSlices, _previousVisibleTimeSlices)) {
 		 	// nothing changed, don't move!
@@ -421,25 +524,44 @@ define([
 		}
 
 		// TODO: find the difference between current and previous to see with slices need to erase.
+		channelGroupDifference = difference(_currentVisibleChannelGroup, _previousVisibleChannelGroup);
+		timeSliceDifference = difference(_currentVisibleTimeSlices, _previousVisibleTimeSlices);
 
-		for (group in _currentVisibleChannelGroup) {
-			// for each slice
-			for (e = 0; e < timeSlicesCount; e++) {
-				
-				// generate cacheKey
-				cacheKey = EpgApi.getCacheKey(group, _currentVisibleTimeSlices[e]);
-				
-				// check if the slice exist on the cache
+		/* Delete old events */ 
+		// Iterate slices that are not longer visible
+		// to erase events from DOM
+
+		// grab time slices that are not current visible
+		removeTimeSlice = (timeSliceDifference && timeSliceDifference.length > 0) ?
+							timeSliceDifference : _timeSlicesMap;
+		// grab channel groups that are not current visible
+		removeChannelGroup =  ( !isEmpty(channelGroupDifference) ) ? 
+								channelGroupDifference : _channelGroupsMap; 
+
+		// process slices that are not visible
+		// after selection, send process to blankSlice
+		// to erase nodes from Shadow DOM
+		processSlice(removeChannelGroup, removeTimeSlice, blankSlice);
+
+
+		/* Render new events */
+		// For all the visible slices, check if there is
+		// data on cache, if not, make a new request to
+		// the API 
+		processSlice(
+			_currentVisibleChannelGroup, 
+			_currentVisibleTimeSlices, 
+			function(cacheKey, group, timeslice) {
 				if (_cache && _cache[cacheKey]) {
 					// exists, simple redraw
 					redrawGrid(cacheKey);
 				} else {
-					// get events Batch
-					EpgApi.getEventBatchFromAPI(group, _currentVisibleTimeSlices[e]);
+					// get events Batch from API
+					EpgApi.getEventBatchFromAPI(group, timeslice);
 				}
-			}
-		}
+		});
 
+		// save visible channels and timeslices for the next move
 		_previousVisibleChannelGroup = _currentVisibleChannelGroup;
 		_previousVisibleTimeSlices = _currentVisibleTimeSlices;
 
@@ -447,14 +569,14 @@ define([
 
 	}
 
-	function createChannelGroups() {
+	function createChannelGroupsMap() {
 
 		var allChannels = ChannelModel[c.GROUPS][ChannelModel[c.SELECTED_GROUP]],
 			channel, map = {}, group = [], id = '';
 
 		var i = 0, t = allChannels.length;
 
-		// make groups of 15 channels each
+		// make groups channels
 		for (i; i < t; i += 1) {
 			channel = allChannels[i];			
 			group.push(channel);
@@ -466,7 +588,7 @@ define([
 			}
 		}
 
-		_channelGroupsMap = map;
+		return map;
 	}
 
 	function getSelectedChannelGroups() {
@@ -487,8 +609,11 @@ define([
 		return selectedGroups;
 	}
 
-	var getSelectedTimeSlices = function() {
+	var getSelectedTimeSlices = function(start, end) {
 		
+		start = start || GridModel[g.SELECTED_TIME].startTime;
+		end = end || GridModel[g.SELECTED_TIME].endTime;
+
 		// Time slices: each slice is HOURS_PER_SLICE hours wide.
 		// If HOURS_PER_SLICE = 4, then the slices are:
 		// [
@@ -500,8 +625,8 @@ define([
 
 		// Take copies of the startDate and endDate input so we don't modify the original
 		// input values by reference:
-		var startDate = new Date(GridModel.selectedTime.startTime.valueOf());
-		var endDate = new Date(GridModel.selectedTime.endTime.valueOf());
+		var startDate = new Date(start.valueOf());
+		var endDate = new Date(end.valueOf());
 
 		// Adjust the start and end dates, so that they align with slice boundaries.
 
@@ -524,7 +649,10 @@ define([
 		var sliceStart = new Date(startDate.valueOf());
 		var sliceEnd = new Date(startDate.valueOf() + millisecondsPerSlice);
 		do {
-			timeSlices.push({ start: new Date(sliceStart.valueOf()), end: new Date(sliceEnd.valueOf()) });
+			timeSlices.push({ 
+				start: formatTimeForApiRequest(new Date(sliceStart.valueOf())), 
+				end: formatTimeForApiRequest(new Date(sliceEnd.valueOf())) 
+			});
 			sliceStart = new Date(sliceStart.valueOf() + millisecondsPerSlice);
 			sliceEnd = new Date(sliceEnd.valueOf() + millisecondsPerSlice);
 		} while (sliceEnd <= endDate);
@@ -540,9 +668,13 @@ define([
 		g.ZERO = g.zeroTime;
 		g.END = new Date(g.zeroTime.valueOf() + 24*60*60*1000);
 
-		createChannelGroups();
+		// Map all the grid slices
+		// theses maps are used to difference operations
+		// with selected channel groups and time slices
+		_timeSlicesMap = getSelectedTimeSlices(g.ZERO, g.END);
+		_channelGroupsMap = createChannelGroupsMap();
 
-		// fill the shadow DOM
+		// fill the Shadow DOM
 		// with selected channels
 		fillTheShadow();
 
