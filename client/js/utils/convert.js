@@ -37,11 +37,26 @@ define([
 		return ms;
 	}
 
+	/**
+	* Format a date as a string YYYY-MM-DDTHH:00Z
+	* Note that this ignores the minutes part of the date, and
+	* always places the formatted date at the top of the hour.
+	*
+	* @private
+	* @return  {string} YYYY-MM-DDTHH:00Z
+	*/
+	function formatTimeForApiRequest(date) {
+		var dt = new Date(date);
+		var formattedTime = dt.getUTCFullYear().toString() + '-' + ('00' + (dt.getUTCMonth() + 1).toString()).slice(-2) + '-' + ('00' + dt.getUTCDate().toString()).slice(-2) + 'T' + ('00' + dt.getUTCHours().toString()).slice(-2) + ':00' + 'Z';
+		return formattedTime;
+	};
+
 /* export */
 
 	return {
-		timeToPixels	: timeToPixels,
-		parseApiDateStringAsMilliseconds	: parseApiDateStringAsMilliseconds
+		timeToPixels						: timeToPixels,
+		formatTimeForApiRequest				: formatTimeForApiRequest,
+		parseApiDateStringAsMilliseconds 	: parseApiDateStringAsMilliseconds
 	};
 
 });
