@@ -64,7 +64,7 @@ define([], function GridConfigContext() {
 
 		SELECTED_TIME: 'selectedTime',
 
-		CHANNEL_SLICE_CACHE: 'channelSliceCache',
+		SLICE_CACHE: 'sliceCache',
 
 		/* properties */
 
