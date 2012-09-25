@@ -58,9 +58,9 @@ define([], function GridConfigContext() {
 
 		/* slices size */
 
-		HOURS_PER_SLICE = 6,
+		HOURS_PER_SLICE: 6,
 		
-		CHANNELS_PER_SLICE = 15,
+		CHANNELS_PER_SLICE: 15,
 
 		/* labels */
 
