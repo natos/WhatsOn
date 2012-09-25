@@ -27,10 +27,11 @@ define([
 	'models/channel',
 	'views/grid',
 	'utils/convert',
+	'utils/common',
 	'utils/dom',
 	'utils/epgapi'
 
-], function GridController(g, c, App, Controller, GridModel, ChannelModel, GridView, convert, dom, EpgApi) {
+], function GridController(g, c, App, Controller, GridModel, ChannelModel, GridView, convert, common, dom, EpgApi) {
 
 	var name = 'grid',
 
@@ -71,96 +72,8 @@ define([
 	// inside the shadow DOM
 	_channelsInShadow = {};
 
-	// helper functions
-	function isObject(obj) { return Object.prototype.toString.call(obj) === '[object Object]'; }
-	function isArray(arr) { return Object.prototype.toString.call(arr) === '[object Array]'; }
-	function isEmpty(map) { for (var key in map) { if (map.hasOwnProperty(key)) { return false; } } return true; }
-	// compares two objects for equality
-	// returns true if they are equal
-	function isEqual(x, y) {
-		var p;
-		for (p in x) { if(typeof(y[p])=='undefined') { return false; } }
-		for (p in x) {
-			if (x[p]) {
-				switch(typeof(x[p])) {
-					case 'object':
-						if (!isEqual(x[p],y[p])) { return false; } 
-						break;
-					case 'function':
-						if (typeof(y[p])=='undefined' || (p != 'equals' && x[p].toString() != y[p].toString())) { return false; }
-						break;
-					default:
-						if (x[p] != y[p]) { return false; }
-				}
-			} else {
-				if (y[p]) { return false; }
-			}
-		}
-		for (p in y) { if(typeof(x[p])=='undefined') { return false; } }
-		return true;
-	}
 
-	// get the difference between
-	// arrays or objects
-	function difference(x, y) {
-
-		var i, t, lbl, xc = {}, yc = {}, diff = false;
-
-		if (isArray(x) && isArray(y)) {
-
-			diff = [];
-
-			for (i = 0, t = x.length; i < t; i++) { xc[JSON.stringify(x[i])] = true; }
-			for (i = 0, t = y.length; i < t; i++) { yc[JSON.stringify(y[i])] = true; }
-
-			for (lbl in xc) { if (!(lbl in yc)) { diff.push(JSON.parse(lbl)); } }
-			for (lbl in yc) { if (!(lbl in xc)) { diff.push(JSON.parse(lbl)); } }
-
-		}
-
-		if (isObject(x) && isObject(y)) {
-
-			diff = {};
-
-			for (lbl in x) { if (!(lbl in y)) { diff[lbl] = x[lbl]; } }
-			for (lbl in y) { if (!(lbl in x)) { diff[lbl] = y[lbl]; } }
-
-		}
-
-		return diff;
-
-	}
-
-	// merge two arrays or two objects
-	function merge(x, y) {
-
-		var i, t, lbl, xc = {}, yc = {}, merge = false;
-
-		if (isArray(x) && isArray(y)) {
-			
-			merge = [];
-			
-			for (i = 0, t = x.length; i < t; i++) { merge.push(x[i]); }
-			for (i = 0, t = y.length; i < t; i++) { merge.push(y[i]); }
-
-		}
-
-		if (isObject(x) && isObject(y)) {
-			
-			merge = {};
-
-			for (lbl in x) { merge[lbl] = x[lbl]; }
-			for (lbl in y) { merge[lbl] = y[lbl]; }
-		}
-
-		return merge;
-	}
-
-	function emptyTheShadow() {
-		// empty previous rows
-		while (_shadow.firstChild) { _shadow.removeChild(_shadow.firstChild); }
-	}
-
+	// Returns a generated CacheKey for a specific GridSlice
 	function getCacheKey(channelId, timeSlice) {
 		return channelId + '|' + new Date(timeSlice.start).getUTCHours() + '|' + new Date(timeSlice.end).getUTCHours();
 	};
@@ -178,6 +91,11 @@ define([
 		var formattedTime = dt.getUTCFullYear().toString() + '-' + ('00' + (dt.getUTCMonth() + 1).toString()).slice(-2) + '-' + ('00' + dt.getUTCDate().toString()).slice(-2) + 'T' + ('00' + dt.getUTCHours().toString()).slice(-2) + ':00' + 'Z';
 		return formattedTime;
 	};
+
+	function emptyTheShadow() {
+		// empty previous rows
+		while (_shadow.firstChild) { _shadow.removeChild(_shadow.firstChild); }
+	}
 
 	function fillTheShadow() {
 
@@ -207,28 +125,9 @@ define([
 		_shadow.appendChild(_tick);
 	}
 
-	function channelModelChanged(changes) {
-		if (changes[c.SELECTED_GROUP]) {
-			_channels = ChannelModel[c.GROUPS][ChannelModel[c.SELECTED_GROUP]];
-			createChannelGroups();
-			emptyTheShadow();
-			fillTheShadow();
-			GridView.render();
-		}
-	}
-
 	/**
 	* Redraw the grid channel-by-channel because new event data has been received.
 	* The grid *might* have moved since the last time.
-	*
-	* Iterate through the channels, and determine what action is required:
-	*  CHANNEL VISIBILITY
-	* PREVIOUS  |  CURRENT  |  ACTION REQUIRED
-	*    Y            Y        No change - do not re-render channel
-	*    Y            Y        If the events received are for this channel, render the channel. Otherwise, do nothing.
-	*    Y            N        Set channel to blank
-	*    N            Y        Render channel events
-	*    N            N        No change - do not re-render channel
 	*
 	* @private
 	*/
@@ -245,17 +144,6 @@ define([
 
 		return;
 
-	}
-
-	/**
-	* Clear an entire channel row
-	* @private
-	*/
-	function blankChannel(channelId) {
-		// grab the channel
-		var channel = _channelsInShadow[channelId];
-		// iterate and remove all its children
-		while (channel.firstChild) { channel.removeChild(channel.firstChild); }
 	}
 
 	/**
@@ -459,8 +347,9 @@ define([
 
 	// Helper function that iterates slices data
 	// crossing channel groups and time slices.
-	// Optional processFunction to manipulate
-	// slice data before operations.
+	// Also recieves an optional arguemnt
+	// 'processFunction' to manipulate slice data
+	// before operations.
 	function processSlice(channelGroup, timeSlice, processFunction) {
 		var group, e, t, cacheKey;
 		for (group in channelGroup) {
@@ -481,7 +370,8 @@ define([
 		// no cache available
 		if (!_cache) { return; }
 
-		if (_cache && _cache[cacheKey]) { 
+		// check if the slice exists
+		if (_cache[cacheKey]) { 
 			// grab slice from cache
 			slice = _cache[cacheKey];
 			// itearate all its events
@@ -512,39 +402,50 @@ define([
 		_currentVisibleTimeSlices = getSelectedTimeSlices();
 
 		var _cache = GridModel[g.CHANNEL_SLICE_CACHE],
-			removeChannelGroup, removeTimeSlice, channelGroupDifference, timeSliceDifference,
-			timeSlicesCount = _currentVisibleTimeSlices.length, e, cacheKey, channel, group, uncachedChannels = [];
+			channelGroupDifference, timeSliceDifference,
+			removeChannelGroup, removeTimeSlice,
+			e, cacheKey, channel, group, uncachedChannels = [];
 	
 		// trying to avoid redraws here by understanding if
 		// there is a new slice visible on the screen
-		if (isEqual(_currentVisibleChannelGroup, _previousVisibleChannelGroup) 
-		 && isEqual(_currentVisibleTimeSlices, _previousVisibleTimeSlices)) {
+		if (common.isEqual(_currentVisibleChannelGroup, _previousVisibleChannelGroup) 
+		 && common.isEqual(_currentVisibleTimeSlices, _previousVisibleTimeSlices)) {
 		 	// nothing changed, don't move!
 			return this;
 		}
 
-		// TODO: find the difference between current and previous to see with slices need to erase.
-		channelGroupDifference = difference(_currentVisibleChannelGroup, _previousVisibleChannelGroup);
-		timeSliceDifference = difference(_currentVisibleTimeSlices, _previousVisibleTimeSlices);
+		// DOM performance is pretty bad, in order to improve performance in small devices,
+		// the grid removes the nodes that are not longer visible to the user. 
+		// Knowing the difference between current and previous channels and times, 
+		channelGroupDifference = common.difference(_currentVisibleChannelGroup, _previousVisibleChannelGroup);
+		timeSliceDifference = common.difference(_currentVisibleTimeSlices, _previousVisibleTimeSlices);
+
 
 		/* Delete old events */ 
+
 		// Iterate slices that are not longer visible
 		// to erase events from DOM
 
-		// grab time slices that are not current visible
-		removeTimeSlice = (timeSliceDifference && timeSliceDifference.length > 0) ?
-							timeSliceDifference : _timeSlicesMap;
-		// grab channel groups that are not current visible
-		removeChannelGroup =  ( !isEmpty(channelGroupDifference) ) ? 
-								channelGroupDifference : _channelGroupsMap; 
+		// Grab timeslices that are not current visible. If there is no
+		// timeSliceDifference, means that the user didn't change the time
+		// selection, so instead of using the difference between current
+		// and previous, use all timeSlices.
+		removeTimeSlice = (timeSliceDifference && timeSliceDifference.length > 0) ?	timeSliceDifference : _timeSlicesMap;
+		
+		// Grab channel groups that are not current visible. If there is
+		// no channelGroupDifference, means that the user didn't change
+		// channel selection, just time, so instead of using the difference
+		// between current and previous, use all channel groups.
+		removeChannelGroup =  ( !common.isEmpty(channelGroupDifference) ) ? channelGroupDifference : _channelGroupsMap; 
 
-		// process slices that are not visible
+		// Process slices that are not visible
 		// after selection, send process to blankSlice
-		// to erase nodes from Shadow DOM
+		// to erase DOM nodes from Shadow
 		processSlice(removeChannelGroup, removeTimeSlice, blankSlice);
 
 
 		/* Render new events */
+
 		// For all the visible slices, check if there is
 		// data on cache, if not, make a new request to
 		// the API 
@@ -659,6 +560,17 @@ define([
 
 		return timeSlices;
 	};
+
+	function channelModelChanged(changes) {
+		if (changes[c.SELECTED_GROUP]) {
+			_channels = ChannelModel[c.GROUPS][ChannelModel[c.SELECTED_GROUP]];
+			createChannelGroups();
+			emptyTheShadow();
+			fillTheShadow();
+			GridView.render();
+		}
+	}
+
 /* public */
 
 /* abstract */
