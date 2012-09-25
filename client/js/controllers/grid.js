@@ -41,11 +41,6 @@ define([
 	gridMoveExecutionTimer,
 	gridMoveExecutionDelay = 100,
 
-	// grid slice size
-	// 6 hours x 15 channels
-	HOURS_PER_SLICE = 6,
-	CHANNELS_PER_SLICE = 15,
-
 	// grab selected channels from channel model
 	_channels = ChannelModel[c.GROUPS][ChannelModel[c.SELECTED_GROUP]],
 	
@@ -301,8 +296,8 @@ define([
 		for (i; i < t; i += 1) {
 			channel = allChannels[i];			
 			group.push(channel);
-			id += ((i === 0 || i % CHANNELS_PER_SLICE === 0)?'':',') + channel.id;
-			if ((i+1) % CHANNELS_PER_SLICE === 0 || (i+1) === t) {
+			id += ((i === 0 || i % g.CHANNELS_PER_SLICE === 0)?'':',') + channel.id;
+			if ((i+1) % g.CHANNELS_PER_SLICE === 0 || (i+1) === t) {
 				map[id] = group.slice();
 				id = '';
 				group.length = 0;
@@ -363,18 +358,18 @@ define([
 		startDate.setMinutes(0);
 		startDate.setSeconds(0);
 		startDate.setMilliseconds(0);
-		var startSliceIndex = Math.floor(startDate.getHours() / HOURS_PER_SLICE);
-		startDate.setHours(startSliceIndex * HOURS_PER_SLICE);
+		var startSliceIndex = Math.floor(startDate.getHours() / g.HOURS_PER_SLICE);
+		startDate.setHours(startSliceIndex * g.HOURS_PER_SLICE);
 
 		// Round the end time UP to the next whole hour
 		endDate.setMinutes(60);
 		endDate.setSeconds(0);
 		endDate.setMilliseconds(0);
-		var endSliceIndex = Math.ceil(endDate.getHours() / HOURS_PER_SLICE);
-		endDate.setHours(endSliceIndex * HOURS_PER_SLICE);
+		var endSliceIndex = Math.ceil(endDate.getHours() / g.HOURS_PER_SLICE);
+		endDate.setHours(endSliceIndex * g.HOURS_PER_SLICE);
 
 		var timeSlices = [];
-		var millisecondsPerSlice = HOURS_PER_SLICE * 60 * 60 * 1000;
+		var millisecondsPerSlice = g.HOURS_PER_SLICE * 60 * 60 * 1000;
 		var sliceStart = new Date(startDate.valueOf());
 		var sliceEnd = new Date(startDate.valueOf() + millisecondsPerSlice);
 		do {
@@ -612,7 +607,7 @@ define([
 		g.END = new Date(g.zeroTime.valueOf() + 24*60*60*1000); // 24hs
 
 		// Map all the grid slices
-		// theses maps are used to difference operations
+		// theses maps are used on difference operations
 		// with selected channel groups and time slices
 		_timeSlicesMap = getSelectedTimeSlices(g.ZERO, g.END);
 		_channelGroupsMap = createChannelGroupsMap();

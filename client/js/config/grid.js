@@ -56,6 +56,12 @@ define([], function GridConfigContext() {
 
 		EXECUTION_DELAY: 250,
 
+		/* slices size */
+
+		HOURS_PER_SLICE = 6,
+		
+		CHANNELS_PER_SLICE = 15,
+
 		/* labels */
 
 		POSITION: 'position',
