@@ -63,9 +63,7 @@ define([], function AppConfigContext() {
 
 		_main: document.getElementById('main'),
 
-		_content: document.getElementById('content'),
-
-		_transition: document.getElementById('transition'),
+		_content: document.getElementById('content')
 
 	};
 

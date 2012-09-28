@@ -68,7 +68,7 @@ function(NowAndNextService, DomainService, Metadata, QS, config) {
 			supports	: req.supports,
 			xhr			: req.xhr
 		});
-	}
+	};
 
 	NowAndNextController.prototype.render = function(req, res) {
 		
