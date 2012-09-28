@@ -1,8 +1,9 @@
-article
-	header
-		h1
-			i.icon-bookmark
-			| Top Bookings
-	ul.channel-event-list
-		each event in topBookingsEvents
-			include on-now-event
+if (topBookingsEvents.length)
+	article
+		header
+			h1
+				i.icon-bookmark
+				| Top Bookings
+		ul.channel-event-list
+			each event in topBookingsEvents
+				include on-now-event
