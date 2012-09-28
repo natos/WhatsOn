@@ -1,67 +1,121 @@
 define([
 
-	'modules/app'
+	'config/app',
+	'config/grid',
+	'modules/event'
 
-], function(App) {
+], function(a, g, Event) {
 
 	'use strict';
 
 	// constants
 	var	API_PREFIX = $('head').attr('data-api'),
-		CHANNEL_EVENTS_RECEIVED_EVENT = 'grid:eventsReceived';
 
+		MAX_BATCH_SIZE = 128;
+
+
+	function getCountriesFromAPI() {
+
+		// fix the request URL
+		var request = API_PREFIX
+		// get events for services
+			+ '/countries.json'
+		// properties
+			+ '?show=name,schedules.selfLink,linearLineupLink'
+		// filters
+			+ '&sort=provinces.code';
+
+		// first request
+			query(request, a.COUTRIES_RECEIVED);
+
+	}
+
+	function getLineUpFromAPI(request) {
+
+		// fix the request URL
+		var request = request
+		// properties
+			+ '?show=name,logicalPosition,eventsLink,channel,logoLink'
+		// filters
+			+ '&sort=logicalPosition';
+
+		// first request
+			query(request, a.LINEUP_RECEIVED);
+
+	}
+
+	function getCategoriesFromAPI(request) {
+
+		// fix the request URL
+		var request = request
+		// properties
+			+ '?show=name,categories.name,categories.selfLink'
+		// filters
+			+ '&sort=categories.name';
+
+		// first request
+			query(request, a.CATEGORIES_RECEIVED);
+
+	}
+
+	function getEventFromAPI(id) {
+
+		// fix the request URL
+		var request = API_PREFIX 
+		// get events for services
+			+ '/programmes/' + id + '.json'
+		// properties
+			+ '?show=title,shortDescription,episodeTitle,episodeNumber,events.start,series.episodes.episodeTitle,series.episodes.events,series.episodes.events.programme.id'
+		// filters
+			+ '&sort=events.start';
+
+		// first request
+			query(request, g.EVENT_RECEIVED);
+
+	}
 
 	function getEventBatchFromAPI(channelsIds, timeSlice) {
 
-		// I'm trying to trick the recursivity here...
-		var start = timeSlice.start,
-			end = timeSlice.end,
 		// fix the request URL
-			request = API_PREFIX 
+		var request = API_PREFIX 
 		// get events for services
-			+ '/linear/services/' + channelsIds + '/events.json'
+			+ '/linearServices/' + channelsIds + '/events.json'
 		// properties
-			+ '?show=start,end,service.id,programme.title'
+			+ '?show=start,end,service.id,programme.id,programme.title'
 		// filters
 			// ATTENTION: notice that the date filters are inverted, this
 			// is made like this to avoid losing events in between timeboxes.
-			+ '&maxBatchSize=200&sort=start&start<=' + end + '&end>=' + start;
+			+ '&sort=start&start<=' + timeSlice.end + '&end>=' + timeSlice.start;
 
 		// first request
-			requestEvents(request);		
+			query(request, g.EVENTS_RECEIVED);
 		
 	}
 
-	function requestEvents(url) {
+	function query(url, eventName) {
 
-//		console.log('requestEvents',url);
-
-		$.getJSON(url + '&callback=?', function(response) {
-			handleEventsFromAPI(response, url);
+		$.getJSON(url + '&maxBatchSize=' + MAX_BATCH_SIZE + '&callback=?', function(response) {
+			handleResponse(response, url, eventName);
 		});
 
 	}
 
-	function handleEventsFromAPI(response, url) {
-
-		//console.log('processing', response);
+	function handleResponse(response, url, eventName) {
 
 		if (response) {
 
-			App.emit(CHANNEL_EVENTS_RECEIVED_EVENT, response, url);
+			Event.emit(eventName, response, url);
 			
 			if (response.nextBatchLink && response.nextBatchLink.href) {
-
-				//console.log('EpgApi', 'Requesting next batch');
 				// FIX
 				// this URL re-write is necessary because
 				// the API remembers the callback parameter
-				// and this causes a mess with Zepto and the
-				// AJAX callbacks
+				// and this causes a mess with Zepto/jQuery
+				// and the AJAX callbacks
 				var callbackName = /\&callback=jsonp\d+/gi;
 				var nextUrl = response.nextBatchLink.href.replace(callbackName, '');
 				// Ask for next Batch
-				requestEvents(nextUrl);
+				query(nextUrl, eventName);
 			}
 
 		}
@@ -69,7 +123,11 @@ define([
 	}
 
 	return {
-		getEventBatchFromAPI : getEventBatchFromAPI
+		getCategoriesFromAPI	: getCategoriesFromAPI,
+		getLineUpFromAPI 		: getLineUpFromAPI,
+		getCountriesFromAPI		: getCountriesFromAPI,
+		getEventFromAPI 		: getEventFromAPI,
+		getEventBatchFromAPI 	: getEventBatchFromAPI
 	};
 
 });

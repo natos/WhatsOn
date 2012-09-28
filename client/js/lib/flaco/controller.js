@@ -7,9 +7,9 @@
 define([
 
 	'config/app',
-	'modules/app'
+	'modules/event'
 
-], function GenericControllerScope(a, App) {
+], function GenericControllerScope(a, Event) {
 
 /* private */
 
@@ -73,13 +73,13 @@ define([
 				// grab the arguments
 				var args = slice.call(arguments, 0);
 				// emit 'first' event
-				if (present) { App.emit(present, Controller, args); }
+				if (present) { Event.emit(present, Controller, args); }
 				// apply the method
 				if (method) { method.apply(Controller, args); }
 				// run View method
 				if (viewMethod) { viewMethod.apply(Controller, args); }
 				// emit 'last' event
-				if (past) { App.emit(past, Controller, args); }
+				if (past) { Event.emit(past, Controller, args); }
 				// return the Controller object
 				return this;
 			}

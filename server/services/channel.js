@@ -49,7 +49,8 @@ function(util, events, request, requestN, cache, DomainService, BookingsService,
 	/** @private */
 
 	//constants
-	var CHANNELS_BACH = config.API_PREFIX + '/linear/lineups/generic-upc.nl/services.json?show=name,channel,logicalPosition,logoLink&maxBatchSize=400',
+	//var CHANNELS_BACH = config.API_PREFIX + '/linear/lineups/generic-upc.nl/services.json?show=name,channel,logicalPosition,logoLink&maxBatchSize=400',
+	var CHANNELS_BACH = config.API_PREFIX + '/schedules/upc.nl/lineups/generic/linearServices.json?show=name,channel,logicalPosition,logoLink&maxBatchSize=400',
 		/* 
 			### For the old API ####
 

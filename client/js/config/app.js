@@ -21,13 +21,31 @@ define([], function AppConfigContext() {
 
 		ROOT_URL: 'http://upcsocial.herokuapp.com/',
 
+		/* labels */
+
+		COUNTRIES_CACHE: 'schedule_cache',
+
+		CATEGORIES_CACHE: 'categories_cache',
+
+		LINEUP_CACHE: 'lineup_cache',
+
 		/* events */
+
+		READY: 'app:ready',
 
 		NAVIGATE: 'app:navigate',
 
 		ACTION: 'app:action',
 
 		VOID: 'app:action:void',
+
+		MODEL_CHANGED: 'app:model_changed',
+
+		COUTRIES_RECEIVED: 'app:countries_received',
+
+		CATEGORIES_RECEIVED: 'app:categories_received',
+
+		LINEUP_RECEIVED: 'app:lineup_received',
 
 		// controllers
 

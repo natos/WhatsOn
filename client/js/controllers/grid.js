@@ -22,6 +22,7 @@ define([
 	'config/grid',
 	'config/channel',
 	'modules/app',
+	'modules/event',
 	'lib/flaco/controller',
 	'models/grid',
 	'models/channel',
@@ -31,7 +32,7 @@ define([
 	'utils/dom',
 	'utils/epgapi'
 
-], function GridController(g, c, App, Controller, GridModel, ChannelModel, GridView, convert, common, dom, EpgApi) {
+], function GridController(g, c, App, Event, Controller, GridModel, ChannelModel, GridView, convert, common, dom, EpgApi) {
 
 	var name = 'grid',
 
@@ -221,6 +222,8 @@ define([
 			eventElement.style.left = left + 'px';
 			//eventElement.setAttribute('data-category', category.replace('/','-')); // the '/' is not interperted by CSS, needed for highlighting
 			//eventElement.setAttribute('data-subcategory', subcategory.replace('/','-')); // the '/' is not interperted by CSS, needed for highlighting
+			// Declare the overlay action
+			eventElement.setAttribute('data-action', 'OVERLAY');
 			if (width >= tinyWidthLimit) {
 				eventElement.appendChild(document.createTextNode(eventTitle));
 			} else {
@@ -242,12 +245,12 @@ define([
 		} // end loop
 		
 		// Finish rendering, send the shawdor DOM to the model,
-		// uses cloneNode(true), the boolean argument defines
-		// if is gonna be a deep clone, including all children
-		// nodes or false, just the selected node.
+		// uses cloneNode(true), the boolean argument means
+		// that is going to be a deep clone, including all children
+		// nodes, false means just the selected node.
 		// Then the model will fire a 'MODEL_CHANGED' and the
 		// view will update its template with the new data.
-		GridModel.set('render', _shadow.cloneNode(true));
+		GridModel.set(g.RENDER, _shadow.cloneNode(true));
 
 	}
 
@@ -407,7 +410,6 @@ define([
 			channelGroup = getChannelsIds.exec(url);
 			channelGroup = channelGroup && channelGroup[0].split('/events').join('');
 
-
 		// snif the time filter
 		if (events.filter && events.filter.length) {
 			for (e = 0; e < events.filter.length; e++) {
@@ -557,6 +559,24 @@ define([
 
 	}
 
+	function setEvent(response) {
+		
+		console.log('<GridController>.setEvent', arguments);
+
+		GridModel.set(g.OVERLAY, response.data[0]);
+
+	}
+
+
+	function getEvent(id) {
+
+		var getNumbers = /\d+/gi;
+		var query = getNumbers.exec(id)[0];
+
+		EpgApi.getEventFromAPI(query);
+
+	}
+
 
 	/**********************
 		EVENT HANDLERS
@@ -617,11 +637,13 @@ define([
 		fillTheShadow();
 
 		// Events Handlers
-		App.on(g.GRID_MOVED, gridMoved);
-		App.on(g.GRID_FETCH_EVENTS, getEvents);
-		App.on(g.EVENTS_RECEIVED, setEvents);
+		Event.on(g.MOVED, gridMoved);
+		Event.on(g.FETCH_EVENTS, getEvents);
+		Event.on(g.EVENTS_RECEIVED, setEvents);
+		Event.on(g.FETCH_EVENT, getEvent);
+		Event.on(g.EVENT_RECEIVED, setEvent);
 
-		App.on(c.MODEL_CHANGED, channelModelChanged);
+		Event.on(c.MODEL_CHANGED, channelModelChanged);
 
 		return this;
 
@@ -633,11 +655,13 @@ define([
 		// in some cases
 		emptyTheShadow();
 
-		App.off(g.GRID_MOVED, gridMoved);
-		App.off(g.GRID_FETCH_EVENTS, getEvents);
-		App.off(g.EVENTS_RECEIVED, setEvents);
+		Event.off(g.MOVED, gridMoved);
+		Event.off(g.FETCH_EVENTS, getEvents);
+		Event.off(g.EVENTS_RECEIVED, setEvents);
+		Event.off(g.FETCH_EVENT, getEvent);
+		Event.off(g.EVENT_RECEIVED, setEvent);
 
-		App.off(c.MODEL_CHANGED, channelModelChanged);
+		Event.off(c.MODEL_CHANGED, channelModelChanged);
 
 		return this;
 

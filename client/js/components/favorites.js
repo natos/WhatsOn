@@ -9,11 +9,12 @@ define([
 	'config/user',
 	'config/channel',
 	'modules/app',
+	'modules/event',
 	'models/user',
 	'models/channel',
 	'utils/dom'
 
-], function(a, u, c, App, UserModel, ChannelModel, dom) {
+], function(a, u, c, App, Event, UserModel, ChannelModel, dom) {
 
 	var name = 'favorites',
 
@@ -143,7 +144,7 @@ define([
 	function initialize() {
 
 		// subscribe to get re-render favorites
-		App.on(u.MODEL_CHANGED, handleDataChanges);
+		Event.on(u.MODEL_CHANGED, handleDataChanges);
 
 		return this;
 
@@ -167,7 +168,7 @@ define([
 
 		removeInvitation();
 
-		App.off(u.MODEL_CHANGED, handleDataChanges);
+		Event.off(u.MODEL_CHANGED, handleDataChanges);
 
 		return this;
 

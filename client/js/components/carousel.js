@@ -9,7 +9,7 @@ define([
 
 	'utils/dom'
 
-], function(dom) {
+], function CarouselComponentScope(dom) {
 
 	var name = 'carousel',
 

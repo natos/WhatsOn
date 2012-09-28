@@ -9,11 +9,12 @@ define([
 	'config/grid',
 	'config/channel',
 	'modules/app',
+	'modules/event',
 	'models/channel',
 	'utils/convert',
 	'utils/dom'
 
-], function TimeBarComponentScope(a, g, c, App, ChannelModel, convert, dom) {
+], function TimeBarComponentScope(a, g, c, App, Event, ChannelModel, convert, dom) {
 
 	var name = 'timebar',
 
@@ -95,9 +96,9 @@ define([
 		$('.upc-logo').on('click', centerViewPort);
 
 		// move with the grid
-		App.on(g.MODEL_CHANGED, modelChanged);
+		Event.on(g.MODEL_CHANGED, modelChanged);
 
-		App.on(a.ACTION, handleActions);
+		Event.on(a.ACTION, handleActions);
 
 		return this;
 
@@ -143,9 +144,9 @@ define([
 
 		$('.upc-logo').off('click', centerViewPort);
 
-		App.off(g.MODEL_CHANGED, modelChanged);
+		Event.off(g.MODEL_CHANGED, modelChanged);
 
-		App.off(a.ACTION, handleActions);
+		Event.off(a.ACTION, handleActions);
 
 		_content.removeChild(_timebar);
 

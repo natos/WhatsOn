@@ -10,11 +10,12 @@ define([
 	'config/user',
 	'config/channel',
 	'modules/app',
+	'modules/event',
 	'models/user',
 	'models/channel',
 	'components/user'
 
-], function UserModuleScope(u, c, App, UserModel, ChannelModel, UserComponent) {
+], function UserModuleScope(u, c, App, Event, UserModel, ChannelModel, UserComponent) {
 
 	var name = 'user',
 
@@ -68,14 +69,14 @@ define([
 		fetchFavorites();
 //		fetchRecordings();
 		// let know eveyone
-		App.emit(u.LOGGED_IN);
+		Event.emit(u.LOGGED_IN);
 
 	}
 
 	/* actions when user is disconnected */
 	function disconnected() {
 		// let know eveyone
-		App.emit(u.LOGGED_OUT);
+		Event.emit(u.LOGGED_OUT);
 		// reset the UserModel by removing data
 		UserModel.set(FACEBOOK_STATUS, false);
 		UserModel.set(FAVORITES, false);
@@ -342,16 +343,16 @@ define([
 			user: UserComponent.initialize()
 		};
 
-		App.on(u.LOG_IN, login);
-		App.on(u.LOG_OUT, logout);
+		Event.on(u.LOG_IN, login);
+		Event.on(u.LOG_OUT, logout);
 
-		App.on(u.FETCH_LIKES, fetchLikes);
-		App.on(u.FETCH_FAVORITES, fetchFavorites);
-		App.on(u.FETCH_RECORDINGS, fetchRecordings);
+		Event.on(u.FETCH_LIKES, fetchLikes);
+		Event.on(u.FETCH_FAVORITES, fetchFavorites);
+		Event.on(u.FETCH_RECORDINGS, fetchRecordings);
 
-		App.on(u.SHARE, share);
-		App.on(u.ADD_FAVORITE, addFavorite);
-		App.on(u.REMOVE_FAVORITE, removeFavorite);
+		Event.on(u.SHARE, share);
+		Event.on(u.ADD_FAVORITE, addFavorite);
+		Event.on(u.REMOVE_FAVORITE, removeFavorite);
 
 		return this;
 	}
@@ -361,16 +362,16 @@ define([
 		FB.Event.unsubscribe(AUTH_STATUS_CHANGE, facebookLoginStatus);
 
 		// let go all the event handlers
-		App.off(u.LOG_IN, login);
-		App.off(u.LOG_OUT, logout);
+		Event.off(u.LOG_IN, login);
+		Event.off(u.LOG_OUT, logout);
 
-		App.off(u.FETCH_LIKES, fetchLikes);
-		App.off(u.FETCH_FAVORITES, fetchFavorites);
-		App.off(u.FETCH_RECORDINGS, fetchRecordings);
+		Event.off(u.FETCH_LIKES, fetchLikes);
+		Event.off(u.FETCH_FAVORITES, fetchFavorites);
+		Event.off(u.FETCH_RECORDINGS, fetchRecordings);
 
-		App.off(u.SHARE, share);
-		App.off(u.ADD_FAVORITE, addFavorite);
-		App.off(u.REMOVE_FAVORITE, removeFavorite);
+		Event.off(u.SHARE, share);
+		Event.off(u.ADD_FAVORITE, addFavorite);
+		Event.off(u.REMOVE_FAVORITE, removeFavorite);
 
 		// unload the components
 		this.components.user = UserComponent.finalize();	

@@ -9,13 +9,14 @@ define([
 	'config/channel',
 	'config/grid',
 	'config/user',
+	'modules/app',
+	'modules/event',
 	'models/channel',
 	'models/grid',
 	'models/user',
-	'modules/app',
 	'utils/dom'
 
-], function ChannelBarComponentScope(a, c, g, u, ChannelModel, GridModel, UserModel, App, dom) {
+], function ChannelBarComponentScope(a, c, g, u, App, Event, ChannelModel, GridModel, UserModel, dom) {
 
 	var name = 'channelbar',
 
@@ -118,10 +119,10 @@ define([
 
 		if (isFavorite) {
 			favorite.className = 'icon-star-empty';
-			App.emit(u.REMOVE_FAVORITE, id);
+			Event.emit(u.REMOVE_FAVORITE, id);
 		} else {
 			favorite.className = 'icon-star';
-			App.emit(u.ADD_FAVORITE, type, url);
+			Event.emit(u.ADD_FAVORITE, type, url);
 		}
 	}
 
@@ -130,9 +131,9 @@ define([
 	function initialize() {
 
 		// move with the grid
-		App.on(g.MODEL_CHANGED, handleGridModelChanges);
-		App.on(u.MODEL_CHANGED, handleUserModelChanges);
-		App.on(a.ACTION, handleActions);
+		Event.on(g.MODEL_CHANGED, handleGridModelChanges);
+		Event.on(u.MODEL_CHANGED, handleUserModelChanges);
+		Event.on(a.ACTION, handleActions);
 
 		return this;
 	}
@@ -155,9 +156,9 @@ define([
 
 		_content.removeChild(_channelsbar);
 
-		App.off(g.MODEL_CHANGED, handleGridModelChanges);
-		App.off(u.MODEL_CHANGED, handleUserModelChanges);
-		App.off(a.ACTION, handleActions);
+		Event.off(g.MODEL_CHANGED, handleGridModelChanges);
+		Event.off(u.MODEL_CHANGED, handleUserModelChanges);
+		Event.off(a.ACTION, handleActions);
 
 		return this;
 
