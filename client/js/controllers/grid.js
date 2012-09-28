@@ -210,8 +210,8 @@ define([
 				TODO: API doesn't give any categroy information yet
 			*/
 			// Category and subcategory
-			//category = event.programme.subcategory.category.name;
-			//subcategory = event.programme.subcategory.name;
+			category = event.programme.subcategory.category.name;
+			subcategory = event.programme.subcategory.name;
 
 			// define node element
 			eventElement = dom.create('a');
@@ -220,8 +220,8 @@ define([
 			eventElement.href = '/programme/' + event.programme.id;
 			eventElement.style.width = width + 'px';
 			eventElement.style.left = left + 'px';
-			//eventElement.setAttribute('data-category', category.replace('/','-')); // the '/' is not interperted by CSS, needed for highlighting
-			//eventElement.setAttribute('data-subcategory', subcategory.replace('/','-')); // the '/' is not interperted by CSS, needed for highlighting
+			eventElement.setAttribute('data-category', category.replace('/','-')); // the '/' is not interperted by CSS, needed for highlighting
+			eventElement.setAttribute('data-subcategory', subcategory.replace('/','-')); // the '/' is not interperted by CSS, needed for highlighting
 			// Declare the overlay action
 			eventElement.setAttribute('data-action', 'OVERLAY');
 			if (width >= tinyWidthLimit) {

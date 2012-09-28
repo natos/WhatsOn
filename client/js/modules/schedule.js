@@ -130,7 +130,23 @@ define([
 				// http://api.lgi.com/alpha/schedules/upc.nl/categories.json?show=name,selfLink,subcategories.name&maxBatchSize=4
 
 				// get Nederland categories
-				EpgApi.getCategoriesFromAPI(request);
+				//EpgApi.getCategoriesFromAPI(request);
+
+
+				// awful temporary solution
+
+				request += '?show=categories.name,selfLink&maxBatchSize=4'
+
+				$.getJSON(request + '&callback=?', function(response) {
+
+					cache[a.CATEGORIES_CACHE] = response.data[0].categories;
+					
+					var categories = response.data[0].categories;
+					
+					if (categories && categories.nextBatchLink && categories.nextBatchLink.href) {
+						EpgApi.getCategoriesFromAPI(categories.nextBatchLink.href);
+					}
+				});
 
 				// stop iteration
 				break;

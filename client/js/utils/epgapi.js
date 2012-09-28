@@ -47,11 +47,11 @@ define([
 	function getCategoriesFromAPI(request) {
 
 		// fix the request URL
-		var request = request
+		//var request = request
 		// properties
-			+ '?show=name,categories.name,categories.selfLink'
+		//	+ '?show=name,categories.name,categories.selfLink'
 		// filters
-			+ '&sort=categories.name';
+		//	+ '&sort=categories.name';
 
 		// first request
 			query(request, a.CATEGORIES_RECEIVED);
@@ -81,7 +81,7 @@ define([
 		// get events for services
 			+ '/linearServices/' + channelsIds + '/events.json'
 		// properties
-			+ '?show=start,end,service.id,programme.id,programme.title'
+			+ '?show=start,end,service.id,programme.id,programme.title,programme.subcategory.name,programme.subcategory.category.name'
 		// filters
 			// ATTENTION: notice that the date filters are inverted, this
 			// is made like this to avoid losing events in between timeboxes.
