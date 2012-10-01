@@ -22,6 +22,7 @@ define([
 	var nowAndNextPageTemplate = document.getElementById('now-and-next-page-template').innerHTML;
 	var nowAndNextChannelRowEventTemplate = document.getElementById('now-and-next-channel-row-event-template').innerHTML;
 	var channelLogoUrls = {};
+	var channelNames = {};
 
 /* private */
 
@@ -126,8 +127,9 @@ define([
 		// Start the API calls to fill the channels with events
 		for (i=0; i<channelsCount; i++) {
 			channel = channels[i];
+            channelLogoUrls[channel.id] = 'http://www.upc.nl' + channel.logoIMG;
+            channelNames[channel.id] = channel.name;
 			channelIdsToFetch.push(channel.id);
-			channelLogoUrls[channel.id] = channel.logo ? ('http://www.upc.nl' + channel.logo.href) : '';
 		}
 		getNowAndNextForChannels(channelIdsToFetch);
 

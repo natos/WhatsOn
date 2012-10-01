@@ -42,7 +42,6 @@ define([
 			delete channel._type;
 			delete channel.apiChannelGroupId;
 			delete channel.broadcastFormat;
-			delete channel.logoIMG;
 			delete channel.position;
 			// iterate domains
 			domainIterator = channel.domains.length;
