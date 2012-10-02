@@ -20,7 +20,9 @@ define([
 	var API_CHANNEL_BATCH_SIZE = 5;
 	var API_EVENTS_BATCH_SIZE = 4;
 	var nowAndNextPageTemplate = document.getElementById('now-and-next-page-template').innerHTML;
-	var nowAndNextChannelRowEventTemplate = document.getElementById('now-and-next-channel-row-event-template').innerHTML;
+	// var nowAndNextChannelRowEventTemplate = document.getElementById('now-and-next-channel-row-event-template').innerHTML;
+	var nowAndNextChannelRowNowEventTemplate = document.getElementById('now-and-next-channel-row-now-event-template').innerHTML;
+	var nowAndNextChannelRowNextEventTemplate = document.getElementById('now-and-next-channel-row-next-event-template').innerHTML;
 	var channelLogoUrls = {};
 	var channelNames = {};
 
@@ -50,7 +52,7 @@ define([
 		var channelRowLink = document.getElementById('channelRowLink-' + channelId);
 		var channelEvent;
 		var viewData;
-		var nowDateTime, startDateTime, endDateTime, startTimeValue, endTimeValue, percentageComplete;
+		var nowDateTime, startDateTime, endDateTime, startTimeValue, endTimeValue, percentageComplete, template;
 
 		var html = "";
 		for (i=0; i< channelEventsCount; i++) {
@@ -76,7 +78,8 @@ define([
 				title: channelEvent.programme.title
 			};
 
-			html += Mustache.render(nowAndNextChannelRowEventTemplate, viewData);
+			template = (i===0) ? nowAndNextChannelRowNowEventTemplate : nowAndNextChannelRowNextEventTemplate;
+			html += Mustache.render(template, viewData);
 		}
 		channelRowLink.innerHTML = html;
 	};
@@ -105,7 +108,6 @@ define([
 	function initialize() {
 
 		App.loadCss('/assets/css/nowandnext.css');
-		App.loadCss('/assets/css/channel-event-list.css');
 
 		return this;
 

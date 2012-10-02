@@ -1,5 +1,5 @@
 li
-	a.channel-row(href="/programme/#{event.programme.id}")
+	a(href="/programme/#{event.programme.id}")
 		article.event(class="#{(event.percentageComplete>=0)?'now':''}")
 			div.event-time-box
 				time.event-starttime #{event.startTimeString}
