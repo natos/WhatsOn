@@ -17,14 +17,30 @@ define([
 ], function NowAndNextViewContext(a, c, App, View, ChannelModel, Mustache, convert) {
 
 	var name = 'nowandnext';
-	var API_CHANNEL_BATCH_SIZE = 5;
-	var API_EVENTS_BATCH_SIZE = 4;
+	var API_CHANNEL_BATCH_SIZE = 10; // How many channels are retrieved per batch
+	var API_EVENTS_BATCH_SIZE = 2; // How many events are returned for each channel
 	var nowAndNextPageTemplate = document.getElementById('now-and-next-page-template').innerHTML;
-	// var nowAndNextChannelRowEventTemplate = document.getElementById('now-and-next-channel-row-event-template').innerHTML;
-	var nowAndNextChannelRowNowEventTemplate = document.getElementById('now-and-next-channel-row-now-event-template').innerHTML;
-	var nowAndNextChannelRowNextEventTemplate = document.getElementById('now-and-next-channel-row-next-event-template').innerHTML;
 	var channelLogoUrls = {};
 	var channelNames = {};
+
+	// Create some default elements that will be cloned when we build the DOM
+	var _eventList = document.createElement('ul');
+	_eventList.className = 'event-list nowandnext-event-list';
+	var _progressBar = document.createElement('div');
+	_progressBar.className = 'progressbar';
+	var _eventTitle = document.createElement('h1');
+	_eventTitle.className = 'event-title';
+	var _eventTimeBox = document.createElement('div');
+	_eventTimeBox.className = 'event-time-box';
+	var _eventStartTime = document.createElement('time');
+	_eventStartTime.className = 'event-starttime';
+	var _eventChannel = document.createElement('aside');
+	_eventChannel.className = 'event-channel';
+	var _eventHeader = document.createElement('div');
+	_eventHeader.className = 'event-header';
+	var _eventArticle = document.createElement('article');
+	_eventArticle.className = 'event';
+
 
 /* private */
 
@@ -49,12 +65,16 @@ define([
 		var channelEventsCount = channelEvents.length;
 		var i;
 		var channelId = channelEvents[0].channel.id;
-		var channelRowLink = document.getElementById('channelRowLink-' + channelId);
+		var eventListContainer = document.getElementById('eventListContainer-' + channelId);
 		var channelEvent;
 		var viewData;
 		var nowDateTime, startDateTime, endDateTime, startTimeValue, endTimeValue, percentageComplete, template;
 
-		var html = "";
+		var channelLink = document.createElement('a');
+		channelLink.href = '/channel/' + channelId;
+
+		var eventList = _eventList.cloneNode(false);
+
 		for (i=0; i< channelEventsCount; i++) {
 			channelEvent = channelEvents[i];
 
@@ -71,18 +91,71 @@ define([
 			viewData = {
 				channelName: channelEvent.channel.name,
 				channelLogoUrl: channelLogoUrls[channelEvent.channel.id],
-				className: (i===0) ? "event now" : "event",
-				day: startDateTime.getDay(),
 				time: channelEvent.startDateTime.slice(11,16),
 				percentageComplete: percentageComplete,
 				title: channelEvent.programme.title
 			};
 
-			template = (i===0) ? nowAndNextChannelRowNowEventTemplate : nowAndNextChannelRowNextEventTemplate;
-			html += Mustache.render(template, viewData);
+			if (i===0) {
+				eventList.appendChild(buildNowEvent(viewData));
+			} else {
+				eventList.appendChild(buildNextEvent(viewData));
+			}
 		}
-		channelRowLink.innerHTML = html;
+
+		channelLink.appendChild(eventList);
+
+		eventListContainer.appendChild(channelLink);
+		eventListContainer.className = 'event-list-container'; // removes the '.hidden' class.
 	};
+
+	var buildNowEvent = function(viewData) {
+		var el = document.createElement('li');
+
+		var progressBar = _progressBar.cloneNode(false);
+		progressBar.style.width = viewData.percentageComplete + '%';
+
+		var eventTitle = _eventTitle.cloneNode(false);
+		eventTitle.appendChild(document.createTextNode(viewData.title));
+
+		var eventChannel = _eventChannel.cloneNode(false);
+		eventChannel.style.backgroundImage = 'url:(' + viewData.channelLogoUrl + ')';
+
+		var eventHeader = _eventHeader.cloneNode(false);
+		var eventArticle = _eventArticle.cloneNode(false);
+		eventArticle.className = 'event now';
+
+		eventHeader.appendChild(progressBar);
+		eventHeader.appendChild(eventTitle);
+		eventArticle.appendChild(eventHeader);
+		eventArticle.appendChild(eventChannel);
+		el.appendChild(eventArticle);
+
+		return el;
+	};
+
+	var buildNextEvent = function(viewData) {
+		var el = document.createElement('li');
+
+		var eventTitle = _eventTitle.cloneNode(false);
+		eventTitle.appendChild(document.createTextNode(viewData.title));
+
+		var eventStartTime = _eventStartTime.cloneNode(false);
+		eventStartTime.appendChild(document.createTextNode(viewData.time));
+
+		var eventHeader = _eventHeader.cloneNode(false);
+		var eventArticle = _eventArticle.cloneNode(false);
+		var eventTimeBox = _eventTimeBox.cloneNode(false);
+
+		eventTimeBox.appendChild(eventStartTime);
+		eventArticle.appendChild(eventTimeBox);
+		eventHeader.appendChild(eventTitle);
+		eventArticle.appendChild(eventHeader);
+		el.appendChild(eventArticle);
+		
+		return el;
+	};
+
 
 	var getNowAndNextForChannels = function(channelIdsToFetch) {
 		var i, j,

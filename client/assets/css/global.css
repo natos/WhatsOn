@@ -1638,6 +1638,10 @@ of events in the list.
 
 **********************************************************************/
 
+.event-list-container {
+	-webkit-transform: translate3d(0,0,0);
+}
+
 /* Links inside an event container are styled as a block,
 with a gradient background, but only for small screens */
 .event-list-container a {

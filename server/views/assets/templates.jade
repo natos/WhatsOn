@@ -63,25 +63,20 @@ script(type="text/template")#invitation-template
 					// TODO: filter groups
 			section
 				{{#channels}}
-				article.event-list-container
-					a(href="/channel/{{id}}")
-						ul.event-list.nowandnext-event-list(id="channelRowLink-{{id}}")
+				article.event-list-container.hidden(id="eventListContainer-{{id}}")
 				{{/channels}}
 
 	script(type="text/template")#now-and-next-channel-row-now-event-template
 		li
-			article(class="{{className}}")
-				div.event-time-box
-					time.event-day {{day}}
-					time.event-starttime {{time}}
+			article.event.now
 				div.event-header
 					div.progressbar(style="width:{{percentageComplete}}%")
 					h1.event-title {{title}}
-				aside.event-channel(style="background-image: url({{channelLogoUrl}});") {{channelName}}
+				aside.event-channel(style="background-image: url({{channelLogoUrl}});")
 
 	script(type="text/template")#now-and-next-channel-row-next-event-template
 		li
-			article(class="{{className}}")
+			article.event
 				div.event-time-box
 					time.event-starttime {{time}}
 				div.event-header
