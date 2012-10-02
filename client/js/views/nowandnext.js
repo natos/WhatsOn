@@ -18,7 +18,7 @@ define([
 
 	var name = 'nowandnext';
 	var API_CHANNEL_BATCH_SIZE = 10; // How many channels are retrieved per batch
-	var API_EVENTS_BATCH_SIZE = 2; // How many events are returned for each channel
+	var API_EVENTS_BATCH_SIZE = 3; // How many events are returned for each channel
 	var nowAndNextPageTemplate = document.getElementById('now-and-next-page-template').innerHTML;
 	var channelLogoUrls = {};
 	var channelNames = {};
@@ -119,7 +119,7 @@ define([
 		eventTitle.appendChild(document.createTextNode(viewData.title));
 
 		var eventChannel = _eventChannel.cloneNode(false);
-		eventChannel.style.backgroundImage = 'url:(' + viewData.channelLogoUrl + ')';
+		eventChannel.style.backgroundImage = 'url(' + viewData.channelLogoUrl + ')';
 
 		var eventHeader = _eventHeader.cloneNode(false);
 		var eventArticle = _eventArticle.cloneNode(false);

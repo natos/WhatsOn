@@ -901,15 +901,6 @@ margin-right: 10px;
 	margin: 10px 0;
 }
 
-.event-list-container {
-	margin: 0;
-	padding: 0;
-	border-top: 1px #bbb solid;
-	border-bottom: 2px #bbb solid;
-	background: #eee url('/assets/images/bg-gradient-headers.png') 0 -5px repeat-x;
-	border-radius: 3px;
-}
-	
 	/* start channel events list */
 	#programme-content h2,
 	#channel-content h2 {
@@ -996,11 +987,6 @@ margin-right: 10px;
 	#channel-content > header,
 	#nowandnext-content > header {
 		padding-top: 20px;
-	}
-
-	.event-list-container {
-		padding: 5px 10px;
-		margin-bottom: 10px;
 	}
 
 	#programme-content h2 i,
@@ -1639,8 +1625,25 @@ of events in the list.
 **********************************************************************/
 
 .event-list-container {
+}
+.event-list-container {
+	margin: 0;
+	padding: 0;
+	border-top: 1px #bbb solid;
+	background: #eee url('/assets/images/bg-gradient-headers.png') 0 -5px repeat-x;
 	-webkit-transform: translate3d(0,0,0);
 }
+@media screen and (min-width:640px) {
+	.event-list-container {
+		border-radius: 3px;
+		border-bottom: 2px #bbb solid;
+		padding: 5px 10px;
+		margin-bottom: 10px;
+	}
+}
+
+
+
 
 /* Links inside an event container are styled as a block,
 with a gradient background, but only for small screens */
@@ -1847,7 +1850,6 @@ events only show the time and channel to minimize visual clutter. */
 	font-size: 1.2em;
 	overflow: hidden;
 	border: 1px solid #aaa;
-	box-shadow: inset 0 0 2px 1px #eee;
 	background: rgb(255,255,255);
 	background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(241,241,241,1) 50%, rgba(225,225,225,1) 51%, rgba(246,246,246,1) 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(50%,rgba(241,241,241,1)), color-stop(51%,rgba(225,225,225,1)), color-stop(100%,rgba(246,246,246,1)));
@@ -1933,8 +1935,6 @@ No need to display the channel logo, so we can pull the event-header mor to the 
 	}
 
 
-
-
 	/* The .progressbar is a background behind the .event-title text on now-events*/
 	.event:not(.now) .progressbar {
 		display: none; 
@@ -1947,7 +1947,6 @@ No need to display the channel logo, so we can pull the event-header mor to the 
 		width: 0;
 		height: 100%;
 		opacity: .5;
-		box-shadow: 2px 0 4px 0 #528000;
 		background: #bfd255;
 		background: -moz-linear-gradient(top,  #bfd255 0%, #8eb92a 50%, #72aa00 51%, #9ecb2d 100%);
 		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#bfd255), color-stop(50%,#8eb92a), color-stop(51%,#72aa00), color-stop(100%,#9ecb2d));
@@ -1960,6 +1959,13 @@ No need to display the channel logo, so we can pull the event-header mor to the 
 	a:active .now .progressbar {
 		opacity: 1;
 	}
+	@media screen and (min-width:640px) {
+		.event.now .progressbar {
+			right: 0;
+			box-shadow: 2px 0 4px 0 #528000; /* Save box-shadow for larger screens */
+		}
+	}
+
 
 
 
