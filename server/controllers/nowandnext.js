@@ -33,10 +33,12 @@ function(NowAndNextService, DomainService, Metadata, QS, config) {
 
 		// Routing
 
-		app.server.get('/nowandnext', this.render);
-		app.server.get('/nowandnext/dt/:dt', this.render);
-		app.server.get('/nowandnext/group/:groupid', this.render);
-		app.server.get('/nowandnext/group/:groupid/dt/:dt', this.render);
+		app.server.get('/nowandnext', this.renderEmpty);
+
+		// app.server.get('/nowandnext', this.render);
+		// app.server.get('/nowandnext/dt/:dt', this.render);
+		// app.server.get('/nowandnext/group/:groupid', this.render);
+		// app.server.get('/nowandnext/group/:groupid/dt/:dt', this.render);
 
 	};
 
@@ -56,6 +58,17 @@ function(NowAndNextService, DomainService, Metadata, QS, config) {
 
 
 	/** @public */
+
+	NowAndNextController.prototype.renderEmpty = function(req, res) {
+		var template = req.xhr ? 'contents/empty-content.jade' : 'layouts/empty-layout.jade';
+
+		res.render(template, {
+			metadata	: metadata.get(),
+			config		: _app.config,
+			supports	: req.supports,
+			xhr			: req.xhr
+		});
+	};
 
 	NowAndNextController.prototype.render = function(req, res) {
 		

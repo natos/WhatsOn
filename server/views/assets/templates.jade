@@ -56,3 +56,28 @@ script(type="text/template")#invitation-template
 					| #{__i('Your favourite channels')}
 			p Save channels to your favourites, and we will show you what is showing now and next.
 
+	script(type="text/template")#now-and-next-page-template
+		#nowandnext-content
+			section#filters
+				ul.channels-list-types
+					// TODO: filter groups
+			section
+				{{#channels}}
+				article.event-list-container.hidden(id="eventListContainer-{{channelId}}")
+				{{/channels}}
+
+	script(type="text/template")#now-and-next-channel-row-now-event-template
+		li
+			article.event.now
+				div.event-header
+					div.progressbar(style="width:{{percentageComplete}}%")
+					h1.event-title {{title}}
+				aside.event-channel(style="background-image: url({{channelLogoUrl}});")
+
+	script(type="text/template")#now-and-next-channel-row-next-event-template
+		li
+			article.event
+				div.event-time-box
+					time.event-starttime {{time}}
+				div.event-header
+					h1.event-title {{title}}

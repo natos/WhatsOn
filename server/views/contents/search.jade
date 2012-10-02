@@ -27,10 +27,10 @@
 			
 			if (hasResults)
 				each group in programmes
-					article
-						ul.search-event-list
+					article.event-list-container
+						ul.event-list.search-event-list
 							each event, i in group
-								li.channel-row
+								li
 									a(href="/programme/#{event.programme.id}")
 										- var nowTimeValue = new Date();
 										- var startDateTime = new Date(event.startDateTime);
@@ -51,7 +51,6 @@
 												time.event-prettyDate #{event.prettyDate}
 											header.event-header
 												div.progressbar(style="width:#{percentageComplete}%")
-												p.event-category
 												h1.event-title #{event.programme.title}
 											aside.event-channel(style="background-image: url(http://www.upc.nl/#{event.channel.logoIMG})")
 												| on #{event.channel.name}

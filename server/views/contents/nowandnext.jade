@@ -7,8 +7,8 @@
 	section
 		each channelEventsCollection in channelEventsCollections
 			article
-				ul.nowandnext-event-list
-					li.channel-row
+				ul.event-list.nowandnext-event-list
+					li
 						a(href="/channel/#{channelEventsCollection.channel.id}")
 							each event, i in channelEventsCollection.channelEvents
 								article.event(class="#{(i === 0) ? "now" : ""}")
