@@ -5,15 +5,16 @@
 
 define([
 
+	'config/app',
+	'models/app',
+	'modules/event',
 	'utils/dom'
 
-], function(dom) {
+], function(a, AppModel, Event, dom) {
 
 	var name = 'highlight',
 
 /* private */
-
-	CATEGORIES_URL = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Subcategory.json',
 
 	_raw = false,
 	_categories = {},
@@ -73,12 +74,14 @@ define([
 		var name, category, subcategory, i,
 			option, optionElement = dom.create('option');
 
-		for (i = 0; i < _raw.length; i++) {
-			name = _raw[i].category.name;
+			console.log(_raw);
+
+		for (i = 0, t = _raw.data.length; i < t; i++) {
+			name = _raw.data[i].name;
 			name = name.replace('/','-'); // the '/' is not interperted by CSS
 
 			if (!_categories[name]) {
-				_categories[name] = _raw[i].category;
+				_categories[name] = _raw.data[i].name;
 			}
 		}
 
@@ -109,14 +112,22 @@ define([
 
 		var i = 0, category, subcategory;
 
-		if (!_raw) {
 
-			$.getJSON(CATEGORIES_URL + '?callback=?', function(data) {
-				_raw = data;
-				data = null;
+		if (!AppModel[a.CATEGORIES_CACHE]) {
 
-				createSelector();
-			});
+				Event.on(a.MODEL_CHANGED, function(changes) {
+					if (changes[a.CATEGORIES_CACHE]) {
+						_raw = changes[a.CATEGORIES_CACHE];
+						createSelector();
+					}
+				});
+
+		} else {
+
+			_raw = AppModel[a.CATEGORIES_CACHE];
+
+			createSelector();
+
 		}
 
 		return this;
@@ -138,7 +149,7 @@ define([
 
 		// do I really  want to remove styles?
 		// or remember the selection...
-		// remove or not to remove... 
+		// 'remove or not to remove...'
 		//removeStyles();
 
 		return this;

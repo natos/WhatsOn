@@ -9,9 +9,10 @@ define([
 	'config/app',
 	'config/user',
 	'modules/app',
+	'modules/event',
 	'models/user'
 
-], function UserControl(a, u, App, UserModel) {
+], function UserControl(a, u, App, Event, UserModel) {
 
 /* private */
 
@@ -47,10 +48,10 @@ define([
 	function initialize() {
 
 		// Handle when the user model change
-		App.on(u.MODEL_CHANGED, manageModelChanges);
+		Event.on(u.MODEL_CHANGED, manageModelChanges);
 
 		// Listen to actions
-		App.on(a.ACTION, manageActions);
+		Event.on(a.ACTION, manageActions);
 
 		return this;
 
@@ -95,7 +96,7 @@ define([
 
 			case u.NOT_AUTHORIZED:
 			case u.UNKNOWN:
-				App.emit(u.LOG_IN);
+				Event.emit(u.LOG_IN);
 				break;
 
 		}
@@ -106,7 +107,7 @@ define([
 		switch (CURRENT_STATUS) {
 
 			case u.CONNECTED:
-				App.emit(u.LOG_OUT);
+				Event.emit(u.LOG_OUT);
 
 			case u.NOT_AUTHORIZED:
 			case u.UNKNOWN:

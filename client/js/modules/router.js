@@ -8,10 +8,11 @@ define([
 
 	'config/app',
 	'modules/app',
+	'modules/event',
 	'utils/dom',
 	'/js/lib/history/1.7.1-r2/bundled/html4+html5/native.history.js'
 
-], function RouterModuleScope(a, App, dom) {
+], function RouterModuleScope(a, App, Event, dom) {
 
 	var name = 'router',
 
@@ -61,7 +62,7 @@ define([
 		// The controller to be loaded is the first element in the parts array
 		State.controller = (State.parts) ? shift.apply(State.parts) : '';
 
-		App.emit(a.NAVIGATE, State);
+		Event.emit(a.NAVIGATE, State);
 	}
 
 	/**
@@ -100,8 +101,15 @@ define([
 
 		// found a data-action attribute?
 		if (dataset.action) {
-			// trigger the action
-			App.emit(a.ACTION, dataset.action, element);
+			//trigger the action, send event object
+			Event.emit(a.ACTION, dataset.action, event);
+		}
+
+		// an action can prevent default
+		// from its own handler context
+		// in that case, stop processing
+		if (event.defaultPrevented) {
+			return;
 		}
 
 		// Keep bubbling up through DOM until you find an anchor,
@@ -123,7 +131,7 @@ define([
 			dataset = dom.getDataset(anchor);
 			navigate(dataset, anchor.title, anchor.href);
 			// let know everyone that we are navigating
-			App.emit(a.ACTION, a.NAVIGATE);
+			Event.emit(a.ACTION, a.NAVIGATE);
 		}
 
 		// else, trigger an void action event it is
@@ -131,7 +139,7 @@ define([
 		// or act when the users click nothing
 		if (!dataset.action && !anchor.href) {
 			// trigger void action
-			App.emit(a.ACTION, a.VOID);
+			Event.emit(a.ACTION, a.VOID);
 		}
 
 		// let the event continue
@@ -144,7 +152,7 @@ define([
 		// Bind to StateChange Event
 		History.Adapter.bind(window, STATECHANGE, handleStateChange);
 		// Active links
-		App.on(a.VIEW_INITIALIZING, activeAnchors);
+		Event.on(a.VIEW_INITIALIZING, activeAnchors);
 		// Listen to every click on #main,
 		// to override its default behavior
 		// and use our own Router to navigate
@@ -164,7 +172,7 @@ define([
 		// Unbind to StateChange Event
 		History.Adapter.unbind(window, STATECHANGE, handleStateChange);
 		// stop activating links
-		App.off(a.VIEW_INITIALIZING, activeAnchors);
+		Event.off(a.VIEW_INITIALIZING, activeAnchors);
 
 		a._main.removeEventListener('click', handleAnchors, false);
 

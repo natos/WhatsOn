@@ -9,7 +9,7 @@ define([
 
 	'utils/dom'
 
-], function(dom) {
+], function CarouselComponentScope(dom) {
 
 	var name = 'carousel',
 
@@ -223,10 +223,6 @@ define([
 		// stop timer
 		timer.stop();
 
-		// remove UI listeners
-		_playpause.removeEventListener('click', playpauseHandler);
-		_navigator.removeEventListener('click', timer.restart);
-
 		// remove browser listeners
 		window.removeEventListener('resize', sizeHandler);
 		window.removeEventListener('orientationchange', sizeHandler);
@@ -238,8 +234,15 @@ define([
 		// We need to remove UI buttons, because when it re-renders,
 		// we loose reference to DOM Interfaces, they are created
 		// every time the component starts
-		if (_navigator) { _carousel.removeChild(_navigator); }
-		if (_playpause) { _carousel.removeChild(_playpause); }
+		if (_navigator && _navigator.parentNode) { 
+			_navigator.removeEventListener('click', timer.restart);
+			_carousel.removeChild(_navigator); 
+		}
+		
+		if (_playpause && _playpause.parentNode) { 
+			_playpause.removeEventListener('click', playpauseHandler); 
+			_carousel.removeChild(_playpause);
+		}
 
 		return this;
 

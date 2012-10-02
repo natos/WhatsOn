@@ -50,13 +50,21 @@ define([], function GridConfigContext() {
 	
 		VIEWPORT_WIDTH_HOURS: 0,
 
-		MAX_DOM_ELEMENTS: 500, // deprecated
-
 		EXTRA_ABOVE_AND_BELOW: 2,
 
 		EXECUTION_DELAY: 250,
 
+		/* slices size */
+
+		HOURS_PER_SLICE: 6,
+		
+		CHANNELS_PER_SLICE: 15,
+
 		/* labels */
+
+		RENDER: 'render',
+
+		OVERLAY: 'overlay',
 
 		POSITION: 'position',
 
@@ -64,7 +72,7 @@ define([], function GridConfigContext() {
 
 		SELECTED_TIME: 'selectedTime',
 
-		CHANNEL_SLICE_CACHE: 'channelSliceCache',
+		SLICE_CACHE: 'sliceCache',
 
 		/* properties */
 
@@ -76,17 +84,19 @@ define([], function GridConfigContext() {
 
 		/* events */
 
-		EVENTS_RECEIVED: 'grid:eventsReceived',
+		MOVED: 'grid:moved',
+
+		RENDERED: 'grid:rendered',
 
 		MODEL_CHANGED: 'grid:model_changed',
 
-		GRID_FETCH_EVENTS: 'grid:fetch_events',
+		FETCH_EVENTS: 'grid:fetch_events',
 
-		GRID_MOVED: 'grid:moved',
+		EVENTS_RECEIVED: 'grid:events_received',
 
-		GRID_RENDERED: 'grid:rendered',
+		FETCH_EVENT: 'grid:fetch_event',
 
-		GRID_EVENTS_RECIEVED: 'grid:events_received'
+		EVENT_RECEIVED: 'grid:event_received',
 	
 	};
 

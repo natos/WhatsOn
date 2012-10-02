@@ -18,7 +18,8 @@ define([], function ChannelConfigContext() {
 
 		/* Default data */
 
-		DEFAULT_GROUP: '986',
+		//DEFAULT_GROUP: '986',
+		DEFAULT_GROUP: '000',
 
 		/* Labels */
 

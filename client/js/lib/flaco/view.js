@@ -6,9 +6,9 @@
 define([
 
 	'config/app',
-	'modules/app'
+	'modules/event'
 
-], function GenericViewScope(a, App) {
+], function GenericViewScope(a, Event) {
 
 /* private */
 
@@ -134,10 +134,10 @@ define([
 	*/
 	// load template data,
 	// when any view finish initialization
-	App.on(a.VIEW_INITIALIZED, loadTemplate);
+	Event.on(a.VIEW_INITIALIZED, loadTemplate);
 	// unload template,
 	// when any view finalized
-	App.on(a.VIEW_FINALIZED, unloadTemplate);
+	Event.on(a.VIEW_FINALIZED, unloadTemplate);
 
 /* public */
 
@@ -212,7 +212,7 @@ define([
 				// save the current State for future reference
 				if (member === INITIALIZE) { View.State = args[0]; }
 				// emit 'first' event
-				if (present) { App.emit(present, View, args); }
+				if (present) { Event.emit(present, View, args); }
 				// apply the method
 				if (method) { method.apply(View, args); }
 				// call the same method for all components views
@@ -220,7 +220,7 @@ define([
 				// instead of an array of arguments
 				forEachComponent.call(View, member, args);
 				// emit 'last' event
-				if(past) { App.emit(past, View, args); }
+				if(past) { Event.emit(past, View, args); }
 				// return the View object
 				return this;
 			}

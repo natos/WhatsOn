@@ -180,7 +180,7 @@ define([
 
 	function initialize() {
 
-		App.loadCss('/assets/css/nowandnext.css');
+//		App.loadCss('/assets/css/nowandnext.css');
 
 		return this;
 
@@ -190,6 +190,7 @@ define([
 		var canvas = document.getElementById('content');
 		var viewData;
 		var channels = ChannelModel[c.GROUPS][ChannelModel[c.SELECTED_GROUP]]; // array of channel objects
+console.log(channels);
 		var channelsCount = channels.length;
 		var channelIdsToFetch = [];
 		var i;
@@ -202,9 +203,9 @@ define([
 		// Start the API calls to fill the channels with events
 		for (i=0; i<channelsCount; i++) {
 			channel = channels[i];
-            channelLogoUrls[channel.id] = 'http://www.upc.nl' + channel.logoIMG;
-            channelNames[channel.id] = channel.name;
-			channelIdsToFetch.push(channel.id);
+            channelLogoUrls[channel.channelId] = channel.logo;
+            channelNames[channel.channelId] = channel.name;
+			channelIdsToFetch.push(channel.channelId);
 		}
 		getNowAndNextForChannels(channelIdsToFetch);
 

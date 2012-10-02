@@ -23,19 +23,24 @@ define([
 	'config/grid',
 	'config/channel',
 	'modules/app',
+	'modules/event',
 	'models/channel',
 	'lib/flaco/view',
 	'components/timebar',
 	'components/channelbar',
 	'components/highlight',
+	'components/overlay',
 	'utils/convert',
 	'utils/dom'
 
-], function GridViewScope(a, g, c, App, ChannelModel, View, TimeBar, ChannelBar, Highlight, convert, dom) {
+], function GridViewScope(a, g, c, App, Event, ChannelModel, View, TimeBar, ChannelBar, Highlight, Overlay, convert, dom) {
 
 	var name = "grid",
 
 /* private */
+
+	// DOM reference
+	_container,
 
 	// Objects
 	_timebar,
@@ -66,11 +71,11 @@ define([
 	*/
 	function handleResizeAndScroll() {
 		// the grid has moved
-		App.emit(g.GRID_MOVED);
+		Event.emit(g.MOVED);
 		// erase the previous timer
 		if (executionTimer) { clearTimeout(executionTimer);	}
 		// set a delay of 200ms to fetch events
-		executionTimer = setTimeout(function emitFetchEvents() { App.emit(g.GRID_FETCH_EVENTS); }, g.EXECUTION_DELAY);
+		executionTimer = setTimeout(function emitFetchEvents() { Event.emit(g.FETCH_EVENTS); }, g.EXECUTION_DELAY);
 	}
 
 	function updateTouchVelocity(e) {
@@ -78,6 +83,7 @@ define([
 			var currentX = e.changedTouches[0].pageX;
 			var currentY = e.changedTouches[0].pageY;
 			var currentTime = new Date();
+
 			if (_previousTouchX && _previousTouchY && _previousTouchTime) {
 				var interval = (currentTime.valueOf() - _previousTouchTime.valueOf()) / 1000;
 				_touchVelocityX = (currentX - _previousTouchX) / interval;
@@ -126,7 +132,36 @@ define([
 			_ticker = document.getElementById('timer-ticker');
 			timer.tick();
 			// trigger rendered
-			App.emit(g.GRID_RENDERED);
+			Event.emit(g.GRID_RENDERED);
+		}
+
+		if (changes.overlay) {
+			
+			var overlay = changes.overlay,
+				event;
+
+			render = [];
+			render.push('<h1>' + overlay.title + '</h1>');
+			render.push('<h2>' + overlay.episodeTitle + '</h2>');
+			render.push('<p>' + overlay.shortDescription + '</p>');
+
+			if (overlay.events.data.length > 0) {
+				render.push('<h3>Watch it again</h3>');
+				render.push('<ul>');
+			}
+
+			for (var i = 0, t = overlay.events.data.length; i<t; i++) {
+				event = overlay.events.data[i];
+				console.log(event);
+				render.push('<li>' + event.start + '</li>');
+			}
+			if (overlay.events.data.length > 0) {
+				render.push('</ul>');
+			}
+			
+			Overlay.show(render.join('\n'));
+
+			console.log(overlay);
 		}
 	}
 
@@ -174,12 +209,21 @@ define([
 		_gridcontainer.className = (_gridcontainer.className === '') ? 'expanded' : '';
 	}
 
-	function handleActions(action) {
+	function handleActions(action, event) {
+
 		if (action === 'TOGGLE-EDIT-MODE') {
 			toggleTimeControls();
 		}
-	}
 
+		if (action === 'OVERLAY') {
+			// Prevent the link to behave
+			event.preventDefault();
+
+			Event.emit(g.FETCH_EVENT, event.target.getAttribute('href'));
+
+			Overlay.show();
+		}
+	}
 
 /* public */
 
@@ -258,9 +302,10 @@ define([
 
 		// The model recieves events
 		// we are listening to render new events
-		App.on(g.MODEL_CHANGED, modelChanged);
+		Event.on(g.MODEL_CHANGED, modelChanged);
 
-		App.on(a.ACTION, handleActions);
+		// Actions
+		Event.on(a.ACTION, handleActions);
 
 		return this;
 
@@ -296,8 +341,9 @@ define([
 
 		a._win.removeEventListener('touchend', onTouchEnd);
 
-		App.off(g.MODEL_CHANGED, modelChanged);
-		App.off(a.ACTION, handleActions);
+		Event.off(g.MODEL_CHANGED, modelChanged);
+
+		Event.off(a.ACTION, handleActions);
 
 		return this;
 
@@ -316,7 +362,8 @@ define([
 		components			: {
 			channelbar	: ChannelBar,
 			timebar		: TimeBar,
-			highlight	: Highlight
+			highlight	: Highlight,
+			overlay 	: Overlay
 		}
 	});
 

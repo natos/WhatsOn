@@ -114,26 +114,26 @@ define([
 		switch (button.className) {
 
 			case 'like':
-				App.emit(u.ADD_LIKE, url);
+				Event.emit(u.ADD_LIKE, url);
 				break;
 
 			case 'like disable':
-				App.emit(u.REMOVE_LIKE, url);
+				Event.emit(u.REMOVE_LIKE, url);
 				break;
 
 			case 'favorite':
-				App.emit(u.ADD_FAVORITE, type, url);
+				Event.emit(u.ADD_FAVORITE, type, url);
 				thisIsAFavorite(id); // Update UI, don't wait for the response
 				break;
 
 			case 'favorite disable':
 				favoriteId = button.getAttribute('data-favorite-id');
-				App.emit(u.REMOVE_FAVORITE, favoriteId);
+				Event.emit(u.REMOVE_FAVORITE, favoriteId);
 				thisIsNotLonguerAFavorite(); // Update UI, don't wait for the response
 				break;
 
 			case 'share':
-				App.emit(u.SHARE, { method: 'feed', link: url });
+				Event.emit(u.SHARE, { method: 'feed', link: url });
 				break;
 		}
 
@@ -145,7 +145,7 @@ define([
 
 	function initialize(State) {
 		// subscribe to get favorites
-		App.on(u.MODEL_CHANGED, handleModelChanges);
+		Event.on(u.MODEL_CHANGED, handleModelChanges);
 		// save basic data for this favorite
 		id = State.parts[0];
 		// hardcoded here to emulate producction urls for facebook
@@ -176,7 +176,7 @@ define([
 		_social.parentNode.removeChild(_social);
 		_content.removeEventListener('click', userActionHandler, false);
 		// remove model handler
-		App.off(u.MODEL_CHANGED, handleModelChanges);
+		Event.off(u.MODEL_CHANGED, handleModelChanges);
 	}
 
 /* export */
