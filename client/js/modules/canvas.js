@@ -139,7 +139,7 @@ define([
 	*/
 	function navigate(State) {
 
-//		console.log(' ------------------ NAVIGATE: ' + State.controller + ' --------------------', arguments);
+		console.log(' ------------------ NAVIGATE: ' + State.controller + ' --------------------', arguments);
 
 		if (typeof State === 'undefined') {
 			console.log('Canvas Module', 'State object is empty. Stop navigation.');

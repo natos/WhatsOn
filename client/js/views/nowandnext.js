@@ -190,7 +190,6 @@ define([
 		var canvas = document.getElementById('content');
 		var viewData;
 		var channels = ChannelModel[c.GROUPS][ChannelModel[c.SELECTED_GROUP]]; // array of channel objects
-console.log(channels);
 		var channelsCount = channels.length;
 		var channelIdsToFetch = [];
 		var i;

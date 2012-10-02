@@ -66,18 +66,15 @@ script(type="text/template")#invitation-template
 				article.event-list-container.hidden(id="eventListContainer-{{channelId}}")
 				{{/channels}}
 
-	script(type="text/template")#now-and-next-channel-row-now-event-template
-		li
-			article.event.now
-				div.event-header
-					div.progressbar(style="width:{{percentageComplete}}%")
-					h1.event-title {{title}}
-				aside.event-channel(style="background-image: url({{channelLogoUrl}});")
+	script(type="text/template")#channel-page-template
+		#channel-content
+			header
+				p.category {{broadcastFormat}}
+				.logo
+					img(src="{{logo}}")
+				h1 
+					button.favorite
+						i.icon-star-empty
+					| {{name}}
 
-	script(type="text/template")#now-and-next-channel-row-next-event-template
-		li
-			article.event
-				div.event-time-box
-					time.event-starttime {{time}}
-				div.event-header
-					h1.event-title {{title}}
+				p.description {{description}}
