@@ -23,9 +23,13 @@ define([], function AppConfigContext() {
 
 		/* labels */
 
-		COUNTRIES_CACHE: 'schedule_cache',
+		SCHEDULES_CACHE: 'schedules_cache',
+
+		COUNTRIES_CACHE: 'countries_cache',
 
 		CATEGORIES_CACHE: 'categories_cache',
+
+		GENRES_CACHE: 'genres_cache',
 
 		LINEUP_CACHE: 'lineup_cache',
 
@@ -45,7 +49,11 @@ define([], function AppConfigContext() {
 
 		CATEGORIES_RECEIVED: 'app:categories_received',
 
+		GENRES_RECEIVED: 'app:genres_received',
+
 		LINEUP_RECEIVED: 'app:lineup_received',
+
+		SCHEDULES_RECEIVED: 'app:schedules_received',
 
 		// controllers
 

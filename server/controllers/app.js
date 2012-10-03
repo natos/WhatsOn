@@ -87,10 +87,10 @@ function(request, express, i18n, config, Supports, ChannelService, Login, Dashbo
 			};
 
 			// fetch channels
-			new ChannelService().once('getChannels', function saveChannels(channels) {
+//			new ChannelService().once('getChannels', function saveChannels(channels) {
 
 				// save the channels
-				self.channels = channels;
+//				self.channels = channels;
 
 				// start the server
 				self.server.listen(process.argv[2] || process.env.PORT || config.PORT, function listening() {
@@ -98,7 +98,7 @@ function(request, express, i18n, config, Supports, ChannelService, Login, Dashbo
 					console.log("Express server ready!");
 				});
 
-			}).getChannels();
+//			}).getChannels();
 
 		return self;
 

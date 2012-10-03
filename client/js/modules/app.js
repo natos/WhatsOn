@@ -35,7 +35,7 @@ define([
 	Event.on(c.MODEL_CHANGED, function(changes) {
 		if (changes[c.BY_ID]) {
 			//channel collection is ready :)
-			load();
+			loadModules();
 		}
 	});
 
@@ -54,9 +54,9 @@ define([
 	
 	}
 
-	function load() {		
+	function loadModules() {		
 		// Load the primary modules for the app.
-		// Each module must have an "initialize" method that returns the module itself.
+		// Each module must have an "initialize" method that returns the module instance.
 		require(['modules/user', 'modules/canvas', 'modules/router'], function initializeModules() {
 			while (module = shift.apply(arguments)) { App.modules[module.name] = module.initialize(); } 
 		});
@@ -98,6 +98,7 @@ define([
 
 	App.name = 'UPC Social';
 	App.initialize = initialize;
+	App.events = Event;
 	App.models = {
 		app 	: AppModel, 
 		channel	: ChannelModel, 

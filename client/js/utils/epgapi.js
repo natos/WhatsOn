@@ -30,6 +30,18 @@ define([
 
 	}
 
+	function getSchedulesFromAPI(request) {
+
+		// fix the request URL
+		var request = request
+		// properties
+			+ '?show=categories.name,genres.name';
+
+		// first request
+			query(request, a.SCHEDULES_RECEIVED);
+
+	}
+
 	function getLineUpFromAPI(request) {
 
 		// fix the request URL
@@ -49,13 +61,25 @@ define([
 		// fix the request URL
 		//var request = request
 		// properties
-		//	+ '?show=name,categories.name,categories.selfLink'
+		//	+ '?show=name'
 		// filters
-		//	+ '&sort=categories.name';
+		//	+ '&sort=name';
 
 		// first request
 			query(request, a.CATEGORIES_RECEIVED);
 
+	}
+
+	function getGenresFromAPI(request) {
+		// fix the request URL
+		//var request = request
+		// properties
+		//	+ '?show=name'
+		// filters
+		//	+ '&sort=name';
+
+		// first request
+			query(request, a.GENRES_RECIEVED);
 	}
 
 	function getEventFromAPI(id) {
@@ -123,11 +147,14 @@ define([
 	}
 
 	return {
+		getEventBatchFromAPI 	: getEventBatchFromAPI,
 		getCategoriesFromAPI	: getCategoriesFromAPI,
-		getLineUpFromAPI 		: getLineUpFromAPI,
 		getCountriesFromAPI		: getCountriesFromAPI,
+		getSchedulesFromAPI		: getSchedulesFromAPI,
+		getGenresFromAPI		: getGenresFromAPI,
+		getLineUpFromAPI 		: getLineUpFromAPI,
 		getEventFromAPI 		: getEventFromAPI,
-		getEventBatchFromAPI 	: getEventBatchFromAPI
+		query 					: query
 	};
 
 });
