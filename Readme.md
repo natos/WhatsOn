@@ -11,3 +11,8 @@ Run the tests
 -------------
 
 	jasmine-node server
+
+Running versions
+----------------
+
+	upcsocial.herokuapp.com

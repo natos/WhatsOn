@@ -34,20 +34,30 @@ define([
 	*	Transition
 	*/
 	function startTransition() {
-		a._transition.className = 'background';
-		a._content.appendChild(a._transition);
+		var transitionElement = document.getElementById('transition');
+		var loadingElement;
+		if (!transitionElement) {
+			transitionElement = document.createElement('div');
+			transitionElement.id = 'transition';
+			loadingElement = document.createElement('div');
+			loadingElement.className = 'loading';
+			transitionElement.appendChild(loadingElement);
+			a._content.appendChild(transitionElement);
+		}
+		transitionElement.className = 'background';
 	}
 
 	function endTransition() {
-		// just wait, so the view won't blink while rendering,
-		// better UX feedback with smoother transition
-		a._transition.className = 'background hide';
+		var transitionElement = document.getElementById('transition');
+		if (transitionElement) {
+			transitionElement.className = 'background hide';
 
-		setTimeout(function removeTransition() {
-			if (a._transition.parentNode) {
-				a._transition.parentNode.removeChild(a._transition);
-			}
-		}, 500);
+			setTimeout(function removeTransition() {
+				if (transitionElement && transitionElement.parentNode) {
+					transitionElement.parentNode.removeChild(transitionElement);
+				}
+			}, 500);
+		}
 	}
 
 	/*
@@ -129,7 +139,7 @@ define([
 	*/
 	function navigate(State) {
 
-//		console.log(' ------------------ NAVIGATE: ' + State.controller + ' --------------------', arguments);
+		console.log(' ------------------ NAVIGATE: ' + State.controller + ' --------------------', arguments);
 
 		if (typeof State === 'undefined') {
 			console.log('Canvas Module', 'State object is empty. Stop navigation.');

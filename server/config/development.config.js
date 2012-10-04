@@ -27,7 +27,8 @@ function(logger) {
 		// Override API_PREFIX with Jedrzej new API interface
 		// Start exploring here > http://api.lgi.com/start/
 
-		'API_PREFIX'	: 'http://api.lgi.com/alpha',
+		'API_PREFIX'	: 'http://api.lgi.com/alpha', // Only available on LGI internal network
+		// 'API_PREFIX'	: 'http://62.179.107.149/cgi-bin/WebObjects/ScheduleAPI-trunk-ivy.woa/1/q', // Externally accessible
 
 		'HTML_PREFIX'	: '',
 		'facebook'		: {
