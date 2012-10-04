@@ -10,6 +10,7 @@ define([
 	// modules
 	'request',
 	'express',
+	'fs',
 	'i18n',
 
 	// config
@@ -38,7 +39,7 @@ define([
 	'controllers/admin'
 ],
 
-function(request, express, i18n, config, Supports, ChannelService, Login, Dashboard, Grid, Channel, Domain, Programme, Event, Movies, Search, Settings, NowAndNext, Facebook, Admin) {
+function(request, express, fs, i18n, config, Supports, ChannelService, Login, Dashboard, Grid, Channel, Domain, Programme, Event, Movies, Search, Settings, NowAndNext, Facebook, Admin) {
 
 /**
  *	@class AppController
@@ -67,10 +68,10 @@ function(request, express, i18n, config, Supports, ChannelService, Login, Dashbo
 
 			// Redirect to dashboard
 			// for requests from root "/"
-			self.server.get('/', redirectToDashboard);
+//			self.server.get('/', redirectToDashboard);
 
 			//	setup app controllers
-			self.controllers = {
+/*			self.controllers = {
 				         login	: new Login(self),
 				     dashboard	: new Dashboard(self),
 				          grid	: new Grid(self),
@@ -84,17 +85,18 @@ function(request, express, i18n, config, Supports, ChannelService, Login, Dashbo
 				    nowandnext 	: new NowAndNext(self),
 				      facebook	: new Facebook(self),
 				         admin	: new Admin(self)
-			};
+			};*/
 
 			// fetch channels
 //			new ChannelService().once('getChannels', function saveChannels(channels) {
 
 				// save the channels
 //				self.channels = channels;
+				var _port = process.argv[2] || process.env.PORT || config.PORT;
 
 				// start the server
-				self.server.listen(process.argv[2] || process.env.PORT || config.PORT, function listening() {
-					console.log("Express server listening on port %d", server.address().port);
+				self.server.listen(_port, function listening() {
+					console.log("Express server listening on port %d", _port);
 					console.log("Express server ready!");
 				});
 
@@ -109,11 +111,11 @@ function(request, express, i18n, config, Supports, ChannelService, Login, Dashbo
 
 	function globalHandler(req, res, next) {
 
-		res.isJsonp = req.query.callback || null;
+	//	res.isJsonp = req.query.callback || null;
 
-		req.supports = new Supports(req);
+	//	req.supports = new Supports(req);
 
-		next();
+		res.send(fs.readFileSync('client/index.html', 'utf8'));
 
 	}
 
@@ -125,15 +127,6 @@ function(request, express, i18n, config, Supports, ChannelService, Login, Dashbo
 
 	function createServer() {
 
-		// not working on version 0.3.0, fixed on 0.3.4
-		// but is not available on npm yet
-		i18n.configure({ 
-			directory: 'server/locales',
-			locales:['en', 'nl', 'es'], 
-			register: global, 
-			debug: true
-		});
-
 		var server = express.createServer();
 
 			server.configure(function() {
@@ -141,7 +134,6 @@ function(request, express, i18n, config, Supports, ChannelService, Login, Dashbo
 				server.use(express.bodyParser());
 				server.use(express.methodOverride());
 				server.use(express['static']('client')); // static is a reserved word?
-				server.use(i18n.init);
 				server.set('views', 'server/views');
 				server.set('view options', { layout: false });
 			});
@@ -152,12 +144,6 @@ function(request, express, i18n, config, Supports, ChannelService, Login, Dashbo
 
 			server.configure('production', function() {
 				server.use(express.errorHandler());
-			});
-
-			// register i18n helpers for use in templates
-			server.helpers({
-				__i: i18n.__,
-				__n: i18n.__n
 			});
 
 			console.log("Express server starting ...");
