@@ -155,7 +155,7 @@ define([
 
 	function finalize() {
 
-		_content.removeChild(_channelsbar);
+		dom.main.removeChild(_channelsbar);
 
 		Event.off(g.MODEL_CHANGED, handleGridModelChanges);
 		Event.off(u.MODEL_CHANGED, handleUserModelChanges);
