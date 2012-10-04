@@ -47,7 +47,7 @@ define([
 		// fix the request URL
 		var request = request
 		// properties
-			+ '?show=name,logicalPosition,eventsLink,channel,logoLink'
+			+ '?show=name,logicalPosition,eventsLink,channel,logoLink,genres.name'
 		// filters
 			+ '&sort=logicalPosition';
 

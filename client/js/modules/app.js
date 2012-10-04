@@ -33,6 +33,8 @@ define([
 	});
 
 	Event.on(c.MODEL_CHANGED, function(changes) {
+		// When channel collection are ready
+		// start all modules
 		if (changes[c.BY_ID]) {
 			//channel collection is ready :)
 			loadModules();
