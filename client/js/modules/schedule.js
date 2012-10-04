@@ -16,13 +16,15 @@ define([
 
 	var name = 'schedule',
 
+/* private */
+
 		cache = {},
 
-		// This hardcode value should be configurable
-		// somewhere, or use geolocation somehow
-		COUNTRY = 'Nederland';
+		// hardcode value for country
+		COUNTRY = 'Nederland',
 
-/* private */
+		// hardcode value for schedule
+		SCHEDULE = 'upc.nl';
 
 	/* Handle data comming from the API */
 
@@ -38,27 +40,45 @@ define([
 
 	});
 
+	Event.on(a.GENRES_RECEIVED, function(response) {
+
+		processResponse(response, a.GENRES_CACHE);
+
+	});
+
 	Event.on(a.LINEUP_RECEIVED, function(response) {
 
 		processResponse(response, a.LINEUP_CACHE);
 
 	});
 
+	Event.on(a.SCHEDULES_RECEIVED, function(response) {
+
+		processResponse(response, a.SCHEDULES_CACHE);
+
+	});
+
+	/* Handle data procceced */
+
 	Event.on(a.MODEL_CHANGED, function(changes) {
 
 		// Once we got countries information
 		if (changes[a.COUNTRIES_CACHE]) {
+			// get schedule data
+			getSchedules();
 			// get channel Lineup
 			getLineup();
-			// get categories
-			getCategories();
+		}
+
+		if (changes[a.SCHEDULES_CACHE]) {
+			// get categorires and genres
+			getCategoriesAndGenres();
 		}
 
 		if (cache[a.LINEUP_CACHE] && cache[a.CATEGORIES_CACHE]) {
 			// Ready to Rock!
 			Event.emit(a.READY);
 		}
-
 	});
 
 	/* Processing functions */
@@ -77,6 +97,9 @@ define([
 		}
 
 		if (!response.nextBatchLink) {
+
+			cache[label].nextBatchLink = null;
+			delete cache[label].nextBatchLink;
 
 			AppModel.set(label, cache[label]);
 
@@ -105,55 +128,60 @@ define([
 
 			}
 		}
-
 	}
 
-	function getCategories() {
+	function getSchedules() {
 
 		var country, request;
 
 		for (var i = 0, t = cache[a.COUNTRIES_CACHE].data.length; i < t; i++) {
 			
 			country = cache[a.COUNTRIES_CACHE].data[i];
-			
+
 			// Here is where the app decides 
 			// wich country schedule to use
 			if (country.name === COUNTRY) {
 
 				request = country.schedules.data[0].selfLink.href.split('?')[0];
 
-				// The URL to get categories is kind of weird, talk with Jedrzej about this...
-				// To get categories, we actually are requesting schedules as main object,
-				// that make the recursion really difficult, and the nextBatches are really short.
-				// http://api.lgi.com/alpha/schedules/upc.nl.json?show=name,categories.selfLink,selfLink&maxBatchSize=4
-				// It would be great if I could query categories as primary object:
-				// http://api.lgi.com/alpha/schedules/upc.nl/categories.json?show=name,selfLink,subcategories.name&maxBatchSize=4
-
-				// get Nederland categories
-				//EpgApi.getCategoriesFromAPI(request);
-
-
-				// awful temporary solution
-
-				request += '?show=categories.name,selfLink&maxBatchSize=4'
-
-				$.getJSON(request + '&callback=?', function(response) {
-
-					cache[a.CATEGORIES_CACHE] = response.data[0].categories;
-					
-					var categories = response.data[0].categories;
-					
-					if (categories && categories.nextBatchLink && categories.nextBatchLink.href) {
-						EpgApi.getCategoriesFromAPI(categories.nextBatchLink.href);
-					}
-				});
-
-				// stop iteration
-				break;
-
+				EpgApi.getSchedulesFromAPI(request);
 			}
 		}
+	}
 
+	function getCategoriesAndGenres() {
+
+		var schedule, request;
+
+		for (var i = 0, t = cache[a.SCHEDULES_CACHE].data.length; i < t; i++) {
+
+			schedule = cache[a.SCHEDULES_CACHE].data[i];
+
+			if (schedule.id === SCHEDULE) {
+
+				if (schedule.categories) {
+					// save the first slice of categories,
+					cache[a.CATEGORIES_CACHE] = schedule.categories;
+					// and ask for the nextBatch if its available.
+					if (schedule.categories.nextBatchLink) {
+						// let the EpgApi deals with async
+						EpgApi.query(schedule.categories.nextBatchLink.href, a.CATEGORIES_RECEIVED);
+
+					}
+				}
+
+				if (schedule.genres) {
+					// save the first slice of genres,
+					cache[a.GENRES_CACHE] = schedule.genres;
+					// and ask for the nextBatch if its available.
+					if (schedule.genres.nextBatchLink) {
+						// let the EpgApi deals with async
+						EpgApi.query(schedule.genres.nextBatchLink.href, a.GENRES_RECEIVED);
+
+					}
+				}
+			}
+		}
 	}
 
 /* public */
@@ -169,7 +197,6 @@ define([
 
 		// release cache
 		cache = null;
-		delete cache;
 	}
 
 /* export */

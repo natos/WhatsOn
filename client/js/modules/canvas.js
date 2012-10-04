@@ -34,6 +34,7 @@ define([
 	*	Transition
 	*/
 	function startTransition() {
+		console.log('startTransition')
 		var transitionElement = document.getElementById('transition');
 		var loadingElement;
 		if (!transitionElement) {
@@ -48,6 +49,7 @@ define([
 	}
 
 	function endTransition() {
+		console.log('endTransition')
 		var transitionElement = document.getElementById('transition');
 		if (transitionElement) {
 			transitionElement.className = 'background hide';
@@ -209,19 +211,19 @@ define([
 		Event.on(a.ACTION, handleActions);
 		// DEBUGGING Handlers
 		/* View live cycle
+		*/
 		Event.on(a.VIEW_INITIALIZING, function(view) { console.log('Canvas Module', view.name, 'VIEW_INITIALIZING'); });
 		Event.on(a.VIEW_INITIALIZED, function(view) { console.log('Canvas Module', view.name, 'VIEW_INITIALIZED'); });
 		Event.on(a.VIEW_RENDERING, function(view) { console.log('Canvas Module', view.name, 'VIEW_RENDERING'); });
 		Event.on(a.VIEW_RENDERED, function(view) { console.log('Canvas Module', view.name, 'VIEW_RENDERED'); });
 		Event.on(a.VIEW_FINALIZING, function(view) { console.log('Canvas Module', view.name, 'VIEW_FINALIZING'); });
 		Event.on(a.VIEW_FINALIZED, function(view) { console.log('Canvas Module', view.name, 'VIEW_FINALIZED'); });
-		*/
 		/* Controller live cycle
+		*/
 		Event.on(a.CONTROLLER_INITIALIZING, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_INITIALIZATING'); });
 		Event.on(a.CONTROLLER_INITIALIZED, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_INITIALIZATED'); });
 		Event.on(a.CONTROLLER_FINALIZING, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_FINALIZATING'); });
 		Event.on(a.CONTROLLER_FINALIZED, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_FINALIZED'); });
-		*/
 
 		if (!App.can3DTransformPositionFixed()) {
 			document.documentElement.className += ' css-no-3d-transform-position-fixed';

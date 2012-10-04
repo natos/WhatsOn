@@ -74,8 +74,6 @@ define([
 		var name, category, subcategory, i,
 			option, optionElement = dom.create('option');
 
-			console.log(_raw);
-
 		for (i = 0, t = _raw.data.length; i < t; i++) {
 			name = _raw.data[i].name;
 			name = name.replace('/','-'); // the '/' is not interperted by CSS
@@ -112,7 +110,6 @@ define([
 
 		var i = 0, category, subcategory;
 
-
 		if (!AppModel[a.CATEGORIES_CACHE]) {
 
 				Event.on(a.MODEL_CHANGED, function(changes) {
@@ -140,7 +137,10 @@ define([
 		}
 
 		form = document.getElementsByTagName('form')[0];
-		form.appendChild(_select);
+
+		if (form) {
+			form.appendChild(_select);
+		}
 
 		return this;
 	}
