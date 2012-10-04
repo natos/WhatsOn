@@ -111,12 +111,11 @@ function(request, express, fs, i18n, config, Supports, ChannelService, Login, Da
 
 	function globalHandler(req, res, next) {
 
-	//	res.isJsonp = req.query.callback || null;
-
-	//	req.supports = new Supports(req);
-
-		res.send(fs.readFileSync('client/index.html', 'utf8'));
-
+		if (!/assets|js|ico/.test(req.url)) {
+			res.send(fs.readFileSync('client/index.html', 'utf8'));
+		} else {
+			next();
+		}
 	}
 
 	function redirectToDashboard(req, res, next) {
@@ -127,7 +126,7 @@ function(request, express, fs, i18n, config, Supports, ChannelService, Login, Da
 
 	function createServer() {
 
-		var server = express.createServer();
+		var server = express();
 
 			server.configure(function() {
 				server.use(server.router);

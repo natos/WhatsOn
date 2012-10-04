@@ -16,12 +16,12 @@ define([
 
 	doc = document,
 
-/* public */
-
 	elements = {
 		a: doc.createElement('a'),
 		i: doc.createElement('i'),
 		b: doc.createElement('b'),
+		ol: doc.createElement('ol'),
+		ul: doc.createElement('ul'),
 		li: doc.createElement('li'),
 		div: doc.createElement('div'),
 		img: doc.createElement('img'),
@@ -32,8 +32,29 @@ define([
 		option: doc.createElement('option'),
 		section: doc.createElement('section'),
 		fragment: doc.createDocumentFragment()
-	};
+	},
 
+/* public */
+
+	main = doc.getElementById('main'),
+
+	content = doc.getElementById('content');
+
+
+	// Creates a DOM element with
+	// attributes
+	function element(e, attrs) {
+
+		element = elements[e].cloneNode(false);
+
+		for (var attr in attrs) {
+			element.setAttribute(attr, attrs[attr])
+		}
+
+		return element;
+	}
+
+	// deprecated
 	function create(e) {
 		return elements[e].cloneNode(false);
 	}
@@ -70,7 +91,10 @@ define([
 
 	return {
 		name		: name,
+		main	 	: main,
+		content 	: content,
 		create		: create,
+		element 	: element,
 		getDataset	: getDataset
 	};
 

@@ -20,15 +20,14 @@ define([
 
 /* private */
 
-	_content = document.getElementById('main'),
 	_template = document.getElementById('timebar-template'),
-	_timebar = dom.create('div'),
+	_timebar = dom.element('div', { id: 'time-bar' }),
 	_timelist,
-	_timecontrols = dom.create('div'),
+	_timecontrols = dom.element('div', { id: 'time-controls' }),
 	_timecontrolsTemplate = document.getElementById('timecontrols-template');
 
-	_timecontrols.id = 'time-controls';
-	_timecontrols.innerHTML = _timecontrolsTemplate.innerHTML;
+//	_timecontrols.id = 'time-controls';
+//	_timecontrols.innerHTML = _timecontrolsTemplate.innerHTML;
 
 	function centerViewPort() {
 
@@ -92,8 +91,9 @@ define([
 
 	function initialize() {
 
+		// This just looks ugly now
 		// add logo behavior, move to 'now'
-		$('.upc-logo').on('click', centerViewPort);
+		//$('.upc-logo').on('click', centerViewPort);
 
 		// move with the grid
 		Event.on(g.MODEL_CHANGED, modelChanged);
@@ -107,8 +107,15 @@ define([
 	function render() {
 
 		// expand time bar
-		_timebar.innerHTML = _template.innerHTML;
-		_timebar.id = "time-bar";
+		// div.shade
+		// div.content
+		// ol#time-bar-list
+		_timebar.appendChild(dom.element('div',{ class: 'shade' }));
+		_timebar.appendChild(dom.element('div',{ class: 'content' }));
+		_timebar.appendChild(dom.element('ol',{ id: 'time-bar-list' }));
+
+		console.log(_timebar);
+		
 		_timebar.appendChild(_timecontrols);
 		//_timebar.addEventListener('click', toggleTimeControls);
 		_timecontrols.addEventListener('change', changeChannelSelection);
@@ -129,7 +136,7 @@ define([
 		}
 
 		
-		_content.appendChild(_timebar);
+		dom.main.appendChild(_timebar);
 		_timelist = document.getElementById('time-bar-list');
 		_timelist.innerHTML = timeIntervalsHtml;
 
@@ -142,13 +149,14 @@ define([
 
 	function finalize() {
 
-		$('.upc-logo').off('click', centerViewPort);
+		// This just looks ugly now
+		//$('.upc-logo').off('click', centerViewPort);
 
 		Event.off(g.MODEL_CHANGED, modelChanged);
 
 		Event.off(a.ACTION, handleActions);
 
-		_content.removeChild(_timebar);
+		dom.main.removeChild(_timebar);
 
 		return this;
 	}

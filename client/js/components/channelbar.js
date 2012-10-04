@@ -21,14 +21,15 @@ define([
 	var name = 'channelbar',
 
 /* private */
+
+	// const
+
 		FAVORITE_CHANNELS = 'favorite-channels',
 		TOGGLE_FAVORITE = 'TOGGLE-FAVORITE',
 		TOGGLE_EDITMODE = 'TOGGLE-EDIT-MODE',
 
-		_template = document.getElementById('channelsbar-template'),
-		_content = document.getElementById('main'),
-		_channelsbar = document.createElement('div'),
-		_channellist,
+		_channelsbar = dom.element('div', { id: 'channels-bar' }),
+		_channellist = dom.element('ul', { id: 'channels-bar-list' }),
 
 	/**
 	* This is the set of channels that will be displayed in the channelbar,
@@ -141,10 +142,10 @@ define([
 	function render() {
 
 		// grab the channellist
-		_channelsbar.id = 'channels-bar';
-		_channelsbar.innerHTML = _template.innerHTML;
-		_content.appendChild(_channelsbar);
-		_channellist = document.getElementById('channels-bar-list');
+		_channelsbar.appendChild( dom.element('div', { class: 'shade' }) );
+		_channelsbar.appendChild( _channellist );
+
+		dom.main.appendChild(_channelsbar);
 
 		renderChannelsGroup();
 

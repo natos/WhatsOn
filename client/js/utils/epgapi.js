@@ -9,15 +9,13 @@ define([
 	'use strict';
 
 	// constants
-	var	API_PREFIX = $('head').attr('data-api'),
-
-		MAX_BATCH_SIZE = 128;
+	var	MAX_BATCH_SIZE = 128;
 
 
 	function getCountriesFromAPI() {
 
 		// fix the request URL
-		var request = API_PREFIX
+		var request = a.API_PREFIX
 		// get events for services
 			+ '/countries.json'
 		// properties
@@ -85,7 +83,7 @@ define([
 	function getEventFromAPI(id) {
 
 		// fix the request URL
-		var request = API_PREFIX 
+		var request = a.API_PREFIX 
 		// get events for services
 			+ '/programmes/' + id + '.json'
 		// properties
@@ -101,7 +99,7 @@ define([
 	function getEventBatchFromAPI(channelsIds, timeSlice) {
 
 		// fix the request URL
-		var request = API_PREFIX 
+		var request = a.API_PREFIX 
 		// get events for services
 			+ '/linearServices/' + channelsIds + '/events.json'
 		// properties

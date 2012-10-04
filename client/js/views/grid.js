@@ -43,9 +43,10 @@ define([
 	_container,
 
 	// Objects
-	_timebar,
-	_channelsbar,
-	_gridcontainer,
+	_gridcontent = dom.element('div', { id: 'grid-content' }),
+	_gridcontainer = dom.element('div', { id: 'grid-container' }),
+	_channelsbar = dom.element('div', { id: 'channels-bar' }),
+	_timebar = dom.element('div', { id: 'time-bar' }),
 	_ticker,
 
 	// Touch coordinates, used for checking velocity
@@ -315,9 +316,8 @@ define([
 
 		drawStyles();
 
-		_gridcontainer = document.getElementById('grid-container');
-		_channelsbar = document.getElementById('channels-bar');
-		_timebar = document.getElementById('time-bar');
+		_gridcontent.appendChild(_gridcontainer);
+		dom.content.appendChild(_gridcontent);
 
 		// initialize ticker
 		timer.start().tick();

@@ -21,6 +21,10 @@ define([], function AppConfigContext() {
 
 		ROOT_URL: 'http://upcsocial.herokuapp.com/',
 
+		API_PREFIX: 'http://api.lgi.com/alpha',
+
+		CONTROLLERS: ['dashboard','grid','nowandnext','search'/*,'not-found'*/],
+
 		/* labels */
 
 		SCHEDULES_CACHE: 'schedules_cache',
@@ -37,23 +41,23 @@ define([], function AppConfigContext() {
 
 		READY: 'app:ready',
 
-		NAVIGATE: 'app:navigate',
-
 		ACTION: 'app:action',
 
 		VOID: 'app:action:void',
 
+		NAVIGATE: 'app:navigate',
+
 		MODEL_CHANGED: 'app:model_changed',
-
-		COUTRIES_RECEIVED: 'app:countries_received',
-
-		CATEGORIES_RECEIVED: 'app:categories_received',
 
 		GENRES_RECEIVED: 'app:genres_received',
 
 		LINEUP_RECEIVED: 'app:lineup_received',
 
+		COUTRIES_RECEIVED: 'app:countries_received',
+
 		SCHEDULES_RECEIVED: 'app:schedules_received',
+
+		CATEGORIES_RECEIVED: 'app:categories_received',
 
 		// controllers
 
