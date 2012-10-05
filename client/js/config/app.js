@@ -85,6 +85,7 @@ define([], function AppConfigContext() {
 
 		/* DOM access */
 
+		// TODO: REMOVE THIS THINGS
 		_doc: document,
 
 		_win: window,

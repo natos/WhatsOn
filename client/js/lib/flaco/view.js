@@ -28,6 +28,11 @@ define([
 
 /* public */
 
+	// Once a view is initialized
+	// start rendering
+	Event.on(a.VIEW_INITIALIZED, function(view){ view.render(); });
+
+
 	function ViewConstructor(o) {
 
 	/* subclass View */
@@ -57,10 +62,6 @@ define([
 	/* protected */
 
 			components = o.components;
-
-		// Once a view is initialized
-		// start rendering
-		Event.on(a.VIEW_INITIALIZED, function(view){ view.render(); });
 
 		// helper for each component
 		function forEachComponent(method, args) {

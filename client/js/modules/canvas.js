@@ -9,58 +9,23 @@ define([
 
 	'config/app',
 	'config/user',
+	'views/menu',
 	'modules/app',
 	'modules/event',
-	'modules/router'
+	'modules/router',
+	'utils/transition'
 
-], function CanvasModuleScope(a, u, App, Event, Router) {
+], function CanvasModuleScope(a, u, Menu, App, Event, Router, transition) {
 
 	var name = 'canvas',
 
 /* private */
 
-	// shift
-		shift = Array.prototype.shift,
-		// DOM
-		_main = a._doc.getElementById('main'),
-		_menu = a._doc.getElementsByTagName('nav')[0],
 		// current state
 		CURRENT_STATE = false,
 		// constants
 		INITIALIZE = 'initialize',
 		FINALIZE = 'finalize';
-
-	/*
-	*	Transition
-	*/
-	function startTransition() {
-		console.log('startTransition')
-		var transitionElement = document.getElementById('transition');
-		var loadingElement;
-		if (!transitionElement) {
-			transitionElement = document.createElement('div');
-			transitionElement.id = 'transition';
-			loadingElement = document.createElement('div');
-			loadingElement.className = 'loading';
-			transitionElement.appendChild(loadingElement);
-			a._content.appendChild(transitionElement);
-		}
-		transitionElement.className = 'background';
-	}
-
-	function endTransition() {
-		console.log('endTransition')
-		var transitionElement = document.getElementById('transition');
-		if (transitionElement) {
-			transitionElement.className = 'background hide';
-
-			setTimeout(function removeTransition() {
-				if (transitionElement && transitionElement.parentNode) {
-					transitionElement.parentNode.removeChild(transitionElement);
-				}
-			}, 500);
-		}
-	}
 
 	/*
 	*	Load controllers
@@ -143,8 +108,10 @@ define([
 
 		console.log(' ------------------ NAVIGATE: ' + State.controller + ' --------------------', arguments);
 
-		if (typeof State === 'undefined') {
-			console.log('Canvas Module', 'State object is empty. Stop navigation.');
+		if (typeof State === 'undefined' || State.controller === "") {
+			console.log('Canvas Module', 'WARNING: State object is empty. Redirecting to DASHBOARD');
+			// load dashboard
+			Router.navigate({}, 'dashboard', '/dashboard');
 			return;
 		}
 
@@ -156,39 +123,12 @@ define([
 		if (a.CONTROLLERS.indexOf(State.controller)>=0) {
 			unloadController(CURRENT_STATE);
 			loadController(State);
-			closeMenu();
+			Menu.close();
 		} else {
-
 			// NOT FOUND! 404 thingy here
 			console.log('404! not found!');
 		}
 
-	}
-
-	function handleActions(action, dataset) {
-		switch (action) {
-			case 'TOGGLE-MENU': 
-				toggleMenu(); break;
-		}
-	}
-
-	function toggleMenu() {
-		if (/open/.test(_main.className)) {
-			closeMenu();
-		} else {
-			openMenu();
-		}
-		console.log(_menu.className);
-	}
-
-	function openMenu() {
-		_main.className = 'open';
-		_menu.className = 'nav active';
-	}
-
-	function closeMenu() {
-		_main.className = '';
-		_menu.className = 'nav';
 	}
 
 /* public */
@@ -203,12 +143,10 @@ define([
 		Event.on(a.NAVIGATE, navigate);
 		// when navigation starts
 		// add a transition state
-		Event.on(a.NAVIGATE, startTransition);
+		Event.on(a.NAVIGATE, transition.start);
 		// and when finish rendereding,
 		// remove transition
-		Event.on(a.VIEW_RENDERED, endTransition);
-		// Listen for action
-		Event.on(a.ACTION, handleActions);
+		Event.on(a.VIEW_RENDERED, transition.end);
 		// DEBUGGING Handlers
 		/* View live cycle
 		*/
@@ -228,6 +166,9 @@ define([
 		if (!App.can3DTransformPositionFixed()) {
 			document.documentElement.className += ' css-no-3d-transform-position-fixed';
 		}
+
+		Menu.initialize();
+
 		return this;
 	}
 
@@ -235,9 +176,8 @@ define([
 	function finalize() {
 
 		Event.off(a.NAVIGATE, navigate);
-		Event.off(a.NAVIGATE, startTransition);
-		Event.off(a.VIEW_RENDERED, endTransition);
-		Event.off(a.ACTION, manageActions);
+		Event.off(a.NAVIGATE, transition.start);
+		Event.off(a.VIEW_RENDERED, transition.end);
 
 		return this;
 	}

@@ -7,9 +7,9 @@
 define([
 
 	'modules/app',
-	'lib/flaco/view',
-	'components/carousel',
-	'components/favorites'
+	'lib/flaco/view'//,
+	//'components/carousel',
+	//'components/favorites'
 
 ], function DashboardView(App, View, Carousel, Favorites) {
 
@@ -17,7 +17,7 @@ define([
 
 /* private */
 
-	var everyMinuteTimer;
+	//var everyMinuteTimer;
 
 /* public */
 
@@ -27,10 +27,10 @@ define([
 	function initialize() {
 
 		// Update the "on-now" section every minute
-		everyMinuteTimer = window.setInterval(function(){
-			$('#on-now').load('/dashboard #on-now');
+		//everyMinuteTimer = window.setInterval(function(){
+		//	$('#on-now').load('/dashboard #on-now');
 //			$('#on-now-by-category').load('/dashboard/on-now-by-category');
-		}, 1000 * 60)
+		//}, 1000 * 60)
 
 
 		return this;
@@ -48,7 +48,7 @@ define([
 
 	function finalize() {
 
-		window.clearInterval(everyMinuteTimer);
+		//window.clearInterval(everyMinuteTimer);
 
 		return this;
 
@@ -62,8 +62,8 @@ define([
 		finalize: finalize,
 		initialize: initialize,
 		components: {
-			carousel: Carousel,
-			favorites: Favorites
+			//carousel: Carousel,
+			//favorites: Favorites
 		}
 	});
 

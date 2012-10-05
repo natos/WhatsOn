@@ -1,8 +1,6 @@
 /* 
 * DOMUtils
 * --------
-*
-*
 */
 
 define([
@@ -14,7 +12,17 @@ define([
 
 /* private */
 
+	// dom access
+
 	doc = document,
+
+	main = doc.getElementById('main'),
+
+	content = doc.getElementById('content'),
+
+	// references
+
+	element,
 
 	elements = {
 		a: doc.createElement('a'),
@@ -36,14 +44,9 @@ define([
 		section: doc.createElement('section'),
 		article: doc.createElement('article'),
 		fragment: doc.createDocumentFragment()
-	},
+	};
 
 /* public */
-
-	main = doc.getElementById('main'),
-
-	content = doc.getElementById('content');
-
 
 	// Creates a DOM element with
 	// attributes
@@ -104,6 +107,7 @@ define([
 
 	return {
 		name		: name,
+		doc 		: doc,
 		main	 	: main,
 		content 	: content,
 		create		: create,

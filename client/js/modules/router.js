@@ -29,13 +29,6 @@ define([
 		shift = Array.prototype.shift;
 
 	/**
-	*	Add the grid just for HTML5 devices
-	*/
-	function addGridButton() {
-		$('.nav').append('<a href="/grid" class="grid"><i class="icon-th"></i><b class="label">TV Gids</b></a>');
-	}
-
-	/**
 	*	Handle State Changes
 	*/
 	function handleStateChange() {
@@ -156,14 +149,10 @@ define([
 		// Listen to every click on #main,
 		// to override its default behavior
 		// and use our own Router to navigate
-		a._main.addEventListener('click', handleAnchors, false);
+		dom.main.addEventListener('click', handleAnchors, false);
 
 		// First load
 		handleStateChange();
-
-		if (App.allowGrid()) {
-			addGridButton();
-		}
 
 		return this;
 	}
@@ -174,7 +163,7 @@ define([
 		// stop activating links
 		Event.off(a.VIEW_INITIALIZING, activeAnchors);
 
-		a._main.removeEventListener('click', handleAnchors, false);
+		dom.main.removeEventListener('click', handleAnchors, false);
 
 		return this;
 	}

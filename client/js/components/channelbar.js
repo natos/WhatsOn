@@ -54,7 +54,7 @@ define([
 			t = selectedChannels.length;
 
 		while (t--) {
-			channelImg = document.getElementById('channelImg'+selectedChannels[t]);
+			channelImg = dom.doc.getElementById('channelImg'+selectedChannels[t]);
 			// If the image doesn't have a src, set the src from the data-src attribute
 			if (!channelImg.getAttribute('src')) {
 				channelImg.setAttribute('src', channelImg.getAttribute('data-src'));
@@ -206,7 +206,7 @@ define([
 		// grab selected channels from channel model
 		_channels = ChannelModel[c.GROUPS][ChannelModel[c.SELECTED_GROUP]];
 
-		_channellist = document.getElementById('channels-bar-list');
+		_channellist = dom.doc.getElementById('channels-bar-list');
 
 		var channelId, name, i, t = _channels.length, item, picture, image, logohref, favorite, favIcon, isFavorite,
 			list = dom.create('fragment');
