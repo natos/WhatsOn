@@ -7,46 +7,58 @@
 define([
 
 	'config/channel',
+	'config/nowandnext',
+	'modules/event',
 	'lib/flaco/view',
 	'models/channel',
-	'lib/mustache/mustache',
-	'utils/convert'
+	'models/nowandnext',
+	'utils/convert',
+	'utils/dom'
 
-], function NowAndNextViewContext(channelConfig, View, ChannelModel, Mustache, convert) {
+], function NowAndNextViewContext(channelConfig, nowAndNextConfig, Event, View, ChannelModel, nowAndNextModel, convert, dom) {
 
 	var name = 'nowandnext';
 
 /* private */
 
 	// Create some default elements that will be cloned when we build the DOM
-	var _eventList = document.createElement('ul');
-	_eventList.className = 'event-list nowandnext-event-list';
-	var _progressBar = document.createElement('div');
-	_progressBar.className = 'progressbar';
-	var _eventTitle = document.createElement('h1');
-	_eventTitle.className = 'event-title';
-	var _eventTimeBox = document.createElement('div');
-	_eventTimeBox.className = 'event-time-box';
-	var _eventStartTime = document.createElement('time');
-	_eventStartTime.className = 'event-starttime';
-	var _eventChannel = document.createElement('aside');
-	_eventChannel.className = 'event-channel';
-	var _eventHeader = document.createElement('div');
-	_eventHeader.className = 'event-header';
-	var _eventArticle = document.createElement('article');
-	_eventArticle.className = 'event';
+	var _progressBar = dom.element('div', {'class' : 'progressbar'});
+	var _eventTitle = dom.element('h1', {'class' : 'event-title'});
+	var _eventTimeBox = dom.element('div', {'class' : 'event-time-box'});
+	var _eventStartTime = dom.element('time', {'class' : 'event-starttime'});
+	var _eventChannel = dom.element('aside', {'class' : 'event-channel'});
+	var _eventHeader = dom.element('div', {'class' : 'event-header'});
+	var _eventArticle = dom.element('article', {'class' : 'event'});
 
 	var renderPageStructure = function() {
 
-		var canvas = document.getElementById('content');
-		var viewData;
-		var channels = ChannelModel[channelConfig.GROUPS][ChannelModel[channelConfig.SELECTED_GROUP]]; // array of channel objects
-		var nowAndNextPageTemplate = document.getElementById('now-and-next-page-template').innerHTML;
+		var nowAndNextContent = document.getElementById('nowandnext-content');
 
-		// Render empty <li> containers for each channel. These will be filled with events later.
-		viewData = {channels:channels};
-		canvas.innerHTML = Mustache.render(nowAndNextPageTemplate, viewData);
+		if (!nowAndNextContent) {
+			nowAndNextContent = dom.element('div', {id: 'nowandnext-content'});
 
+			var channels = ChannelModel[channelConfig.GROUPS][ChannelModel[channelConfig.SELECTED_GROUP]]; // array of channel objects
+			var channelsLength = channels.length;
+			var channelArticle, i;
+
+			for (i=0; i<channelsLength; i++) {
+				channelArticle = dom.element('article', {
+					'class':'event-list-container hidden',
+					'id':'eventListContainer-' + channels[i].channelId
+				});
+				nowAndNextContent.appendChild(channelArticle);
+			}
+			dom.content.appendChild(nowAndNextContent);
+		} else {
+			nowAndNextContent.style.display = '';
+		}
+
+	};
+
+	var onNowAndNextModelChanged = function(changes) {
+		if (changes.eventsForChannel) {
+			renderEventsForChannel(changes.eventsForChannel);
+		}
 	};
 
 	var buildNowEvent = function(viewData) {
@@ -96,11 +108,8 @@ define([
 		return el;
 	};
 
-
-
-/* public */
-
 	var renderEventsForChannel = function(channelEvents) {
+
 		var channelEventsCount = channelEvents.length;
 		var channelId = channelEvents[0].channel.id;
 		var eventListContainer = document.getElementById('eventListContainer-' + channelId);
@@ -110,7 +119,7 @@ define([
 		var channelLink = document.createElement('a');
 		channelLink.href = '/channel/' + channelId;
 
-		var eventList = _eventList.cloneNode(false);
+		var eventList = dom.element('ul', {'class' : 'event-list nowandnext-event-list'});
 
 		for (i=0; i< channelEventsCount; i++) {
 			channelEvent = channelEvents[i];
@@ -142,14 +151,19 @@ define([
 
 		channelLink.appendChild(eventList);
 
+		dom.empty(eventListContainer);
 		eventListContainer.appendChild(channelLink);
 		eventListContainer.className = 'event-list-container'; // removes the '.hidden' class.
 	};
+
+
+/* public */
 
 /* abstract */
 
 	function initialize() {
 
+		Event.on(nowAndNextConfig.MODEL_CHANGED, onNowAndNextModelChanged);
 		return this;
 
 	}
@@ -164,7 +178,14 @@ define([
 
 	function finalize() {
 
+		var nowAndNextContent = document.getElementById('nowandnext-content');
+		if (nowAndNextContent) {
+			nowAndNextContent.style.display = 'none';
+		}
+
+		Event.off(nowAndNextConfig.MODEL_CHANGED, onNowAndNextModelChanged);
 		return this;
+
 	}
 
 
@@ -174,8 +195,7 @@ define([
 		name		: name,
 		initialize	: initialize,
 		finalize	: finalize,
-		render		: render,
-		renderEventsForChannel : renderEventsForChannel
+		render		: render
 	});
 
 });

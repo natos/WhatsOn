@@ -114,8 +114,6 @@ define([
 		_timebar.appendChild(dom.element('div',{ class: 'content' }));
 		_timebar.appendChild(dom.element('ol',{ id: 'time-bar-list' }));
 
-		console.log(_timebar);
-		
 		_timebar.appendChild(_timecontrols);
 		//_timebar.addEventListener('click', toggleTimeControls);
 		_timecontrols.addEventListener('change', changeChannelSelection);

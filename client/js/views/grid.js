@@ -318,6 +318,7 @@ define([
 
 		_gridcontent.appendChild(_gridcontainer);
 		dom.content.appendChild(_gridcontent);
+		_gridcontent.style.display = '';
 
 		// initialize ticker
 		timer.start().tick();
@@ -326,6 +327,8 @@ define([
 	}
 
 	function finalize() {
+
+		_gridcontent.style.display = 'none';
 
 		removeStyles();
 

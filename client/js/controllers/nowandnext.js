@@ -28,7 +28,7 @@ define([
 		if (apiResponse) {
 			channelsInBatch = apiResponse.length;
 			for (i=0; i< channelsInBatch; i++) {
-				NowAndNextView.renderEventsForChannel(apiResponse[i]);
+				NowAndNextModel.set('eventsForChannel', apiResponse[i]);
 			}
 		}
 	};

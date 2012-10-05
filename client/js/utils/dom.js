@@ -20,17 +20,21 @@ define([
 		a: doc.createElement('a'),
 		i: doc.createElement('i'),
 		b: doc.createElement('b'),
+		h1: doc.createElement('h1'),
 		ol: doc.createElement('ol'),
 		ul: doc.createElement('ul'),
 		li: doc.createElement('li'),
 		div: doc.createElement('div'),
 		img: doc.createElement('img'),
 		span: doc.createElement('span'),
+		time: doc.createElement('time'),
 		style: doc.createElement('style'),
+		aside: doc.createElement('aside'),
 		button: doc.createElement('button'),
 		select: doc.createElement('select'),
 		option: doc.createElement('option'),
 		section: doc.createElement('section'),
+		article: doc.createElement('article'),
 		fragment: doc.createDocumentFragment()
 	},
 
@@ -87,6 +91,15 @@ define([
 		return dataset;
 	}
 
+	/**
+	* Clear an element's contents. Like jQuery.empty().
+	*/
+	function empty(el) {
+		while (el.hasChildNodes()) {
+		    el.removeChild(el.firstChild);
+		}
+	}
+
 /* export */
 
 	return {
@@ -95,7 +108,8 @@ define([
 		content 	: content,
 		create		: create,
 		element 	: element,
-		getDataset	: getDataset
+		getDataset	: getDataset,
+		empty		: empty
 	};
 
 });
