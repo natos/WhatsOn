@@ -1627,7 +1627,7 @@ The complete HTML for a .event element is as follows:
 		<div class="progressbar" style="width:{{percentage complete}}%"></div>
 		<div class="event-title">{{event title}}</div>
 	</div>
-	<aside style="background-image:url(...)">{{on channel name}}</aside>
+	<aside class="event-channel" style="background-image:url(...)">{{on channel name}}</aside>
 </article>
 
 The [type-of-event-list] classname on the list modifies the rendering
@@ -1771,11 +1771,12 @@ for an event. Its rendering depends on context.
 }
 
 	/* The only time the event-day block should be shown is for
-	non-now events in a programme-event-list */
+	non-now events in programme-event-list and search-event-list */
 	.event .event-day {
 		display:none;
 	}
-	.programme-event-list .event:not(.now) .event-day {
+	.programme-event-list .event:not(.now) .event-day,
+	.search-event-list .event .event-day {
 		display: inline-block;
 		margin-right: 5px;
 	}
