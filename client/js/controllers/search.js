@@ -11,7 +11,7 @@ define([
 	'lib/flaco/controller',
 	'views/search'
 
-], function SearchController(a, App, Controller, SearchView) {
+], function SearchController(a, App, Controller, searchView) {
 
 	var name = 'search';
 
@@ -39,7 +39,7 @@ define([
 		name: name,
 		initialize: initialize,
 		finalize: finalize,
-		view: SearchView
+		view: searchView
 	});
 
 });

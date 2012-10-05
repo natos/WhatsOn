@@ -9,15 +9,50 @@
 define([
 
 	'config/app',
-	'modules/app',
+	'config/search',
 	'lib/flaco/view',
-	'modules/router'
+	'utils/dom'
 
-], function(a, App, View, Router) {
+], function(a, searchConfig, View, dom) {
 
 	var name = 'search';
+console.log(dom);
 
 /* private */
+
+	function renderPageStructure() {
+
+		var searchContent = document.getElementById('search-content');
+
+		if (!searchContent) {
+			searchContent = dom.element('div', {'id': 'search-content'});
+			var header = dom.element('header', {'id': 'search-query'});
+			var results = dom.element('section', {'id': 'search-results'});
+			var form = dom.element('form', {'class': 'search-form'});
+			var q = dom.element('input', {'type': 'search', 'id': 'q', 'name': 'q', 'placeholder': 'Search...', 'value': ''});
+			var submitButton = dom.element('button', {'type': 'submit', 'class': 'search-btn'});
+			var icon = dom.element('i', {'class': 'icon-search'});
+			var label = dom.element('b', {'class': 'label'});
+			var buttonText = document.createTextNode('Search');
+
+			label.appendChild(buttonText);
+			submitButton.appendChild(icon);
+			submitButton.appendChild(label);
+
+			form.appendChild(q);
+			form.appendChild(submitButton);
+
+			header.appendChild(form);
+
+			searchContent.appendChild(header);
+			searchContent.appendChild(results);
+
+			dom.content.appendChild(searchContent);
+		} else {
+			searchContent.style.display = '';
+		}
+
+	}
 
 	function filterHandler(event) {
 
@@ -105,6 +140,14 @@ define([
 		return false;
 	}
 
+	function hidePageStructure() {
+		var searchContent = document.getElementById('search-content');
+		if (searchContent) {
+			searchContent.style.display = 'none';
+		}
+	};
+
+
 /* public */
 
 	var filters = {};
@@ -121,6 +164,7 @@ define([
 
 	function render() {
 
+		renderPageStructure();
 		initResults();
 
 		return this;
@@ -128,6 +172,8 @@ define([
 	}
 
 	function finalize() {
+
+		hidePageStructure();
 
 		a._win.removeEventListener('click', filterHandler, false);
 		a._win.removeEventListener('change', filterHandler, false);
