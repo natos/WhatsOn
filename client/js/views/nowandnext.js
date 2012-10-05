@@ -61,17 +61,26 @@ define([
 		}
 	};
 
-	var buildNowEvent = function(viewData) {
-		var el = document.createElement('li');
+	var appendNowEvent = function(targetElement, channelEvent) {
+
+		var nowDateTime = new Date();
+		var startDateTime = new Date(convert.parseApiDateStringAsMilliseconds(channelEvent.startDateTime));
+		var endDateTime = new Date(convert.parseApiDateStringAsMilliseconds(channelEvent.endDateTime));
+		var nowTimeValue = nowDateTime.valueOf();
+		var startTimeValue = startDateTime.valueOf();
+		var endTimeValue = endDateTime.valueOf();
+		var percentageComplete = (100 * (nowTimeValue - startTimeValue)) / (endTimeValue - startTimeValue);
+
+		var eventListItem = dom.element('li');
 
 		var progressBar = _progressBar.cloneNode(false);
-		progressBar.style.width = viewData.percentageComplete + '%';
+		progressBar.style.width = percentageComplete + '%';
 
 		var eventTitle = _eventTitle.cloneNode(false);
-		eventTitle.appendChild(document.createTextNode(viewData.title));
+		eventTitle.appendChild(document.createTextNode(channelEvent.programme.title));
 
 		var eventChannel = _eventChannel.cloneNode(false);
-		eventChannel.style.backgroundImage = 'url(' + viewData.channelLogoUrl + ')';
+		eventChannel.style.backgroundImage = 'url(' + ChannelModel.byId['s-' + channelEvent.channel.id].logo + ')';
 
 		var eventHeader = _eventHeader.cloneNode(false);
 		var eventArticle = _eventArticle.cloneNode(false);
@@ -81,19 +90,20 @@ define([
 		eventHeader.appendChild(eventTitle);
 		eventArticle.appendChild(eventHeader);
 		eventArticle.appendChild(eventChannel);
-		el.appendChild(eventArticle);
+		eventListItem.appendChild(eventArticle);
 
-		return el;
+		targetElement.appendChild(eventListItem);
 	};
 
-	var buildNextEvent = function(viewData) {
-		var el = document.createElement('li');
+	var appendNextEvent = function(targetElement, channelEvent) {
+
+		var eventListItem = document.createElement('li');
 
 		var eventTitle = _eventTitle.cloneNode(false);
-		eventTitle.appendChild(document.createTextNode(viewData.title));
+		eventTitle.appendChild(document.createTextNode(channelEvent.programme.title));
 
 		var eventStartTime = _eventStartTime.cloneNode(false);
-		eventStartTime.appendChild(document.createTextNode(viewData.time));
+		eventStartTime.appendChild(document.createTextNode(channelEvent.startDateTime.slice(11,16)));
 
 		var eventHeader = _eventHeader.cloneNode(false);
 		var eventArticle = _eventArticle.cloneNode(false);
@@ -103,9 +113,9 @@ define([
 		eventArticle.appendChild(eventTimeBox);
 		eventHeader.appendChild(eventTitle);
 		eventArticle.appendChild(eventHeader);
-		el.appendChild(eventArticle);
-		
-		return el;
+		eventListItem.appendChild(eventArticle);
+
+		targetElement.appendChild(eventListItem);
 	};
 
 	var renderEventsForChannel = function(channelEvents) {
@@ -113,47 +123,31 @@ define([
 		var channelEventsCount = channelEvents.length;
 		var channelId = channelEvents[0].channel.id;
 		var eventListContainer = document.getElementById('eventListContainer-' + channelId);
-		var nowDateTime, startDateTime, endDateTime, startTimeValue, endTimeValue, percentageComplete, template;
-		var channelEvent, viewData, i;
-
-		var channelLink = document.createElement('a');
-		channelLink.href = '/channel/' + channelId;
-
+		var channelLink = dom.element('a');
 		var eventList = dom.element('ul', {'class' : 'event-list nowandnext-event-list'});
+		var i;
 
-		for (i=0; i< channelEventsCount; i++) {
-			channelEvent = channelEvents[i];
+		// "now" event
+		appendNowEvent(eventList, channelEvents[0]);
 
-			nowDateTime = new Date();
-			startDateTime = new Date(convert.parseApiDateStringAsMilliseconds(channelEvent.startDateTime));
-			endDateTime = new Date(convert.parseApiDateStringAsMilliseconds(channelEvent.endDateTime));
-
-			nowTimeValue = nowDateTime.valueOf();
-			startTimeValue = startDateTime.valueOf();
-			endTimeValue = endDateTime.valueOf();
-
-			percentageComplete = (100 * (nowTimeValue - startTimeValue)) / (endTimeValue - startTimeValue);
-
-			viewData = {
-				channelName: channelEvent.channel.name,
-				channelLogoUrl: ChannelModel.byId['s-' + channelEvent.channel.id].logo,
-				time: channelEvent.startDateTime.slice(11,16),
-				percentageComplete: percentageComplete,
-				title: channelEvent.programme.title
-			};
-
-			if (i===0) {
-				eventList.appendChild(buildNowEvent(viewData));
-			} else {
-				eventList.appendChild(buildNextEvent(viewData));
-			}
+		// "next" events
+		for (i=1; i< channelEventsCount; i++) {
+			appendNextEvent(eventList, channelEvents[i])
 		}
 
 		channelLink.appendChild(eventList);
+		channelLink.href = '/channel/' + channelId;
 
 		dom.empty(eventListContainer);
 		eventListContainer.appendChild(channelLink);
 		eventListContainer.className = 'event-list-container'; // removes the '.hidden' class.
+	};
+
+	var hidePageStructure = function() {
+		var nowAndNextContent = document.getElementById('nowandnext-content');
+		if (nowAndNextContent) {
+			nowAndNextContent.style.display = 'none';
+		}
 	};
 
 
@@ -178,10 +172,7 @@ define([
 
 	function finalize() {
 
-		var nowAndNextContent = document.getElementById('nowandnext-content');
-		if (nowAndNextContent) {
-			nowAndNextContent.style.display = 'none';
-		}
+		hidePageStructure();
 
 		Event.off(nowAndNextConfig.MODEL_CHANGED, onNowAndNextModelChanged);
 		return this;
