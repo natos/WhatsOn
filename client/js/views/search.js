@@ -151,26 +151,59 @@ define([
 	}
 
 	function onSearchModelChanged(changes) {
-		var results, resultsCount, i;
+		var groupedResults;
 
 		if (changes.searchResults) {
-			results = changes.searchResults;
-			resultsCount = results.length;
-
-			var elResults = document.getElementById('search-results');
-			dom.empty(elResults);
-
-			for (i=0; i<resultsCount; i++) {
-				renderResult(results[i]);
-				var p = dom.element('p');
-				p.appendChild(document.createTextNode(results[i].programme.title));
-				elResults.appendChild(p);
-			}
+			var resultsGroups = groupResultsByProgramme(changes.searchResults);
+			renderResultsGroups(resultsGroups)
 		}
 	}
 
-	function renderResult(searchResult) {
+	function groupResultsByProgramme(originalResults) {
+		var resultsGroups = [];
+		var currentGroup = [];
+		var previousProgrammeTitle = '';
+		var result, i;
+		var originalResultsCount = originalResults.length;
 
+		for (i=0; i<originalResultsCount; i++) {
+			result = originalResults[i];
+			if (i>0 && (result.programme.title !== previousProgrammeTitle)) {
+				resultsGroups.push(currentGroup);
+				currentGroup = [];
+			}
+			currentGroup.push(result);
+			previousProgrammeTitle = result.programme.title;
+		}
+
+		return resultsGroups;
+	}
+
+	function renderResultsGroups(resultsGroups) {
+
+		var groupsCount = resultsGroups.length;
+		var i;
+
+		var resultsContainer = document.getElementById('search-results');
+		dom.empty(resultsContainer);
+
+		for (i=0; i<groupsCount; i++) {
+			renderResults(resultsContainer, resultsGroups[i]);
+		}
+	}
+
+	function renderResults(resultsContainer, results) {
+		var resultsCount = results.length;
+		var i, result, li;
+		var ul = dom.element('ul');
+
+		for (i=0; i<resultsCount; i++) {
+			result = results[i];
+			li = dom.element('li');
+			li.appendChild(document.createTextNode(results[i].programme.title));
+			ul.appendChild(li);
+		}
+		resultsContainer.appendChild(ul);
 	}
 
 /* public */
