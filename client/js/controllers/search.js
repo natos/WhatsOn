@@ -6,29 +6,43 @@
 
 define([
 
-	'config/app',
-	'modules/app',
+	'config/search',
+	'modules/event',
 	'lib/flaco/controller',
+	'models/search',
 	'views/search'
 
-], function SearchController(a, App, Controller, searchView) {
+], function SearchController(searchConfig, Event, Controller, searchModel, searchView) {
 
 	var name = 'search';
 
 /* private */
 
+	var onSearchFor = function(q) {
+console.log('onSearchFor');
+console.log(q);
+		var request = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Event.json?query=' + q + '&callback=?';
+		$.getJSON(request, handleSearchResponse);
+	};
+
+	var handleSearchResponse = function(apiResponse) {
+		searchModel.set('searchResults', apiResponse);
+	};
+
 /* public */
 
-/* abstract */ 
+/* abstract */
 
 	function initialize() {
 
+		Event.on(searchConfig.SEARCH_FOR, onSearchFor);
 		return this;
 
 	}
 
 	function finalize() {
 
+		Event.off(searchConfig.SEARCH_FOR, onSearchFor);
 		return this;
 
 	}

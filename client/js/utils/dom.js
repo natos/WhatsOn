@@ -20,6 +20,7 @@ define([
 		a: doc.createElement('a'),
 		i: doc.createElement('i'),
 		b: doc.createElement('b'),
+		p: doc.createElement('p'),
 		h1: doc.createElement('h1'),
 		ol: doc.createElement('ol'),
 		ul: doc.createElement('ul'),

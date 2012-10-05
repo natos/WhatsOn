@@ -10,13 +10,14 @@ define([
 
 	'config/app',
 	'config/search',
+	'modules/event',
 	'lib/flaco/view',
+	'controllers/search',
 	'utils/dom'
 
-], function(a, searchConfig, View, dom) {
+], function(a, searchConfig, Event, View, searchController, dom) {
 
 	var name = 'search';
-console.log(dom);
 
 /* private */
 
@@ -29,7 +30,7 @@ console.log(dom);
 			var header = dom.element('header', {'id': 'search-query'});
 			var results = dom.element('section', {'id': 'search-results'});
 			var form = dom.element('form', {'class': 'search-form'});
-			var q = dom.element('input', {'type': 'search', 'id': 'q', 'name': 'q', 'placeholder': 'Search...', 'value': ''});
+			var q = dom.element('input', {'type': 'search', 'id': 'q', 'name': 'q', 'placeholder': 'Search...', 'value': '', 'autofocus':'autofocus'});
 			var submitButton = dom.element('button', {'type': 'submit', 'class': 'search-btn'});
 			var icon = dom.element('i', {'class': 'icon-search'});
 			var label = dom.element('b', {'class': 'label'});
@@ -136,7 +137,9 @@ console.log(dom);
 	}
 
 	function submitHandler(event) {
-		$('#content').load('/search?q=' + $('#q').val(), function(data, status, xhr){});
+		event.preventDefault();
+		var q = document.getElementById('q').value;
+		Event.emit(searchConfig.SEARCH_FOR, q);
 		return false;
 	}
 
@@ -145,8 +148,30 @@ console.log(dom);
 		if (searchContent) {
 			searchContent.style.display = 'none';
 		}
-	};
+	}
 
+	function onSearchModelChanged(changes) {
+		var results, resultsCount, i;
+
+		if (changes.searchResults) {
+			results = changes.searchResults;
+			resultsCount = results.length;
+
+			var elResults = document.getElementById('search-results');
+			dom.empty(elResults);
+
+			for (i=0; i<resultsCount; i++) {
+				renderResult(results[i]);
+				var p = dom.element('p');
+				p.appendChild(document.createTextNode(results[i].programme.title));
+				elResults.appendChild(p);
+			}
+		}
+	}
+
+	function renderResult(searchResult) {
+
+	}
 
 /* public */
 
@@ -157,6 +182,8 @@ console.log(dom);
 		a._win.addEventListener('click', filterHandler, false);
 		a._win.addEventListener('change', filterHandler, false);
 		a._win.addEventListener('submit', submitHandler);
+
+		Event.on(searchConfig.MODEL_CHANGED, onSearchModelChanged);
 
 		return this;
 
@@ -178,6 +205,8 @@ console.log(dom);
 		a._win.removeEventListener('click', filterHandler, false);
 		a._win.removeEventListener('change', filterHandler, false);
 		a._win.removeEventListener('submit', submitHandler, false);
+
+		Event.off(searchConfig.MODEL_CHANGED, onSearchModelChanged);
 
 		return this;
 

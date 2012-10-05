@@ -18,7 +18,8 @@ define([], function SearchConfigContext() {
 
 		/* Events */
 
-		MODEL_CHANGED: 'search:model_changed'
+		MODEL_CHANGED: 'search:model_changed',
+		SEARCH_FOR: 'search:search_for'
 
 	};
 
