@@ -19,8 +19,6 @@ define([
 /* private */
 
 	var onSearchFor = function(q) {
-console.log('onSearchFor');
-console.log(q);
 		var request = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Event.json?query=' + q + '&callback=?';
 		$.getJSON(request, handleSearchResponse);
 	};

@@ -13,11 +13,14 @@ define([
 	'modules/event',
 	'lib/flaco/view',
 	'controllers/search',
-	'utils/dom'
+	'models/channel',
+	'utils/dom',
+	'utils/convert'
 
-], function(a, searchConfig, Event, View, searchController, dom) {
+], function(a, searchConfig, Event, View, searchController, channelModel, dom, convert) {
 
 	var name = 'search';
+	var now = new Date();
 
 /* private */
 
@@ -154,26 +157,33 @@ define([
 		var groupedResults;
 
 		if (changes.searchResults) {
-			var resultsGroups = groupResultsByProgramme(changes.searchResults);
-			renderResultsGroups(resultsGroups)
+			if (changes.searchResults.length > 0) {
+				var resultsGroups = groupResultsByProgrammeAndChannel(changes.searchResults);
+				renderResultsGroups(resultsGroups);
+			} else {
+				renderNoResults();
+			}
 		}
 	}
 
-	function groupResultsByProgramme(originalResults) {
+	function groupResultsByProgrammeAndChannel(originalResults) {
+		var channelProgrammeCombinations = {};
+		var key;
 		var resultsGroups = [];
-		var currentGroup = [];
-		var previousProgrammeTitle = '';
 		var result, i;
 		var originalResultsCount = originalResults.length;
 
 		for (i=0; i<originalResultsCount; i++) {
 			result = originalResults[i];
-			if (i>0 && (result.programme.title !== previousProgrammeTitle)) {
-				resultsGroups.push(currentGroup);
-				currentGroup = [];
+			key = result.channel.id + result.programme.title;
+			if (!channelProgrammeCombinations[key]) {
+				channelProgrammeCombinations[key] = [];
 			}
-			currentGroup.push(result);
-			previousProgrammeTitle = result.programme.title;
+			channelProgrammeCombinations[key].push(result);
+		}
+
+		for(key in channelProgrammeCombinations) {
+			resultsGroups.push(channelProgrammeCombinations[key]);
 		}
 
 		return resultsGroups;
@@ -192,18 +202,104 @@ define([
 		}
 	}
 
+	function byStartDateTimeSorter(a,b) {
+		var sortOrder = 0;
+		if (a && b && a.startDateTime && b.startDateTime) {
+			if (a.startDateTime < b.startDateTime) {
+				sortOrder = -1;
+			} else if (a.startDateTime > b.startDateTime) {
+				sortOrder = 1;
+			}
+		}
+		return sortOrder;
+	}
+
 	function renderResults(resultsContainer, results) {
+
+		results = results.sort(byStartDateTimeSorter);
+
 		var resultsCount = results.length;
 		var i, result, li;
-		var ul = dom.element('ul');
+		var eventListContainer = dom.element('article', {'class':'event-list-container'});
+		var ul = dom.element('ul', {'class' : 'event-list search-event-list'});
+
+		var channel = channelModel.byId['s-' + results[0].channel.id];
+		// Sometimes the channel doesn't exist? Probably because we're using
+		// the old API for search, and the new API for channels.
+		if (!channel) {
+			return;
+		}
 
 		for (i=0; i<resultsCount; i++) {
 			result = results[i];
+
+			var nowTimeValue = new Date();
+			var startDateTime = new Date(convert.parseApiDateStringAsMilliseconds(result.startDateTime));
+			var endDateTime = new Date(convert.parseApiDateStringAsMilliseconds(result.endDateTime));
+			// Note: only show events within the next 12 hours!
+			// TODO: we need a better way of rendering the start day/daete + time in 
+			// the search results list for displaying events that start further in the future. 
+			if (startDateTime.valueOf() - now.valueOf() >= 43200000) {
+				if (i===0) {
+					return;
+				} else {
+					break;
+				}
+			}
+			var hours = startDateTime.getHours();
+			hours = (hours < 10)? '0' + hours : hours;
+			var minutes = startDateTime.getMinutes();
+			minutes = (minutes < 10)? '0' + minutes : minutes;
+			var time = (hours + ':' + minutes);
+			var startTimeValue = startDateTime.valueOf();
+			var endTimeValue = endDateTime.valueOf();
+			var percentageComplete = (100 * (nowTimeValue - startTimeValue)) / (endTimeValue - startTimeValue);
+
 			li = dom.element('li');
-			li.appendChild(document.createTextNode(results[i].programme.title));
+			var eventLink = dom.element('a', {'href':'/programme/' + result.programme.id});
+			var eventClassName = (i===0) ? 'event now' : 'event';
+			var eventArticle = dom.element('article', {'class': eventClassName});
+
+			var eventTimeBox = dom.element('div', {'class':'event-time-box'});
+			var eventPrettyDate = dom.element('time', {'class':'event-prettyDate'});
+			var eventStartTime = dom.element('time', {'class':'event-starttime'});
+			eventStartTime.appendChild(document.createTextNode(time));
+			eventPrettyDate.appendChild(document.createTextNode('TODO: prettydate'));
+
+			eventTimeBox.appendChild(eventPrettyDate);
+			eventTimeBox.appendChild(eventStartTime);
+			eventArticle.appendChild(eventTimeBox);
+
+			var eventHeader = dom.element('div', {'class':'event-header'});
+			var eventTitle = dom.element('div', {'class':'event-title'});
+			eventTitle.appendChild(document.createTextNode(results[i].programme.title));
+
+			if (percentageComplete > 0) {
+				var progressBar = dom.element('div', {'class':'progressbar', 'style':'width:' + percentageComplete + '%'});
+				eventHeader.appendChild(progressBar);
+			}
+			eventHeader.appendChild(eventTitle);
+			eventArticle.appendChild(eventHeader);
+
+			var eventChannel = dom.element('aside', {'class':'event-channel','style':'background-image:url(' + channel.logo + ')'});
+			eventChannel.appendChild(document.createTextNode(channel.name));
+			eventArticle.appendChild(eventChannel);
+
+			eventLink.appendChild(eventArticle);
+			li.appendChild(eventLink);
 			ul.appendChild(li);
 		}
-		resultsContainer.appendChild(ul);
+		eventListContainer.appendChild(ul);
+		resultsContainer.appendChild(eventListContainer);
+	}
+
+	function renderNoResults() {
+		var resultsContainer = document.getElementById('search-results');
+		dom.empty(resultsContainer);
+
+		var p = dom.element('p');
+		p.appendChild(document.createTextNode('No results found'));
+		resultsContainer.appendChild(p);
 	}
 
 /* public */
@@ -224,6 +320,7 @@ define([
 
 	function render() {
 
+		now = new Date();
 		renderPageStructure();
 		initResults();
 
