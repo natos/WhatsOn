@@ -1898,7 +1898,7 @@ No need to display the channel logo, so we can pull the event-header mor to the 
 		line-height: 41px;
 		padding-top:0;
 		text-indent: 50px;
-		text-shadow: 0 -1px 0 rgba(000,000,000,0.2), 0 1px 0 rgba(255,255,255,1);
+		text-shadow: 0 1px 0 rgba(255,255,255,1);
 	}
 
 	/* 	now-and-next lists don't show startime, so adjust the text indent */
