@@ -23,8 +23,8 @@ define([
 
 		transitionElement = document.getElementById('transition');
 		if (!transitionElement) {
-			transitionElement = dom.element('div', { id: 'transition' });
-			loadingElement = dom.element('div', { class: 'loading' });
+			transitionElement = dom.element('div', { 'id': 'transition' });
+			loadingElement = dom.element('div', { 'class': 'loading' });
 			transitionElement.appendChild(loadingElement);
 			dom.content.appendChild(transitionElement);
 		}

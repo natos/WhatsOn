@@ -142,7 +142,7 @@ define([
 	function render() {
 
 		// grab the channellist
-		_channelsbar.appendChild( dom.element('div', { class: 'shade' }) );
+		_channelsbar.appendChild( dom.element('div', { 'class': 'shade' }) );
 		_channelsbar.appendChild( _channellist );
 
 		dom.main.appendChild(_channelsbar);

@@ -110,8 +110,8 @@ define([
 		// div.shade
 		// div.content
 		// ol#time-bar-list
-		_timebar.appendChild(dom.element('div',{ class: 'shade' }));
-		_timebar.appendChild(dom.element('div',{ class: 'content' }));
+		_timebar.appendChild(dom.element('div',{ 'class': 'shade' }));
+		_timebar.appendChild(dom.element('div',{ 'class': 'content' }));
 		_timebar.appendChild(dom.element('ol',{ id: 'time-bar-list' }));
 
 		_timebar.appendChild(_timecontrols);
