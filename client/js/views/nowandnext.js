@@ -120,27 +120,32 @@ define([
 
 	var renderEventsForChannel = function(channelEvents) {
 
-		var channelEventsCount = channelEvents.length;
-		var channelId = channelEvents[0].channel.id;
-		var eventListContainer = document.getElementById('eventListContainer-' + channelId);
-		var channelLink = dom.element('a');
-		var eventList = dom.element('ul', {'class' : 'event-list nowandnext-event-list'});
-		var i;
+		if (channelEvents && channelEvents.length) {
 
-		// "now" event
-		appendNowEvent(eventList, channelEvents[0]);
+			var channelEventsCount = channelEvents.length;
+			var channelId = channelEvents[0].channel.id;
+			var eventListContainer = document.getElementById('eventListContainer-' + channelId);
+			var channelLink = dom.element('a');
+			var eventList = dom.element('ul', {'class' : 'event-list nowandnext-event-list'});
+			var i;
 
-		// "next" events
-		for (i=1; i< channelEventsCount; i++) {
-			appendNextEvent(eventList, channelEvents[i])
+			// "now" event
+			appendNowEvent(eventList, channelEvents[0]);
+
+			// "next" events
+			for (i=1; i< channelEventsCount; i++) {
+				appendNextEvent(eventList, channelEvents[i])
+			}
+
+			channelLink.appendChild(eventList);
+			channelLink.href = '/channel/' + channelId;
+
+			dom.empty(eventListContainer);
+			eventListContainer.appendChild(channelLink);
+			eventListContainer.className = 'event-list-container'; // removes the '.hidden' class.
+
 		}
 
-		channelLink.appendChild(eventList);
-		channelLink.href = '/channel/' + channelId;
-
-		dom.empty(eventListContainer);
-		eventListContainer.appendChild(channelLink);
-		eventListContainer.className = 'event-list-container'; // removes the '.hidden' class.
 	};
 
 	var hidePageStructure = function() {
