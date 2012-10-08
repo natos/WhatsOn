@@ -9,15 +9,17 @@ define([
 	'config/app',
 	'lib/flaco/view',
 	'modules/event',
-	'utils/dom'
+	'utils/dom',
+	'utils/language'
 
-], function ChannelViewScope(a, View, Event, dom) {
+], function ChannelViewScope(a, View, Event, dom, Language) {
 
-	var name = 'menu',
+	var name = 'menu';
+	var lang = new Language('nl'); // TODO: get correct language code
 
 /* private */
 
-	_menu = dom.doc.getElementsByTagName('nav')[0];
+	var _menu = dom.doc.getElementsByTagName('nav')[0];
 
 	function handleActions(action, dataset) {
 		switch (action) {
@@ -34,6 +36,25 @@ define([
 		}
 	}
 
+	function localize() {
+		var settingsLabel = document.getElementById("menu-item-settings-label");
+		var settingsLabelText = lang.translate('nav-label-settings');
+		dom.empty(settingsLabel);
+		settingsLabel.appendChild(document.createTextNode(settingsLabelText));
+		settingsLabel.parentNode.title = settingsLabelText;
+
+		settingsLabel = document.getElementById("menu-item-user-settings-label");
+		dom.empty(settingsLabel);
+		settingsLabel.appendChild(document.createTextNode(settingsLabelText));
+		settingsLabel.parentNode.title = settingsLabelText;
+
+		var searchLabel = document.getElementById("menu-item-search-label");
+		var searchLabelText = lang.translate('nav-label-search');
+		dom.empty(searchLabel);
+		searchLabel.appendChild(document.createTextNode(searchLabelText));
+		searchLabel.parentNode.title = searchLabelText;
+	}
+
 /* public */
 
 	function initialize(State) {
@@ -47,7 +68,7 @@ define([
 
 	function render() {
 
-
+		localize();
 
 		return this;
 
