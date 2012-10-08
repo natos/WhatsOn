@@ -14,8 +14,11 @@
 
 # Don't restart the server because of changes in client-side code
 /client/*
+/client-build/*
 /public/*
 
 # Ignore git commits
 .git/*
 
+# Ignore changes to the readme
+Readme.md

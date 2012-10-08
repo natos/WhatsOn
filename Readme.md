@@ -1,18 +1,19 @@
-UPC Whats On
-============
+# UPC Whats On
 
-Run the app
------------
+## Run the app
 
-	node main.js
+	$ node main.js
+
+## Run the app for a specific environment type
+
+    $ NODE_ENV=production node main.js
+    $ NODE_ENV=production nodemon main.js
 
 
-Run the tests
--------------
+## Run the tests
 
-	jasmine-node server
+    $ jasmine-node server
 
-Running versions
-----------------
+## Running versions
 
-	upcsocial.herokuapp.com
+* [upcsocial.herokuapp.com](http://upcsocial.herokuapp.com)
