@@ -10,9 +10,11 @@ define([
 	'config/app',
 	'models/app',
 	'modules/event',
-	'utils/epgapi'
+	'modules/router',
+	'utils/epgapi',
+	'utils/common'
 
-], function ScheduleModuleScope(a, AppModel, Event, EpgApi) {
+], function ScheduleModuleScope(a, AppModel, Event, Router, EpgApi, common) {
 
 	var name = 'schedule',
 
@@ -21,9 +23,12 @@ define([
 		cache = {},
 
 		// hardcode value for country
+		// TODO: check if there's a cookie
 		COUNTRY = 'Nederland',
 
 		// hardcode value for schedule
+		// TODO: remove this thing, use
+		// always the first schedule
 		SCHEDULE = 'upc.nl';
 
 	/* Handle data comming from the API */
@@ -64,6 +69,19 @@ define([
 
 		// Once we got countries information
 		if (changes[a.COUNTRIES_CACHE]) {
+			
+			// a selection of country means
+			// we need to re-fetch data
+		}
+
+		if (changes[a.SELECTED_COUNTRY]) {
+
+			// Reset model data
+			AppModel[a.LINEUP_CACHE] = cache[a.LINEUP_CACHE] = null;
+			AppModel[a.SCHEDULES_CACHE] = cache[a.SCHEDULES_CACHE] = null;
+			AppModel[a.CATEGORIES_CACHE] = cache[a.CATEGORIES_CACHE] = null;
+			AppModel[a.GENRES_CACHE] = cache[a.GENRES_CACHE] = null;
+
 			// get schedule data
 			getSchedules();
 			// get channel Lineup
@@ -75,7 +93,7 @@ define([
 			getCategoriesAndGenres();
 		}
 
-		if (cache[a.LINEUP_CACHE] && cache[a.CATEGORIES_CACHE]) {
+		if (AppModel[a.LINEUP_CACHE] && AppModel[a.CATEGORIES_CACHE] && AppModel[a.GENRES_CACHE]) {
 			// Ready to Rock!
 			Event.emit(a.READY);
 		}
@@ -101,6 +119,8 @@ define([
 			cache[label].nextBatchLink = null;
 			delete cache[label].nextBatchLink;
 
+			console.log('<SCHEDULE>','Saving', label, 'on Model.');
+
 			AppModel.set(label, cache[label]);
 
 		}
@@ -116,7 +136,7 @@ define([
 			
 			// Here is where the app decides 
 			// wich country schedule to use
-			if (country.name === COUNTRY) {
+			if (country.name === AppModel[a.SELECTED_COUNTRY]) {
 
 				request = country.linearLineupLink.href.split('?')[0];
 
@@ -140,7 +160,7 @@ define([
 
 			// Here is where the app decides 
 			// wich country schedule to use
-			if (country.name === COUNTRY) {
+			if (country.name === AppModel[a.SELECTED_COUNTRY]) {
 
 				request = country.schedules.data[0].selfLink.href.split('?')[0];
 
@@ -153,33 +173,27 @@ define([
 
 		var schedule, request;
 
-		for (var i = 0, t = cache[a.SCHEDULES_CACHE].data.length; i < t; i++) {
+		schedule = cache[a.SCHEDULES_CACHE].data[0];
 
-			schedule = cache[a.SCHEDULES_CACHE].data[i];
+		if (schedule.categories) {
+			// save the first slice of categories,
+			cache[a.CATEGORIES_CACHE] = schedule.categories;
+			// and ask for the nextBatch if its available.
+			if (schedule.categories.nextBatchLink) {
+				// let the EpgApi deals with async
+				EpgApi.query(schedule.categories.nextBatchLink.href, a.CATEGORIES_RECEIVED);
 
-			if (schedule.id === SCHEDULE) {
+			}
+		}
 
-				if (schedule.categories) {
-					// save the first slice of categories,
-					cache[a.CATEGORIES_CACHE] = schedule.categories;
-					// and ask for the nextBatch if its available.
-					if (schedule.categories.nextBatchLink) {
-						// let the EpgApi deals with async
-						EpgApi.query(schedule.categories.nextBatchLink.href, a.CATEGORIES_RECEIVED);
+		if (schedule.genres) {
+			// save the first slice of genres,
+			cache[a.GENRES_CACHE] = schedule.genres;
+			// and ask for the nextBatch if its available.
+			if (schedule.genres.nextBatchLink) {
+				// let the EpgApi deals with async
+				EpgApi.query(schedule.genres.nextBatchLink.href, a.GENRES_RECEIVED);
 
-					}
-				}
-
-				if (schedule.genres) {
-					// save the first slice of genres,
-					cache[a.GENRES_CACHE] = schedule.genres;
-					// and ask for the nextBatch if its available.
-					if (schedule.genres.nextBatchLink) {
-						// let the EpgApi deals with async
-						EpgApi.query(schedule.genres.nextBatchLink.href, a.GENRES_RECEIVED);
-
-					}
-				}
 			}
 		}
 	}

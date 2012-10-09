@@ -9,13 +9,14 @@ define([
 
 	'config/app',
 	'config/user',
+	'models/app',
 	'views/menu',
 	'modules/app',
 	'modules/event',
 	'modules/router',
 	'utils/transition'
 
-], function CanvasModuleScope(a, u, Menu, App, Event, Router, transition) {
+], function CanvasModuleScope(a, u, AppModel, Menu, App, Event, Router, transition) {
 
 	var name = 'canvas',
 
@@ -33,7 +34,7 @@ define([
 	function loadController(State) {
 		// something went wrong
 		if (!State) {
-			console.log('loadController','State object is empty, can\'t load a controller without information.');
+			console.log('<CANVAS>','loadController','State object is empty, can\'t load a controller without information.');
 			return;
 		}
 
@@ -47,7 +48,7 @@ define([
 		// Controller doesn't exist yet
 		// Async load the requested controller
 		if (typeof cachedController === 'undefined') {
-			console.log('loadController', State.controller, ' doesn\'t exists, go an get it, lazy loading.');
+			console.log('<CANVAS>','loadController', State.controller, ' doesn\'t exists, go an get it, lazy loading.');
 			// Controller is not cached, go and get one
 			fetchController('controllers/' + State.controller);
 			return;
@@ -55,7 +56,7 @@ define([
 
 		// Check if the controller has a intialize method, all controllers must have one
 		if (typeof cachedController[INITIALIZE] !== "function") {
-			console.log('Canvas Module', cachedController.name + ' doesn\'t have a \'initialize\' method available.');
+			console.log('<CANVAS>', cachedController.name + ' doesn\'t have a \'initialize\' method available.');
 			return;
 		}
 		// Everything seems fine
@@ -82,7 +83,7 @@ define([
 	function unloadController(State) {
 		// something went wrong
 		if (!State) {
-			console.log('unloadController','State object is empty, must be the first load.');
+			console.log('<CANVAS>','unloadController','State object is empty, must be the first load.');
 			return;
 		}
 		// finalize controller
@@ -92,7 +93,7 @@ define([
 
 	function finalizeController(controller) {
 		if (typeof controller[FINALIZE] !== "function") {
-			console.log('Canvas Module', controller.name + ' can\'t be finalized, \'finalize\' method is not a function.');
+			console.log('<CANVAS>', controller.name + ' can\'t be finalized, \'finalize\' method is not a function.');
 			return;
 		}
 		// finalize controller
@@ -106,22 +107,22 @@ define([
 	*/
 	function navigate(State) {
 
-		console.log(' ------------------ NAVIGATE: ' + State.controller + ' --------------------', arguments);
+		console.log('<CANVAS>',' ------------------ NAVIGATE: ' + State.controller + ' --------------------', arguments);
 
 		if (typeof State === 'undefined' || State.controller === "") {
-			console.log('Canvas Module', 'WARNING: State object is empty. Redirecting to DASHBOARD');
+			console.log('<CANVAS>', 'WARNING: State object is empty. Redirecting to DASHBOARD');
 			// load dashboard
 			Router.navigate({}, 'dashboard', '/dashboard');
 			return;
 		}
 
 		if (State === CURRENT_STATE) {
-			console.log('Canvas Module', State.name + ' controller already loaded.');
+			console.log('<CANVAS>', State.name + ' controller already loaded.');
 			return;
 		}
 
 		if (a.CONTROLLERS.indexOf(State.controller)>=0) {
-			unloadController(CURRENT_STATE);
+			if (CURRENT_STATE) { unloadController(CURRENT_STATE); }
 			loadController(State);
 			Menu.close();
 		} else {
@@ -150,18 +151,18 @@ define([
 		// DEBUGGING Handlers
 		/* View live cycle
 		*/
-		Event.on(a.VIEW_INITIALIZING, function(view) { console.log('Canvas Module', view.name, 'VIEW_INITIALIZING'); });
-		Event.on(a.VIEW_INITIALIZED, function(view) { console.log('Canvas Module', view.name, 'VIEW_INITIALIZED'); });
-		Event.on(a.VIEW_RENDERING, function(view) { console.log('Canvas Module', view.name, 'VIEW_RENDERING'); });
-		Event.on(a.VIEW_RENDERED, function(view) { console.log('Canvas Module', view.name, 'VIEW_RENDERED'); });
-		Event.on(a.VIEW_FINALIZING, function(view) { console.log('Canvas Module', view.name, 'VIEW_FINALIZING'); });
-		Event.on(a.VIEW_FINALIZED, function(view) { console.log('Canvas Module', view.name, 'VIEW_FINALIZED'); });
+		Event.on(a.VIEW_INITIALIZING, function(view) { console.log('<CANVAS>', view.name, 'VIEW_INITIALIZING'); });
+		Event.on(a.VIEW_INITIALIZED, function(view) { console.log('<CANVAS>', view.name, 'VIEW_INITIALIZED'); });
+		Event.on(a.VIEW_RENDERING, function(view) { console.log('<CANVAS>', view.name, 'VIEW_RENDERING'); });
+		Event.on(a.VIEW_RENDERED, function(view) { console.log('<CANVAS>', view.name, 'VIEW_RENDERED'); });
+		Event.on(a.VIEW_FINALIZING, function(view) { console.log('<CANVAS>', view.name, 'VIEW_FINALIZING'); });
+		Event.on(a.VIEW_FINALIZED, function(view) { console.log('<CANVAS>', view.name, 'VIEW_FINALIZED'); });
 		/* Controller live cycle
 		*/
-		Event.on(a.CONTROLLER_INITIALIZING, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_INITIALIZATING'); });
-		Event.on(a.CONTROLLER_INITIALIZED, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_INITIALIZATED'); });
-		Event.on(a.CONTROLLER_FINALIZING, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_FINALIZATING'); });
-		Event.on(a.CONTROLLER_FINALIZED, function(view) { console.log('Canvas Module', view.name, 'CONTROLLER_FINALIZED'); });
+		Event.on(a.CONTROLLER_INITIALIZING, function(view) { console.log('<CANVAS>', view.name, 'CONTROLLER_INITIALIZATING'); });
+		Event.on(a.CONTROLLER_INITIALIZED, function(view) { console.log('<CANVAS>', view.name, 'CONTROLLER_INITIALIZATED'); });
+		Event.on(a.CONTROLLER_FINALIZING, function(view) { console.log('<CANVAS>', view.name, 'CONTROLLER_FINALIZATING'); });
+		Event.on(a.CONTROLLER_FINALIZED, function(view) { console.log('<CANVAS>', view.name, 'CONTROLLER_FINALIZED'); });
 
 		if (!App.can3DTransformPositionFixed()) {
 			document.documentElement.className += ' css-no-3d-transform-position-fixed';

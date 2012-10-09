@@ -15,9 +15,9 @@ define([
 /* private */
 
 	// UI elements
-		box,
-		content,
-		close;
+		box 	= dom.element('div', { id: name }),
+		content = dom.element('div', { id: 'overlay-content' }),
+		close 	= dom.element('a', { id: 'overlay-close', href: '#overlay-close' });
 
 /* public */ 
 
@@ -27,7 +27,9 @@ define([
 	}
 
 	function show(html) {
-		content.innerHTML = html || '<div class="loading"></div>';
+		if (html) {
+			content.innerHTML = html || '<div class="loading"></div>';
+		}
 		box.className = 'active';
 	}
 
@@ -40,24 +42,14 @@ define([
 
 		var lbl, icon;
 		// create the label
-		lbl = dom.create('b');
-		lbl.className = 'label';
+		lbl = dom.element('b', { class: 'label' });
 		lbl.innerHTML = 'close';
 		// create the icon
-		icon = dom.create('i');
-		icon.className = 'icon-remove-sign';
+		icon = dom.element('i', { class: 'icon-remove-sign' });
 		// create close button
-		close = dom.create('a');
-		close.id = 'overlay-close';
-		close.href = '#overlay-close';
 		close.appendChild(icon);
 		close.appendChild(lbl);
-		// create the container
-		content = dom.create('div');
-		content.id = 'overlay-content';
 		// create the layout
-		box = dom.create('div');
-		box.id = name;
 		box.appendChild(content);
 		box.appendChild(close);
 
@@ -98,7 +90,8 @@ define([
 		finalize	: finalize,
 		render		: render,
 		show		: show,
-		hide		: hide
+		hide		: hide,
+		content 	: content // DOM interface
 	};
 
 });

@@ -30,16 +30,14 @@ define([
 	// whenever your ready
 	Event.on(a.READY, function() {
 		// we are ready... :P
+		console.log('App ready!!!')
 	});
 
-	Event.on(c.MODEL_CHANGED, function(changes) {
-		// When channel collection are ready
-		// start all modules
-		if (changes[c.BY_ID]) {
-			//channel collection is ready :)
-			loadModules();
+	function initializeModules() {
+		while (module = shift.apply(arguments)) { 
+			App.modules[module.name] = module.initialize(); 
 		}
-	});
+	}
 
 /* public */
 
@@ -50,7 +48,9 @@ define([
 
 	function initialize() {
 
-		Schedule.initialize();
+		// Load the primary modules for the app.
+		// Each module must have an "initialize" method that returns the module instance.
+		require(['modules/schedule', 'modules/canvas', 'modules/router'], initializeModules);
 
 		return App;
 	
@@ -59,9 +59,9 @@ define([
 	function loadModules() {		
 		// Load the primary modules for the app.
 		// Each module must have an "initialize" method that returns the module instance.
-		require(['modules/user', 'modules/canvas', 'modules/router'], function initializeModules() {
-			while (module = shift.apply(arguments)) { App.modules[module.name] = module.initialize(); } 
-		});
+		//require(['modules/user', 'modules/canvas', 'modules/router'], initializeModules);
+
+		return App;
 	}
 
 	/**

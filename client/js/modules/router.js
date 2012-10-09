@@ -7,16 +7,19 @@
 define([
 
 	'config/app',
+	'models/app',
 	'modules/app',
 	'modules/event',
 	'utils/dom',
 	'/js/lib/history/1.7.1-r2/bundled/html4+html5/native.history.js'
 
-], function RouterModuleScope(a, App, Event, dom) {
+], function RouterModuleScope(a, AppModel, App, Event, dom) {
 
 	var name = 'router',
 
 /* private */
+
+		REDIRECT = false,
 
 	// consts
 
@@ -28,11 +31,23 @@ define([
 
 		shift = Array.prototype.shift;
 
+
+	Event.on(a.READY, function() {
+		// we are ready... :P
+		if (REDIRECT) { 
+			navigate(REDIRECT) 
+		} else {
+			navigate({}, 'dashboard', '/dashboard');
+		}
+
+	});
+
 	/**
 	*	Handle State Changes
 	*/
 	function handleStateChange() {
 
+		// Creates the State Object
 		var State = History.getState(); // Note: We are using History.getState() instead of event.state
 
 		var path = History.getShortUrl(State.url);
@@ -53,9 +68,28 @@ define([
 		State.parts = path.split(/[\/\?\&=\#]/gi);
 
 		// The controller to be loaded is the first element in the parts array
-		State.controller = (State.parts) ? shift.apply(State.parts) : '';
+		State.controller = (State.parts) ? shift.apply(State.parts) : ''
 
+		// We may need to select the country first...
+
+		// Open settings when there is no country selected
+		// and the selected controller is not Settings
+		if (State.controller !== 'settings' && !AppModel[a.SELECTED_COUNTRY]) {
+			REDIRECT = State;
+			navigate({}, 'settings', '/settings');
+			return;
+		} 
+
+		// When controller is empty
+		// redirect to Dashboard
+		if (State.controller === "") {
+			navigate({}, 'dashboard', '/dashboard');
+			return;
+		}
+		
+		// Let's navigate
 		Event.emit(a.NAVIGATE, State);
+
 	}
 
 	/**
@@ -151,7 +185,6 @@ define([
 		// and use our own Router to navigate
 		dom.main.addEventListener('click', handleAnchors, false);
 
-		// First load
 		handleStateChange();
 
 		return this;

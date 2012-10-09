@@ -105,6 +105,12 @@ define([
 		return merge;
 	}
 
+
+	// empty and object to reuse
+	function empty(x) {
+		for (e in x) { x[e] = null; }
+	}
+
 /* export */
 
 	return {
@@ -113,7 +119,8 @@ define([
 		isEmpty		: isEmpty,
 		isEqual 	: isEqual,
 		difference 	: difference,
-		merge 		: merge
+		merge 		: merge,
+		empty 		: empty
 	};
 
 });

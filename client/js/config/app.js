@@ -23,7 +23,8 @@ define([], function AppConfigContext() {
 
 		API_PREFIX: 'http://api.lgi.com/alpha',
 
-		CONTROLLERS: ['dashboard','grid','nowandnext','search'/*,'not-found'*/],
+		// valid controllers
+		CONTROLLERS: ['settings','dashboard','grid','nowandnext','search'/*,'not-found'*/],
 
 		/* labels */
 
@@ -48,6 +49,8 @@ define([], function AppConfigContext() {
 		NAVIGATE: 'app:navigate',
 
 		MODEL_CHANGED: 'app:model_changed',
+
+		SELECTED_COUNTRY: 'app:selected_country',
 
 		GENRES_RECEIVED: 'app:genres_received',
 
@@ -81,20 +84,7 @@ define([], function AppConfigContext() {
 
 		VIEW_RENDERING: 'app:view_rendering',
 
-		VIEW_RENDERED: 'app:view_rendered',
-
-		/* DOM access */
-
-		// TODO: REMOVE THIS THINGS
-		_doc: document,
-
-		_win: window,
-
-		_body: document.body,
-
-		_main: document.getElementById('main'),
-
-		_content: document.getElementById('content')
+		VIEW_RENDERED: 'app:view_rendered'
 
 	};
 
