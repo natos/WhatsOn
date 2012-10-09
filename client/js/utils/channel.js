@@ -51,7 +51,6 @@ define([
 
 		for (i = 0; i < dataLength; i++) {
 			channel = data[i];
-			channel.channelId = channel.channel.id;
 			// save channel by id
 			byId[channel.id] = channel;
 			// logo easy access THANK YOU!
