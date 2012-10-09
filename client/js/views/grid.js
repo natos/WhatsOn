@@ -292,20 +292,24 @@ define([
 
 		// UI event handlers
 		// every time user scrolls, we want to load new events
-		a._win.addEventListener('resize', handleResizeAndScroll);
-		a._win.addEventListener('scroll', handleResizeAndScroll);
-		a._win.addEventListener('touchmove', handleResizeAndScroll);
+		window.addEventListener('resize', handleResizeAndScroll);
+				
+		window.addEventListener('scroll', handleResizeAndScroll);
+				
+		window.addEventListener('touchmove', handleResizeAndScroll);
 
 		// Update touch velocity
-		a._win.addEventListener('touchstart', updateTouchVelocity);
-		a._win.addEventListener('touchmove', updateTouchVelocity);
+		window.addEventListener('touchstart', updateTouchVelocity);
+				
+		window.addEventListener('touchmove', updateTouchVelocity);
 
 		// restoreHeaders
-		a._win.addEventListener('scroll', restoreHeaders);
-		a._win.addEventListener('touchstart', restoreHeaders);
+		window.addEventListener('scroll', restoreHeaders);
+		
+		window.addEventListener('touchstart', restoreHeaders);
 
 		// touch end
-		a._win.addEventListener('touchend', onTouchEnd);
+		window.addEventListener('touchend', onTouchEnd);
 
 		// The model recieves events
 		// we are listening to render new events
@@ -338,17 +342,21 @@ define([
 
 		removeStyles();
 
-		a._win.removeEventListener('resize', handleResizeAndScroll);
-		a._win.removeEventListener('scroll', handleResizeAndScroll);
-		a._win.removeEventListener('touchmove', handleResizeAndScroll);
-
-		a._win.removeEventListener('touchstart', updateTouchVelocity);
-		a._win.removeEventListener('touchmove', updateTouchVelocity);
-
-		a._win.removeEventListener('scroll', restoreHeaders);
-		a._win.removeEventListener('touchstart', restoreHeaders);
-
-		a._win.removeEventListener('touchend', onTouchEnd);
+		window.removeEventListener('resize', handleResizeAndScroll);
+		
+		window.removeEventListener('scroll', handleResizeAndScroll);
+				
+		window.removeEventListener('touchmove', handleResizeAndScroll);
+				
+		window.removeEventListener('touchstart', updateTouchVelocity);
+				
+		window.removeEventListener('touchmove', updateTouchVelocity);
+				
+		window.removeEventListener('scroll', restoreHeaders);
+				
+		window.removeEventListener('touchstart', restoreHeaders);
+				
+		window.removeEventListener('touchend', onTouchEnd);
 
 		Event.off(g.MODEL_CHANGED, modelChanged);
 

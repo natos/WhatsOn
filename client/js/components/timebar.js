@@ -32,10 +32,11 @@ define([
 	function centerViewPort() {
 
 		var left = convert.timeToPixels( (new Date()).valueOf() );
-			left = left - ( a._doc.body.clientWidth / 2 ) + g.CHANNEL_BAR_WIDTH;
+			left = left - ( dom.doc.body.clientWidth / 2 ) + g.CHANNEL_BAR_WIDTH;
 
 		// move the window left, but the same distance top
-		a._win.scroll(left, a._doc.body.scrollTop);
+		
+		window.scroll(left, dom.doc.body.scrollTop);
 
 		return this;
 

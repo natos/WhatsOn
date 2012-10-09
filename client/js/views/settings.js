@@ -39,7 +39,7 @@ define([
 
 	function handleSelection(event) {
 
-		var checks = Overlay.content.querySelectorAll('input:checked');
+		var checks = Overlay.content().querySelectorAll('input:checked');
 
 		if (checks.length > 0) {
 			Event.emit(a.SELECTED_COUNTRY, checks[0].value);
@@ -99,11 +99,11 @@ define([
 
 		if (AppModel[a.COUNTRIES_CACHE]) {
 
-			Overlay.content.appendChild(createLayout());
+			Overlay.content().appendChild(createLayout());
 
 			Overlay.show();
 
-			Overlay.content.addEventListener('change', handleChange);
+			Overlay.content().addEventListener('change', handleChange);
 
 			button.addEventListener('click', handleSelection);
 
@@ -119,7 +119,7 @@ define([
 
 	function finalize() {
 
-		Overlay.content.removeEventListener('change', handleChange);
+		Overlay.content().removeEventListener('change', handleChange);
 
 		button.removeEventListener('click', handleSelection);
 

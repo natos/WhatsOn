@@ -18,54 +18,63 @@ define([
 
 	var lang,
 	// UI elements
-		box 	= dom.element('div', { id: name }),
-		content = dom.element('div', { id: 'overlay-content' }),
-		close 	= dom.element('a', { id: 'overlay-close', href: '#overlay-close' });
-
-/* public */ 
+		_box,
+		_content,
+		_close;
 
 	function closeHandler(event) {
 		event.preventDefault();
 		hide();
 	}
 
+/* public */ 
+
+	function content() {
+		return _content;
+	}
+
 	function show(html) {
 		if (html) {
-			content.innerHTML = html || '<div class="loading"></div>';
+			_content.innerHTML = html || '<div class="loading"></div>';
 		}
-		box.className = 'active';
+		_box.className = 'active';
 	}
 
 	function hide() {
-		content.innerHTML = '';
-		box.className = '';
+		_content.innerHTML = '';
+		_box.className = '';
 	}
 
 	function initialize() {
 
+		console.log('init overlay');
 		lang = new Language(app.selectedLanguageCode);
 
-		var lbl, icon;
+		_box 	= dom.element('div', { id: name }),
+		_content = dom.element('div', { id: 'overlay-content' }),
+		_close 	= dom.element('a', { id: 'overlay-close', href: '#overlay-close' });
+
+		var _lbl, _icon;
 		// create the label
-		lbl = dom.element('b', { class: 'label' });
-		lbl.innerHTML = lang.translate('close');
+		_lbl = dom.element('b', { class: 'label' });
+		_lbl.innerHTML = lang.translate('close');
 		// create the icon
-		icon = dom.element('i', { class: 'icon-remove-sign' });
+		_icon = dom.element('i', { class: 'icon-remove-sign' });
 		// create close button
-		close.appendChild(icon);
-		close.appendChild(lbl);
+		_close.appendChild(_icon);
+		_close.appendChild(_lbl);
 		// create the layout
-		box.appendChild(content);
-		box.appendChild(close);
+		_box.appendChild(_content);
+		_box.appendChild(_close);
 
 		return this;
 	}
 
 	function render() {
 
-		close.addEventListener('click', closeHandler);
+		_close.addEventListener('click', closeHandler);
 
-		document.body.appendChild(box);
+		document.body.appendChild(_box);
 
 		return this;
 
@@ -73,15 +82,16 @@ define([
 
 	function finalize() {
 
-		close.removeEventListener('click', closeHandler);
 
-		while (box.firstChild) { box.removeChild(box.firstChild); }
+		_close.removeEventListener('click', closeHandler);
 
-		document.body.removeChild(box);
+		while (_box.firstChild) { _box.removeChild(_box.firstChild); }
 
-		box = null;
-		content = null;
-		close = null;
+		document.body.removeChild(_box);
+
+		_box = null;
+		_content = null;
+		_close = null;
 
 		return this;
 

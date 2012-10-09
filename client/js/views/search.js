@@ -312,10 +312,12 @@ define([
 	function initialize() {
 
 		lang = new Language(app.selectedLanguageCode);
-
-		a._win.addEventListener('click', filterHandler, false);
-		a._win.addEventListener('change', filterHandler, false);
-		a._win.addEventListener('submit', submitHandler);
+		
+		window.addEventListener('click', filterHandler, false);
+				
+		window.addEventListener('change', filterHandler, false);
+				
+		window.addEventListener('submit', submitHandler);
 
 		Event.on(searchConfig.MODEL_CHANGED, onSearchModelChanged);
 
@@ -336,10 +338,12 @@ define([
 	function finalize() {
 
 		hidePageStructure();
-
-		a._win.removeEventListener('click', filterHandler, false);
-		a._win.removeEventListener('change', filterHandler, false);
-		a._win.removeEventListener('submit', submitHandler, false);
+		
+		window.removeEventListener('click', filterHandler, false);
+				
+		window.removeEventListener('change', filterHandler, false);
+				
+		window.removeEventListener('submit', submitHandler, false);
 
 		Event.off(searchConfig.MODEL_CHANGED, onSearchModelChanged);
 
