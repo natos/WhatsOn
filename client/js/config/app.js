@@ -83,6 +83,10 @@ define([], function AppConfigContext() {
 
 		VIEW_RENDERED: 'app:view_rendered',
 
+		// Localization
+
+		selectedLanguageCode: 'nl',
+
 		/* DOM access */
 
 		// TODO: REMOVE THIS THINGS

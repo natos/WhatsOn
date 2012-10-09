@@ -15,7 +15,7 @@ define([
 ], function ChannelViewScope(a, View, Event, dom, Language) {
 
 	var name = 'menu';
-	var lang = new Language('nl'); // TODO: get correct language code
+	var lang = new Language(a.selectedLanguageCode);
 
 /* private */
 
@@ -37,22 +37,36 @@ define([
 	}
 
 	function localize() {
-		var settingsLabel = document.getElementById("menu-item-settings-label");
-		var settingsLabelText = lang.translate('nav-label-settings');
-		dom.empty(settingsLabel);
-		settingsLabel.appendChild(document.createTextNode(settingsLabelText));
-		settingsLabel.parentNode.title = settingsLabelText;
+		var translationsMap = [
+			{ids:['menu-label-home'], key:'home'},
+			{ids:['menu-label-search'], key:'search'},
+			{ids:['menu-label-tvguide'], key:'tvguide'},
+			{ids:['menu-label-nownext'], key:'nownext'},
+			{ids:['menu-label-settings','menu-label-user-settings'], key:'settings'},
+			{ids:['menu-label-login'], key:'login'},
+			{ids:['menu-label-user-logout'], key:'logout'}
+		];
 
-		settingsLabel = document.getElementById("menu-item-user-settings-label");
-		dom.empty(settingsLabel);
-		settingsLabel.appendChild(document.createTextNode(settingsLabelText));
-		settingsLabel.parentNode.title = settingsLabelText;
+		var translationsMapItem, i, j, ids, el, translationValue;
 
-		var searchLabel = document.getElementById("menu-item-search-label");
-		var searchLabelText = lang.translate('nav-label-search');
-		dom.empty(searchLabel);
-		searchLabel.appendChild(document.createTextNode(searchLabelText));
-		searchLabel.parentNode.title = searchLabelText;
+		i = translationsMap.length;
+		while (i--) {
+			translationsMapItem = translationsMap[i];
+			ids = translationsMapItem.ids;
+			translationValue = lang.translate(translationsMapItem['key']);
+
+			j = ids.length;
+			while (j--) {
+				el = document.getElementById(ids[j]);
+				if (el) {
+					dom.empty(el);
+					el.appendChild(document.createTextNode(translationValue));
+					if (el.parentNode) {
+						el.parentNode.title = translationValue;
+					}
+				}
+			}
+		}
 	}
 
 /* public */
