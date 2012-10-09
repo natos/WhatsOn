@@ -8,6 +8,7 @@
 
 define([
 
+	'modules/zepto',
 	'config/app',
 	'config/search',
 	'modules/event',
@@ -17,7 +18,7 @@ define([
 	'utils/dom',
 	'utils/convert'
 
-], function(a, searchConfig, Event, View, searchController, channelModel, dom, convert) {
+], function($, a, searchConfig, Event, View, searchController, channelModel, dom, convert) {
 
 	var name = 'search';
 	var now = new Date();

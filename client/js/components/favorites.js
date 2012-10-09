@@ -5,6 +5,7 @@
 
 define([
 
+	'modules/zepto',
 	'config/app',
 	'config/user',
 	'config/channel',
@@ -14,7 +15,7 @@ define([
 	'models/channel',
 	'utils/dom'
 
-], function(a, u, c, App, Event, UserModel, ChannelModel, dom) {
+], function($, a, u, c, App, Event, UserModel, ChannelModel, dom) {
 
 	var name = 'favorites',
 

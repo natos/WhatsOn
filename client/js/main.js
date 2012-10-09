@@ -1,7 +1,5 @@
 require.config({
-/* ... */
 });
-
 
 require([
 

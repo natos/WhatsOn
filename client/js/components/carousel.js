@@ -106,11 +106,9 @@ define([
 		if (rowing) {
 			timer.stop();
 			this.getElementsByTagName('i')[0].className = 'icon-play';
-			//$(this).find('.icon-pause').removeClass('icon-pause').addClass('icon-play');
 		} else {
 			timer.start();
 			this.getElementsByTagName('i')[0].className = 'icon-pause';
-			//$(this).find('.icon-play').removeClass('icon-play').addClass('icon-pause');
 		}
 		rowing = !rowing;
 	}

@@ -6,13 +6,14 @@
 
 define([
 
+	'modules/zepto',
 	'config/app',
 	'modules/app',
 	'modules/event',
 	'utils/dom',
 	'/js/lib/history/1.7.1-r2/bundled/html4+html5/native.history.js'
 
-], function RouterModuleScope(a, App, Event, dom) {
+], function RouterModuleScope($, a, App, Event, dom) {
 
 	var name = 'router',
 

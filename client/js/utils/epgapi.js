@@ -1,10 +1,11 @@
 define([
 
+	'modules/zepto',
 	'config/app',
 	'config/grid',
 	'modules/event'
 
-], function(a, g, Event) {
+], function($, a, g, Event) {
 
 	'use strict';
 

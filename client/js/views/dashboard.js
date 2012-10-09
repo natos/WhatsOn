@@ -6,12 +6,13 @@
 
 define([
 
+	'modules/zepto',
 	'modules/app',
 	'lib/flaco/view'//,
 	//'components/carousel',
 	//'components/favorites'
 
-], function DashboardView(App, View, Carousel, Favorites) {
+], function DashboardView($, App, View, Carousel, Favorites) {
 
 	var name = "dashboard";
 

@@ -6,13 +6,14 @@
 
 define([
 
+	'modules/zepto',
 	'config/channel',
 	'lib/flaco/controller',
 	'modules/event',
 	'models/channel',
 	'views/channel'
 
-], function ChannelControllerScope(channelConfig, Controller, Event, ChannelModel, ChannelView) {
+], function ChannelControllerScope($, channelConfig, Controller, Event, ChannelModel, ChannelView) {
 
 	var name = 'channel';
 
