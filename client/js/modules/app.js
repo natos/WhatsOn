@@ -109,6 +109,7 @@ define([
 	}
 	App.allowGrid = allowGrid;
 	App.can3DTransformPositionFixed = can3DTransformPositionFixed;
+	App.selectedLanguageCode = 'nl';
 
 	window.app = App;
 

@@ -2,6 +2,7 @@
 * EventModule 
 * -----------
 *
+* Singleton! This is the central event emitter for the whole app.
 */
 
 define([

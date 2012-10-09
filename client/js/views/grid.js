@@ -31,13 +31,17 @@ define([
 	'components/highlight',
 	'components/overlay',
 	'utils/convert',
-	'utils/dom'
+	'utils/dom',
+	'utils/language'
 
-], function GridViewScope(a, g, c, App, Event, ChannelModel, View, TimeBar, ChannelBar, Highlight, Overlay, convert, dom) {
+], function GridViewScope(a, g, c, App, Event, ChannelModel, View, TimeBar, ChannelBar, Highlight, Overlay, convert, dom, Language) {
 
 	var name = "grid",
 
 /* private */
+
+	// Translations
+	_lang,
 
 	// DOM reference
 	_container,
@@ -147,7 +151,7 @@ define([
 			render.push('<p>' + overlay.shortDescription + '</p>');
 
 			if (overlay.events.data.length > 0) {
-				render.push('<h3>Watch it again</h3>');
+				render.push('<h3>' + _lang.translate('watch-again') + '</h3>');
 				render.push('<ul>');
 			}
 
@@ -283,6 +287,8 @@ define([
 /* abstract */
 
 	function initialize() {
+
+		_lang = new Language(App.selectedLanguageCode);
 
 		// UI event handlers
 		// every time user scrolls, we want to load new events
