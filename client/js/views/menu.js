@@ -39,36 +39,25 @@ define([
 	}
 
 	function localize() {
+		var setParentNodeTitle = function(el, translationValue) {
+			if (el.parentNode) {
+				el.parentNode.title = translationValue;
+			}
+		};
+
 		var translationsMap = [
-			{ids:['menu-label-home'], key:'home'},
-			{ids:['menu-label-search'], key:'search'},
-			{ids:['menu-label-tvguide'], key:'tvguide'},
-			{ids:['menu-label-nownext'], key:'nownext'},
-			{ids:['menu-label-settings','menu-label-user-settings'], key:'settings'},
-			{ids:['menu-label-login'], key:'login'},
-			{ids:['menu-label-user-logout'], key:'logout'}
+			{ids:['menu-label-home'], key:'home', action: setParentNodeTitle},
+			{ids:['menu-label-search'], key:'search', action: setParentNodeTitle},
+			{ids:['menu-label-tvguide'], key:'tvguide', action: setParentNodeTitle},
+			{ids:['menu-label-nownext'], key:'nownext', action: setParentNodeTitle},
+			{ids:['menu-label-settings','menu-label-user-settings'], key:'settings', action: setParentNodeTitle},
+			{ids:['menu-label-login'], key:'login', action: setParentNodeTitle},
+			{ids:['menu-label-user-logout'], key:'logout', action: setParentNodeTitle},
+			{ids:['menu-label-menu'], key:'menu', action: setParentNodeTitle},
+			{ids:['upc-logo', 'pageTitle'], key:'appname'}
 		];
 
-		var translationsMapItem, i, j, ids, el, translationValue;
-
-		i = translationsMap.length;
-		while (i--) {
-			translationsMapItem = translationsMap[i];
-			ids = translationsMapItem.ids;
-			translationValue = lang.translate(translationsMapItem['key']);
-
-			j = ids.length;
-			while (j--) {
-				el = document.getElementById(ids[j]);
-				if (el) {
-					dom.empty(el);
-					el.appendChild(document.createTextNode(translationValue));
-					if (el.parentNode) {
-						el.parentNode.title = translationValue;
-					}
-				}
-			}
-		}
+		lang.setTextForNamedElements(translationsMap);
 	}
 
 /* public */

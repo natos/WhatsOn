@@ -10,6 +10,7 @@ define([], function LanguageConfigContext() {
 
 	var translations = {
 		"en" : {
+			"appname" : "UPC Social",
 			"home" : "Home",
 			"search" : "Search",
 			"tvguide" : "TV Guide",
@@ -17,6 +18,7 @@ define([], function LanguageConfigContext() {
 			"settings" : "Settings",
 			"login" : "Log in",
 			"logout" : "Log out",
+			"menu" : "Menu",
 			"close" : "Close",
 			"watch-again" : "Watch it again",
 			"nothing-found" : "No results found",
@@ -32,6 +34,7 @@ define([], function LanguageConfigContext() {
 			"day-7" : "Sunday"
 		},
 		"nl" : {
+			"appname" : "UPC Sociaal",
 			"home" : "Thuis",
 			"search" : "Zoeken",
 			"tvguide" : "TV Gids",
@@ -39,6 +42,7 @@ define([], function LanguageConfigContext() {
 			"settings" : "Instellingen",
 			"login" : "Inloggen",
 			"logout" : "Uitloggen",
+			"menu" : "Menu",
 			"close" : "Sluiten",
 			"watch-again" : "Opnieuw kijken",
 			"nothing-found" : "Niets gevonden",

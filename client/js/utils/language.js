@@ -14,9 +14,10 @@
 
 define([
 
-	'config/language'
+	'config/language',
+	'utils/dom'
 
-], function LanguageScope(allTranslations) {
+], function LanguageScope(allTranslations, dom) {
 
 
 	function LanguageConstructor(languageCode) {
@@ -27,8 +28,48 @@ define([
 			return translations[key] || key;
 		};
 
+		/**
+		* Set the text values for a list of named elements.
+		* The translationsMap parameter is an array of objects:
+		* [
+		*   {ids:['id1', 'id2', ...], key: 'translationKey', action: function(el, translationValue){} },
+		*   ...
+		* ]
+		*
+		* Each object in the array is structured as follows:
+		*   ids: an array of element IDs, whose text should be set to the translation
+		* 	key: the translation key for the text
+		*   action (optional): a function to be run after the element's text has been set
+		*/
+		var setTextForNamedElements = function(translationsMap) {
+
+			var translationsMapItem, i, j, ids, el, translationValue, action;
+
+			i = translationsMap.length;
+			while (i--) {
+				translationsMapItem = translationsMap[i];
+				ids = translationsMapItem.ids;
+				translationValue = this.translate(translationsMapItem['key']);
+				action = translationsMapItem['action'];
+
+				j = ids.length;
+				while (j--) {
+					el = document.getElementById(ids[j]);
+					if (el) {
+						dom.empty(el);
+						el.appendChild(document.createTextNode(translationValue));
+						if (action && typeof(action)=='function') {
+							action.call(this, el, translationValue);
+						}
+					}
+				}
+			}
+
+		};
+
 		return {
-			translate : translate
+			translate : translate,
+			setTextForNamedElements : setTextForNamedElements
 		};
 	}
 
