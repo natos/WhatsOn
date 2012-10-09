@@ -6,16 +6,20 @@
 
 define([
 
-	'utils/dom'
+	'modules/app',
+	'utils/dom',
+	'utils/language'
 
-], function OverlayComponentScope(dom) {
+], function OverlayComponentScope(app, dom, Language) {
 
-	var name = 'overlay',
+	var name = 'overlay';
 
 /* private */
 
+	var lang;
+
 	// UI elements
-		box,
+	var box,
 		content,
 		close;
 
@@ -38,11 +42,13 @@ define([
 
 	function initialize() {
 
+		lang = new Language(app.selectedLanguageCode);
+
 		var lbl, icon;
 		// create the label
 		lbl = dom.create('b');
 		lbl.className = 'label';
-		lbl.innerHTML = 'close';
+		lbl.innerHTML = lang.translate('close');
 		// create the icon
 		icon = dom.create('i');
 		icon.className = 'icon-remove-sign';

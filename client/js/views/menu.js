@@ -8,16 +8,18 @@ define([
 	
 	'config/app',
 	'lib/flaco/view',
+	'modules/app',
 	'modules/event',
 	'utils/dom',
 	'utils/language'
 
-], function ChannelViewScope(a, View, Event, dom, Language) {
+], function ChannelViewScope(a, View, app, Event, dom, Language) {
 
 	var name = 'menu';
-	var lang = new Language(a.selectedLanguageCode);
 
 /* private */
+
+	var lang;
 
 	var _menu = dom.doc.getElementsByTagName('nav')[0];
 
@@ -72,6 +74,8 @@ define([
 /* public */
 
 	function initialize(State) {
+
+		lang = new Language(app.selectedLanguageCode);
 
 		// Listen for action
 		Event.on(a.ACTION, handleActions);
