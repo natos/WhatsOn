@@ -7,8 +7,8 @@
 define([
 
 	'modules/app',
-	'lib/flaco/view'//,
-	//'components/carousel',
+	'lib/flaco/view',
+	'components/carousel',
 	//'components/favorites'
 
 ], function DashboardView(App, View, Carousel, Favorites) {
@@ -62,8 +62,8 @@ define([
 		finalize: finalize,
 		initialize: initialize,
 		components: {
-			//carousel: Carousel,
-			//favorites: Favorites
+	//		carousel: Carousel,
+	//		favorites: Favorites
 		}
 	});
 
