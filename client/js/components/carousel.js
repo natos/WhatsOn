@@ -141,15 +141,21 @@ define([
 		window.addEventListener('resize', sizeHandler);
 		window.addEventListener('orientationchange', sizeHandler);
 
+		$.getJSON('http://platform.tvbuzz.nl/api/ie/buzz/now?l=0,10&callback=?', function(response){
+				console.log(response);
+		});
+
 		return this;
 	}
 
 	function render() {
 
-		_carousel = document.getElementById('featured');
-		_carousel.className = 'carousel';
-		_list = _carousel.getElementsByTagName('ul')[0]; // the UL comes with the template... 
-		_list.className = 'show slide';
+
+
+		_carousel = dom.element('div', { id: 'featured', class: 'carousel'} );
+		_list = dom.element('ul', { class: 'show slide' });
+
+		_carousel.appendChild(_list);
 
 		// reset position
 		slide(_list).to(0);
@@ -161,9 +167,9 @@ define([
 
 		var dataset, i = 0, img, disc,
 			programme, programmes = _carousel.getElementsByTagName('li'),
-			_pauseIcon = dom.create('i'),
-			_disc = dom.create('i');
-			_navigator = dom.create('div');
+			_pauseIcon = dom.element('i', { class: 'icon-pause' }),
+			_disc = dom.element('i', { class: DISC_CLASS });
+			_navigator = dom.element('div', { id: 'carouselNavigator', class: 'navigator' });
 
 		// have no programmes?
 		if (programmes.length <= 0) {
@@ -173,19 +179,13 @@ define([
 			return;
 		}
 
-		_navigator.id = 'carouselNavigator';
-		_navigator.className = 'navigator';
-		_playpause = dom.create('div');
-		_playpause.id = 'playpause';
+		_playpause = dom.element('div', { id: 'playpause' });
 		_playpause.appendChild(_pauseIcon);
 		_playpause.addEventListener('click', playpauseHandler);
-		_pauseIcon.className = 'icon-pause';
-		_disc.className = DISC_CLASS;
 
 		for (i; i < programmes.length; i++) {
 			programme = programmes[i];
 			// position the list element
-			//programme.style[transform] = property + '(' + (100*i) + ((opera) ? '%)' : '%, 0, 0)');
 			slide(programme).to(i); // nice eh?
 			// deal with background images
 			img = programme.getElementsByTagName('img')[0];
@@ -193,7 +193,7 @@ define([
 			if (dataset.src) { img.src = dataset.src; }
 			// create a disc and addit to navigator
 			disc = _disc.cloneNode(true);
-			disc.setAttribute('data-index',i);
+			disc.setAttribute('data-index', i);
 			_navigator.appendChild(disc);
 		}
 
