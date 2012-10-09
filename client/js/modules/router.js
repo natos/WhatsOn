@@ -31,15 +31,15 @@ define([
 
 		shift = Array.prototype.shift;
 
-
+	// We may need to redirect
+	// after the app is ready
 	Event.on(a.READY, function() {
-		// we are ready... :P
 		if (REDIRECT) { 
-			navigate(REDIRECT) 
-		} else {
-			navigate({}, 'dashboard', '/dashboard');
+			// navigate
+			redirect(REDIRECT);
+			// forget the current redirect
+			REDIRECT = false;
 		}
-
 	});
 
 	/**
@@ -47,10 +47,11 @@ define([
 	*/
 	function handleStateChange() {
 
+		var SELECTED_COUNTRY = AppModel[a.SELECTED_COUNTRY],
 		// Creates the State Object
-		var State = History.getState(); // Note: We are using History.getState() instead of event.state
+			State = History.getState(), // Note: We are using History.getState() instead of event.state
+			path = History.getShortUrl(State.url);
 
-		var path = History.getShortUrl(State.url);
 		// Remove the initial '/' from the path
 		if (path.slice(0,1)==='/') {
 			path = path.slice(1);
@@ -68,28 +69,46 @@ define([
 		State.parts = path.split(/[\/\?\&=\#]/gi);
 
 		// The controller to be loaded is the first element in the parts array
-		State.controller = (State.parts) ? shift.apply(State.parts) : ''
-
-		// We may need to select the country first...
-
-		// Open settings when there is no country selected
-		// and the selected controller is not Settings
-		if (State.controller !== 'settings' && !AppModel[a.SELECTED_COUNTRY]) {
-			REDIRECT = State;
-			navigate({}, 'settings', '/settings');
-			return;
-		} 
+		State.controller = (State.parts) ? shift.apply(State.parts) : '';
 
 		// When controller is empty
-		// redirect to Dashboard
 		if (State.controller === "") {
-			navigate({}, 'dashboard', '/dashboard');
+			// just redirect to dashboard
+			redirect('dashboard');
+			// stop here
 			return;
 		}
-		
-		// Let's navigate
-		Event.emit(a.NAVIGATE, State);
 
+		// We may need to select the country first...
+		// Open settings when there is no country selected
+		// and the selected controller is not Settings
+		if (!SELECTED_COUNTRY) {
+
+			// If the selected controller is setings
+			if (State.controller === 'settings') {
+				// after choosing a country
+				// go back to the dashboard
+				REDIRECT = 'dashboard';
+				// let the canvas know
+				Event.emit(a.NAVIGATE, State);
+				// stop here
+				return;
+
+			} else {
+				// save the current controller
+				// to redirect later
+				REDIRECT = State.controller;
+			}
+
+			// redirect to settings
+			redirect('settings');
+			// stop here
+			return;
+
+		}
+
+		// Normal flow
+		Event.emit(a.NAVIGATE, State);
 	}
 
 	/**
@@ -109,15 +128,16 @@ define([
 	*	and use our own Router to navigate
 	*/
 	function handleAnchors(event) {
+		
 		// save the click target
-		var element = anchor = event.target;
-		var dataset;
+		var element = anchor = event.target,
 
 		// Find actions on clicked elements, this
 		// actions are declared on the data-action
 		// attribute, its value defines the action
 		// to be trigger.
-		dataset = dom.getDataset(element);
+			dataset = dom.getDataset(element);
+
 		while (!dataset.action) {
 			// break if the #main is reached
 			if (element === this) { break; }
@@ -198,6 +218,11 @@ define([
 
 		dom.main.removeEventListener('click', handleAnchors, false);
 
+		return this;
+	}
+
+	function redirect(name) {
+		navigate({}, name, '/' + name);
 		return this;
 	}
 

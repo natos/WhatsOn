@@ -22,14 +22,14 @@ define([
 
 /* private */
 
+	selectedCountry,
+
 	template = dom.element('fragment'),
 
 	button = dom.element('input', { type: 'submit', value: 'Continue', disabled:'disabled' });
 
-
 	/* Handle data changes */
 	Event.on(a.MODEL_CHANGED, function(changes) {
-
 		// Once we got countries information
 		if (changes[a.COUNTRIES_CACHE]) {
 			render();
@@ -55,7 +55,7 @@ define([
 
 	function createLayout() {
 
-		var i, t, countries, country, title, subtitle, list, li, label;
+		var i, t, countries, country, title, subtitle, list, li, label, selected;
 
 		title = dom.element('h1');
 		title.innerHTML = "Settings";
@@ -73,8 +73,15 @@ define([
 
 		for (i = 0, t = countries.length; i < t; i++) {
 			country = countries[i].name;
+			selected = country === selectedCountry;
+			inputAttr = {
+				type: 'radio', 
+				name: 'country-selector', 
+				value: country
+			}
+			if (country === selectedCountry) { inputAttr.checked = 'checked'; }
 			label = dom.element('label');
-			label.appendChild(dom.element('input', { type: 'radio', name: 'country-selector', value: country }));
+			label.appendChild(dom.element('input', inputAttr));
 			label.appendChild(dom.doc.createTextNode(country));
 			li = dom.element('li');
 			li.appendChild(label);
@@ -90,6 +97,8 @@ define([
 /* public */
 
 	function initialize() {
+
+		selectedCountry = AppModel[a.SELECTED_COUNTRY];
 
 		return this;
 

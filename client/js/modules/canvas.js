@@ -97,7 +97,7 @@ define([
 			return;
 		}
 		// finalize controller
-//		console.log(' ------------------ FINALIZE CONTROLLER: ' + controller.name + ' --------------------');
+		console.log(' ------------------ FINALIZE CONTROLLER: ' + controller.name + ' --------------------');
 		controller[FINALIZE]();
 	}
 
@@ -150,19 +150,19 @@ define([
 		Event.on(a.VIEW_RENDERED, transition.end);
 		// DEBUGGING Handlers
 		/* View live cycle
-		*/
 		Event.on(a.VIEW_INITIALIZING, function(view) { console.log('<CANVAS>', view.name, 'VIEW_INITIALIZING'); });
 		Event.on(a.VIEW_INITIALIZED, function(view) { console.log('<CANVAS>', view.name, 'VIEW_INITIALIZED'); });
 		Event.on(a.VIEW_RENDERING, function(view) { console.log('<CANVAS>', view.name, 'VIEW_RENDERING'); });
 		Event.on(a.VIEW_RENDERED, function(view) { console.log('<CANVAS>', view.name, 'VIEW_RENDERED'); });
 		Event.on(a.VIEW_FINALIZING, function(view) { console.log('<CANVAS>', view.name, 'VIEW_FINALIZING'); });
 		Event.on(a.VIEW_FINALIZED, function(view) { console.log('<CANVAS>', view.name, 'VIEW_FINALIZED'); });
-		/* Controller live cycle
 		*/
+		/* Controller live cycle
 		Event.on(a.CONTROLLER_INITIALIZING, function(view) { console.log('<CANVAS>', view.name, 'CONTROLLER_INITIALIZATING'); });
 		Event.on(a.CONTROLLER_INITIALIZED, function(view) { console.log('<CANVAS>', view.name, 'CONTROLLER_INITIALIZATED'); });
 		Event.on(a.CONTROLLER_FINALIZING, function(view) { console.log('<CANVAS>', view.name, 'CONTROLLER_FINALIZATING'); });
 		Event.on(a.CONTROLLER_FINALIZED, function(view) { console.log('<CANVAS>', view.name, 'CONTROLLER_FINALIZED'); });
+		*/
 
 		if (!App.can3DTransformPositionFixed()) {
 			document.documentElement.className += ' css-no-3d-transform-position-fixed';
