@@ -108,6 +108,8 @@ define([
 
 		if (AppModel[a.COUNTRIES_CACHE]) {
 
+			dom.empty(Overlay.content());
+
 			Overlay.content().appendChild(createLayout());
 
 			Overlay.show();
