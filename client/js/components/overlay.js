@@ -7,10 +7,11 @@
 define([
 
 	'modules/app',
+	'modules/router',
 	'utils/dom',
 	'utils/language'
 
-], function OverlayComponentScope(app, dom, Language) {
+], function OverlayComponentScope(App, Router, dom, Language) {
 
 	var name = 'overlay';
 
@@ -24,7 +25,10 @@ define([
 
 	function closeHandler(event) {
 		event.preventDefault();
-		hide();
+//		hide();
+		// use the history to go back
+		// instead of removing overlay view
+		Router.back();
 	}
 
 /* public */ 
@@ -48,7 +52,7 @@ define([
 	function initialize() {
 
 		console.log('init overlay');
-		lang = new Language(app.selectedLanguageCode);
+		lang = new Language(App.selectedLanguageCode);
 
 		_box 	= dom.element('div', { id: name }),
 		_content = dom.element('div', { id: 'overlay-content' }),

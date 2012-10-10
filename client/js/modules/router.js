@@ -1,7 +1,8 @@
 /*
 * RouterModule
 * ------
-* Using HTML5 pushState API with a little help of History.js (http://balupton.github.com/history.js/demo/)
+* Using HTML5 pushState API with a little help of History.js: 
+* http://balupton.github.com/history.js/demo/
 */
 
 define([
@@ -19,37 +20,28 @@ define([
 
 /* private */
 
-		REDIRECT = false,
-
 	// consts
 
 		STATECHANGE = 'statechange',
 
 	// shorcuts
 
+		// Localize global History Object
 		History = window.History,
 
-		shift = Array.prototype.shift;
+		shift = Array.prototype.shift,
 
-	// We may need to redirect
-	// after the app is ready
-	Event.on(a.READY, function() {
-		if (REDIRECT) { 
-			// navigate
-			redirect(REDIRECT);
-			// forget the current redirect
-			REDIRECT = false;
-		}
-	});
+	// country selection
+
+		SELECTED_COUNTRY;
 
 	/**
 	*	Handle State Changes
 	*/
 	function handleStateChange() {
 
-		var SELECTED_COUNTRY = AppModel[a.SELECTED_COUNTRY],
 		// Creates the State Object
-			State = History.getState(), // Note: We are using History.getState() instead of event.state
+		var State = History.getState(), // Note: We are using History.getState() instead of event.state
 			path = History.getShortUrl(State.url);
 
 		// Remove the initial '/' from the path
@@ -78,35 +70,7 @@ define([
 			// stop here
 			return;
 		}
-
-		// We may need to select the country first...
-		// Open settings when there is no country selected
-		// and the selected controller is not Settings
-		if (!SELECTED_COUNTRY) {
-
-			// If the selected controller is setings
-			if (State.controller === 'settings') {
-				// after choosing a country
-				// go back to the dashboard
-				REDIRECT = 'dashboard';
-				// let the canvas know
-				Event.emit(a.NAVIGATE, State);
-				// stop here
-				return;
-
-			} else {
-				// save the current controller
-				// to redirect later
-				REDIRECT = State.controller;
-			}
-
-			// redirect to settings
-			redirect('settings');
-			// stop here
-			return;
-
-		}
-
+		
 		// Normal flow
 		Event.emit(a.NAVIGATE, State);
 	}
@@ -196,8 +160,10 @@ define([
 /* public */
 
 	function initialize() {
+
 		// Bind to StateChange Event
 		History.Adapter.bind(window, STATECHANGE, handleStateChange);
+
 		// Active links
 		Event.on(a.VIEW_INITIALIZING, activeAnchors);
 		// Listen to every click on #main,
@@ -242,7 +208,9 @@ define([
 	return {
 		name		: name,
 		initialize	: initialize,
-		navigate	: navigate
+		navigate	: navigate,
+		back		: History.back,
+		go 			: History.go
 	};
 
 });
