@@ -97,7 +97,7 @@ define([
 			return;
 		}
 		// finalize controller
-		console.log(' ------------------ FINALIZE CONTROLLER: ' + controller.name + ' --------------------');
+		//console.log(' ------------------ FINALIZE CONTROLLER: ' + controller.name + ' --------------------');
 		controller[FINALIZE]();
 	}
 
@@ -121,12 +121,19 @@ define([
 			return;
 		}
 
+		// is a valid controller?
 		if (a.CONTROLLERS.indexOf(State.controller)>=0) {
+			// unload current state
 			if (CURRENT_STATE) { unloadController(CURRENT_STATE); }
+			// load new state
 			loadController(State);
+			// close menu
+			// TODO: Port this to the menu component,
+			// and self-close it by listening events
 			Menu.close();
 		} else {
 			// NOT FOUND! 404 thingy here
+			// TODO: Not found page
 			console.log('404! not found!');
 		}
 
