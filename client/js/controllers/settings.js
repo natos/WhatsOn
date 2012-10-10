@@ -13,30 +13,25 @@ define([
 	'models/app',
 	'modules/app',
 	'modules/event',
+	'views/settings',
 	'lib/flaco/controller',
-	'views/settings'
+	'lib/cookie/cookie'
 
-], function SettingsController(a, AppModel, App, Event, Controller, SettingsView) {
+], function SettingsController(a, AppModel, App, Event, SettingsView, Controller, cookie) {
 
 	var name = 'settings';
 
 /* private */
 
 	/* Handle data changes */
-	Event.on(a.MODEL_CHANGED, function(changes) {
-
-		// Once we got countries information
-		if (changes[a.COUNTRIES_CACHE]) {
-
-		}
-
-	});
-
+	
 	Event.on(a.SELECTED_COUNTRY, function(country) {
-		
-		// set the selected country on the AppModel
-		AppModel.set(a.SELECTED_COUNTRY, country)
-
+		// set the selected country
+		// on the AppModel
+		AppModel.set(a.SELECTED_COUNTRY, country);
+		// save selection on a cookie
+		// for future reference
+		cookie.set(a.SELECTED_COUNTRY, country);
 	});
 
 
