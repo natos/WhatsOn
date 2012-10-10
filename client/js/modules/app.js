@@ -12,32 +12,29 @@ define([
 	'config/channel',
 	'modules/event',
 	'modules/schedule',
-	'utils/channel',
 	'models/app',
 	'models/channel',
 	'models/grid',
 	'models/user'
 
-], function AppModuleScope(a, c, Event, Schedule, ChannelUtils, AppModel, ChannelModel, GridModel, UserModel) {
+], function AppModuleScope(a, c, Event, Schedule, AppModel, ChannelModel, GridModel, UserModel) {
 
 /* private */
 	
 	var shift = Array.prototype.shift,
 
-	// Global namespace
+		// Global namespace
 		App = {};
 
 	// whenever your ready
 	Event.on(a.READY, function() {
 		// we are ready... :P
-		console.log('App ready!!!')
+		console.log('App ready!!!','Loading modules');
+		loadModules();
 	});
 
-	function initializeModules() {
-		while (module = shift.apply(arguments)) { 
-			App.modules[module.name] = module.initialize(); 
-		}
-	}
+	// initialize modules
+	function initializer() { while (module = shift.apply(arguments)) { App.modules[module.name] = module.initialize(); } }
 
 /* public */
 
@@ -48,9 +45,7 @@ define([
 
 	function initialize() {
 
-		// Load the primary modules for the app.
-		// Each module must have an "initialize" method that returns the module instance.
-		require(['modules/schedule', 'modules/canvas', 'modules/router'], initializeModules);
+		require(['modules/schedule'], initializer);
 
 		return App;
 	
@@ -59,7 +54,7 @@ define([
 	function loadModules() {		
 		// Load the primary modules for the app.
 		// Each module must have an "initialize" method that returns the module instance.
-		//require(['modules/user', 'modules/canvas', 'modules/router'], initializeModules);
+		require(['modules/canvas', 'modules/router'], initializer);
 
 		return App;
 	}
@@ -107,7 +102,7 @@ define([
 		grid 	: GridModel,
 		user	: UserModel
 	}
-	App.allowGrid = allowGrid;
+	App.allowGrid = allowGrid();
 	App.can3DTransformPositionFixed = can3DTransformPositionFixed;
 	App.selectedLanguageCode = 'nl';
 
