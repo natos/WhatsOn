@@ -8,34 +8,41 @@
 define([
 
 	'config/app',
+	'config/channel',
 	'models/app',
+	'models/channel',
 	'modules/event',
 	'modules/router',
 	'utils/epgapi',
-	'utils/common'
+	'utils/common',
+	'lib/cookie/cookie'
 
-], function ScheduleModuleScope(a, AppModel, Event, Router, EpgApi, common) {
+], function ScheduleModuleScope(a, c, AppModel, ChannelModel, Event, Router, EpgApi, common, cookie) {
 
 	var name = 'schedule',
 
 /* private */
-
+		
 		cache = {},
 
 		// hardcode value for country
-		// TODO: check if there's a cookie
-		COUNTRY = 'Nederland',
-
-		// hardcode value for schedule
-		// TODO: remove this thing, use
-		// always the first schedule
-		SCHEDULE = 'upc.nl';
+		COUNTRY = cookie.get(a.SELECTED_COUNTRY) || a.DEFAULT_COUNTRY;
 
 	/* Handle data comming from the API */
 
 	Event.on(a.COUTRIES_RECEIVED, function(response) { 
 
 		processResponse(response, a.COUNTRIES_CACHE);
+
+		// Check if theres a cookie
+		// with country selection
+		if (COUNTRY) {
+			AppModel.set(a.SELECTED_COUNTRY, COUNTRY);
+		} else {
+			console.log('no country?')
+		}
+
+		console.log('Selecting', COUNTRY ,'country');
 
 	});
 
@@ -93,11 +100,30 @@ define([
 			getCategoriesAndGenres();
 		}
 
-		if (AppModel[a.LINEUP_CACHE] && AppModel[a.CATEGORIES_CACHE] && AppModel[a.GENRES_CACHE]) {
+		if (changes[a.LINEUP_CACHE]) {
+			processLineup(changes[a.LINEUP_CACHE]);
+		}
+
+		if (AppModel[a.CATEGORIES_CACHE] && AppModel[a.GENRES_CACHE]) {
+			ready(); //?
+		}
+	});
+
+	Event.on(c.MODEL_CHANGED, function(changes) {
+
+		if (changes[c.SELECTED_GROUP]) {
+			ready(); //?
+		}	
+
+	});
+
+
+	function ready() {
+		if (ChannelModel[c.SELECTED_GROUP] && AppModel[a.CATEGORIES_CACHE] && AppModel[a.GENRES_CACHE]) {
 			// Ready to Rock!
 			Event.emit(a.READY);
 		}
-	});
+	}
 
 	/* Processing functions */
 
@@ -196,6 +222,61 @@ define([
 
 			}
 		}
+	}
+
+	/**
+	* Process the channel collection, creates a 'groups' collection order by group id
+	* to lighting-fast query channels information.
+	*/
+
+	function processLineup(lineup) {
+
+		var data = lineup.data, groups = {}, byId = {}, group, channel, domain, i, domainIterator, groupIterator, dataLength = data.length;
+			// All Zenders collection
+			groups['000'] = [];
+			// Favorite channels collection
+			groups['001'] = [];
+
+		for (i = 0; i < dataLength; i++) {
+			channel = data[i];
+			// save channel by id
+			byId[channel.id] = channel;
+			// logo easy access THANK YOU!
+			byId[channel.id].logo = channel.logoLink.href;
+			// save channels on All Zenders collection
+			groups['000'].push(channel);
+			// a little cleanning
+			delete channel.logoLink;
+			delete channel.logicalPosition;
+			delete channel.channel;
+			
+			/*
+			// iterate domains
+			domainIterator = channel.domains.length;
+			while(domainIterator--) {
+				domain = channel.domains[domainIterator];
+				// domain cleanning
+				groupIterator = domain.groups.length;
+				while(groupIterator--) {
+					group = domain.groups[groupIterator];
+					if (!groups[group]) { groups[group] = []; }
+					groups[group].push(channel);
+				}
+			}*/
+		}
+
+		// TODO: sort channels 
+
+		// Save byId map
+		ChannelModel.set(c.BY_ID, byId);
+		// Save groups map
+		ChannelModel.set(c.GROUPS, groups);
+		// Set default selected group
+		// ATTENTION: Read user preferences here
+		ChannelModel.set(c.SELECTED_GROUP, c.DEFAULT_GROUP);
+
+		// return raw data
+		return data;
 	}
 
 /* public */

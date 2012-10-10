@@ -19,14 +19,17 @@ define([], function AppConfigContext() {
 
 		NAMESPACE: 'upsocial',
 
-		ROOT_URL: 'http://upcsocial.herokuapp.com/',
-
 		API_PREFIX: 'http://api.lgi.com/alpha',
+		
+		//API_PREFIX: 'http://62.179.107.149/cgi-bin/WebObjects/ScheduleAPI-trunk-ivy.woa/1/q',
 
-		// valid controllers
 		CONTROLLERS: ['settings','dashboard','grid','nowandnext','search'/*,'not-found'*/],
 
-		/* labels */
+		DEFAULT_COUNTRY: 'Ireland',
+
+		DEFAULT_LANGUAJE: 'en',
+
+		/* collection labels */
 
 		SCHEDULES_CACHE: 'schedules_cache',
 
@@ -38,7 +41,7 @@ define([], function AppConfigContext() {
 
 		LINEUP_CACHE: 'lineup_cache',
 
-		/* events */
+		/* events names */
 
 		READY: 'app:ready',
 
