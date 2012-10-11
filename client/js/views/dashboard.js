@@ -62,7 +62,7 @@ define([
 		finalize: finalize,
 		initialize: initialize,
 		components: {
-	//		carousel: Carousel,
+			carousel: Carousel
 	//		favorites: Favorites
 		}
 	});

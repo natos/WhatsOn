@@ -27,11 +27,8 @@ define([
 		App = {};
 
 	// whenever your ready
-	Event.on(a.READY, function() {
-		// we are ready... :P
-		console.log('App ready!!!','Loading modules');
-		loadModules();
-	});
+	// start modules
+	Event.on(a.READY, loadModules);
 
 	// initialize modules
 	function initializer() { while (module = shift.apply(arguments)) { App.modules[module.name] = module.initialize(); } }
