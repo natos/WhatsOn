@@ -7,7 +7,7 @@
 
 define([
 
-	'/js/lib/event/event.js'
+	'lib/event/event'
 
 ], function EventModuleScope(EventEmitter) {
 

@@ -24,8 +24,9 @@ module.exports = function(grunt) {
         'client/js/views/**/*.js',
         'client/js/*.js'
       ],
-      grunt: [
-        'grunt.js'
+      config: [
+        'grunt.js',
+        'package.json'
       ]
     },
     concat: {
@@ -34,22 +35,12 @@ module.exports = function(grunt) {
         dest: 'release/<%= meta.dt %>/assets/css/all.css'
       }
     },
-    min: {
-      dist: {
-        src: ['<banner:meta.banner>', '<config:concat.dist.dest>'],
-        dest: 'dist/<%= pkg.name %>.min.js'
-      }
-    },
     mincss: {
       compress: {
         files: {
           'release/<%= meta.dt %>/assets/css/all.min.css': ['release/<%= meta.dt %>/assets/css/all.css']
         }
       }
-    },
-    watch: {
-      files: '<config:lint.files>',
-      tasks: 'lint qunit'
     },
     jshint: {
       options: {
@@ -63,11 +54,14 @@ module.exports = function(grunt) {
         undef: true,
         boss: true,
         eqnull: true,
-        browser: true
+        browser: true,
+        smarttabs: true
       },
-      globals: {}
+      globals: {
+        define: true,
+        require: true
+      }
     },
-    uglify: {},
     copy: {
       release: {
         files: {
@@ -76,16 +70,54 @@ module.exports = function(grunt) {
           "release/<%= meta.dt %>/index.html" : "client/index.html"
         }
       }
+    },
+    requirejs: {
+      compile: {
+        options: {
+          baseUrl: "client/js/",
+          dir: "release/<%= meta.dt %>/js/",
+          modules: [
+              {
+                  name: "main",
+                  // Parts of the app are dynamically loaded, and
+                  // are not automatically included by the r.js optimizer.
+                  // Specify these modules explicitly, so that they are
+                  // included in the generated build file (main.js).
+                  include: [
+                      // Core modules
+                      "modules/user",
+                      "modules/canvas",
+                      "modules/router",
+                      // Flaco MVC library
+                      "lib/flaco/model",
+                      "lib/flaco/controller",
+                      "lib/flaco/view",
+                      // Application m/v/c files
+                      "models/channel",
+                      "models/nowandnext",
+                      "models/search",
+                      "models/grid",
+                      "controllers/nowandnext",
+                      "controllers/search",
+                      "controllers/grid",
+                      "views/nowandnext",
+                      "views/search",
+                      "views/grid"
+                  ]
+              }
+          ]
+        }
+      }
     }
   });
 
   // Default task.
-  grunt.registerTask('default', 'lint concat min');
+  grunt.registerTask('default', 'lint:config');
 
   // Load tasks from grunt-contrib
   grunt.loadNpmTasks('grunt-contrib');
 
   // Release task
-  grunt.registerTask('release', 'lint:grunt concat:css mincss:compress copy:release');
+  grunt.registerTask('release', 'lint:config concat:css mincss:compress copy:release requirejs');
 
 };
