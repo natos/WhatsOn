@@ -67,7 +67,8 @@ module.exports = function(grunt) {
         files: {
           "release/<%= meta.dt %>/assets/images/" : "client/assets/images/**",
           "release/<%= meta.dt %>/assets/font/fontawesome-custom/" : "client/assets/font/fontawesome-custom/**",
-          "release/<%= meta.dt %>/index.html" : "client/index.html"
+          "release/<%= meta.dt %>/index.html" : "client/index.html",
+          "release/<%= meta.dt %>/.htaccess" : "client/.htaccess"
         }
       }
     },
