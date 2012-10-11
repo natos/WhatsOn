@@ -55,7 +55,7 @@ img {
 	margin-left: -15px;
 
 	/* TODO: change UPC logo for LGI Logo */
-	background: transparent url('/assets/images/sprite.png') 0 0 no-repeat;
+	background: transparent url('../images/sprite.png') 0 0 no-repeat;
 
 	opacity: .7; /* hipster branding ;) */
 }
@@ -162,7 +162,7 @@ img {
 	position: absolute;
 	width: 100%;
 	height: 50px;
-	background: transparent url('/assets/images/main_gradient.png') 0 0 repeat-x;
+	background: transparent url('../images/main_gradient.png') 0 0 repeat-x;
 }
 
 #navigation-content {
@@ -174,7 +174,7 @@ img {
 	height: 55px;
 	margin: 0;
 	padding: 0;
-	background: transparent url('/assets/images/bg-gradient-shadow-bottom.png') 0 50px repeat-x;
+	background: transparent url('../images/bg-gradient-shadow-bottom.png') 0 50px repeat-x;
 }
 
 .nav {
@@ -209,7 +209,7 @@ If it isn't hidden, sometimes it bleeds through while scrolling through a long p
 }
 
 .open .nav {
-	background: #555 url('/assets/images/bg-gradient-shadow-left.png') 100% 0 repeat-y;
+	background: #555 url('../images/bg-gradient-shadow-left.png') 100% 0 repeat-y;
 }
 
 .open #navigation,
@@ -256,12 +256,12 @@ If it isn't hidden, sometimes it bleeds through while scrolling through a long p
 }
 
 .nav a.active, .nav a:active {
-	background-color: #333 url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
+	background-color: #333 url('../images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
 }
 
 #user-control a:active, .menu-item:active, .menu-item.active {
 	color: #ccc;
-	background: #333 url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
+	background: #333 url('../images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
 }
 
 .nav a.active i, #user-control a.active i, .menu-item.active i {
@@ -317,7 +317,7 @@ If it isn't hidden, sometimes it bleeds through while scrolling through a long p
 
 	.open .nav a.active {
 		color: #ccc;
-		background: #333 url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
+		background: #333 url('../images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
 		border-bottom: solid 1px #000;
 	}
 
@@ -448,7 +448,7 @@ If it isn't hidden, sometimes it bleeds through while scrolling through a long p
 	margin-left: -110px;
 	height: 19px;
 	margin-top: -9px;
-	background: transparent url('/assets/images/ajax-loader.gif') no-repeat;
+	background: transparent url('../images/ajax-loader.gif') no-repeat;
 }
 
 #transition.hide {
@@ -459,7 +459,7 @@ If it isn't hidden, sometimes it bleeds through while scrolling through a long p
 	border: none;
 	width: 25px;
 	height: 25px;
-	background: url('/assets/images/loader.gif') 50% 50% no-repeat;
+	background: url('../images/loader.gif') 50% 50% no-repeat;
 }
 
 /**
@@ -488,7 +488,7 @@ If it isn't hidden, sometimes it bleeds through while scrolling through a long p
 footer {
 	text-align: center;
 	padding: 10px;
-	background: transparent url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
+	background: transparent url('../images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
 }
 
 
@@ -809,7 +809,7 @@ margin-right: 10px;
 
 	#dashboard-content .favorite-channels.loading,
 	#dashboard-content .favorite-programmes.loading {
-		background: url('/assets/images/ajax-loader.gif') 50% 50% no-repeat;
+		background: url('../images/ajax-loader.gif') 50% 50% no-repeat;
 		height:40px;
 	}
 
@@ -891,7 +891,7 @@ margin-right: 10px;
 	border-top: 1px #bbb solid;
 	border-bottom: 2px #bbb solid;
 	border-radius: 5px;
-	background: #eee url('/assets/images/bg-gradient-headers.png') 0 -5px repeat-x;
+	background: #eee url('../images/bg-gradient-headers.png') 0 -5px repeat-x;
 
 }
 
@@ -1132,7 +1132,7 @@ margin-right: 10px;
 
 #time-bar-list li span {
 	position:relative;
-	background:url('/assets/images/spike-down.png') no-repeat 50% 100%;
+	background:url('../images/spike-down.png') no-repeat 50% 100%;
 	display:block;
 	left:-50%;
 	top: 3px;
@@ -1404,7 +1404,7 @@ margin-right: 10px;
 #channels-bar .shade {
 	position: absolute;
 	/* Fake box-shadow. CSS box-shadow can decrease scrolling performance on old iOS and Android browsers. */ 
-	background: transparent url('/assets/images/bg-gradient-shadow-right.png') repeat-y 100% 0;
+	background: transparent url('../images/bg-gradient-shadow-right.png') repeat-y 100% 0;
 	width: 100%;
 	height: 100%;
 	right: -6px;
@@ -1417,7 +1417,7 @@ margin-right: 10px;
 	top: 10px;
 	right: 0px;
 	position: absolute;
-	background: url('/assets/images/bg-gradient-shadow-right.png') 0 0 repeat-y;
+	background: url('../images/bg-gradient-shadow-right.png') 0 0 repeat-y;
 }
 
 #channels-bar-list {
@@ -1551,7 +1551,7 @@ margin-right: 10px;
 }
 
 .grid-event:active {
-	background: #fff url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
+	background: #fff url('../images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
 }
 
 .grid-event.tiny {
@@ -1586,7 +1586,7 @@ margin-right: 10px;
 
 	opacity: .9;
 
-	background:url('/assets/images/bg-timer-ticker.png') repeat-y 0 0;
+	background:url('../images/bg-timer-ticker.png') repeat-y 0 0;
 }
 
 /**********************************************************************
@@ -1645,7 +1645,7 @@ of events in the list.
 	margin: 0;
 	padding: 0;
 	border-top: 1px #bbb solid;
-	background: #eee url('/assets/images/bg-gradient-headers.png') 0 -5px repeat-x;
+	background: #eee url('../images/bg-gradient-headers.png') 0 -5px repeat-x;
 }
 @media screen and (min-width:640px) {
 	.event-list-container {

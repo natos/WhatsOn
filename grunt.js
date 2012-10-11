@@ -31,7 +31,7 @@ module.exports = function(grunt) {
     concat: {
       css: {
         src: ['client/assets/css/normalize.css', 'client/assets/css/font-awesome-custom.css', 'client/assets/css/global.css'],
-        dest: 'release/<%= meta.dt %>/styles.css'
+        dest: 'release/<%= meta.dt %>/assets/css/all.css'
       }
     },
     min: {
@@ -43,7 +43,7 @@ module.exports = function(grunt) {
     mincss: {
       compress: {
         files: {
-          'release/<%= meta.dt %>/styles.min.css': ['release/<%= meta.dt %>/styles.css']
+          'release/<%= meta.dt %>/assets/css/all.min.css': ['release/<%= meta.dt %>/assets/css/all.css']
         }
       }
     },
@@ -67,7 +67,16 @@ module.exports = function(grunt) {
       },
       globals: {}
     },
-    uglify: {}
+    uglify: {},
+    copy: {
+      release: {
+        files: {
+          "release/<%= meta.dt %>/assets/images/" : "client/assets/images/**",
+          "release/<%= meta.dt %>/assets/font/fontawesome-custom/" : "client/assets/font/fontawesome-custom/**",
+          "release/<%= meta.dt %>/index.html" : "client/index.html"
+        }
+      }
+    }
   });
 
   // Default task.
@@ -77,6 +86,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib');
 
   // Release task
-  grunt.registerTask('release', 'lint:grunt concat:css mincss:compress');
+  grunt.registerTask('release', 'lint:grunt concat:css mincss:compress copy:release');
 
 };
