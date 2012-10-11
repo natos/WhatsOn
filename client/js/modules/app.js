@@ -54,7 +54,7 @@ define([
 	function loadModules() {		
 		// Load the primary modules for the app.
 		// Each module must have an "initialize" method that returns the module instance.
-		require(['modules/canvas', 'modules/router'], initializer);
+		require(['modules/user','modules/canvas', 'modules/router'], initializer);
 
 		return App;
 	}
