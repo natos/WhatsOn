@@ -9,10 +9,11 @@ module.exports = function(grunt) {
         '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
         '<%= pkg.homepage ? "* " + pkg.homepage + "\n" : "" %>' +
         '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
-        ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */'
+        ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */',
+      dt: '<%= grunt.template.today("yyyymmddHHMMss") %>'
     },
     lint: {
-      files: [
+      js: [
         'grunt.js',
         'client/js/components/**/*.js',
         'client/js/config/**/*.js',
@@ -22,18 +23,28 @@ module.exports = function(grunt) {
         'client/js/utils/**/*.js',
         'client/js/views/**/*.js',
         'client/js/*.js'
+      ],
+      grunt: [
+        'grunt.js'
       ]
     },
     concat: {
-      dist: {
-        src: ['<banner:meta.banner>', '<file_strip_banner:lib/<%= pkg.name %>.js>'],
-        dest: 'dist/<%= pkg.name %>.js'
+      css: {
+        src: ['client/assets/css/normalize.css', 'client/assets/css/font-awesome-custom.css', 'client/assets/css/global.css'],
+        dest: 'release/<%= meta.dt %>/styles.css'
       }
     },
     min: {
       dist: {
         src: ['<banner:meta.banner>', '<config:concat.dist.dest>'],
         dest: 'dist/<%= pkg.name %>.min.js'
+      }
+    },
+    mincss: {
+      compress: {
+        files: {
+          'release/<%= meta.dt %>/styles.min.css': ['release/<%= meta.dt %>/styles.css']
+        }
       }
     },
     watch: {
@@ -61,5 +72,11 @@ module.exports = function(grunt) {
 
   // Default task.
   grunt.registerTask('default', 'lint concat min');
+
+  // Load tasks from grunt-contrib
+  grunt.loadNpmTasks('grunt-contrib');
+
+  // Release task
+  grunt.registerTask('release', 'lint:grunt concat:css mincss:compress');
 
 };
