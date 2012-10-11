@@ -1,19 +1,21 @@
 /*
 * RouterModule
 * ------
-* Using HTML5 pushState API with a little help of History.js (http://balupton.github.com/history.js/demo/)
+* Using HTML5 pushState API with a little help of History.js: 
+* http://balupton.github.com/history.js/demo/
 */
 
 define([
 
 	'modules/zepto',
 	'config/app',
+	'models/app',
 	'modules/app',
 	'modules/event',
 	'utils/dom',
 	'/js/lib/history/1.7.1-r2/bundled/html4+html5/native.history.js'
 
-], function RouterModuleScope($, a, App, Event, dom) {
+], function RouterModuleScope($, a, AppModel, App, Event, dom) {
 
 	var name = 'router',
 
@@ -25,18 +27,24 @@ define([
 
 	// shorcuts
 
+		// Localize global History Object
 		History = window.History,
 
-		shift = Array.prototype.shift;
+		shift = Array.prototype.shift,
+
+	// country selection
+
+		SELECTED_COUNTRY;
 
 	/**
 	*	Handle State Changes
 	*/
 	function handleStateChange() {
 
-		var State = History.getState(); // Note: We are using History.getState() instead of event.state
+		// Creates the State Object
+		var State = History.getState(), // Note: We are using History.getState() instead of event.state
+			path = History.getShortUrl(State.url);
 
-		var path = History.getShortUrl(State.url);
 		// Remove the initial '/' from the path
 		if (path.slice(0,1)==='/') {
 			path = path.slice(1);
@@ -56,6 +64,15 @@ define([
 		// The controller to be loaded is the first element in the parts array
 		State.controller = (State.parts) ? shift.apply(State.parts) : '';
 
+		// When controller is empty
+		if (State.controller === "") {
+			// just redirect to dashboard
+			redirect('dashboard');
+			// stop here
+			return;
+		}
+		
+		// Normal flow
 		Event.emit(a.NAVIGATE, State);
 	}
 
@@ -76,15 +93,16 @@ define([
 	*	and use our own Router to navigate
 	*/
 	function handleAnchors(event) {
+		
 		// save the click target
-		var element = anchor = event.target;
-		var dataset;
+		var element = anchor = event.target,
 
 		// Find actions on clicked elements, this
 		// actions are declared on the data-action
 		// attribute, its value defines the action
 		// to be trigger.
-		dataset = dom.getDataset(element);
+			dataset = dom.getDataset(element);
+
 		while (!dataset.action) {
 			// break if the #main is reached
 			if (element === this) { break; }
@@ -143,8 +161,10 @@ define([
 /* public */
 
 	function initialize() {
+
 		// Bind to StateChange Event
 		History.Adapter.bind(window, STATECHANGE, handleStateChange);
+
 		// Active links
 		Event.on(a.VIEW_INITIALIZING, activeAnchors);
 		// Listen to every click on #main,
@@ -152,7 +172,6 @@ define([
 		// and use our own Router to navigate
 		dom.main.addEventListener('click', handleAnchors, false);
 
-		// First load
 		handleStateChange();
 
 		return this;
@@ -166,6 +185,11 @@ define([
 
 		dom.main.removeEventListener('click', handleAnchors, false);
 
+		return this;
+	}
+
+	function redirect(name) {
+		navigate({}, name, '/' + name);
 		return this;
 	}
 
@@ -185,7 +209,9 @@ define([
 	return {
 		name		: name,
 		initialize	: initialize,
-		navigate	: navigate
+		navigate	: navigate,
+		back		: History.back,
+		go 			: History.go
 	};
 
 });

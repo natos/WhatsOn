@@ -12,16 +12,19 @@ define([
 	'config/app',
 	'config/search',
 	'modules/event',
+	'modules/app',
 	'lib/flaco/view',
 	'controllers/search',
 	'models/channel',
 	'utils/dom',
-	'utils/convert'
+	'utils/convert',
+	'utils/language'
 
-], function($, a, searchConfig, Event, View, searchController, channelModel, dom, convert) {
+], function($, a, searchConfig, Event, app, View, searchController, channelModel, dom, convert, Language) {
 
 	var name = 'search';
 	var now = new Date();
+	var lang = new Language();
 
 /* private */
 
@@ -34,11 +37,11 @@ define([
 			var header = dom.element('header', {'id': 'search-query'});
 			var results = dom.element('section', {'id': 'search-results'});
 			var form = dom.element('form', {'class': 'search-form'});
-			var q = dom.element('input', {'type': 'search', 'id': 'q', 'name': 'q', 'placeholder': 'Search...', 'value': '', 'autofocus':'autofocus'});
+			var q = dom.element('input', {'type': 'search', 'id': 'q', 'name': 'q', 'placeholder': lang.translate('search-field-placeholder'), 'value': '', 'autofocus':'autofocus'});
 			var submitButton = dom.element('button', {'type': 'submit', 'class': 'search-btn'});
 			var icon = dom.element('i', {'class': 'icon-search'});
 			var label = dom.element('b', {'class': 'label'});
-			var buttonText = document.createTextNode('Search');
+			var buttonText = document.createTextNode(lang.translate('search'));
 
 			label.appendChild(buttonText);
 			submitButton.appendChild(icon);
@@ -299,7 +302,7 @@ define([
 		dom.empty(resultsContainer);
 
 		var p = dom.element('p');
-		p.appendChild(document.createTextNode('No results found'));
+		p.appendChild(document.createTextNode(lang.translate('nothing-found')));
 		resultsContainer.appendChild(p);
 	}
 
@@ -309,9 +312,13 @@ define([
 
 	function initialize() {
 
-		a._win.addEventListener('click', filterHandler, false);
-		a._win.addEventListener('change', filterHandler, false);
-		a._win.addEventListener('submit', submitHandler);
+		lang = new Language(app.selectedLanguageCode);
+		
+		window.addEventListener('click', filterHandler, false);
+				
+		window.addEventListener('change', filterHandler, false);
+				
+		window.addEventListener('submit', submitHandler);
 
 		Event.on(searchConfig.MODEL_CHANGED, onSearchModelChanged);
 
@@ -332,10 +339,12 @@ define([
 	function finalize() {
 
 		hidePageStructure();
-
-		a._win.removeEventListener('click', filterHandler, false);
-		a._win.removeEventListener('change', filterHandler, false);
-		a._win.removeEventListener('submit', submitHandler, false);
+		
+		window.removeEventListener('click', filterHandler, false);
+				
+		window.removeEventListener('change', filterHandler, false);
+				
+		window.removeEventListener('submit', submitHandler, false);
 
 		Event.off(searchConfig.MODEL_CHANGED, onSearchModelChanged);
 

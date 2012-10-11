@@ -19,13 +19,17 @@ define([], function AppConfigContext() {
 
 		NAMESPACE: 'upsocial',
 
-		ROOT_URL: 'http://upcsocial.herokuapp.com/',
-
 		API_PREFIX: 'http://api.lgi.com/alpha',
+		
+		//API_PREFIX: 'http://62.179.107.149/cgi-bin/WebObjects/ScheduleAPI-trunk-ivy.woa/1/q',
 
-		CONTROLLERS: ['dashboard','grid','nowandnext','search'/*,'not-found'*/],
+		CONTROLLERS: ['settings','dashboard','grid','nowandnext','search'/*,'not-found'*/],
 
-		/* labels */
+		DEFAULT_COUNTRY: 'Ireland',
+
+		DEFAULT_LANGUAJE: 'en',
+
+		/* collection labels */
 
 		SCHEDULES_CACHE: 'schedules_cache',
 
@@ -37,7 +41,7 @@ define([], function AppConfigContext() {
 
 		LINEUP_CACHE: 'lineup_cache',
 
-		/* events */
+		/* events names */
 
 		READY: 'app:ready',
 
@@ -48,6 +52,8 @@ define([], function AppConfigContext() {
 		NAVIGATE: 'app:navigate',
 
 		MODEL_CHANGED: 'app:model_changed',
+
+		SELECTED_COUNTRY: 'app:selected_country',
 
 		GENRES_RECEIVED: 'app:genres_received',
 
@@ -81,20 +87,7 @@ define([], function AppConfigContext() {
 
 		VIEW_RENDERING: 'app:view_rendering',
 
-		VIEW_RENDERED: 'app:view_rendered',
-
-		/* DOM access */
-
-		// TODO: REMOVE THIS THINGS
-		_doc: document,
-
-		_win: window,
-
-		_body: document.body,
-
-		_main: document.getElementById('main'),
-
-		_content: document.getElementById('content')
+		VIEW_RENDERED: 'app:view_rendered'
 
 	};
 

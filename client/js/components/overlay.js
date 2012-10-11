@@ -6,69 +6,79 @@
 
 define([
 
-	'utils/dom'
+	'modules/app',
+	'modules/router',
+	'utils/dom',
+	'utils/language'
 
-], function OverlayComponentScope(dom) {
+], function OverlayComponentScope(App, Router, dom, Language) {
 
-	var name = 'overlay',
+	var name = 'overlay';
 
 /* private */
 
+	var lang,
 	// UI elements
-		box,
-		content,
-		close;
-
-/* public */ 
+		_box,
+		_content,
+		_close;
 
 	function closeHandler(event) {
 		event.preventDefault();
-		hide();
+//		hide();
+		// use the history to go back
+		// instead of removing overlay view
+		Router.back();
+	}
+
+/* public */ 
+
+	function content() {
+		return _content;
 	}
 
 	function show(html) {
-		content.innerHTML = html || '<div class="loading"></div>';
-		box.className = 'active';
+		if (html) {
+			_content.innerHTML = html || '<div class="loading"></div>';
+		}
+		_box.className = 'active';
 	}
 
 	function hide() {
-		content.innerHTML = '';
-		box.className = '';
+		_content.innerHTML = '';
+		_box.className = '';
 	}
 
 	function initialize() {
 
-		var lbl, icon;
+		console.log('init overlay');
+		lang = new Language(App.selectedLanguageCode);
+
+		_box 	= dom.element('div', { id: name }),
+		_content = dom.element('div', { id: 'overlay-content' }),
+		_close 	= dom.element('a', { id: 'overlay-close', href: '#overlay-close' });
+
+		var _lbl, _icon;
 		// create the label
-		lbl = dom.create('b');
-		lbl.className = 'label';
-		lbl.innerHTML = 'close';
+		_lbl = dom.element('b', { class: 'label' });
+		_lbl.innerHTML = lang.translate('close');
 		// create the icon
-		icon = dom.create('i');
-		icon.className = 'icon-remove-sign';
+		_icon = dom.element('i', { class: 'icon-remove-sign' });
 		// create close button
-		close = dom.create('a');
-		close.id = 'overlay-close';
-		close.href = '#overlay-close';
-		close.appendChild(icon);
-		close.appendChild(lbl);
-		// create the container
-		content = dom.create('div');
-		content.id = 'overlay-content';
+		_close.appendChild(_icon);
+		_close.appendChild(_lbl);
 		// create the layout
-		box = dom.create('div');
-		box.id = name;
-		box.appendChild(content);
-		box.appendChild(close);
+		_box.appendChild(_content);
+		_box.appendChild(_close);
 
 		return this;
 	}
 
 	function render() {
 
-		close.addEventListener('click', closeHandler);
+		_close.addEventListener('click', closeHandler);
 
-		document.body.appendChild(box);
+		document.body.appendChild(_box);
 
 		return this;
 
@@ -76,15 +86,16 @@ define([
 
 	function finalize() {
 
-		close.removeEventListener('click', closeHandler);
 
-		while (box.firstChild) { box.removeChild(box.firstChild); }
+		_close.removeEventListener('click', closeHandler);
 
-		document.body.removeChild(box);
+		while (_box.firstChild) { _box.removeChild(_box.firstChild); }
 
-		box = null;
-		content = null;
-		close = null;
+		document.body.removeChild(_box);
+
+		_box = null;
+		_content = null;
+		_close = null;
 
 		return this;
 
@@ -98,7 +109,8 @@ define([
 		finalize	: finalize,
 		render		: render,
 		show		: show,
-		hide		: hide
+		hide		: hide,
+		content 	: content // DOM interface
 	};
 
 });

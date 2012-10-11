@@ -8,29 +8,41 @@
 define([
 
 	'config/app',
+	'config/channel',
 	'models/app',
+	'models/channel',
 	'modules/event',
-	'utils/epgapi'
+	'modules/router',
+	'utils/epgapi',
+	'utils/common',
+	'lib/cookie/cookie'
 
-], function ScheduleModuleScope(a, AppModel, Event, EpgApi) {
+], function ScheduleModuleScope(a, c, AppModel, ChannelModel, Event, Router, EpgApi, common, cookie) {
 
 	var name = 'schedule',
 
 /* private */
-
+		
 		cache = {},
 
 		// hardcode value for country
-		COUNTRY = 'Nederland',
-
-		// hardcode value for schedule
-		SCHEDULE = 'upc.nl';
+		COUNTRY = cookie.get(a.SELECTED_COUNTRY) || a.DEFAULT_COUNTRY;
 
 	/* Handle data comming from the API */
 
 	Event.on(a.COUTRIES_RECEIVED, function(response) { 
 
 		processResponse(response, a.COUNTRIES_CACHE);
+
+		// Check if theres a cookie
+		// with country selection
+		if (COUNTRY) {
+			AppModel.set(a.SELECTED_COUNTRY, COUNTRY);
+		} else {
+			console.log('no country?')
+		}
+
+		console.log('Selecting', COUNTRY ,'country');
 
 	});
 
@@ -64,6 +76,19 @@ define([
 
 		// Once we got countries information
 		if (changes[a.COUNTRIES_CACHE]) {
+			
+			// a selection of country means
+			// we need to re-fetch data
+		}
+
+		if (changes[a.SELECTED_COUNTRY]) {
+
+			// Reset model data
+			AppModel[a.LINEUP_CACHE] = cache[a.LINEUP_CACHE] = null;
+			AppModel[a.SCHEDULES_CACHE] = cache[a.SCHEDULES_CACHE] = null;
+			AppModel[a.CATEGORIES_CACHE] = cache[a.CATEGORIES_CACHE] = null;
+			AppModel[a.GENRES_CACHE] = cache[a.GENRES_CACHE] = null;
+
 			// get schedule data
 			getSchedules();
 			// get channel Lineup
@@ -75,11 +100,30 @@ define([
 			getCategoriesAndGenres();
 		}
 
-		if (cache[a.LINEUP_CACHE] && cache[a.CATEGORIES_CACHE]) {
+		if (changes[a.LINEUP_CACHE]) {
+			processLineup(changes[a.LINEUP_CACHE]);
+		}
+
+		if (AppModel[a.CATEGORIES_CACHE] && AppModel[a.GENRES_CACHE]) {
+			ready(); //?
+		}
+	});
+
+	Event.on(c.MODEL_CHANGED, function(changes) {
+
+		if (changes[c.SELECTED_GROUP]) {
+			ready(); //?
+		}	
+
+	});
+
+
+	function ready() {
+		if (ChannelModel[c.SELECTED_GROUP] && AppModel[a.CATEGORIES_CACHE] && AppModel[a.GENRES_CACHE]) {
 			// Ready to Rock!
 			Event.emit(a.READY);
 		}
-	});
+	}
 
 	/* Processing functions */
 
@@ -101,6 +145,8 @@ define([
 			cache[label].nextBatchLink = null;
 			delete cache[label].nextBatchLink;
 
+			console.log('<SCHEDULE>','Saving', label, 'on Model.');
+
 			AppModel.set(label, cache[label]);
 
 		}
@@ -116,7 +162,7 @@ define([
 			
 			// Here is where the app decides 
 			// wich country schedule to use
-			if (country.name === COUNTRY) {
+			if (country.name === AppModel[a.SELECTED_COUNTRY]) {
 
 				request = country.linearLineupLink.href.split('?')[0];
 
@@ -140,7 +186,7 @@ define([
 
 			// Here is where the app decides 
 			// wich country schedule to use
-			if (country.name === COUNTRY) {
+			if (country.name === AppModel[a.SELECTED_COUNTRY]) {
 
 				request = country.schedules.data[0].selfLink.href.split('?')[0];
 
@@ -153,35 +199,84 @@ define([
 
 		var schedule, request;
 
-		for (var i = 0, t = cache[a.SCHEDULES_CACHE].data.length; i < t; i++) {
+		schedule = cache[a.SCHEDULES_CACHE].data[0];
 
-			schedule = cache[a.SCHEDULES_CACHE].data[i];
+		if (schedule.categories) {
+			// save the first slice of categories,
+			cache[a.CATEGORIES_CACHE] = schedule.categories;
+			// and ask for the nextBatch if its available.
+			if (schedule.categories.nextBatchLink) {
+				// let the EpgApi deals with async
+				EpgApi.query(schedule.categories.nextBatchLink.href, a.CATEGORIES_RECEIVED);
 
-			if (schedule.id === SCHEDULE) {
-
-				if (schedule.categories) {
-					// save the first slice of categories,
-					cache[a.CATEGORIES_CACHE] = schedule.categories;
-					// and ask for the nextBatch if its available.
-					if (schedule.categories.nextBatchLink) {
-						// let the EpgApi deals with async
-						EpgApi.query(schedule.categories.nextBatchLink.href, a.CATEGORIES_RECEIVED);
-
-					}
-				}
-
-				if (schedule.genres) {
-					// save the first slice of genres,
-					cache[a.GENRES_CACHE] = schedule.genres;
-					// and ask for the nextBatch if its available.
-					if (schedule.genres.nextBatchLink) {
-						// let the EpgApi deals with async
-						EpgApi.query(schedule.genres.nextBatchLink.href, a.GENRES_RECEIVED);
-
-					}
-				}
 			}
 		}
+
+		if (schedule.genres) {
+			// save the first slice of genres,
+			cache[a.GENRES_CACHE] = schedule.genres;
+			// and ask for the nextBatch if its available.
+			if (schedule.genres.nextBatchLink) {
+				// let the EpgApi deals with async
+				EpgApi.query(schedule.genres.nextBatchLink.href, a.GENRES_RECEIVED);
+
+			}
+		}
+	}
+
+	/**
+	* Process the channel collection, creates a 'groups' collection order by group id
+	* to lighting-fast query channels information.
+	*/
+
+	function processLineup(lineup) {
+
+		var data = lineup.data, groups = {}, byId = {}, group, channel, domain, i, domainIterator, groupIterator, dataLength = data.length;
+			// All Zenders collection
+			groups['000'] = [];
+			// Favorite channels collection
+			groups['001'] = [];
+
+		for (i = 0; i < dataLength; i++) {
+			channel = data[i];
+			// save channel by id
+			byId[channel.id] = channel;
+			// logo easy access THANK YOU!
+			byId[channel.id].logo = channel.logoLink.href;
+			// save channels on All Zenders collection
+			groups['000'].push(channel);
+			// a little cleanning
+			delete channel.logoLink;
+			delete channel.logicalPosition;
+			delete channel.channel;
+			
+			/*
+			// iterate domains
+			domainIterator = channel.domains.length;
+			while(domainIterator--) {
+				domain = channel.domains[domainIterator];
+				// domain cleanning
+				groupIterator = domain.groups.length;
+				while(groupIterator--) {
+					group = domain.groups[groupIterator];
+					if (!groups[group]) { groups[group] = []; }
+					groups[group].push(channel);
+				}
+			}*/
+		}
+
+		// TODO: sort channels 
+
+		// Save byId map
+		ChannelModel.set(c.BY_ID, byId);
+		// Save groups map
+		ChannelModel.set(c.GROUPS, groups);
+		// Set default selected group
+		// ATTENTION: Read user preferences here
+		ChannelModel.set(c.SELECTED_GROUP, c.DEFAULT_GROUP);
+
+		// return raw data
+		return data;
 	}
 
 /* public */

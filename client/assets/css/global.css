@@ -282,6 +282,10 @@ If it isn't hidden, sometimes it bleeds through while scrolling through a long p
 	display: none;
 }
 
+.settings { 
+	position: absolute;
+}
+
 @media screen and (min-width:640px) {
 
 	.open #navigation,
@@ -349,6 +353,7 @@ If it isn't hidden, sometimes it bleeds through while scrolling through a long p
 	}
 	
 	.settings {
+		left: auto;
 		right: 50px;
 	}
 
@@ -365,6 +370,7 @@ If it isn't hidden, sometimes it bleeds through while scrolling through a long p
 	}
 
 	.settings {
+		left: auto;
 		right: 80px;
 	}
 
