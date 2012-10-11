@@ -38,7 +38,7 @@ module.exports = function(grunt) {
     mincss: {
       compress: {
         files: {
-          'release/<%= meta.dt %>/assets/css/all.min.css': ['release/<%= meta.dt %>/assets/css/all.css']
+          'release/<%= meta.dt %>/assets/css/all.css': ['release/<%= meta.dt %>/assets/css/all.css']
         }
       }
     },
