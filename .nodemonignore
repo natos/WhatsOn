@@ -17,6 +17,9 @@
 /client-build/*
 /public/*
 
+# Don't restart the server because of changes in gruntfile
+grunt.js
+
 # Ignore git commits
 .git/*
 
