@@ -7,9 +7,10 @@
 
 define([
 
-	'utils/dom'
+	'utils/dom',
+	'lib/jcors-loader/jcors-loader'
 
-], function CarouselComponentScope(dom) {
+], function CarouselComponentScope(dom, jcors) {
 
 	var name = 'carousel',
 
@@ -139,16 +140,20 @@ define([
 		window.addEventListener('resize', sizeHandler);
 		window.addEventListener('orientationchange', sizeHandler);
 
-		$.getJSON('http://platform.tvbuzz.nl/api/ie/buzz/now?l=0,10&callback=?', function(response){
-				console.log(response);
-		});
+		//$.getJSON('http://platform.tvbuzz.nl/api/ie/buzz/now?l=0,10&callback=?', function(response){
+		//		console.log(response);
+		//});
+
+		jcors.load('http://enigmatic-hamlet-2742.herokuapp.com/nl/tvtips.json', function(response) {
+			console.log('jcors:', response);
+		})
 
 		return this;
 	}
 
 	function render() {
 
-
+		console.log('<CAROUSEL>','Rendering')
 
 		_carousel = dom.element('div', { id: 'featured', class: 'carousel'} );
 		_list = dom.element('ul', { class: 'show slide' });
@@ -226,7 +231,6 @@ define([
 		window.removeEventListener('orientationchange', sizeHandler);
 
 		// reset carousel className
-		_carousel = document.getElementById('featured');
 		_carousel.className = 'no-carousel';
 
 		// We need to remove UI buttons, because when it re-renders,
