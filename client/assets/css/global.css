@@ -127,10 +127,10 @@ img {
 	http://www.sencha.com/blog/understanding-hardware-acceleration-on-mobile-browsers
 	http://indiegamr.com/ios6-html-hardware-acceleration-changes-and-how-to-fix-them/
 	*/
-	-webkit-transform: translateZ(0);
+/*	-webkit-transform: translateZ(0);
 	-webkit-perspective: 1000;
 	-webkit-backface-visibility: hidden;
-	-webkit-transition: -webkit-transform .3s ease-in-out;
+*/	-webkit-transition: -webkit-transform .3s ease-in-out;
     -moz-transition: -moz-transform .3s ease-in-out;
     -o-transition: -o-transform .3s ease-in-out;
     transition: transform .3s ease-in-out;
