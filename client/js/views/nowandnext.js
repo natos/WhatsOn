@@ -15,13 +15,16 @@ define([
 	'models/nowandnext',
 	'utils/convert',
 	'utils/dom',
+	'utils/language',
 	'components/overlay'
 
-], function NowAndNextViewContext(appConfig, channelConfig, nowAndNextConfig, Event, View, ChannelModel, nowAndNextModel, convert, dom, overlay) {
+], function NowAndNextViewContext(appConfig, channelConfig, nowAndNextConfig, Event, View, ChannelModel, nowAndNextModel, convert, dom, Language, overlay) {
 
 	var name = 'nowandnext';
 
 /* private */
+
+	var _lang;
 
 	// Create some default elements that will be cloned when we build the DOM
 	var _progressBar = dom.element('div', {'class' : 'progressbar'});
@@ -75,7 +78,10 @@ define([
 		var channel = ChannelModel.byId[channelId];
 		var render = [];
 		var genreNames = [];
-		var genresCount, eventsCount;
+		var genresCount, eventsCount, startDateTime, e;
+		var currentDay = new Date().getDay();
+		var dayIterator = 0;
+		var dayName;
 
 		render.push('<h1><img src="', channel.logo, '"> ' + channel.name + '</h1>');
 		if (channel.genres && channel.genres.data && channel.genres.data.length) {
@@ -86,40 +92,37 @@ define([
 			render.push('<p>' + genreNames.join(', ') + '</p>');
 		}
 
-		render.push('<ul>');
+		render.push('<h2>' + _lang.translate('day-today') + '</h2><ul>');
 
 		eventsCount = eventsForChannel.length;
 		for (i=0; i<eventsCount; i++) {
+			e = eventsForChannel[i];
+			startDateTime = new Date(convert.parseApiDateStringAsMilliseconds(e.start));
 			render.push(
 				'<li class="event-list-item-simple"><time>',
-				eventsForChannel[i].start,
+				('0' + startDateTime.getHours()).slice(-2) + ':' + ('0' + startDateTime.getMinutes()).slice(-2),
 				'</time>',
-				eventsForChannel[i].programme.title,
+				e.programme.title,
 				'</li>'
 			);
+
+			if (startDateTime.getDay() !== currentDay) {
+				currentDay = startDateTime.getDay();
+				dayIterator += 1;
+				if (dayIterator===1) {
+					dayName = _lang.translate('day-tomorrow');
+				} else {
+					dayName = _lang.translate('day-' + currentDay);
+				}
+				render.push('</ul><h2>' + dayName + '</h2><ul>');
+			}
 		}
 
 		render.push('</ul>');
 
-		// if (overlay.events.data.length > 0) {
-		// 	render.push('<h3>' + _lang.translate('watch-again') + '</h3>');
-		// 	render.push('<ul>');
-		// }
-
-		// for (var i = 0, t = overlay.events.data.length; i<t; i++) {
-		// 	event = overlay.events.data[i];
-		// 	console.log(event);
-		// 	render.push('<li>' + event.start + '</li>');
-		// }
-		// if (overlay.events.data.length > 0) {
-		// 	render.push('</ul>');
-		// }
-		
 		overlay.show(render.join('\n'));
-
-		// console.log(overlay);
 	
-	}
+	};
 
 	var appendNowEvent = function(targetElement, channelEvent) {
 
@@ -243,6 +246,8 @@ define([
 /* abstract */
 
 	function initialize() {
+
+		_lang = new Language(app.selectedLanguageCode);
 
 		Event.on(nowAndNextConfig.MODEL_CHANGED, onModelChanged);
 		Event.on(appConfig.ACTION, onAppAction);

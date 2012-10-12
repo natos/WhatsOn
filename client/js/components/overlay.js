@@ -70,7 +70,7 @@ console.log('init overlay');
 		var _lbl, _icon;
 		// create the label
 		_lbl = dom.element('b', { class: 'label' });
-		_lbl.innerHTML = lang.translate('close');
+		_lbl.innerHTML = ' ' + lang.translate('close');
 		// create the icon
 		_icon = dom.element('i', { class: 'icon-remove-sign' });
 		// create close button

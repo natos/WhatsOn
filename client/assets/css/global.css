@@ -2181,4 +2181,6 @@ ul {
 	padding: 10px;
 	position: relative;
 	background-color: #fff;
+	border-radius:10px;
+	border:2px solid #669;
 }
