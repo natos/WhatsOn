@@ -6,6 +6,7 @@
 
 define([
 
+	'config/app',
 	'config/channel',
 	'config/nowandnext',
 	'modules/event',
@@ -13,9 +14,10 @@ define([
 	'models/channel',
 	'models/nowandnext',
 	'utils/convert',
-	'utils/dom'
+	'utils/dom',
+	'components/overlay'
 
-], function NowAndNextViewContext(channelConfig, nowAndNextConfig, Event, View, ChannelModel, nowAndNextModel, convert, dom) {
+], function NowAndNextViewContext(appConfig, channelConfig, nowAndNextConfig, Event, View, ChannelModel, nowAndNextModel, convert, dom, overlay) {
 
 	var name = 'nowandnext';
 
@@ -29,6 +31,7 @@ define([
 	var _eventChannel = dom.element('aside', {'class' : 'event-channel'});
 	var _eventHeader = dom.element('div', {'class' : 'event-header'});
 	var _eventArticle = dom.element('article', {'class' : 'event'});
+	var _channelLink = dom.element('a', {'data-action' : 'OVERLAY'});
 
 	var renderPageStructure = function() {
 
@@ -55,11 +58,68 @@ define([
 
 	};
 
-	var onNowAndNextModelChanged = function(changes) {
+	var onModelChanged = function(changes) {
+
 		if (changes.eventsForChannel) {
 			renderEventsForChannel(changes.eventsForChannel);
 		}
+
+		if (changes.overlay_eventsForChannel) {
+			renderChannelOverlay(changes.overlay_eventsForChannel);
+		}
+
 	};
+
+	var renderChannelOverlay = function(eventsForChannel) {
+		var channelId = eventsForChannel[0].service.id;
+		var channel = ChannelModel.byId[channelId];
+		var render = [];
+		var genreNames = [];
+		var genresCount, eventsCount;
+
+		render.push('<h1><img src="', channel.logo, '"> ' + channel.name + '</h1>');
+		if (channel.genres && channel.genres.data && channel.genres.data.length) {
+			genresCount = channel.genres.data.length;
+			for (i=0; i<genresCount; i++) {
+				genreNames.push(channel.genres.data[i].name);
+			}
+			render.push('<p>' + genreNames.join(', ') + '</p>');
+		}
+
+		render.push('<ul>');
+
+		eventsCount = eventsForChannel.length;
+		for (i=0; i<eventsCount; i++) {
+			render.push(
+				'<li class="event-list-item-simple"><time>',
+				eventsForChannel[i].start,
+				'</time>',
+				eventsForChannel[i].programme.title,
+				'</li>'
+			);
+		}
+
+		render.push('</ul>');
+
+		// if (overlay.events.data.length > 0) {
+		// 	render.push('<h3>' + _lang.translate('watch-again') + '</h3>');
+		// 	render.push('<ul>');
+		// }
+
+		// for (var i = 0, t = overlay.events.data.length; i<t; i++) {
+		// 	event = overlay.events.data[i];
+		// 	console.log(event);
+		// 	render.push('<li>' + event.start + '</li>');
+		// }
+		// if (overlay.events.data.length > 0) {
+		// 	render.push('</ul>');
+		// }
+		
+		overlay.show(render.join('\n'));
+
+		// console.log(overlay);
+	
+	}
 
 	var appendNowEvent = function(targetElement, channelEvent) {
 
@@ -114,7 +174,7 @@ define([
 			var maxEventsToRender = channelEvents.length;
 			var channelId = channelEvents[0].service.id;
 			var eventListContainer = document.getElementById('eventListContainer-' + channelId);
-			var channelLink = dom.element('a');
+			var channelLink = _channelLink.cloneNode(true);
 			var eventList = dom.element('ul', {'class' : 'event-list nowandnext-event-list'});
 			var i;
 
@@ -131,6 +191,7 @@ define([
 
 			channelLink.appendChild(eventList);
 			channelLink.href = '/channel/' + channelId;
+			channelLink.setAttribute('data-channelId', channelId);
 
 			dom.empty(eventListContainer);
 			eventListContainer.appendChild(channelLink);
@@ -147,6 +208,35 @@ define([
 		}
 	};
 
+	var onAppAction = function (action, event) {
+
+		var el, channelId;
+
+		if (action === 'OVERLAY') {
+
+			event.preventDefault();
+
+			// The router module hands us the original event,
+			// which was raised on the source element. We need to
+			// reach the target element that has the data-action attribute on it.
+			el = event.target;
+			while (el.parentNode) {
+				if (el.getAttribute('data-action')) {
+					channelId = el.getAttribute('data-channelId');
+
+					if (channelId) {
+						Event.emit(nowAndNextConfig.FETCH_CHANNEL, channelId);
+						overlay.show();
+					}
+
+					break;
+				} else {
+					el = el.parentNode;
+				}
+			}
+		}
+	};
+
 
 /* public */
 
@@ -154,7 +244,9 @@ define([
 
 	function initialize() {
 
-		Event.on(nowAndNextConfig.MODEL_CHANGED, onNowAndNextModelChanged);
+		Event.on(nowAndNextConfig.MODEL_CHANGED, onModelChanged);
+		Event.on(appConfig.ACTION, onAppAction);
+
 		return this;
 
 	}
@@ -171,7 +263,9 @@ define([
 
 		hidePageStructure();
 
-		Event.off(nowAndNextConfig.MODEL_CHANGED, onNowAndNextModelChanged);
+		Event.off(nowAndNextConfig.MODEL_CHANGED, onModelChanged);
+		Event.off(appConfig.ACTION, onAppAction);
+
 		return this;
 
 	}
@@ -183,7 +277,10 @@ define([
 		name		: name,
 		initialize	: initialize,
 		finalize	: finalize,
-		render		: render
+		render		: render,
+		components			: {
+			overlay 	: overlay
+		}
 	});
 
 });

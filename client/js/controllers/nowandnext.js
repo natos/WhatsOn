@@ -9,13 +9,14 @@ define([
 	'modules/zepto',
 	'config/channel',
 	'config/app',
+	'config/nowandnext',
 	'lib/flaco/controller',
 	'modules/event',
 	'models/channel',
 	'models/nowandnext',
 	'views/nowandnext'
 
-], function NowAndNextController($, channelConfig, appConfig, Controller, Event, ChannelModel, NowAndNextModel, NowAndNextView) {
+], function NowAndNextController($, channelConfig, appConfig, nowAndNextConfig, Controller, Event, ChannelModel, nowAndNextModel, nowAndNextView) {
 
 	var name = 'nowandnext';
 
@@ -23,7 +24,7 @@ define([
 
 	var API_CHANNEL_BATCH_SIZE = 10; // How many channels are retrieved per batch
 
-	var handleApiResponse = function(apiResponse) {
+	var handleChannelsBatchResponse = function(apiResponse) {
 		var eventsInBatch, e, i, channelId, eventsCount;
 		var eventsForChannel = {};
 
@@ -41,9 +42,15 @@ define([
 			}
 
 			for (channelId in eventsForChannel) {
-				NowAndNextModel.set('eventsForChannel', eventsForChannel[channelId]);
+				nowAndNextModel.set('eventsForChannel', eventsForChannel[channelId]);
 			}
 
+		}
+	};
+
+	var handleSingleChannelResponse = function(apiResponse) {
+		if (apiResponse && apiResponse.data) {
+			nowAndNextModel.set('overlay_eventsForChannel', apiResponse.data);
 		}
 	};
 
@@ -69,10 +76,23 @@ define([
 				'&maxBatchSize=' + (API_CHANNEL_BATCH_SIZE * 5) +
 				'&callback=?';
 
-			$.getJSON(request, handleApiResponse);
+			$.getJSON(request, handleChannelsBatchResponse);
 		}
 	};
 
+	var onFetchChannel = function(channelId) {
+		// Go and get single channel info from api
+		var formattedSliceStartTime = getExactFormattedSliceStartTime(new Date());
+		var request = appConfig.API_PREFIX +
+			'/linearServices/' + channelId + '/events.json' +
+			'?show=start,end,service.id,programme.id,programme.title' +
+			'&sort=start' +
+			'&end>=' + formattedSliceStartTime +
+			'&maxBatchSize=128' +
+			'&callback=?';
+
+		$.getJSON(request, handleSingleChannelResponse);
+	};
 
 
 /* public */
@@ -92,11 +112,15 @@ define([
 		}
 		getNowAndNextForChannels(channelIdsToFetch);
 
+		Event.on(nowAndNextConfig.FETCH_CHANNEL, onFetchChannel);
+
 		return this;
 
 	}
 
 	function finalize() {
+
+		Event.off(nowAndNextConfig.FETCH_CHANNEL, onFetchChannel);
 
 		return this;
 
@@ -108,7 +132,7 @@ define([
 		name		: name,
 		initialize	: initialize,
 		finalize	: finalize,
-		view		: NowAndNextView
+		view		: nowAndNextView
 	});
 
 });

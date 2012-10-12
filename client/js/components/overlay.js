@@ -36,10 +36,10 @@ define([
 	}
 
 	function close() {
-//		hide();
+		hide();
 		// use the history to go back
 		// instead of removing overlay view
-		Router.back();
+		// Router.back();
 	}
 
 /* public */
@@ -49,9 +49,7 @@ define([
 	}
 
 	function show(html) {
-		if (html) {
-			_content.innerHTML = html || '<div class="loading"></div>';
-		}
+		_content.innerHTML = html || '<div class="loading">' + lang.translate('loading') + '</div>';
 		_box.className = 'active';
 	}
 
@@ -62,7 +60,7 @@ define([
 
 	function initialize() {
 
-		console.log('init overlay');
+console.log('init overlay');
 		lang = new Language(App.selectedLanguageCode);
 
 		_box 	= dom.element('div', { id: name }),
