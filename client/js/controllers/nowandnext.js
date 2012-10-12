@@ -1,35 +1,49 @@
-/* 
-* NowAndNextController 
+/*
+* NowAndNextController
 * -------------
 *
 */
 
 define([
 
+	'modules/zepto',
 	'config/channel',
+	'config/app',
 	'lib/flaco/controller',
 	'modules/event',
 	'models/channel',
 	'models/nowandnext',
 	'views/nowandnext'
 
-], function NowAndNextController(channelConfig, Controller, Event, ChannelModel, NowAndNextModel, NowAndNextView) {
+], function NowAndNextController($, channelConfig, appConfig, Controller, Event, ChannelModel, NowAndNextModel, NowAndNextView) {
 
 	var name = 'nowandnext';
 
 /* private */
 
 	var API_CHANNEL_BATCH_SIZE = 10; // How many channels are retrieved per batch
-	var API_EVENTS_BATCH_SIZE = 3; // How many events are returned for each channel
 
 	var handleApiResponse = function(apiResponse) {
-		var channelsInBatch, i;
+		var eventsInBatch, e, i, channelId, eventsCount;
+		var eventsForChannel = {};
 
-		if (apiResponse) {
-			channelsInBatch = apiResponse.length;
-			for (i=0; i< channelsInBatch; i++) {
-				NowAndNextModel.set('eventsForChannel', apiResponse[i]);
+		if (apiResponse && apiResponse.data) {
+
+			// Group events by channel
+			eventsCount = apiResponse.data.length;
+			for (i=0; i< eventsCount; i++) {
+				e = apiResponse.data[i];
+				channelId = e.service.id;
+				if (!eventsForChannel[channelId]) {
+					eventsForChannel[channelId] = [];
+				}
+				eventsForChannel[channelId].push(e);
 			}
+
+			for (channelId in eventsForChannel) {
+				NowAndNextModel.set('eventsForChannel', eventsForChannel[channelId]);
+			}
+
 		}
 	};
 
@@ -47,7 +61,14 @@ define([
 		batchesCount = Math.ceil(channelIdsToFetch.length / API_CHANNEL_BATCH_SIZE);
 		for (i=0; i<batchesCount; i++) {
 			channelIdBatch = channelIdsToFetch.slice( API_CHANNEL_BATCH_SIZE * i, API_CHANNEL_BATCH_SIZE * (i+1) );
-			request = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/' + channelIdBatch.join('|') + '/events/NowAndNext_' + formattedSliceStartTime + '.json?batchSize=' + API_EVENTS_BATCH_SIZE + '&order=startDateTime&optionalProperties=Programme.subcategory&callback=?';
+			request = appConfig.API_PREFIX +
+				'/linearServices/' + channelIdBatch.join(',') + '/events.json' +
+				'?show=start,end,service.id,programme.id,programme.title' +
+				'&sort=start' +
+				'&end>=' + formattedSliceStartTime +
+				'&maxBatchSize=' + (API_CHANNEL_BATCH_SIZE * 5) +
+				'&callback=?';
+
 			$.getJSON(request, handleApiResponse);
 		}
 	};
@@ -67,7 +88,7 @@ define([
 
 		// Start the API calls to fill the channels with events
 		for (i=0; i<channelsCount; i++) {
-			channelIdsToFetch.push(channels[i].channelId);
+			channelIdsToFetch.push(channels[i].id);
 		}
 		getNowAndNextForChannels(channelIdsToFetch);
 

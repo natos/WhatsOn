@@ -44,7 +44,7 @@ define([
 			for (i=0; i<channelsLength; i++) {
 				channelArticle = dom.element('article', {
 					'class':'event-list-container hidden',
-					'id':'eventListContainer-' + channels[i].channelId
+					'id':'eventListContainer-' + channels[i].id
 				});
 				nowAndNextContent.appendChild(channelArticle);
 			}
@@ -64,8 +64,8 @@ define([
 	var appendNowEvent = function(targetElement, channelEvent) {
 
 		var nowDateTime = new Date();
-		var startDateTime = new Date(convert.parseApiDateStringAsMilliseconds(channelEvent.startDateTime));
-		var endDateTime = new Date(convert.parseApiDateStringAsMilliseconds(channelEvent.endDateTime));
+		var startDateTime = new Date(convert.parseApiDateStringAsMilliseconds(channelEvent.start));
+		var endDateTime = new Date(convert.parseApiDateStringAsMilliseconds(channelEvent.end));
 		var nowTimeValue = nowDateTime.valueOf();
 		var startTimeValue = startDateTime.valueOf();
 		var endTimeValue = endDateTime.valueOf();
@@ -80,7 +80,7 @@ define([
 		eventTitle.appendChild(document.createTextNode(channelEvent.programme.title));
 
 		var eventChannel = _eventChannel.cloneNode(false);
-		eventChannel.style.backgroundImage = 'url(' + ChannelModel.byId['s-' + channelEvent.channel.id].logo + ')';
+		eventChannel.style.backgroundImage = 'url(' + ChannelModel.byId[channelEvent.service.id].logo + ')';
 
 		var eventHeader = _eventHeader.cloneNode(false);
 		var eventArticle = _eventArticle.cloneNode(false);
@@ -103,7 +103,7 @@ define([
 		eventTitle.appendChild(document.createTextNode(channelEvent.programme.title));
 
 		var eventStartTime = _eventStartTime.cloneNode(false);
-		eventStartTime.appendChild(document.createTextNode(channelEvent.startDateTime.slice(11,16)));
+		eventStartTime.appendChild(document.createTextNode(channelEvent.start.slice(11,16)));
 
 		var eventHeader = _eventHeader.cloneNode(false);
 		var eventArticle = _eventArticle.cloneNode(false);
@@ -119,11 +119,10 @@ define([
 	};
 
 	var renderEventsForChannel = function(channelEvents) {
-
 		if (channelEvents && channelEvents.length) {
 
-			var channelEventsCount = channelEvents.length;
-			var channelId = channelEvents[0].channel.id;
+			var maxEventsToRender = channelEvents.length;
+			var channelId = channelEvents[0].service.id;
 			var eventListContainer = document.getElementById('eventListContainer-' + channelId);
 			var channelLink = dom.element('a');
 			var eventList = dom.element('ul', {'class' : 'event-list nowandnext-event-list'});
@@ -132,9 +131,12 @@ define([
 			// "now" event
 			appendNowEvent(eventList, channelEvents[0]);
 
-			// "next" events
-			for (i=1; i< channelEventsCount; i++) {
-				appendNextEvent(eventList, channelEvents[i])
+			// "next" events.
+			if (maxEventsToRender > 3) {
+				maxEventsToRender = 3;
+			}
+			for (i=1; i< maxEventsToRender; i++) {
+				appendNextEvent(eventList, channelEvents[i]);
 			}
 
 			channelLink.appendChild(eventList);
