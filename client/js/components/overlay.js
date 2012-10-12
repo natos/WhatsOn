@@ -25,13 +25,24 @@ define([
 
 	function closeHandler(event) {
 		event.preventDefault();
+		close();
+	}
+
+	function keyupHandler(event) {
+		var which = event.keyCode || event.charCode;
+		if (which===27) {
+			close();
+		}
+	}
+
+	function close() {
 //		hide();
 		// use the history to go back
 		// instead of removing overlay view
 		Router.back();
 	}
 
-/* public */ 
+/* public */
 
 	function content() {
 		return _content;
@@ -78,6 +89,8 @@ define([
 
 		_close.addEventListener('click', closeHandler);
 
+		window.addEventListener('keyup', keyupHandler);
+
 		document.body.appendChild(_box);
 
 		return this;
@@ -86,8 +99,9 @@ define([
 
 	function finalize() {
 
-
 		_close.removeEventListener('click', closeHandler);
+
+		window.removeEventListener('keyup', keyupHandler);
 
 		while (_box.firstChild) { _box.removeChild(_box.firstChild); }
 
