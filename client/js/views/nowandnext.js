@@ -98,22 +98,12 @@ define([
 	var appendNextEvent = function(targetElement, channelEvent) {
 
 		var eventListItem = document.createElement('li');
-
-		var eventTitle = _eventTitle.cloneNode(false);
-		eventTitle.appendChild(document.createTextNode(channelEvent.programme.title));
+		eventListItem.className = 'event-list-item-simple';
 
 		var eventStartTime = _eventStartTime.cloneNode(false);
 		eventStartTime.appendChild(document.createTextNode(channelEvent.start.slice(11,16)));
-
-		var eventHeader = _eventHeader.cloneNode(false);
-		var eventArticle = _eventArticle.cloneNode(false);
-		var eventTimeBox = _eventTimeBox.cloneNode(false);
-
-		eventTimeBox.appendChild(eventStartTime);
-		eventArticle.appendChild(eventTimeBox);
-		eventHeader.appendChild(eventTitle);
-		eventArticle.appendChild(eventHeader);
-		eventListItem.appendChild(eventArticle);
+		eventListItem.appendChild(eventStartTime);
+		eventListItem.appendChild(document.createTextNode(channelEvent.programme.title));
 
 		targetElement.appendChild(eventListItem);
 	};

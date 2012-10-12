@@ -1604,24 +1604,33 @@ The two forms of an event list are as follows:
 	<ul class="event-list [type-of-event-list]">
 		<li>
 			<a href="#">
-				<article class="event"></article>
+				[event content]
 			</a>
 		</li>
 	</ul>
 </div>
 
-<!-- Each the entire list is a single link. Example: now and next (list links to channel page). -->
+<!-- The entire list is a single link. Example: now and next (list links to channel page). -->
 <div class="event-list-container">
 	<a href="#">
 		<ul class="event-list [type-of-event-list]">
 			<li>
-				<article class="event"></article>
+				[event content]
 			</li>
 		</ul>
 	</a>
 </div>
 
-The complete HTML for a .event element is as follows:
+[event content] can be declared in two ways:
+
+1) Simple
+
+<li class="event-list-item-simple">
+	<time class="event-starttime">16:35</time> My Little Pony
+</li>
+
+
+2) Complete
 
 <article class="event [now]">
 	<div class="event-time-box">
@@ -1684,6 +1693,28 @@ with a gradient background, but only for small screens */
 	}
 }
 
+/**
+Simple event list item rendering:
+
+<li class="event-list-item-simple">
+	<time class="event-starttime">16:35</time> My Little Pony
+</li>
+*/
+.event-list-item-simple {
+	font-weight:bold;
+	color:#555;
+	margin:10px;
+	padding-left:60px;
+
+	/* Text on a single line, truncated by ellipsis */
+	overflow:hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+	.event-list-item-simple .event-starttime {
+		font-weight:normal;
+		margin-right:0.5em;
+	}
 
 
 /**
