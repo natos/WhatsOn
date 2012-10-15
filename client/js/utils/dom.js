@@ -71,6 +71,11 @@ define([
 		return element;
 	}
 
+	// Creates a DOM text node
+	function text(str) {
+		return doc.createTextNode(str);
+	}
+
 	// deprecated
 	function create(e) {
 		return elements[e].cloneNode(false);
@@ -122,6 +127,7 @@ define([
 		content 	: content,
 		create		: create,
 		element 	: element,
+		text		: text,
 		getDataset	: getDataset,
 		empty		: empty
 	};
