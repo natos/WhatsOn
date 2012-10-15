@@ -25,7 +25,7 @@ define([], function AppConfigContext() {
 
 		CONTROLLERS: ['settings','dashboard','grid','nowandnext','search'/*,'not-found'*/],
 
-		DEFAULT_COUNTRY: 'Ireland',
+		DEFAULT_COUNTRY: 'Nederland',
 
 		DEFAULT_LANGUAJE: 'en',
 

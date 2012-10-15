@@ -9,29 +9,21 @@ define([
 	'modules/app',
 	'lib/flaco/view',
 	'components/carousel',
-	//'components/favorites'
+	'components/favorites',
+	'utils/dom'
 
-], function DashboardView(App, View, Carousel, Favorites) {
+], function DashboardView(App, View, Carousel, Favorites, dom) {
 
 	var name = "dashboard";
 
 /* private */
 
-	//var everyMinuteTimer;
 
 /* public */
 
-
-/* abstract */ 
+	var content = dom.element('div', { id: name + '-content' });
 
 	function initialize() {
-
-		// Update the "on-now" section every minute
-		//everyMinuteTimer = window.setInterval(function(){
-		//	$('#on-now').load('/dashboard #on-now');
-//			$('#on-now-by-category').load('/dashboard/on-now-by-category');
-		//}, 1000 * 60)
-
 
 		return this;
 
@@ -39,8 +31,7 @@ define([
 
 	function render() {
 
-		// The "what's on now by category" data is too big for the dashboard (100K+)
-//		$('#on-now-by-category').load('/dashboard/on-now-by-category');
+		dom.content.appendChild(content);
 
 		return this;
 
@@ -48,7 +39,7 @@ define([
 
 	function finalize() {
 
-		//window.clearInterval(everyMinuteTimer);
+		dom.content.removeChild(content);
 
 		return this;
 
@@ -61,9 +52,10 @@ define([
 		render: render,
 		finalize: finalize,
 		initialize: initialize,
+		content: content,
 		components: {
-			carousel: Carousel
-	//		favorites: Favorites
+			carousel: Carousel,
+			favorites: Favorites
 		}
 	});
 

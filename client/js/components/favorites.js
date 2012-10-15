@@ -12,9 +12,10 @@ define([
 	'modules/event',
 	'models/user',
 	'models/channel',
+	'utils/epgapi',
 	'utils/dom'
 
-], function(a, u, c, App, Event, UserModel, ChannelModel, dom) {
+], function(a, u, c, App, Event, UserModel, ChannelModel, EpgApi, dom) {
 
 	var name = 'favorites',
 
@@ -34,13 +35,13 @@ define([
 
 		// dom 
 
-		_dashboardContent = document.getElementById('dashboard-content'),
+		_content,
+
+		_favoriteProgrammes,
+
+		_favoriteChannels,
 
 		_invitation = dom.create('section');
-
-		_invitation.id = 'invitation';
-
-		_invitation.innerHTML = document.getElementById('invitation-template').innerHTML;
 
 
 	function handleDataChanges(model) {
@@ -72,7 +73,16 @@ define([
 	}
 
 	function renderInvitation() { 
-		_dashboardContent.insertBefore(_invitation, document.getElementById('featured').nextSibling); 
+		//_dashboardContent.insertBefore(_invitation, document.getElementById('featured').nextSibling); 
+		var _invitation, _parragraph, _fbButton;
+			_invitation = dom.element('div', { id: name + '-invitation' });
+			_fbButton = dom.element('button', { class: 'Login', title: 'Login', 'data-action': 'LOGIN' });
+			_parragraph = dom.element('p');
+			_parragraph.appendChild(dom.text("Keep track your favorite shows and channels, recommend, comment and share it with your friends with your facebook account:"));
+			_parragraph.appendChild(_fbButton);
+
+			return 
+
 	}
 
 	function removeInvitation() { 
@@ -84,27 +94,32 @@ define([
 
 	function renderChannels(channels) {
 
-		var favoriteChannels = document.getElementById(FAVORITE_CHANNELS),
+		var _favoriteChannels = layout({ id: FAVORITE_CHANNELS, title: 'You favourite channels now', icon: 'icon-star' }),
 			favoriteChannelIds = [], url, channel, id;
+
+			var extractId = /\d+/ig;
 
 		// for all the favorite channels
 		for (url in channels) {
 			channel = channels[url].data['tv_channel'];
-			id = channel.url.split(a.ROOT_URL + 'channel/')[1];
-			favoriteChannelIds.push(id);
+			//id = channel.url.split(a.ROOT_URL + 'channel/')[1];
+			id = channel.url.match(extractId);
+			favoriteChannelIds.push(id[0]);
 		}
 
 		if (favoriteChannelIds.length > 0) {
-			favoriteChannels.className = 'loading';
-			$(favoriteChannels).load('/dashboard/on-now/channels/' + favoriteChannelIds.join('|'), function(data, status, xhr){
+			_favoriteChannels.className = 'loading';
+			console.log(favoriteChannelIds.join('|'));
+			/*$(favoriteChannels).load('/dashboard/on-now/channels/' + favoriteChannelIds.join('|'), function(data, status, xhr){
 				favoriteChannels.className = '';
 				data = null;
 				delete data;
-			});
+			});*/
 		} else {
-			favoriteChannels.innerHTML = document.getElementById('empty-favorite-channels-template').innerHTML;
 			console.log('Favorite channels not found man, sorry!');
 		}
+
+		//_content.appendChild(_favoriteChannels);
 
 		console.log('finish rendering channels');
 	}
@@ -114,29 +129,64 @@ define([
 	// only the programmes with next information
 	function renderProgrames(programmes) {
 
-		var favoriteProgrammes = document.getElementById(FAVORITE_PROGRAMMES),
+		var _favoriteProgrammes = layout({ id: FAVORITE_PROGRAMMES, class: 'loading', title: 'You favourite shows now', icon: 'icon-star' }),
 			favoriteProgrammeIds = [], url, programmes, id;
+		
+			var extractId = /\d+/ig;
 
 		// for all the favorite channels
 		for (url in programmes) {
+
 			programme = programmes[url].data['tv_show'];
-			id = programme.url.split(a.ROOT_URL + 'programme/')[1];
-			favoriteProgrammeIds.push(id);
+
+			//id = extractId.exec(programme.url);
+			id = programme.url.match(extractId);
+
+			if (id && id[0]) {
+				favoriteProgrammeIds.push(id[0]);
+			}
+
 		}
 
 		if (favoriteProgrammeIds.length > 0) {
-			favoriteProgrammes.className = 'loading';
-			$(favoriteProgrammes).load('/dashboard/on-now/programmes/' + favoriteProgrammeIds.join('|'), function(data, status, xhr) {
+			
+			console.log(favoriteProgrammeIds.join("|"));
+
+			EpgApi.getEventFromAPI(id[0]);
+
+			/*$(favoriteProgrammes).load('/dashboard/on-now/programmes/' + favoriteProgrammeIds.join('|'), function(data, status, xhr) {
 				favoriteProgrammes.className = '';
 				data = null;
 				delete data;
-			});
+			});*/
+
 		} else {
-			favoriteProgrammes.innerHTML = document.getElementById('favorite-programmes-notfound-template').innerHTML;
 			console.log('Favorite progames not found man, sorry!');
 		}
 
+		//_content.appendChild(_favoriteProgrammes);
+
 		console.log('finish rendering programmes');
+	}
+
+
+	function layout(props) {
+
+		var _section, _article, _header, _h1, _title, _icon, _list;
+
+		_icon = dom.element('i', { class: props.icon } );
+		_title = dom.text( props.title );
+		_h1 = dom.element('h1');
+		_h1.appendChild(_icon);
+		_h1.appendChild(_title);
+		_header = dom.element('header');
+		_header.appendChild(_h1);
+		_list = dom.element('ul', { class: 'nowandnext-event-list' });
+		_section = dom.element('section', { id: props.id });
+		_section.appendChild(_header);
+		_section.appendChild(_list);
+
+		return _section;
 	}
 
 /* public */
@@ -152,6 +202,8 @@ define([
 
 	function render(model) {
 
+		_content = dom.doc.getElementById('dashboard-content');
+
 		handleDataChanges(UserModel);
 
 		if (!isConnectedToFacebook) {
@@ -166,7 +218,9 @@ define([
 
 	function finalize() {
 
-		removeInvitation();
+		//removeInvitation();
+
+		dom.empty(_content);
 
 		Event.off(u.MODEL_CHANGED, handleDataChanges);
 
