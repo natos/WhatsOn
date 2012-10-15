@@ -105,12 +105,23 @@ define([
 				if (member === INITIALIZE) { View.State = args[0]; }
 				// emit 'first' event
 				if (present) { Event.emit(present, View, args); }
-				// apply the method
-				if (method) { method.apply(View, args); }
-				// call the same method for all components views
-				// using 'call' here because uses an argument list
-				// instead of an array of arguments
-				forEachComponent.call(View, member, args);
+				// invert execution order when FINALIZE
+				if (member === FINALIZE) {
+					// call the same method for all components views
+					// using 'call' here because uses an argument list
+					// instead of an array of arguments
+					forEachComponent.call(View, member, args);
+					// apply the method
+					if (method) { method.apply(View, args); }
+				} else {
+					// for INITIALIZE and RENDER use default execution order
+					// apply the method
+					if (method) { method.apply(View, args); }
+					// call the same method for all components views
+					// using 'call' here because uses an argument list
+					// instead of an array of arguments
+					forEachComponent.call(View, member, args);
+				}
 				// emit 'last' event
 				if(past) { Event.emit(past, View, args); }
 				// return the View object

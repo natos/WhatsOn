@@ -74,10 +74,18 @@ define([
 				var args = slice.call(arguments, 0);
 				// emit 'first' event
 				if (present) { Event.emit(present, Controller, args); }
-				// apply the method
-				if (method) { method.apply(Controller, args); }
-				// run View method
-				if (viewMethod) { viewMethod.apply(Controller, args); }
+				// invert execution order when finalize
+				if (member === FINALIZE) {
+					// run View method
+					if (viewMethod) { viewMethod.apply(Controller, args); }
+					// apply the method
+					if (method) { method.apply(Controller, args); }
+				} else {
+					// apply the method
+					if (method) { method.apply(Controller, args); }
+					// run View method
+					if (viewMethod) { viewMethod.apply(Controller, args); }
+				}
 				// emit 'last' event
 				if (past) { Event.emit(past, Controller, args); }
 				// return the Controller object
