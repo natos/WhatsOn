@@ -92,10 +92,6 @@ define([
 
 	function initialize() {
 
-		// This just looks ugly now
-		// add logo behavior, move to 'now'
-		//$('.upc-logo').on('click', centerViewPort);
-
 		// move with the grid
 		Event.on(g.MODEL_CHANGED, modelChanged);
 
@@ -147,9 +143,6 @@ define([
 	}
 
 	function finalize() {
-
-		// This just looks ugly now
-		//$('.upc-logo').off('click', centerViewPort);
 
 		Event.off(g.MODEL_CHANGED, modelChanged);
 

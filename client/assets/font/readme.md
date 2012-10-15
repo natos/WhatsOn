@@ -12,10 +12,12 @@ The custom cut-down version includes the following icons:
 icon-bookmark
 icon-calendar
 icon-certificate
+icon-chevron-right
 icon-cog
 icon-facebook-sign
 icon-heart
 icon-home
+icon-info-sign
 icon-pause
 icon-play
 icon-remove-sign

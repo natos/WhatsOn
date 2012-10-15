@@ -20,6 +20,8 @@ define([], function NowAndNextConfigContext() {
 
 		MODEL_CHANGED: 'nowandnext:model_changed',
 
+		FETCH_CHANNEL: 'nowandnext:fetch_channel'
+
 	};
 
 });

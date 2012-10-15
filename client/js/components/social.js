@@ -84,8 +84,6 @@ define([
 			_favorite[i].removeAttribute('data-favorite-id');
 			_favorite[i].getElementsByTagName('i')[0].className = 'icon-star-empty';
 		}
-		//$('.favorite', '#content').removeAttr('disable').removeClass('disable').removeAttr('data-favorite-id');
-		//$('.favorite i', '#content').attr('class','icon-star-empty');
 	}
 
 	/* Action Handler, for User Interaction */

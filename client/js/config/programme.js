@@ -6,7 +6,11 @@
 *
 */
 
-define([], function ProgrammeConfigContext() {
+define([
+
+	'modules/zepto'
+
+], function ProgrammeConfigContext($) {
 
 /* private */
 

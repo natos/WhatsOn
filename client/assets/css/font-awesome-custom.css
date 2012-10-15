@@ -78,10 +78,12 @@ li[class^="icon-"].icon-large:before, li[class*=" icon-"].icon-large:before {
 .icon-bookmark:before             { content: "\f02e"; }
 .icon-calendar:before             { content: "\f073"; }
 .icon-certificate:before          { content: "\f0a3"; }
+.icon-chevron-right:before        { content: "\f054"; }
 .icon-cog:before                  { content: "\f013"; }
 .icon-facebook-sign:before        { content: "\f082"; }
 .icon-heart:before                { content: "\f004"; }
 .icon-home:before                 { content: "\f015"; }
+.icon-info-sign:before            { content: "\f05a"; }
 .icon-pause:before                { content: "\f04c"; }
 .icon-play:before                 { content: "\f04b"; }
 .icon-remove-sign:before          { content: "\f057"; }

@@ -1,5 +1,4 @@
 require.config({
-	
 	paths : {
         //create alias to plugins (not needed if plugins are on the baseUrl)
         text: 'lib/require-plugins/text',
@@ -14,9 +13,7 @@ require.config({
         //propertyParser : 'lib/requirejs-plugins/propertyParser',
         //markdownConverter : 'lib/Markdown.Converter'
     }
-
 });
-
 
 require([
 

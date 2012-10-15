@@ -6,13 +6,14 @@
 
 define([
 
+	'modules/zepto',
 	'config/search',
 	'modules/event',
 	'lib/flaco/controller',
 	'models/search',
 	'views/search'
 
-], function SearchController(searchConfig, Event, Controller, searchModel, searchView) {
+], function SearchController($, searchConfig, Event, Controller, searchModel, searchView) {
 
 	var name = 'search';
 

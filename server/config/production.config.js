@@ -14,7 +14,7 @@ define([
  *	@static
  */
 
-function() {
+function(logger) {
 
 	var config = {
 

@@ -25,22 +25,31 @@ define([
 
 	function closeHandler(event) {
 		event.preventDefault();
-//		hide();
-		// use the history to go back
-		// instead of removing overlay view
-		Router.back();
+		close();
 	}
 
-/* public */ 
+	function keyupHandler(event) {
+		var which = event.keyCode || event.charCode;
+		if (which===27) {
+			close();
+		}
+	}
+
+	function close() {
+		hide();
+		// use the history to go back
+		// instead of removing overlay view
+		// Router.back();
+	}
+
+/* public */
 
 	function content() {
 		return _content;
 	}
 
 	function show(html) {
-		if (html) {
-			_content.innerHTML = html || '<div class="loading"></div>';
-		}
+		_content.innerHTML = html || '<div class="loading">' + lang.translate('loading') + '</div>';
 		_box.className = 'active';
 	}
 
@@ -51,7 +60,7 @@ define([
 
 	function initialize() {
 
-		console.log('init overlay');
+console.log('init overlay');
 		lang = new Language(App.selectedLanguageCode);
 
 		_box 	= dom.element('div', { id: name }),
@@ -61,7 +70,7 @@ define([
 		var _lbl, _icon;
 		// create the label
 		_lbl = dom.element('b', { class: 'label' });
-		_lbl.innerHTML = lang.translate('close');
+		_lbl.innerHTML = ' ' + lang.translate('close');
 		// create the icon
 		_icon = dom.element('i', { class: 'icon-remove-sign' });
 		// create close button
@@ -78,6 +87,8 @@ define([
 
 		_close.addEventListener('click', closeHandler);
 
+		window.addEventListener('keyup', keyupHandler);
+
 		document.body.appendChild(_box);
 
 		return this;
@@ -86,8 +97,9 @@ define([
 
 	function finalize() {
 
-
 		_close.removeEventListener('click', closeHandler);
+
+		window.removeEventListener('keyup', keyupHandler);
 
 		while (_box.firstChild) { _box.removeChild(_box.firstChild); }
 
