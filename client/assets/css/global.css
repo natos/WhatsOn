@@ -418,11 +418,6 @@ If it isn't hidden, sometimes it bleeds through while scrolling through a long p
 
 }
 
-/* For the no-mustard case, don't display the transition overlay at all */
-.no-mustard #transition {
-	display:none;
-}
-
 #transition {
 	position: absolute;
 	position: fixed;
