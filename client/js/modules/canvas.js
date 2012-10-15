@@ -61,18 +61,18 @@ define([
 		}
 		// Everything seems fine
 		// Initialize controller
-//		console.log(' ------------------ LOAD CONTROLLER: ' + cachedController.name + ' --------------------');
+		console.log(' ------------------ LOAD CONTROLLER: ' + cachedController.name + ' --------------------');
 		intializeController(cachedController);
 	}
 
 	function intializeController(controller) {
-//		console.log(' ------------------ INITIALIZE CONTROLLER: ' + controller.name + ' --------------------');
+		console.log(' ------------------ INITIALIZE CONTROLLER: ' + controller.name + ' --------------------');
 		controller[INITIALIZE](CURRENT_STATE);
 	}
 
 	// async load controllers with require
 	function fetchController(controller) {
-//		console.log(' ------------------ FETCH CONTROLLER: ' + controller + ' --------------------');
+		console.log(' ------------------ FETCH CONTROLLER: ' + controller + ' --------------------');
 		require([controller], function mapController(controller) {
 			controllers[controller.name] = controller;
 			intializeController(controller);
@@ -87,7 +87,7 @@ define([
 			return;
 		}
 		// finalize controller
-//		console.log(' ------------------ UN-LOAD CONTROLLER: ' + State.controller + ' --------------------');
+		console.log(' ------------------ UN-LOAD CONTROLLER: ' + State.controller + ' --------------------');
 		finalizeController(controllers[State.controller]);
 	}
 
@@ -97,7 +97,7 @@ define([
 			return;
 		}
 		// finalize controller
-		//console.log(' ------------------ FINALIZE CONTROLLER: ' + controller.name + ' --------------------');
+		console.log(' ------------------ FINALIZE CONTROLLER: ' + controller.name + ' --------------------');
 		controller[FINALIZE]();
 	}
 

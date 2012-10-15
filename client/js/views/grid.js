@@ -327,6 +327,7 @@ define([
 		drawStyles();
 
 		_gridcontent.appendChild(_gridcontainer);
+		
 		dom.content.appendChild(_gridcontent);
 		_gridcontent.style.display = '';
 
