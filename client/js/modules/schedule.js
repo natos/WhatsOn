@@ -25,6 +25,8 @@ define([
 		
 		cache = {},
 
+		is_ready = false,
+
 		// hardcode value for country
 		COUNTRY = cookie.get(a.SELECTED_COUNTRY) || a.DEFAULT_COUNTRY;
 
@@ -104,24 +106,17 @@ define([
 			processLineup(changes[a.LINEUP_CACHE]);
 		}
 
-		if (AppModel[a.CATEGORIES_CACHE] && AppModel[a.GENRES_CACHE]) {
-			ready(); //?
-		}
+		ready(); //?
 	});
-
-	Event.on(c.MODEL_CHANGED, function(changes) {
-
-		if (changes[c.SELECTED_GROUP]) {
-			ready(); //?
-		}	
-
-	});
-
 
 	function ready() {
-		if (ChannelModel[c.SELECTED_GROUP] && AppModel[a.CATEGORIES_CACHE] && AppModel[a.GENRES_CACHE]) {
-			// Ready to Rock!
-			Event.emit(a.READY);
+		if (!is_ready) {
+			if (AppModel[a.CATEGORIES_CACHE] && AppModel[a.GENRES_CACHE]) {
+				// Ready to Rock!
+				console.log('APP REDAY1')
+				is_ready = true;
+				Event.emit(a.READY);
+			}
 		}
 	}
 
