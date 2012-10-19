@@ -23,6 +23,9 @@ define([], function AppConfigContext() {
 		
 		API_PREFIX: 'http://62.179.107.149/cgi-bin/WebObjects/ScheduleAPI-trunk-ivy.woa/1/q',
 
+		FEED_PROXY_BASE_PATH: 'http://localhost:3001',
+		// FEED_PROXY_BASE_PATH: 'http://enigmatic-hamlet-2742.herokuapp.com',
+
 		CONTROLLERS: ['settings','dashboard','grid','nowandnext','search'/*,'not-found'*/],
 
 		DEFAULT_COUNTRY: 'Nederland',

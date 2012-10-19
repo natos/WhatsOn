@@ -16,7 +16,7 @@ define([
 	'utils/dom',
 	'utils/language'
 
-], function(a, u, c, App, Event, UserModel, ChannelModel, EpgApi, dom, Language) {
+], function(appConfig, u, c, App, Event, UserModel, ChannelModel, EpgApi, dom, Language) {
 
 	var name = 'favorites',
 		_lang,
@@ -107,7 +107,7 @@ define([
 			favoriteChannelsBlock = layout({ id: FAVORITE_CHANNELS, title: title, icon: 'icon-star', list: list });
 
 			// Go and load now&next for favourite channels
-			require(['json!http://localhost:3001/nowandnext/ie/' + favoriteChannelIds.join('|') + '/channels.json'], function(channelData) {
+			require(['json!' + appConfig.FEED_PROXY_BASE_PATH + '/nowandnext/ie/' + favoriteChannelIds.join('|') + '/channels.json'], function(channelData) {
 				var channelId, eventsForChannel, i, eventsCount, e;
 				var list = dom.element('ul');
 
@@ -152,7 +152,7 @@ define([
 			favoriteProgrammesBlock = layout({ id: FAVORITE_PROGRAMMES, title: title, icon: 'icon-star', list: list });
 
 			// Go and load next events for favourite programmes
-			require(['json!http://localhost:3001/nowandnext/ie/' + favoriteProgrammeIds.join('|') + '/programmes.json'], function(programmesData) {
+			require(['json!' + appConfig.FEED_PROXY_BASE_PATH + '/nowandnext/ie/' + favoriteProgrammeIds.join('|') + '/programmes.json'], function(programmesData) {
 				var programmeId, eventsForProgramme, i, eventsCount, e;
 				var list = dom.element('ul');
 				var programmesFound = 0;
