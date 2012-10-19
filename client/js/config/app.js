@@ -19,9 +19,9 @@ define([], function AppConfigContext() {
 
 		NAMESPACE: 'upsocial',
 
-		API_PREFIX: 'http://api.lgi.com/alpha',
+		// API_PREFIX: 'http://api.lgi.com/alpha',
 		
-		//API_PREFIX: 'http://62.179.107.149/cgi-bin/WebObjects/ScheduleAPI-trunk-ivy.woa/1/q',
+		API_PREFIX: 'http://62.179.107.149/cgi-bin/WebObjects/ScheduleAPI-trunk-ivy.woa/1/q',
 
 		CONTROLLERS: ['settings','dashboard','grid','nowandnext','search'/*,'not-found'*/],
 

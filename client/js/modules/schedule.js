@@ -113,7 +113,7 @@ define([
 		if (!is_ready) {
 			if (AppModel[a.CATEGORIES_CACHE] && AppModel[a.GENRES_CACHE]) {
 				// Ready to Rock!
-				console.log('APP REDAY1')
+				console.log('APP READY');
 				is_ready = true;
 				Event.emit(a.READY);
 			}

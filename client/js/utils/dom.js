@@ -60,12 +60,16 @@ define([
 
 	// Creates a DOM element with
 	// attributes
-	function element(e, attrs) {
+	function element(e, attrs, str) {
 
 		element = elements[e].cloneNode(false);
 
 		for (var attr in attrs) {
 			element.setAttribute(attr, attrs[attr])
+		}
+
+		if (str) {
+			element.appendChild(text(str));
 		}
 
 		return element;
