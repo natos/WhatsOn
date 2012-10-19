@@ -13,11 +13,13 @@ define([
 	'models/user',
 	'models/channel',
 	'utils/epgapi',
-	'utils/dom'
+	'utils/dom',
+	'utils/language'
 
-], function(a, u, c, App, Event, UserModel, ChannelModel, EpgApi, dom) {
+], function(a, u, c, App, Event, UserModel, ChannelModel, EpgApi, dom, Language) {
 
 	var name = 'favorites',
+		_lang,
 
 /* private */
 
@@ -96,12 +98,13 @@ define([
 
 		var favoriteChannelsBlock;
 		var list = dom.element('ul');
+		var title = _lang.translate('dash-favorite-channels-title');
 
 		if (favoriteChannelIds.length > 0) {
 
 			// Show loading message
-			list.appendChild(dom.element('li', {'class':'loading'}, 'Loading...'));
-			favoriteChannelsBlock = layout({ id: FAVORITE_CHANNELS, title: 'On your favourite channels now', icon: 'icon-star', list: list });
+			list.appendChild(dom.element('li', {'class':'loading'}, _lang.translate('loading')));
+			favoriteChannelsBlock = layout({ id: FAVORITE_CHANNELS, title: title, icon: 'icon-star', list: list });
 
 			// Go and load now&next for favourite channels
 			require(['json!http://localhost:3001/nowandnext/ie/' + favoriteChannelIds.join('|') + '/channels.json'], function(channelData) {
@@ -120,13 +123,13 @@ define([
 
 				favoriteChannelsBlock.parentNode.removeChild(favoriteChannelsBlock);
 				_content.appendChild(
-					layout({ id: FAVORITE_CHANNELS, title: 'On your favourite channels now', icon: 'icon-star', list: list })
+					layout({ id: FAVORITE_CHANNELS, title: title, icon: 'icon-star', list: list })
 				);
 			});
 		} else {
 			// Show instructions
-			list.appendChild(dom.element('li', {}, 'You have no favourite channels yet'));
-			favoriteChannelsBlock = layout({ id: FAVORITE_CHANNELS, title: 'On your favourite channels now', icon: 'icon-star', list: list });
+			list.appendChild(dom.element('li', {}, _lang.tranlate('dash-favorite-channels-none-added')));
+			favoriteChannelsBlock = layout({ id: FAVORITE_CHANNELS, title: title, icon: 'icon-star', list: list });
 		}
 
 		_content.appendChild(favoriteChannelsBlock);
@@ -140,12 +143,13 @@ define([
 
 		var favoriteProgrammesBlock;
 		var list = dom.element('ul');
+		var title = _lang.translate('dash-favorite-shows-title');
 
 		if (favoriteProgrammeIds.length > 0) {
 
 			// Show loading message
-			list.appendChild(dom.element('li', {'class':'loading'}, 'Loading...'));
-			favoriteProgrammesBlock = layout({ id: FAVORITE_PROGRAMMES, title: 'Your favourite shows', icon: 'icon-star', list: list });
+			list.appendChild(dom.element('li', {'class':'loading'}, _lang.translate('loading')));
+			favoriteProgrammesBlock = layout({ id: FAVORITE_PROGRAMMES, title: title, icon: 'icon-star', list: list });
 
 			// Go and load next events for favourite programmes
 			require(['json!http://localhost:3001/nowandnext/ie/' + favoriteProgrammeIds.join('|') + '/programmes.json'], function(programmesData) {
@@ -165,18 +169,18 @@ define([
 				}
 
 				if (programmesFound === 0) {
-					list.appendChild(dom.element('li', {}, "Can't find any upcoming broadcasts for your favourites!"));
+					list.appendChild(dom.element('li', {}, _lang.translate('dash-favorite-shows-none-found')));
 				}
 
 				favoriteProgrammesBlock.parentNode.removeChild(favoriteProgrammesBlock);
 				_content.appendChild(
-					layout({ id: FAVORITE_PROGRAMMES, title: 'Your favourite shows', icon: 'icon-star', list: list })
+					layout({ id: FAVORITE_PROGRAMMES, title: title, icon: 'icon-star', list: list })
 				);
 			});
 		} else {
 			// Show instructions
-			list.appendChild(dom.element('li', {}, 'You have no favourite shows yet'));
-			favoriteProgrammesBlock = layout({ id: FAVORITE_PROGRAMMES, title: 'Your favourite shows', icon: 'icon-star', list: list });
+			list.appendChild(dom.element('li', {}, _lang.translate('dash-favorite-shows-none-added')));
+			favoriteProgrammesBlock = layout({ id: FAVORITE_PROGRAMMES, title: title, icon: 'icon-star', list: list });
 		}
 
 		_content.appendChild(favoriteProgrammesBlock);
@@ -210,6 +214,8 @@ define([
 /* public */
 
 	function initialize() {
+
+		_lang = new Language(App.selectedLanguageCode);
 
 		// subscribe to get re-render favorites
 		Event.on(u.MODEL_CHANGED, handleDataChanges);
