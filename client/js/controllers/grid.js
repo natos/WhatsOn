@@ -206,9 +206,6 @@ define([
 				eventTitle = "←" + event.programme.title;
 			}
 
-			/* 
-				TODO: API doesn't give any categroy information yet
-			*/
 			// Category and subcategory
 			category = event.programme.subcategory.category.name;
 			subcategory = event.programme.subcategory.name;
@@ -217,13 +214,11 @@ define([
 			eventElement = dom.create('a');
 			eventElement.id = 'event-' + event.id;
 			eventElement.className = 'grid-event' + (width < tinyWidthLimit ? ' tiny' : '');
-			eventElement.href = '/programme/' + event.programme.id;
+			eventElement.href = '#programme/' + event.programme.id;
 			eventElement.style.width = width + 'px';
 			eventElement.style.left = left + 'px';
 			eventElement.setAttribute('data-category', category.replace('/','-')); // the '/' is not interperted by CSS, needed for highlighting
 			eventElement.setAttribute('data-subcategory', subcategory.replace('/','-')); // the '/' is not interperted by CSS, needed for highlighting
-			// Declare the overlay action
-			eventElement.setAttribute('data-action', 'OVERLAY');
 			if (width >= tinyWidthLimit) {
 				eventElement.appendChild(document.createTextNode(eventTitle));
 			} else {
@@ -446,7 +441,7 @@ define([
 				// crashes and empty slots of data.
 				var callbackName = /\&callback=jsonp\d+/gi;
 				var nextUrl = cachedSlice.nextBatchLink.href.replace(callbackName, '');
-				var exists = false;
+				var exists = false; // 10/24/2012 NS: Don't know what this flags means...
 
 				if (nextUrl === url) {
 					// here we know the actual request is a nextBatch
@@ -559,25 +554,7 @@ define([
 
 	}
 
-	function setEvent(response) {
-		
-		console.log('<GridController>.setEvent', arguments);
-
-		GridModel.set(g.OVERLAY, response.data[0]);
-
-	}
-
-
-	function getEvent(id) {
-
-		var getNumbers = /\d+/gi;
-		var query = getNumbers.exec(id)[0];
-
-		EpgApi.getEventFromAPI(query);
-
-	}
-
-
+	
 	/**********************
 		EVENT HANDLERS
 	**********************/
@@ -640,9 +617,6 @@ define([
 		Event.on(g.MOVED, gridMoved);
 		Event.on(g.FETCH_EVENTS, getEvents);
 		Event.on(g.EVENTS_RECEIVED, setEvents);
-		Event.on(g.FETCH_EVENT, getEvent);
-		Event.on(g.EVENT_RECEIVED, setEvent);
-
 		Event.on(c.MODEL_CHANGED, channelModelChanged);
 
 		return this;
@@ -658,9 +632,6 @@ define([
 		Event.off(g.MOVED, gridMoved);
 		Event.off(g.FETCH_EVENTS, getEvents);
 		Event.off(g.EVENTS_RECEIVED, setEvents);
-		Event.off(g.FETCH_EVENT, getEvent);
-		Event.off(g.EVENT_RECEIVED, setEvent);
-
 		Event.off(c.MODEL_CHANGED, channelModelChanged);
 
 		return this;
