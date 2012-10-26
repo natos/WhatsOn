@@ -28,6 +28,7 @@ define([
 	_navigator,
 	_carousel,
 	_list,
+	_transition,
 
 	timer = {
 		clock: void 0,
@@ -118,12 +119,15 @@ define([
 
 	function renderProgrammes(tips) {
 
+		console.log(tips)
+
 		// have no programmes?
 		if (!tips) {
 			console.log('<CAROUSEL>', 'No programmes available.');
 			return;
 		}
 
+		_list = dom.element('ul', { class: 'show slide' });
 		// define the type of transformation
 		// this is because we normally use
 		// translate3d and opera doesn't support it
@@ -134,7 +138,6 @@ define([
 		var i = 0, disc, tip, _programme, _details, _title, _channel, _container,
 			_pauseIcon = dom.element('i', { class: 'icon-pause' }),
 			_disc = dom.element('i', { class: DISC_CLASS });
-			_navigator = dom.element('div', { id: 'carouselNavigator', class: 'navigator' });
 
 		// create playpause button
 		_playpause = dom.element('div', { id: 'playpause' });
@@ -183,11 +186,11 @@ define([
 		tips = null;
 		disc = null;
 		_disc = null;
-		_programme = null;
-		_details = null;
 		_title = null;
+		_details = null;
 		_channel = null;
 		_container = null;
+		_programme = null;
 
 		// select first
 		if (_navigator.firstChild) {
@@ -197,16 +200,18 @@ define([
 		// Add a click handler for navigation
 		_navigator.addEventListener('click', discHandler);
 
-		// add content list 
-		_carousel.appendChild(_list);
 		// add navigator and playpause to carousel
-		_carousel.appendChild(_navigator);
-		_carousel.appendChild(_playpause);
+		_carousel.insertBefore(_playpause, _carousel.firstChild);
+		_carousel.insertBefore(_navigator, _carousel.firstChild);
+		// add content list first
+		_carousel.insertBefore(_list, _carousel.firstChild);
 		// check the viewport size
 		sizeHandler();
-
 		// start timer
 		timer.start();
+
+		_transition.className = 'hide';
+		_transition.parentNode.removeChild(_transition);
 	}
 
 	/*
@@ -232,24 +237,30 @@ define([
 
 	function initialize() {
 
+		_transition = dom.element('div', { 'id': 'carousel-loading' });
+		_loading = dom.element('div', { 'class': 'loader' });
+		_transition.appendChild(_loading);
+
+		_navigator = dom.element('div', { id: 'carouselNavigator', class: 'navigator' });
+
 		_carousel = dom.element('section', { id: 'featured', class: 'carousel'} );
-		_list = dom.element('ul', { class: 'show slide' });
+		_carousel.appendChild(_transition);
+
+		// append to dom
+		dom.content.appendChild(_carousel);
 
 		window.addEventListener('resize', sizeHandler);
 		window.addEventListener('orientationchange', sizeHandler);
+
+		require(['json!http://enigmatic-hamlet-2742.herokuapp.com/nl/tvtips.json'], renderProgrammes);
+		//$.getJSON('http://62.179.107.149/cgi-bin/WebObjects/FeedSniplets.woa/wa/XmlFeedActions/getFeed?format=json&groupName=ieTVTips&callback=?', renderProgrammes);
 
 		return this;
 	}
 
 	function render() {
 
-		// TODO: Add loader to carousel layout 
-		console.log('loading carousel')
-
-		// append to dom
-		dom.doc.getElementById('dashboard-content').appendChild(_carousel);
-
-		require(['json!http://enigmatic-hamlet-2742.herokuapp.com/nl/tvtips.json'], renderProgrammes);
+		_loading.style.height =	_transition.style.height = _carousel.style.height = (window.innerWidth * 0.5625) + 'px';
 
 		return this;
 	}
@@ -259,15 +270,13 @@ define([
 		// stop timer
 		timer.stop();
 
+		// remove dom listeners
+		_navigator && _navigator.removeEventListener('click', timer.restart);
+		_playpause && _playpause.removeEventListener('click', playpauseHandler); 
+
 		// remove browser listeners
 		window.removeEventListener('resize', sizeHandler);
 		window.removeEventListener('orientationchange', sizeHandler);
-
-		// reset carousel className
-		_carousel.className = 'no-carousel';
-
-		_navigator.removeEventListener('click', timer.restart);
-		_playpause.removeEventListener('click', playpauseHandler); 
 
 		// We need to remove UI buttons, because when it re-renders,
 		// we loose reference to DOM Interfaces, they are created
@@ -275,8 +284,9 @@ define([
 		_carousel.removeChild(_navigator); 
 		_carousel.removeChild(_playpause);
 		_carousel.removeChild(_list);
+
 		// remove carousel
-		dom.doc.getElementById('dashboard-content').removeChild(_carousel);
+		dom.content.removeChild(_carousel);
 
 		_list = null;
 		_carousel = null;
