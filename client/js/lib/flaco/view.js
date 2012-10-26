@@ -6,9 +6,10 @@
 define([
 
 	'config/app',
-	'modules/event'
+	'modules/event',
+	'utils/dom'
 
-], function GenericViewScope(a, Event) {
+], function GenericViewScope(a, Event, dom) {
 
 /* private */
 
@@ -113,6 +114,8 @@ define([
 					forEachComponent.call(View, member, args);
 					// apply the method
 					if (method) { method.apply(View, args); }
+					// self empty view container
+					dom.empty(dom.content);
 				} else {
 					// for INITIALIZE and RENDER use default execution order
 					// apply the method
@@ -123,7 +126,7 @@ define([
 					forEachComponent.call(View, member, args);
 				}
 				// emit 'last' event
-				if(past) { Event.emit(past, View, args); }
+				if (past) { Event.emit(past, View, args); }
 				// return the View object
 				return this;
 			}
