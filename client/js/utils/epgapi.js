@@ -3,15 +3,32 @@ define([
 	'modules/zepto',
 	'config/app',
 	'config/grid',
+	'config/programme',
+	'config/channel',
 	'modules/event'
 
-], function($, a, g, Event) {
+], function($, a, g, p, c, Event) {
 
 	'use strict';
 
 	// constants
 	var	MAX_BATCH_SIZE = 128;
 
+
+	function getNowAndNextForChannels(channelsIds, time) {
+		// fix the request URL
+		var request = a.API_PREFIX 
+		// get events for services
+			+ '/linearServices/' + channelsIds + '/events.json'
+		// properties
+			+ '?show=start,end,service.id,programme.id,programme.title,programme.subcategory.name,programme.subcategory.category.name'
+		// filters
+			+ '&sort=start&end>=' + time;
+
+		// first request
+			query(request, c.NOWANDNEXT_RECEIVED);
+
+	}
 
 	function getCountriesFromAPI() {
 
@@ -81,7 +98,7 @@ define([
 			query(request, a.GENRES_RECIEVED);
 	}
 
-	function getEventFromAPI(id) {
+	function getProgrammeFromAPI(id) {
 
 		// fix the request URL
 		var request = a.API_PREFIX 
@@ -93,7 +110,7 @@ define([
 			+ '&sort=events.start';
 
 		// first request
-			query(request, g.EVENT_RECEIVED);
+			query(request, p.PROGRAMME_RECEIVED);
 
 	}
 
@@ -121,6 +138,12 @@ define([
 			handleResponse(response, url, eventName);
 		});
 
+		// We can start using this pattern when EpgAPIsupport CORS,
+		// This is much better, because we can remove '$' dependency
+		//require(['json!' + url + '&maxBatchSize=' + MAX_BATCH_SIZE], function handleResponseProxy(response) {
+		//	handleResponse(response, url, eventName);
+		//});
+
 	}
 
 	function handleResponse(response, url, eventName) {
@@ -146,14 +169,15 @@ define([
 	}
 
 	return {
-		getEventBatchFromAPI 	: getEventBatchFromAPI,
-		getCategoriesFromAPI	: getCategoriesFromAPI,
-		getCountriesFromAPI		: getCountriesFromAPI,
-		getSchedulesFromAPI		: getSchedulesFromAPI,
-		getGenresFromAPI		: getGenresFromAPI,
-		getLineUpFromAPI 		: getLineUpFromAPI,
-		getEventFromAPI 		: getEventFromAPI,
-		query 					: query
+		getNowAndNextForChannels	: getNowAndNextForChannels,
+		getEventBatchFromAPI 		: getEventBatchFromAPI,
+		getCategoriesFromAPI		: getCategoriesFromAPI,
+		getCountriesFromAPI			: getCountriesFromAPI,
+		getSchedulesFromAPI			: getSchedulesFromAPI,
+		getProgrammeFromAPI 		: getProgrammeFromAPI,
+		getGenresFromAPI			: getGenresFromAPI,
+		getLineUpFromAPI 			: getLineUpFromAPI,
+		query 						: query
 	};
 
 });
