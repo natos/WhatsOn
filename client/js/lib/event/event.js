@@ -49,6 +49,7 @@
 	 * @return {Boolean} If false then it was a once event
 	 */
 	Event.prototype.fire = function(args) {
+
 		this.listener.apply(this.scope || this.instance, args);
 		
 		// Remove the listener if this is a once only listener
