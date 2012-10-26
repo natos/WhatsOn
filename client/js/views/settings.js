@@ -12,17 +12,19 @@ define([
 	'models/app',
 	'modules/app',
 	'modules/event',
-	'components/overlay',
 	'lib/flaco/view',
-	'utils/dom'
+	'utils/dom',
+	'components/carousel'
 
-], function SettingsView(a, AppModel, App, Event, Overlay, View, dom) {
+], function SettingsView(a, AppModel, App, Event, View, dom, Carousel) {
 
 	var name = 'settings',
 
 /* private */
 
 	selectedCountry,
+
+	content = dom.element('div', { id: name + '-content' });
 
 	template = dom.element('fragment'),
 
@@ -39,7 +41,7 @@ define([
 
 	function handleSelection(event) {
 
-		var checks = Overlay.content().querySelectorAll('input:checked');
+		var checks = content.querySelectorAll('input:checked');
 
 		if (checks.length > 0) {
 			Event.emit(a.SELECTED_COUNTRY, checks[0].value);
@@ -55,19 +57,17 @@ define([
 
 	function createLayout() {
 
-		var i, t, countries, country, title, subtitle, list, li, label, selected;
+		var i, t, article, countries, country, title, subtitle, list, li, label, selected;
 
-		title = dom.element('h1');
-		title.innerHTML = "Settings";
+		article = dom.element('article');
 
 		subtitle = dom.element('h2');
 		subtitle.innerHTML = "Select your country";
 
 		list = dom.element('ul');
 
-		template.appendChild(title);
-		template.appendChild(subtitle);
-		template.appendChild(list);
+		article.appendChild(subtitle);
+		article.appendChild(list);
 
 		countries = AppModel[a.COUNTRIES_CACHE].data;
 
@@ -88,7 +88,9 @@ define([
 			list.appendChild(li);
 		}
 
-		template.appendChild(button);
+		article.appendChild(button);
+
+		template.appendChild(article);
 
 		return template;
 
@@ -100,6 +102,8 @@ define([
 
 		selectedCountry = AppModel[a.SELECTED_COUNTRY];
 
+		dom.content.appendChild(content);
+
 		return this;
 
 	}
@@ -108,19 +112,17 @@ define([
 
 		if (AppModel[a.COUNTRIES_CACHE]) {
 
-			dom.empty(Overlay.content());
+			dom.empty(content);
 
-			Overlay.content().appendChild(createLayout());
+			content.appendChild(createLayout());
 
-			Overlay.show();
-
-			Overlay.content().addEventListener('change', handleChange);
+			content.addEventListener('change', handleChange);
 
 			button.addEventListener('click', handleSelection);
 
 		} else {
 
-			Overlay.show('Loading...');
+			content.appendChild(dom.text('Loading...'));
 
 		}
 
@@ -130,7 +132,11 @@ define([
 
 	function finalize() {
 
-		Overlay.content().removeEventListener('change', handleChange);
+		dom.empty(content);
+
+		dom.content.removeChild(content);
+
+		content.removeEventListener('change', handleChange);
 
 		button.removeEventListener('click', handleSelection);
 
@@ -145,10 +151,7 @@ define([
 		name				: name,
 		initialize			: initialize,
 		finalize			: finalize,
-		render				: render,
-		components			: {
-			overlay	: Overlay
-		}
+		render				: render
 	});
 
 });
