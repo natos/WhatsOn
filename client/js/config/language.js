@@ -32,7 +32,12 @@ define([], function LanguageConfigContext() {
 			"day-4" : "Thursday",
 			"day-5" : "Friday",
 			"day-6" : "Saturday",
-			"day-0" : "Sunday"
+			"day-0" : "Sunday",
+			"dash-favorite-shows-title" : "Your favourite shows",
+			"dash-favorite-shows-none-added" : "You haven't added any favourite shows yet",
+			"dash-favorite-shows-none-found" : "Can't find any upcoming broadcasts for your favourites!",
+			"dash-favorite-channels-title" : "Your favourite channels",
+			"dash-favorite-channels-none-added" : "You haven't added any favourite channels yet"
 		},
 		"nl" : {
 			"appname" : "UPC Sociaal",
@@ -57,7 +62,12 @@ define([], function LanguageConfigContext() {
 			"day-4" : "Donderdag",
 			"day-5" : "Vrijdag",
 			"day-6" : "Zaterdag",
-			"day-0" : "Zondag"
+			"day-0" : "Zondag",
+			"dash-favorite-shows-title" : "Jouw favoriete programma's",
+			"dash-favorite-shows-none-added" : "Je hebt nog geen favoriete programma's toegevoegd",
+			"dash-favorite-shows-none-found" : "We kunnen geen uitzendingen van jouw favoriete programma's vinden!",
+			"dash-favorite-channels-title" : "Jouw favoriete zenders",
+			"dash-favorite-channels-none-added" : "Je hebt nog geen favoriete zenders toegevoegd"
 		},
 		"at" : {
 			"appname" : "UPC Social",

@@ -13,16 +13,18 @@ define([
 	'models/user',
 	'models/channel',
 	'utils/epgapi',
+	'utils/language',
 	'utils/dom',
 	'utils/convert'
 
-], function(a, u, c, App, Event, UserModel, ChannelModel, EpgApi, dom, convert) {
+], function(a, u, c, App, Event, UserModel, ChannelModel, EpgApi, Language, dom, convert) {
 
 	var name = 'favorites',
+		_lang,
 
 /* private */
 
-		// constants 
+		// constants
 
 		FACEBOOK_STATUS = 'facebook-status',
 
@@ -34,7 +36,7 @@ define([
 
 		isConnectedToFacebook = false,
 
-		// dom 
+		// dom
 
 		_favoriteProgrammes,
 
@@ -67,11 +69,11 @@ define([
 				removeInvitation();
 			}
 			
-			_favoriteProgrammes = layout({ id: FAVORITE_PROGRAMMES, class: 'loading', title: 'You favourite shows now', icon: 'icon-star' });
-			_favoriteChannels = layout({ id: FAVORITE_CHANNELS, class: 'loading', title: 'You favourite channels now', icon: 'icon-star' });
+			//_favoriteProgrammes = layout({ id: FAVORITE_PROGRAMMES, class: 'loading', title: 'You favourite shows now', icon: 'icon-star' });
+			//_favoriteChannels = layout({ id: FAVORITE_CHANNELS, class: 'loading', title: 'You favourite channels now', icon: 'icon-star' });
 
-			dom.content.appendChild(_favoriteProgrammes);
-			dom.content.appendChild(_favoriteChannels);
+			//dom.content.appendChild(_favoriteProgrammes);
+			//dom.content.appendChild(_favoriteChannels);
 		}
 
 
@@ -90,10 +92,9 @@ define([
 			_fbButton = dom.element('button', { class: 'login', title: 'Login', 'data-action': 'LOGIN' });
 			_fbButton.appendChild(dom.element('i', { class: 'icon-facebook-sign' }));
 			_fbButton.appendChild(dom.text('Login'));
-			_parragraph = dom.element('p');
-			_parragraph.appendChild(dom.text("Keep track your favorite shows and channels, recommend, comment and share it with your friends with your facebook account: "));
+			_parragraph = dom.element('p', {}, "Keep track your favorite shows and channels, recommend, comment and share it with your friends with your facebook account: ");
 			_parragraph.appendChild(_fbButton);
-			_invitation = _section.getElementsByTagName('article')[0];
+			_invitation = dom.element('article');
 			_invitation.appendChild(_parragraph);
 			_section.appendChild(_invitation);
 			dom.content.appendChild(_section);
@@ -103,116 +104,127 @@ define([
 		_invitation.parentNode.removeChild(_invitation);
 	}
 
-	function renderChannels(channels) {
+	function renderChannels(favoriteChannelIds) {
 
-		var favoriteChannelIds = [], url, channel, id, now,
-
-			extractId = /\d+/ig;
-
-		// for all the favorite channels
-		for (url in channels) {
-			channel = channels[url].data['tv_channel'];
-			//id = channel.url.split(a.ROOT_URL + 'channel/')[1];
-			id = channel.url.match(extractId);
-			if (id && id[0]) {
-				favoriteChannelIds.push(id[0]);
-			}
-		}
+		var favoriteChannelsBlock;
+		var list = dom.element('ul');
+		var title = _lang.translate('dash-favorite-channels-title');
 
 		if (favoriteChannelIds.length > 0) {
-			_favoriteChannels.className = 'loading';
-			now = convert.formatTimeForApiRequest(new Date());
-			//EpgApi.getNowAndNextForChannels(favoriteChannelIds.join(','), convert.formatTimeForApiRequest(new Date()));
-			EpgApi.getNowAndNextForChannels('s-7s', now);
+
+			// Show loading message
+			list.appendChild(dom.element('li', {'class':'loading'}, _lang.translate('loading')));
+			favoriteChannelsBlock = layout({ id: FAVORITE_CHANNELS, title: title, icon: 'icon-star', list: list });
+
+			// Go and load now&next for favourite channels
+			require(['json!' + a.FEED_PROXY_BASE_PATH + '/nowandnext/ie/' + favoriteChannelIds.join('|') + '/channels.json'], function(channelData) {
+				var channelId, eventsForChannel, i, eventsCount, e;
+				var list = dom.element('ul');
+
+				// TODO: proper layout for now&next events in this block
+				for (channelId in channelData) {
+					eventsForChannel = channelData[channelId];
+					eventsCount = eventsForChannel.length;
+					for (i=0; i<eventsCount; i++) {
+						e = eventsForChannel[i];
+						list.appendChild(dom.element('li', {}, e.service.id + ' ' + e.programme.title + ' ' + e.start));
+					}
+				}
+
+				favoriteChannelsBlock.parentNode.removeChild(favoriteChannelsBlock);
+				dom.content.appendChild(
+					layout({ id: FAVORITE_CHANNELS, title: title, icon: 'icon-star', list: list })
+				);
+			});
 		} else {
-
-			var message = dom.element('p');
-				message.appendChild(dom.text("Save channels to your favourites, and we will show you what is showing now and next."));
-
-			_favoriteChannels.getElementsByTagName('article')[0].appendChild(message);
-
-			message = null;
+			// Show instructions
+			list.appendChild(dom.element('li', {}, _lang.tranlate('dash-favorite-channels-none-added')));
+			favoriteChannelsBlock = layout({ id: FAVORITE_CHANNELS, title: title, icon: 'icon-star', list: list });
 		}
 
-		console.log('finish rendering channels');
+		dom.content.appendChild(favoriteChannelsBlock);
+
 	}
 
-	function handleNowAndNextEventsFromChannels() {
-		console.log('handleNowAndNextEventsFromChannels', arguments);
-	}
+	function renderProgrames(favoriteProgrammeIds) {
 
-	// iterate the favorites, for each of them
-	// fetch the now and next, and shows
-	// only the programmes with next information
-	function renderProgrames(programmes) {
-
-		var favoriteProgrammeIds = [], url, programmes, id,
-		
-			extractId = /\d+/ig;
-
-		// for all the favorite channels
-		for (url in programmes) {
-
-			programme = programmes[url].data['tv_show'];
-
-			//id = extractId.exec(programme.url);
-			id = programme.url.match(extractId);
-
-			if (id && id[0]) {
-				favoriteProgrammeIds.push(id[0]);
-			}
-
-		}
+		var favoriteProgrammesBlock;
+		var list = dom.element('ul');
+		var title = _lang.translate('dash-favorite-shows-title');
 
 		if (favoriteProgrammeIds.length > 0) {
 
-			console.log(favoriteProgrammeIds.join("|"));
+			// Show loading message
+			list.appendChild(dom.element('li', {'class':'loading'}, _lang.translate('loading')));
+			favoriteProgrammesBlock = layout({ id: FAVORITE_PROGRAMMES, title: title, icon: 'icon-star', list: list });
 
-			// TODO: Fetch now and next of favorite programmes
+			// Go and load next events for favourite programmes
+			require(['json!' + a.FEED_PROXY_BASE_PATH + '/nowandnext/ie/' + favoriteProgrammeIds.join('|') + '/programmes.json'], function(programmesData) {
+				var programmeId, eventsForProgramme, i, eventsCount, e;
+				var list = dom.element('ul');
+				var programmesFound = 0;
 
-			//EpgApi.getEventFromAPI(id[0]); // event id? programme id? what to do here?
+				// TODO: proper layout for now&next events in this block
+				for (programmeId in programmesData) {
+					programmesFound += 1;
+					eventsForProgramme = programmesData[programmeId];
+					eventsCount = eventsForProgramme.length;
+					for (i=0; i<eventsCount; i++) {
+						e = eventsForProgramme[i];
+						list.appendChild(dom.element('li', {}, e.programme.title + ' on channel ' + e.service.id + ' at ' + e.start));
+					}
+				}
 
+				if (programmesFound === 0) {
+					list.appendChild(dom.element('li', {}, _lang.translate('dash-favorite-shows-none-found')));
+				}
+
+				favoriteProgrammesBlock.parentNode.removeChild(favoriteProgrammesBlock);
+				dom.content.appendChild(
+					layout({ id: FAVORITE_PROGRAMMES, title: title, icon: 'icon-star', list: list })
+				);
+			});
 		} else {
-
-			var message = dom.element('p');
-				message.appendChild(dom.text("We can not find any of your favorite shows on TV right now."));
-			
-			_favoriteProgrammes.getElementsByTagName('article')[0].appendChild(message);
-
-			message = null;
+			// Show instructions
+			list.appendChild(dom.element('li', {}, _lang.translate('dash-favorite-shows-none-added')));
+			favoriteProgrammesBlock = layout({ id: FAVORITE_PROGRAMMES, title: title, icon: 'icon-star', list: list });
 		}
+
+		dom.content.appendChild(favoriteProgrammesBlock);
 
 	}
 
 	function layout(props) {
 
-		var _section, _article, _header, _h1, _title, _icon, _list;
+		var section, article, header, h1, title, icon, list;
 
-		_icon = dom.element('i', { class: props.icon } );
-		_title = dom.text( props.title );
-		_h1 = dom.element('h1');
-		_h1.appendChild(_icon);
-		_h1.appendChild(_title);
-		_header = dom.element('header');
-		_header.appendChild(_h1);
-		_list = dom.element('ul', { class: 'nowandnext-event-list' });
-		_article = dom.element('article');
-		_article.appendChild(_header);
-		_article.appendChild(_list);
-		_section = dom.element('section', { id: props.id });
-		_section.appendChild(_article);
+		icon = dom.element('i', { 'class': props.icon } );
+		title = dom.text( props.title );
+		h1 = dom.element('h1');
+		h1.appendChild(icon);
+		h1.appendChild(title);
+		header = dom.element('header');
+		header.appendChild(h1);
+		if (props.list) {
+			list = props.list;
+		} else {
+			list = dom.element('ul', { 'class': 'nowandnext-event-list' });
+		}
+		section = dom.element('section', { id: props.id });
+		section.appendChild(header);
+		section.appendChild(list);
 
-		return _section;
+		return section;
 	}
 
 /* public */
 
 	function initialize() {
 
+		_lang = new Language(App.selectedLanguageCode);
+
 		// subscribe to get re-render favorites
 		Event.on(u.MODEL_CHANGED, handleDataChanges);
-
-		Event.on(c.NOWANDNEXT_RECEIVED, handleNowAndNextEventsFromChannels);
 
 		return this;
 
@@ -234,8 +246,6 @@ define([
 		dom.content.removeChild(_favoriteChannels);
 
 		Event.off(u.MODEL_CHANGED, handleDataChanges);
-
-		Event.off(c.NOWANDNEXT_RECEIVED, handleNowAndNextEventsFromChannels);
 
 		return this;
 

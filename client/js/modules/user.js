@@ -1,4 +1,4 @@
-/* 
+/*
 * UserModule
 * ----------
 *
@@ -17,27 +17,33 @@ define([
 
 ], function UserModuleScope(u, c, App, Event, UserModel, ChannelModel, UserComponent) {
 
-	var name = 'user',
+	var name = 'user';
 
-	// shorcuts
-		slice = Array.prototype.slice;
+	// shortcuts
+	var slice = Array.prototype.slice;
 
 /* private */
 
 	// constants
-	FACEBOOK_STATUS		= 'facebook-status',
-	AUTH_STATUS_CHANGE	= 'auth.statusChange',
-	OPEN_GRAPH_PREFIX	= '/me/upcsocial:',
+	var FACEBOOK_STATUS		= 'facebook-status';
+	var AUTH_STATUS_CHANGE	= 'auth.statusChange';
+	var OPEN_GRAPH_PREFIX	= '/me/upcsocial:';
+
 	// og calls
-	LIKES_CALL			= '/me/likes',
-	FAVORITES_CALL		= OPEN_GRAPH_PREFIX + 'favorite',
-	RECORDINGS_CALL		= OPEN_GRAPH_PREFIX + 'record',
+	var LIKES_CALL			= '/me/likes';
+	var FAVORITES_CALL		= OPEN_GRAPH_PREFIX + 'favorite';
+	var RECORDINGS_CALL		= OPEN_GRAPH_PREFIX + 'record';
+
 	// labels
-	LIKES				= 'likes',
-	FAVORITES			= 'favorites',
-	RECORDINGS			= 'recordings',
-	FAVORITE_PROGRAMMES = 'favorite-programmes',
-	FAVORITE_CHANNELS	= 'favorite-channels';
+	var LIKES				= 'likes';
+	var FAVORITES			= 'favorites';
+	var RECORDINGS			= 'recordings';
+	var FAVORITE_PROGRAMMES = 'favorite-programmes';
+	var FAVORITE_CHANNELS	= 'favorite-channels';
+
+	// Patterns for parsing our OG urls
+	var OG_REGEX_PATTERN_PROGRAMME = /^http\:\/\/upcsocial\.herokuapp\.com\/programme\/(\d*)$/;
+	var OG_REGEX_PATTERN_CHANNEL = /^http\:\/\/upcsocial\.herokuapp\.com\/channel\/([a-zA-Z0-9]*)$/;
 
 	// every time the facebook login status
 	// is changed, this handler will save the
@@ -49,8 +55,8 @@ define([
 		UserModel.set(FACEBOOK_STATUS, response);
 
 		switch (response.status) {
-			case u.CONNECTED: 
-				connected(); 
+			case u.CONNECTED:
+				connected();
 				break;
 
 			case u.NOT_AUTHORIZED:
@@ -92,7 +98,7 @@ define([
 	*	Helpers to execute login with facebook credentials
 	*/
 
-	function login() { 
+	function login() {
 
 		// Check for arguments. The first argument, could be a callback
 		// Because some actions need login first
@@ -110,7 +116,7 @@ define([
 		}
 
 		// Login with facebook
-		FB.login(handleLogin, { scope: u.SCOPE }); 
+		FB.login(handleLogin, { scope: u.SCOPE });
 
 	}
 
@@ -119,8 +125,8 @@ define([
 	function getAuthStatus() { return UserModel[FACEBOOK_STATUS]? true: false;	}
 
 	/**
-	*	Fetch opengraph data and save the response into a model, 
-	*	use: 
+	*	Fetch opengraph data and save the response into a model,
+	*	use:
 	*		fetch( label ).from( opengraph_url ).saveTo( model );
 	*/
 
@@ -130,10 +136,10 @@ define([
 		var _label = label, _call, _model, _callback;
 
 			/* currying helpers */
-			function from(call) { 
+			function from(call) {
 				_call = call;
 				return { saveTo: saveTo };
-			}	
+			}
 
 			function saveTo(model) {
 				_model = model;
@@ -142,17 +148,17 @@ define([
 
 			function process(callback) {
 				_callback = callback;
-				if (_label && _call && _model) { FB.api(_call, handleResponse); } 
+				if (_label && _call && _model) { FB.api(_call, handleResponse); }
 			}
 
 		/* handler */
 		function handleResponse(response) {
-			if (!response) { 
+			if (!response) {
 				console.log('Warning!', _label, _call, _model.name, ': Open graph has sent an empty response', response);
-				return; 
+				return;
 			}
 
-			if (_callback) { 
+			if (_callback) {
 				_callback({
 					label: _label,
 					call: _call,
@@ -183,41 +189,78 @@ define([
 		fetch(FAVORITES)
 		.from(FAVORITES_CALL)
 		.saveTo(UserModel)
-		.process(function preprocessFavorites(obj) {
+		.process(function (obj) {
 
 			// save favorites
 			obj.model.set(obj.label, obj.response);
 
 			var TV_PROGRAMME = 'tv_show',
 				TV_CHANNEL = 'tv_channel',
-				_programmes = {},
-				_channels = {},
-				_id;
+				favoriteProgrammeIds = [],
+				favoriteChannelIds = [],
+				favoritesCount = obj.response.data.length,
+				i, favorite, id;
 
-			obj.response.data.forEach(function(favorite) {
+			for (i=0; i<favoritesCount; i++) {
+				favorite = obj.response.data[i];
 
-				if (TV_PROGRAMME in favorite.data && favorite.data[TV_PROGRAMME].url) {
-					_programmes[favorite.data[TV_PROGRAMME].url] = favorite;
+				// Details of the OG object being referenced are in the .data property of the favourite.
+				// We are interested in "tv_show" and "tv_channel" objects.
+				// Note that these objects are identified by a URI! We have to extract
+				// our channel ID or programme ID from that URI.
+
+				if (favorite.data[TV_PROGRAMME] && favorite.data[TV_PROGRAMME].url) {
+					id = getProgrammeIdFromOpenGraphUrl(favorite.data[TV_PROGRAMME].url);
+					if (id) {
+						favoriteProgrammeIds.push(id);
+					}
 				}
 
-				if (TV_CHANNEL in favorite.data && favorite.data[TV_CHANNEL].url) {
-					_channels[favorite.data[TV_CHANNEL].url] = favorite;
-					_id = favorite.data[TV_CHANNEL].url.split('http://upcsocial.herokuapp.com/channel/')[1]; // this is so ugly, sorry
-					ChannelModel[c.GROUPS]['001'].push(ChannelModel[c.BY_ID][_id]);
+				if (favorite.data[TV_CHANNEL] && favorite.data[TV_CHANNEL].url) {
+					id = getChannelIdFromOpenGraphUrl(favorite.data[TV_CHANNEL].url);
+					if (id) {
+						favoriteChannelIds.push(id);
+					}
 				}
 
-			});
+			}
 
-			obj.model.set(FAVORITE_PROGRAMMES, _programmes);
-			obj.model.set(FAVORITE_CHANNELS, _channels);
+			obj.model.set(FAVORITE_PROGRAMMES, favoriteProgrammeIds);
+			obj.model.set(FAVORITE_CHANNELS, favoriteChannelIds);
 
 			// GC
-			_programmes = null;
-			_channels = null;
-			delete _programmes;
-			delete _channels;
+			programmes = null;
+			channels = null;
+			delete programmes;
+			delete channels;
 
 		});
+	}
+
+	function getProgrammeIdFromOpenGraphUrl(url) {
+		var programmeId = null;
+		var matches = url.match(OG_REGEX_PATTERN_PROGRAMME);
+
+		if (matches.length === 2) {
+			// First item in matches array contains the full pattern.
+			// programme ID capture group is in second position.
+			programmeId = matches[1];
+		}
+
+		return programmeId;
+	}
+
+	function getChannelIdFromOpenGraphUrl(url) {
+		var channelId = null;
+		var matches = url.match(OG_REGEX_PATTERN_CHANNEL);
+
+		if (matches.length === 2) {
+			// First item in matches array contains the full pattern.
+			// channel ID capture group is in second position.
+			channelId = 's-' + matches[1];
+		}
+
+		return channelId;
 	}
 
 	/* FETCH RECORDINGS */
