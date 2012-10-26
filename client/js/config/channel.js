@@ -29,11 +29,15 @@ define([], function ChannelConfigContext() {
 
 		GROUPS: 'groups',
 
+		CHANNEL: 'channel:channel',
+
 		SELECTED_GROUP: 'selected_group',
 
 		/* Events */
 
 		MODEL_CHANGED: 'channel:model_changed',
+
+		NOWANDNEXT_RECEIVED: 'channel:nowandnext_received'
 
 	};
 
