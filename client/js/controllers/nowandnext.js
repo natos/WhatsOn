@@ -57,10 +57,13 @@ define([
 	// Given a date, return a string in the format 'YYYY-MM-DDTHH:MMZ',
 	// which is the format the EPG api accepts for marking the start time.
 	var getExactFormattedSliceStartTime = function(dt) {
+	// note: this is the same as utils/convert.formatTimeForApiRequest() method
 		return dt.getUTCFullYear().toString() + '-' + ('00' + (dt.getUTCMonth() + 1).toString()).slice(-2) + '-' + ('00' + dt.getUTCDate().toString()).slice(-2) + 'T' + ('00' + dt.getUTCHours().toString()).slice(-2) + ':' + ('00' + dt.getUTCMinutes().toString()).slice(-2) + 'Z';
 	};
 
+
 	var getNowAndNextForChannels = function(channelIdsToFetch) {
+	// note: this is already solved on utils/epgiapi
 		var formattedSliceStartTime = getExactFormattedSliceStartTime(new Date());
 		var i, j, channelIdBatch, batchesCount, request;
 
@@ -76,6 +79,7 @@ define([
 				'&maxBatchSize=' + (API_CHANNEL_BATCH_SIZE * 5) +
 				'&callback=?';
 
+			// API calls should be solved inside utils/EpgApi 
 			$.getJSON(request, handleChannelsBatchResponse);
 		}
 	};
