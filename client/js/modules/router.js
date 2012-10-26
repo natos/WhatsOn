@@ -7,7 +7,6 @@
 
 define([
 
-	'modules/zepto',
 	'config/app',
 	'models/app',
 	'modules/app',
@@ -15,7 +14,7 @@ define([
 	'utils/dom',
 	'lib/history/1.7.1-r2/bundled/html4+html5/native.history'
 
-], function RouterModuleScope($, a, AppModel, App, Event, dom) {
+], function RouterModuleScope(a, AppModel, App, Event, dom) {
 
 	var name = 'router',
 
@@ -32,9 +31,7 @@ define([
 
 		shift = Array.prototype.shift,
 
-	// country selection
-
-		SELECTED_COUNTRY;
+		slice = Array.prototype.slice;
 
 	/**
 	*	Handle State Changes
@@ -45,6 +42,7 @@ define([
 		var State = History.getState(), // Note: We are using History.getState() instead of event.state
 			path = History.getShortUrl(State.url);
 
+		console.log('<ROUTER> handleStateChange', State, path);
 		// Remove the initial '/' from the path
 		if (path.slice(0,1)==='/') {
 			path = path.slice(1);
@@ -62,16 +60,9 @@ define([
 		State.parts = path.split(/[\/\?\&=\#]/gi);
 
 		// The controller to be loaded is the first element in the parts array
-		State.controller = (State.parts) ? shift.apply(State.parts) : '';
+		// Return dashboards if is empty
+		State.controller = (State.parts) ? shift.apply(State.parts) : 'dashboard';
 
-		// When controller is empty
-		if (State.controller === "") {
-			// just redirect to dashboard
-			redirect('dashboard');
-			// stop here
-			return;
-		}
-		
 		// Normal flow
 		Event.emit(a.NAVIGATE, State);
 	}
@@ -80,10 +71,17 @@ define([
 	*	Activate anchors
 	*/
 	function activeAnchors(State) {
-		var anchor = $('.' + State.name);
+		// get the selected anchor
+		var anchor = dom.doc.querySelectorAll('.' + State.name);
+		// if the selected anchor exist
 		if (anchor[0]) {
-			$('.nav a').removeClass('active');
-			anchor.addClass('active');
+			// deselect all the anchors
+			slice.call(dom.doc.querySelectorAll('.nav a'), 0)
+				.forEach(function(e) { 
+					e.className = e.className.replace('active',''); 
+				});
+			// make the selected anchor active
+			anchor[0].className = anchor[0].className += ' active';
 		}
 	}
 
@@ -93,7 +91,7 @@ define([
 	*	and use our own Router to navigate
 	*/
 	function handleAnchors(event) {
-		
+
 		// save the click target
 		var element = anchor = event.target,
 
@@ -141,6 +139,7 @@ define([
 			// grab its data-*, title, and href attr
 			// and pass everithing to the router, he will pushState and whatever
 			dataset = dom.getDataset(anchor);
+			// pushState to history
 			navigate(dataset, anchor.title, anchor.href);
 			// let know everyone that we are navigating
 			Event.emit(a.ACTION, a.NAVIGATE);
@@ -195,6 +194,7 @@ define([
 
 	function navigate(data, title, url) {
 		History.pushState(data, title, url);
+		console.log('<ROUTER> navigate', data, title, url);
 		return this;
 	}
 
