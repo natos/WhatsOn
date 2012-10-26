@@ -14,8 +14,15 @@
 
 # Don't restart the server because of changes in client-side code
 /client/*
+/client-build/*
 /public/*
+/release/*
+
+# Don't restart the server because of changes in gruntfile
+grunt.js
 
 # Ignore git commits
 .git/*
 
+# Ignore changes to the readme
+Readme.md

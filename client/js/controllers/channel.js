@@ -6,20 +6,34 @@
 
 define([
 
+	'modules/zepto',
+	'config/channel',
 	'lib/flaco/controller',
+	'modules/event',
+	'models/channel',
 	'views/channel'
 
-], function ChannelControllerScope(Controller, ChannelView) {
+], function ChannelControllerScope($, channelConfig, Controller, Event, ChannelModel, ChannelView) {
 
 	var name = 'channel';
 
 /* private */
 
+	var handleApiResponse = function(response) {
+		ChannelModel.set('eventsForChannel', response);
+	};
+
 /* public */
 
 /* abstract */
 
-	function initialize() {
+	function initialize(state) {
+
+		var channelId = state.parts[0];
+		ChannelModel.set('currentChannelId', channelId);
+
+		request = 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/Channel/' + channelId + '/events/NowAndNext.json?order=startDateTime&callback=?';
+		$.getJSON(request, handleApiResponse);
 
 		return this;
 

@@ -9,25 +9,27 @@ define([
 	'config/channel',
 	'config/grid',
 	'config/user',
+	'modules/app',
+	'modules/event',
 	'models/channel',
 	'models/grid',
 	'models/user',
-	'modules/app',
 	'utils/dom'
 
-], function ChannelBarComponentScope(a, c, g, u, ChannelModel, GridModel, UserModel, App, dom) {
+], function ChannelBarComponentScope(a, c, g, u, App, Event, ChannelModel, GridModel, UserModel, dom) {
 
 	var name = 'channelbar',
 
 /* private */
+
+	// const
+
 		FAVORITE_CHANNELS = 'favorite-channels',
 		TOGGLE_FAVORITE = 'TOGGLE-FAVORITE',
 		TOGGLE_EDITMODE = 'TOGGLE-EDIT-MODE',
 
-		_template = document.getElementById('channelsbar-template'),
-		_content = document.getElementById('main'),
-		_channelsbar = document.createElement('div'),
-		_channellist,
+		_channelsbar = dom.element('div', { id: 'channels-bar' }),
+		_channellist = dom.element('ul', { id: 'channels-bar-list' }),
 
 	/**
 	* This is the set of channels that will be displayed in the channelbar,
@@ -52,7 +54,7 @@ define([
 			t = selectedChannels.length;
 
 		while (t--) {
-			channelImg = document.getElementById('channelImg'+selectedChannels[t]);
+			channelImg = dom.doc.getElementById('channelImg'+selectedChannels[t]);
 			// If the image doesn't have a src, set the src from the data-src attribute
 			if (!channelImg.getAttribute('src')) {
 				channelImg.setAttribute('src', channelImg.getAttribute('data-src'));
@@ -118,10 +120,10 @@ define([
 
 		if (isFavorite) {
 			favorite.className = 'icon-star-empty';
-			App.emit(u.REMOVE_FAVORITE, id);
+			Event.emit(u.REMOVE_FAVORITE, id);
 		} else {
 			favorite.className = 'icon-star';
-			App.emit(u.ADD_FAVORITE, type, url);
+			Event.emit(u.ADD_FAVORITE, type, url);
 		}
 	}
 
@@ -130,9 +132,9 @@ define([
 	function initialize() {
 
 		// move with the grid
-		App.on(g.MODEL_CHANGED, handleGridModelChanges);
-		App.on(u.MODEL_CHANGED, handleUserModelChanges);
-		App.on(a.ACTION, handleActions);
+		Event.on(g.MODEL_CHANGED, handleGridModelChanges);
+		Event.on(u.MODEL_CHANGED, handleUserModelChanges);
+		Event.on(a.ACTION, handleActions);
 
 		return this;
 	}
@@ -140,10 +142,10 @@ define([
 	function render() {
 
 		// grab the channellist
-		_channelsbar.id = 'channels-bar';
-		_channelsbar.innerHTML = _template.innerHTML;
-		_content.appendChild(_channelsbar);
-		_channellist = document.getElementById('channels-bar-list');
+		_channelsbar.appendChild( dom.element('div', { 'class': 'shade' }) );
+		_channelsbar.appendChild( _channellist );
+
+		dom.main.appendChild(_channelsbar);
 
 		renderChannelsGroup();
 
@@ -153,11 +155,11 @@ define([
 
 	function finalize() {
 
-		_content.removeChild(_channelsbar);
+		dom.main.removeChild(_channelsbar);
 
-		App.off(g.MODEL_CHANGED, handleGridModelChanges);
-		App.off(u.MODEL_CHANGED, handleUserModelChanges);
-		App.off(a.ACTION, handleActions);
+		Event.off(g.MODEL_CHANGED, handleGridModelChanges);
+		Event.off(u.MODEL_CHANGED, handleUserModelChanges);
+		Event.off(a.ACTION, handleActions);
 
 		return this;
 
@@ -204,7 +206,7 @@ define([
 		// grab selected channels from channel model
 		_channels = ChannelModel[c.GROUPS][ChannelModel[c.SELECTED_GROUP]];
 
-		_channellist = document.getElementById('channels-bar-list');
+		_channellist = dom.doc.getElementById('channels-bar-list');
 
 		var channelId, name, i, t = _channels.length, item, picture, image, logohref, favorite, favIcon, isFavorite,
 			list = dom.create('fragment');
@@ -222,13 +224,13 @@ define([
 			isFavorite = (UserModel[FAVORITE_CHANNELS]) ? UserModel[FAVORITE_CHANNELS]['http://upcsocial.herokuapp.com/channel/' + channelId] : false;
 
 			// don't know why, some logos are missing
-			logohref = _channels[i].logo && _channels[i].logo.href || '';
+			logohref = _channels[i].logo || '';
 
 			// create logo image
 			image = dom.create('img');
 			image.setAttribute('id', 'channelImg' + channelId);
 			image.setAttribute('title', name);
-			image.setAttribute('data-src', 'http://www.upc.nl' + logohref + '?size=medium');
+			image.setAttribute('data-src', logohref);
 
 			// create logo container
 			picture = dom.create('div');

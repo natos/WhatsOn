@@ -23,24 +23,39 @@ define([
 	'config/grid',
 	'config/channel',
 	'modules/app',
+	'modules/event',
 	'models/channel',
 	'lib/flaco/view',
 	'components/timebar',
 	'components/channelbar',
 	'components/highlight',
 	'utils/convert',
-	'utils/dom'
+	'utils/dom',
+	'utils/language'
 
-], function GridViewScope(a, g, c, App, ChannelModel, View, TimeBar, ChannelBar, Highlight, convert, dom) {
+], function GridViewScope(a, g, c, App, Event, ChannelModel, View, TimeBar, ChannelBar, Highlight, convert, dom, Language) {
 
 	var name = "grid",
 
+		components = {
+			channelbar	: ChannelBar,
+			timebar		: TimeBar,
+			highlight	: Highlight
+		},
+
 /* private */
 
+	// Translations
+	_lang,
+
+	// DOM reference
+	_container,
+
 	// Objects
-	_timebar,
-	_channelsbar,
-	_gridcontainer,
+	_gridcontent = dom.element('div', { id: 'grid-content' }),
+	_gridcontainer = dom.element('div', { id: 'grid-container' }),
+	_channelsbar = dom.element('div', { id: 'channels-bar' }),
+	_timebar = dom.element('div', { id: 'time-bar' }),
 	_ticker,
 
 	// Touch coordinates, used for checking velocity
@@ -66,11 +81,11 @@ define([
 	*/
 	function handleResizeAndScroll() {
 		// the grid has moved
-		App.emit(g.GRID_MOVED);
+		Event.emit(g.MOVED);
 		// erase the previous timer
 		if (executionTimer) { clearTimeout(executionTimer);	}
 		// set a delay of 200ms to fetch events
-		executionTimer = setTimeout(function emitFetchEvents() { App.emit(g.GRID_FETCH_EVENTS); }, g.EXECUTION_DELAY);
+		executionTimer = setTimeout(function emitFetchEvents() { Event.emit(g.FETCH_EVENTS); }, g.EXECUTION_DELAY);
 	}
 
 	function updateTouchVelocity(e) {
@@ -78,6 +93,7 @@ define([
 			var currentX = e.changedTouches[0].pageX;
 			var currentY = e.changedTouches[0].pageY;
 			var currentTime = new Date();
+
 			if (_previousTouchX && _previousTouchY && _previousTouchTime) {
 				var interval = (currentTime.valueOf() - _previousTouchTime.valueOf()) / 1000;
 				_touchVelocityX = (currentX - _previousTouchX) / interval;
@@ -126,7 +142,36 @@ define([
 			_ticker = document.getElementById('timer-ticker');
 			timer.tick();
 			// trigger rendered
-			App.emit(g.GRID_RENDERED);
+			Event.emit(g.GRID_RENDERED);
+		}
+
+		if (changes.overlay) {
+			
+			var overlay = changes.overlay,
+				event;
+
+			render = [];
+			render.push('<h1>' + overlay.title + '</h1>');
+			render.push('<h2>' + overlay.episodeTitle + '</h2>');
+			render.push('<p>' + overlay.shortDescription + '</p>');
+
+			if (overlay.events.data.length > 0) {
+				render.push('<h3>' + _lang.translate('watch-again') + '</h3>');
+				render.push('<ul>');
+			}
+
+			for (var i = 0, t = overlay.events.data.length; i<t; i++) {
+				event = overlay.events.data[i];
+				console.log(event);
+				render.push('<li>' + event.start + '</li>');
+			}
+			if (overlay.events.data.length > 0) {
+				render.push('</ul>');
+			}
+			
+			Overlay.show(render.join('\n'));
+
+			console.log(overlay);
 		}
 	}
 
@@ -174,12 +219,12 @@ define([
 		_gridcontainer.className = (_gridcontainer.className === '') ? 'expanded' : '';
 	}
 
-	function handleActions(action) {
+	function handleActions(action, event) {
+
 		if (action === 'TOGGLE-EDIT-MODE') {
 			toggleTimeControls();
 		}
 	}
-
 
 /* public */
 
@@ -239,28 +284,35 @@ define([
 
 	function initialize() {
 
+		_lang = new Language(App.selectedLanguageCode);
+
 		// UI event handlers
 		// every time user scrolls, we want to load new events
-		a._win.addEventListener('resize', handleResizeAndScroll);
-		a._win.addEventListener('scroll', handleResizeAndScroll);
-		a._win.addEventListener('touchmove', handleResizeAndScroll);
+		window.addEventListener('resize', handleResizeAndScroll);
+				
+		window.addEventListener('scroll', handleResizeAndScroll);
+				
+		window.addEventListener('touchmove', handleResizeAndScroll);
 
 		// Update touch velocity
-		a._win.addEventListener('touchstart', updateTouchVelocity);
-		a._win.addEventListener('touchmove', updateTouchVelocity);
+		window.addEventListener('touchstart', updateTouchVelocity);
+				
+		window.addEventListener('touchmove', updateTouchVelocity);
 
 		// restoreHeaders
-		a._win.addEventListener('scroll', restoreHeaders);
-		a._win.addEventListener('touchstart', restoreHeaders);
+		window.addEventListener('scroll', restoreHeaders);
+		
+		window.addEventListener('touchstart', restoreHeaders);
 
 		// touch end
-		a._win.addEventListener('touchend', onTouchEnd);
+		window.addEventListener('touchend', onTouchEnd);
 
 		// The model recieves events
 		// we are listening to render new events
-		App.on(g.MODEL_CHANGED, modelChanged);
+		Event.on(g.MODEL_CHANGED, modelChanged);
 
-		App.on(a.ACTION, handleActions);
+		// Actions
+		Event.on(a.ACTION, handleActions);
 
 		return this;
 
@@ -270,9 +322,9 @@ define([
 
 		drawStyles();
 
-		_gridcontainer = document.getElementById('grid-container');
-		_channelsbar = document.getElementById('channels-bar');
-		_timebar = document.getElementById('time-bar');
+		_gridcontent.appendChild(_gridcontainer);
+		
+		dom.content.appendChild(_gridcontent);
 
 		// initialize ticker
 		timer.start().tick();
@@ -284,20 +336,27 @@ define([
 
 		removeStyles();
 
-		a._win.removeEventListener('resize', handleResizeAndScroll);
-		a._win.removeEventListener('scroll', handleResizeAndScroll);
-		a._win.removeEventListener('touchmove', handleResizeAndScroll);
+		dom.content.removeChild(_gridcontent);
 
-		a._win.removeEventListener('touchstart', updateTouchVelocity);
-		a._win.removeEventListener('touchmove', updateTouchVelocity);
+		window.removeEventListener('resize', handleResizeAndScroll);
+		
+		window.removeEventListener('scroll', handleResizeAndScroll);
+				
+		window.removeEventListener('touchmove', handleResizeAndScroll);
+				
+		window.removeEventListener('touchstart', updateTouchVelocity);
+				
+		window.removeEventListener('touchmove', updateTouchVelocity);
+				
+		window.removeEventListener('scroll', restoreHeaders);
+				
+		window.removeEventListener('touchstart', restoreHeaders);
+				
+		window.removeEventListener('touchend', onTouchEnd);
 
-		a._win.removeEventListener('scroll', restoreHeaders);
-		a._win.removeEventListener('touchstart', restoreHeaders);
+		Event.off(g.MODEL_CHANGED, modelChanged);
 
-		a._win.removeEventListener('touchend', onTouchEnd);
-
-		App.off(g.MODEL_CHANGED, modelChanged);
-		App.off(a.ACTION, handleActions);
+		Event.off(a.ACTION, handleActions);
 
 		return this;
 
@@ -313,11 +372,7 @@ define([
 		render				: render,
 		getSelectedChannels	: getSelectedChannels,
 		getSelectedTime		: getSelectedTime,
-		components			: {
-			channelbar	: ChannelBar,
-			timebar		: TimeBar,
-			highlight	: Highlight
-		}
+		components			: components
 	});
 
 });

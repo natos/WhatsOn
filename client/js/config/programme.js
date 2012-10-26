@@ -6,7 +6,9 @@
 *
 */
 
-define([], function ProgrammeConfigContext() {
+define([
+
+], function ProgrammeConfigContext() {
 
 /* private */
 
@@ -16,19 +18,15 @@ define([], function ProgrammeConfigContext() {
 
 	return {
 
+		/* Labels */
+
+		PROGRAMME: 'programme:programme',
+
 		/* Events */
 
-		/* DOM Access */
+		MODEL_CHANGED: 'programme:model_changed',
 
-		$window: $(window),
-	
-		$body: $(document.body),
-
-		$userAction: $('#user-action'),		
-
-		$record: $('.record'),
-
-		$favorite: $('.favorite')
+		PROGRAMME_RECEIVED: 'programme:received',
 
 	};
 

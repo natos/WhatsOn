@@ -22,12 +22,14 @@ function(logger) {
 		'APP_NAME'		: 'UPC Social',
 		'APP_URL'		: 'http://upcsocial.herokuapp.com/',
 		'APP_LOGO'		: 'http://upcsocial.herokuapp.com/assets/images/upclogo.jpg',
-		// production
 		'API_PREFIX'	: 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi.woa/api/',
-		// Jedrzej
-//		'API_PREFIX'	: 'http://10.65.34.72/cgi-bin/WebObjects/EPGApi.woa/-2004/api/',
-		// neo4j on vaca
-		//'API_PREFIX'	: 'http://tvgids.upc.nl/cgi-bin/WebObjects/EPGApi-Neo4J.woa/api/',
+		
+		// Override API_PREFIX with Jedrzej new API interface
+		// Start exploring here > http://api.lgi.com/start/
+
+		'API_PREFIX'	: 'http://api.lgi.com/alpha', // Only available on LGI internal network
+		// 'API_PREFIX'	: 'http://62.179.107.149/cgi-bin/WebObjects/ScheduleAPI-trunk-ivy.woa/1/q', // Externally accessible
+
 		'HTML_PREFIX'	: '',
 		'facebook'		: {
 			'app-id'		: '290742221014129',

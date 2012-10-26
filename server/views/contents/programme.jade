@@ -18,11 +18,11 @@ if (xhr)
 
 	section
 		if data.events
-			article
+			article.event-list-container
 				h2.watch-title
 					i.icon-time
 					#{__i('Watch it')}
-				ul.programme-event-list
+				ul.event-list.programme-event-list
 					each event in data.events
 						li
 							a(href="/channel/#{event.channel.id}")

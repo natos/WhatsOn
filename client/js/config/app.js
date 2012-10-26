@@ -19,15 +19,56 @@ define([], function AppConfigContext() {
 
 		NAMESPACE: 'upsocial',
 
-		ROOT_URL: 'http://upcsocial.herokuapp.com/',
+		// API_PREFIX: 'http://api.lgi.com/alpha',
+		
+		API_PREFIX: 'http://62.179.107.149/cgi-bin/WebObjects/ScheduleAPI-trunk-ivy.woa/1/q',
 
-		/* events */
+		FEED_PROXY_BASE_PATH: 'http://localhost:3001',
+		// FEED_PROXY_BASE_PATH: 'http://enigmatic-hamlet-2742.herokuapp.com',
 
-		NAVIGATE: 'app:navigate',
+		OG_PREFIX: 'http://enigmatic-hamlet-2742.herokuapp.com/',
+
+		CONTROLLERS: ['settings','dashboard','grid','nowandnext','search','programme','channel'/*,'not-found'*/],
+
+		DEFAULT_COUNTRY: 'Nederland',
+
+		DEFAULT_LANGUAJE: 'en',
+
+		/* collection labels */
+
+		SCHEDULES_CACHE: 'schedules_cache',
+
+		COUNTRIES_CACHE: 'countries_cache',
+
+		CATEGORIES_CACHE: 'categories_cache',
+
+		GENRES_CACHE: 'genres_cache',
+
+		LINEUP_CACHE: 'lineup_cache',
+
+		/* events names */
+
+		READY: 'app:ready',
 
 		ACTION: 'app:action',
 
 		VOID: 'app:action:void',
+
+		NAVIGATE: 'app:navigate',
+
+		MODEL_CHANGED: 'app:model_changed',
+
+		SELECTED_COUNTRY: 'app:selected_country',
+
+		GENRES_RECEIVED: 'app:genres_received',
+
+		LINEUP_RECEIVED: 'app:lineup_received',
+
+		COUTRIES_RECEIVED: 'app:countries_received',
+
+		SCHEDULES_RECEIVED: 'app:schedules_received',
+
+		CATEGORIES_RECEIVED: 'app:categories_received',
 
 		// controllers
 
@@ -51,21 +92,7 @@ define([], function AppConfigContext() {
 
 		VIEW_RENDERING: 'app:view_rendering',
 
-		VIEW_RENDERED: 'app:view_rendered',
-
-		/* DOM access */
-
-		_doc: document,
-
-		_win: window,
-
-		_body: document.body,
-
-		_main: document.getElementById('main'),
-
-		_content: document.getElementById('content'),
-
-		_transition: document.getElementById('transition'),
+		VIEW_RENDERED: 'app:view_rendered'
 
 	};
 

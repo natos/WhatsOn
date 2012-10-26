@@ -9,17 +9,22 @@ define([
 	'config/user',
 	'config/channel',
 	'modules/app',
+	'modules/event',
 	'models/user',
 	'models/channel',
-	'utils/dom'
+	'utils/epgapi',
+	'utils/language',
+	'utils/dom',
+	'utils/convert'
 
-], function(a, u, c, App, UserModel, ChannelModel, dom) {
+], function(a, u, c, App, Event, UserModel, ChannelModel, EpgApi, Language, dom, convert) {
 
 	var name = 'favorites',
+		_lang,
 
 /* private */
 
-		// constants 
+		// constants
 
 		FACEBOOK_STATUS = 'facebook-status',
 
@@ -31,15 +36,13 @@ define([
 
 		isConnectedToFacebook = false,
 
-		// dom 
+		// dom
 
-		_dashboardContent = document.getElementById('dashboard-content'),
+		_favoriteProgrammes,
 
-		_invitation = dom.create('section');
+		_favoriteChannels,
 
-		_invitation.id = 'invitation';
-
-		_invitation.innerHTML = document.getElementById('invitation-template').innerHTML;
+		_invitation;
 
 
 	function handleDataChanges(model) {
@@ -51,16 +54,28 @@ define([
 			return;
 		}
 
-		if (model[FACEBOOK_STATUS]) {
 
-			isConnectedToFacebook = (model[FACEBOOK_STATUS]['status'] === u.CONNECTED);
+		isConnectedToFacebook = (model[FACEBOOK_STATUS] && model[FACEBOOK_STATUS]['status'] === u.CONNECTED);
 
-			if (!isConnectedToFacebook) {
+		if (!isConnectedToFacebook) {
+
+			if (!_invitation) {
 				renderInvitation();
-			} else {
+			}
+
+		} else {
+
+			if (_invitation) {
 				removeInvitation();
 			}
+			
+			//_favoriteProgrammes = layout({ id: FAVORITE_PROGRAMMES, class: 'loading', title: 'You favourite shows now', icon: 'icon-star' });
+			//_favoriteChannels = layout({ id: FAVORITE_CHANNELS, class: 'loading', title: 'You favourite channels now', icon: 'icon-star' });
+
+			//dom.content.appendChild(_favoriteProgrammes);
+			//dom.content.appendChild(_favoriteChannels);
 		}
+
 
 		if (model[FAVORITE_PROGRAMMES]) { renderProgrames(model[FAVORITE_PROGRAMMES]); }
 
@@ -70,80 +85,146 @@ define([
 
 	}
 
-	function renderInvitation() { 
-		_dashboardContent.insertBefore(_invitation, document.getElementById('featured').nextSibling); 
+	function renderInvitation() {
+
+		var _parragraph, _fbButton;
+			_section = layout({ id: 'invitation', class: 'loading', title: 'Login with Facebook', icon: 'icon-star' });
+			_fbButton = dom.element('button', { class: 'login', title: 'Login', 'data-action': 'LOGIN' });
+			_fbButton.appendChild(dom.element('i', { class: 'icon-facebook-sign' }));
+			_fbButton.appendChild(dom.text('Login'));
+			_parragraph = dom.element('p', {}, "Keep track your favorite shows and channels, recommend, comment and share it with your friends with your facebook account: ");
+			_parragraph.appendChild(_fbButton);
+			_invitation = dom.element('article');
+			_invitation.appendChild(_parragraph);
+			_section.appendChild(_invitation);
+			dom.content.appendChild(_section);
 	}
 
 	function removeInvitation() { 
-		var __invitation = document.getElementById('invitation');
-		if (__invitation) {
-			__invitation.parentNode.removeChild(__invitation);
-		}
+		_invitation.parentNode.removeChild(_invitation);
 	}
 
-	function renderChannels(channels) {
+	function renderChannels(favoriteChannelIds) {
 
-		var favoriteChannels = document.getElementById(FAVORITE_CHANNELS),
-			favoriteChannelIds = [], url, channel, id;
-
-		// for all the favorite channels
-		for (url in channels) {
-			channel = channels[url].data['tv_channel'];
-			id = channel.url.split(a.ROOT_URL + 'channel/')[1];
-			favoriteChannelIds.push(id);
-		}
+		var favoriteChannelsBlock;
+		var list = dom.element('ul');
+		var title = _lang.translate('dash-favorite-channels-title');
 
 		if (favoriteChannelIds.length > 0) {
-			favoriteChannels.className = 'loading';
-			$(favoriteChannels).load('/dashboard/on-now/channels/' + favoriteChannelIds.join('|'), function(data, status, xhr){
-				favoriteChannels.className = '';
-				data = null;
-				delete data;
+
+			// Show loading message
+			list.appendChild(dom.element('li', {'class':'loading'}, _lang.translate('loading')));
+			favoriteChannelsBlock = layout({ id: FAVORITE_CHANNELS, title: title, icon: 'icon-star', list: list });
+
+			// Go and load now&next for favourite channels
+			require(['json!' + a.FEED_PROXY_BASE_PATH + '/nowandnext/ie/' + favoriteChannelIds.join('|') + '/channels.json'], function(channelData) {
+				var channelId, eventsForChannel, i, eventsCount, e;
+				var list = dom.element('ul');
+
+				// TODO: proper layout for now&next events in this block
+				for (channelId in channelData) {
+					eventsForChannel = channelData[channelId];
+					eventsCount = eventsForChannel.length;
+					for (i=0; i<eventsCount; i++) {
+						e = eventsForChannel[i];
+						list.appendChild(dom.element('li', {}, e.service.id + ' ' + e.programme.title + ' ' + e.start));
+					}
+				}
+
+				favoriteChannelsBlock.parentNode.removeChild(favoriteChannelsBlock);
+				dom.content.appendChild(
+					layout({ id: FAVORITE_CHANNELS, title: title, icon: 'icon-star', list: list })
+				);
 			});
 		} else {
-			favoriteChannels.innerHTML = document.getElementById('empty-favorite-channels-template').innerHTML;
-			console.log('Favorite channels not found man, sorry!');
+			// Show instructions
+			list.appendChild(dom.element('li', {}, _lang.tranlate('dash-favorite-channels-none-added')));
+			favoriteChannelsBlock = layout({ id: FAVORITE_CHANNELS, title: title, icon: 'icon-star', list: list });
 		}
 
-		console.log('finish rendering channels');
+		dom.content.appendChild(favoriteChannelsBlock);
+
 	}
 
-	// iterate the favorites, for each of them
-	// fetch the now and next, and shows
-	// only the programmes with next information
-	function renderProgrames(programmes) {
+	function renderProgrames(favoriteProgrammeIds) {
 
-		var favoriteProgrammes = document.getElementById(FAVORITE_PROGRAMMES),
-			favoriteProgrammeIds = [], url, programmes, id;
-
-		// for all the favorite channels
-		for (url in programmes) {
-			programme = programmes[url].data['tv_show'];
-			id = programme.url.split(a.ROOT_URL + 'programme/')[1];
-			favoriteProgrammeIds.push(id);
-		}
+		var favoriteProgrammesBlock;
+		var list = dom.element('ul');
+		var title = _lang.translate('dash-favorite-shows-title');
 
 		if (favoriteProgrammeIds.length > 0) {
-			favoriteProgrammes.className = 'loading';
-			$(favoriteProgrammes).load('/dashboard/on-now/programmes/' + favoriteProgrammeIds.join('|'), function(data, status, xhr) {
-				favoriteProgrammes.className = '';
-				data = null;
-				delete data;
+
+			// Show loading message
+			list.appendChild(dom.element('li', {'class':'loading'}, _lang.translate('loading')));
+			favoriteProgrammesBlock = layout({ id: FAVORITE_PROGRAMMES, title: title, icon: 'icon-star', list: list });
+
+			// Go and load next events for favourite programmes
+			require(['json!' + a.FEED_PROXY_BASE_PATH + '/nowandnext/ie/' + favoriteProgrammeIds.join('|') + '/programmes.json'], function(programmesData) {
+				var programmeId, eventsForProgramme, i, eventsCount, e;
+				var list = dom.element('ul');
+				var programmesFound = 0;
+
+				// TODO: proper layout for now&next events in this block
+				for (programmeId in programmesData) {
+					programmesFound += 1;
+					eventsForProgramme = programmesData[programmeId];
+					eventsCount = eventsForProgramme.length;
+					for (i=0; i<eventsCount; i++) {
+						e = eventsForProgramme[i];
+						list.appendChild(dom.element('li', {}, e.programme.title + ' on channel ' + e.service.id + ' at ' + e.start));
+					}
+				}
+
+				if (programmesFound === 0) {
+					list.appendChild(dom.element('li', {}, _lang.translate('dash-favorite-shows-none-found')));
+				}
+
+				favoriteProgrammesBlock.parentNode.removeChild(favoriteProgrammesBlock);
+				dom.content.appendChild(
+					layout({ id: FAVORITE_PROGRAMMES, title: title, icon: 'icon-star', list: list })
+				);
 			});
 		} else {
-			favoriteProgrammes.innerHTML = document.getElementById('favorite-programmes-notfound-template').innerHTML;
-			console.log('Favorite progames not found man, sorry!');
+			// Show instructions
+			list.appendChild(dom.element('li', {}, _lang.translate('dash-favorite-shows-none-added')));
+			favoriteProgrammesBlock = layout({ id: FAVORITE_PROGRAMMES, title: title, icon: 'icon-star', list: list });
 		}
 
-		console.log('finish rendering programmes');
+		dom.content.appendChild(favoriteProgrammesBlock);
+
+	}
+
+	function layout(props) {
+
+		var section, article, header, h1, title, icon, list;
+
+		icon = dom.element('i', { 'class': props.icon } );
+		title = dom.text( props.title );
+		h1 = dom.element('h1');
+		h1.appendChild(icon);
+		h1.appendChild(title);
+		header = dom.element('header');
+		header.appendChild(h1);
+		if (props.list) {
+			list = props.list;
+		} else {
+			list = dom.element('ul', { 'class': 'nowandnext-event-list' });
+		}
+		section = dom.element('section', { id: props.id });
+		section.appendChild(header);
+		section.appendChild(list);
+
+		return section;
 	}
 
 /* public */
 
 	function initialize() {
 
+		_lang = new Language(App.selectedLanguageCode);
+
 		// subscribe to get re-render favorites
-		App.on(u.MODEL_CHANGED, handleDataChanges);
+		Event.on(u.MODEL_CHANGED, handleDataChanges);
 
 		return this;
 
@@ -151,13 +232,8 @@ define([
 
 	function render(model) {
 
-		handleDataChanges(UserModel);
 
-		if (!isConnectedToFacebook) {
-			renderInvitation();
-		} else {
-			removeInvitation();
-		}
+		handleDataChanges(UserModel);
 
 		return this;
 
@@ -165,9 +241,11 @@ define([
 
 	function finalize() {
 
-		removeInvitation();
+		dom.content.removeChild(_favoriteProgrammes);
+		
+		dom.content.removeChild(_favoriteChannels);
 
-		App.off(u.MODEL_CHANGED, handleDataChanges);
+		Event.off(u.MODEL_CHANGED, handleDataChanges);
 
 		return this;
 

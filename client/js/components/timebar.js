@@ -9,33 +9,34 @@ define([
 	'config/grid',
 	'config/channel',
 	'modules/app',
+	'modules/event',
 	'models/channel',
 	'utils/convert',
 	'utils/dom'
 
-], function TimeBarComponentScope(a, g, c, App, ChannelModel, convert, dom) {
+], function TimeBarComponentScope(a, g, c, App, Event, ChannelModel, convert, dom) {
 
 	var name = 'timebar',
 
 /* private */
 
-	_content = document.getElementById('main'),
 	_template = document.getElementById('timebar-template'),
-	_timebar = dom.create('div'),
+	_timebar = dom.element('div', { id: 'time-bar' }),
 	_timelist,
-	_timecontrols = dom.create('div'),
+	_timecontrols = dom.element('div', { id: 'time-controls' }),
 	_timecontrolsTemplate = document.getElementById('timecontrols-template');
 
-	_timecontrols.id = 'time-controls';
-	_timecontrols.innerHTML = _timecontrolsTemplate.innerHTML;
+//	_timecontrols.id = 'time-controls';
+//	_timecontrols.innerHTML = _timecontrolsTemplate.innerHTML;
 
 	function centerViewPort() {
 
 		var left = convert.timeToPixels( (new Date()).valueOf() );
-			left = left - ( a._doc.body.clientWidth / 2 ) + g.CHANNEL_BAR_WIDTH;
+			left = left - ( dom.doc.body.clientWidth / 2 ) + g.CHANNEL_BAR_WIDTH;
 
 		// move the window left, but the same distance top
-		a._win.scroll(left, a._doc.body.scrollTop);
+		
+		window.scroll(left, dom.doc.body.scrollTop);
 
 		return this;
 
@@ -91,13 +92,10 @@ define([
 
 	function initialize() {
 
-		// add logo behavior, move to 'now'
-		$('.upc-logo').on('click', centerViewPort);
-
 		// move with the grid
-		App.on(g.MODEL_CHANGED, modelChanged);
+		Event.on(g.MODEL_CHANGED, modelChanged);
 
-		App.on(a.ACTION, handleActions);
+		Event.on(a.ACTION, handleActions);
 
 		return this;
 
@@ -106,8 +104,13 @@ define([
 	function render() {
 
 		// expand time bar
-		_timebar.innerHTML = _template.innerHTML;
-		_timebar.id = "time-bar";
+		// div.shade
+		// div.content
+		// ol#time-bar-list
+		_timebar.appendChild(dom.element('div',{ 'class': 'shade' }));
+		_timebar.appendChild(dom.element('div',{ 'class': 'content' }));
+		_timebar.appendChild(dom.element('ol',{ id: 'time-bar-list' }));
+
 		_timebar.appendChild(_timecontrols);
 		//_timebar.addEventListener('click', toggleTimeControls);
 		_timecontrols.addEventListener('change', changeChannelSelection);
@@ -128,7 +131,7 @@ define([
 		}
 
 		
-		_content.appendChild(_timebar);
+		dom.main.appendChild(_timebar);
 		_timelist = document.getElementById('time-bar-list');
 		_timelist.innerHTML = timeIntervalsHtml;
 
@@ -141,13 +144,11 @@ define([
 
 	function finalize() {
 
-		$('.upc-logo').off('click', centerViewPort);
+		Event.off(g.MODEL_CHANGED, modelChanged);
 
-		App.off(g.MODEL_CHANGED, modelChanged);
+		Event.off(a.ACTION, handleActions);
 
-		App.off(a.ACTION, handleActions);
-
-		_content.removeChild(_timebar);
+		dom.main.removeChild(_timebar);
 
 		return this;
 	}

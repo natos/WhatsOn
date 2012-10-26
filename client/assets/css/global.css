@@ -15,10 +15,6 @@ body {
 	padding-bottom: 10px;
 }
 
-#content, .background {
-	background: #ddd url(data:image/png;base64,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) 0 0  repeat;
-}
-
 a,
 a:hover,
 a:visited { 
@@ -59,7 +55,7 @@ img {
 	margin-left: -15px;
 
 	/* TODO: change UPC logo for LGI Logo */
-	background: transparent url('/assets/images/sprite.png') 0 0 no-repeat;
+	background: transparent url('../images/sprite.png') 0 0 no-repeat;
 
 	opacity: .7; /* hipster branding ;) */
 }
@@ -107,6 +103,10 @@ img {
 *	main
 */
 
+.background, #content {
+	background: #ddd url(data:image/png;base64,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) 0 0  repeat;
+}
+
 #main {
 	top: 50px;
 	bottom: 0;
@@ -125,8 +125,15 @@ img {
 	bottom: 0;
 	min-height: 100%;
 	position: relative;
+	/* Force 3d compositing for the #content layer.
+	See:
+	http://www.sencha.com/blog/understanding-hardware-acceleration-on-mobile-browsers
+	http://indiegamr.com/ios6-html-hardware-acceleration-changes-and-how-to-fix-them/
+	*/
+/*	-webkit-transform: translateZ(0);
+	-webkit-perspective: 1000;
 	-webkit-backface-visibility: hidden;
-	-webkit-transition: -webkit-transform .3s ease-in-out;
+*/	-webkit-transition: -webkit-transform .3s ease-in-out;
     -moz-transition: -moz-transform .3s ease-in-out;
     -o-transition: -o-transform .3s ease-in-out;
     transition: transform .3s ease-in-out;
@@ -158,7 +165,7 @@ img {
 	position: absolute;
 	width: 100%;
 	height: 50px;
-	background: transparent url('/assets/images/main_gradient.png') 0 0 repeat-x;
+	background: transparent url('../images/main_gradient.png') 0 0 repeat-x;
 }
 
 #navigation-content {
@@ -170,7 +177,7 @@ img {
 	height: 55px;
 	margin: 0;
 	padding: 0;
-	background: transparent url('/assets/images/bg-gradient-shadow-bottom.png') 0 50px repeat-x;
+	background: transparent url('../images/bg-gradient-shadow-bottom.png') 0 50px repeat-x;
 }
 
 .nav {
@@ -182,12 +189,25 @@ img {
 	position: absolute;
 	position: fixed;
 	-webkit-backface-visibility: hidden;
-	-webkit-transition: background-color .3s ease-in-out;
-    -moz-transition: background-color .3s ease-in-out;
-    -ms-transition: background-color .3s ease-in-out;
-    -o-transition: background-color .3s ease-in-out;
-    transition: background-color .3s ease-in-out;
+	-webkit-transition: background-color, opacity .5s ease-in-out;
+    -moz-transition: background-color, opacity .5s ease-in-out;
+    -ms-transition: background-color, opacity .5s ease-in-out;
+    -o-transition: background-color, opacity .5s ease-in-out;
+    transition: background-color, opacity .5s ease-in-out;
     z-index: 0;
+}
+
+.nav.hide {
+	opacity: 0;
+}
+
+/* On small screens, hide .nav when not active.
+If it isn't hidden, sometimes it bleeds through while scrolling through a long page.
+ */
+@media screen and (max-width:639px) {
+	.nav:not(.active) {
+		display:none;
+	}
 }
 
 /* keep your profile picture small on the bar */
@@ -197,7 +217,7 @@ img {
 }
 
 .open .nav {
-	background: #555 url('/assets/images/bg-gradient-shadow-left.png') 100% 0 repeat-y;
+	background: #555 url('../images/bg-gradient-shadow-left.png') 100% 0 repeat-y;
 }
 
 .open #navigation,
@@ -244,12 +264,12 @@ img {
 }
 
 .nav a.active, .nav a:active {
-	background-color: #333 url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
+	background-color: #333 url('../images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
 }
 
 #user-control a:active, .menu-item:active, .menu-item.active {
 	color: #ccc;
-	background: #333 url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
+	background: #333 url('../images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
 }
 
 .nav a.active i, #user-control a.active i, .menu-item.active i {
@@ -268,6 +288,10 @@ img {
 	font-weight: normal;
 	vertical-align: top;
 	display: none;
+}
+
+.close, .settings { 
+	position: absolute;
 }
 
 @media screen and (min-width:640px) {
@@ -301,7 +325,7 @@ img {
 
 	.open .nav a.active {
 		color: #ccc;
-		background: #333 url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
+		background: #333 url('../images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
 		border-bottom: solid 1px #000;
 	}
 
@@ -332,11 +356,12 @@ img {
 		position: absolute;
 	}
 
-	.login {
+	.login, .close {
 		right: 0;
 	}
 	
 	.settings {
+		left: auto;
 		right: 50px;
 	}
 
@@ -353,6 +378,7 @@ img {
 	}
 
 	.settings {
+		left: auto;
 		right: 80px;
 	}
 
@@ -400,11 +426,6 @@ img {
 
 }
 
-/* For the no-mustard case, don't display the transition overlay at all */
-.no-mustard #transition {
-	display:none;
-}
-
 #transition {
 	position: absolute;
 	position: fixed;
@@ -430,7 +451,7 @@ img {
 	margin-left: -110px;
 	height: 19px;
 	margin-top: -9px;
-	background: transparent url('/assets/images/ajax-loader.gif') no-repeat;
+	background: transparent url('../images/ajax-loader.gif') no-repeat;
 }
 
 #transition.hide {
@@ -441,7 +462,33 @@ img {
 	border: none;
 	width: 25px;
 	height: 25px;
-	background: url('/assets/images/loader.gif') 50% 50% no-repeat;
+	background: url('../images/loader.gif') 50% 50% no-repeat;
+}
+
+.loader {
+	opacity: .3;
+	background: url('../images/loader.gif') 50% 50% no-repeat;
+	min-height: 64px;
+}
+
+#carousel-loading {
+	background: white;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+
+	-webkit-backface-visibility: hidden;
+	-webkit-transition: opacity ease-in-out .3s;
+	-moz-transition: opacity ease-in-out .3s;
+	-ms-transition: opacity ease-in-out .3s;
+	-o-transition: opacity ease-in-out .3s;
+	-transition: opacity ease-in-out .3s;
+}
+
+#carousel-loading.hide {
+	opacity: 0;
 }
 
 /**
@@ -470,7 +517,7 @@ img {
 footer {
 	text-align: center;
 	padding: 10px;
-	background: transparent url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
+	background: transparent url('../images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
 }
 
 
@@ -563,10 +610,10 @@ footer {
 /* Carousel-specific */
 .carousel {
 	position: relative;
+	overflow: hidden;
 	margin: 0;
 	right: 0;
 	left: 0;
-	overflow: hidden;
 }
 
 	.carousel .show {
@@ -766,7 +813,7 @@ footer {
 /* general */
 
 #content section > article > header > h1 > i {
-margin-right: 10px;
+	margin-right: 10px;
 }
 
 #content section > article > header > h1 {
@@ -791,7 +838,7 @@ margin-right: 10px;
 
 	#dashboard-content .favorite-channels.loading,
 	#dashboard-content .favorite-programmes.loading {
-		background: url('/assets/images/ajax-loader.gif') 50% 50% no-repeat;
+		background: url('../images/ajax-loader.gif') 50% 50% no-repeat;
 		height:40px;
 	}
 
@@ -873,7 +920,7 @@ margin-right: 10px;
 	border-top: 1px #bbb solid;
 	border-bottom: 2px #bbb solid;
 	border-radius: 5px;
-	background: #eee url('/assets/images/bg-gradient-headers.png') 0 -5px repeat-x;
+	background: #eee url('../images/bg-gradient-headers.png') 0 -5px repeat-x;
 
 }
 
@@ -915,13 +962,13 @@ margin-right: 10px;
 #channel-content > section > article,
 #nowandnext-content > section > article {
 	margin: 0;
-	padding: 0;
+	padding: 0 10px;
 	border-top: 1px #bbb solid;
 	border-bottom: 2px #bbb solid;
 	background: #eee url('/assets/images/bg-gradient-headers.png') 0 -5px repeat-x;
 	border-radius: 3px;
 }
-	
+
 	/* start channel events list */
 	#programme-content h2,
 	#channel-content h2 {
@@ -1010,15 +1057,6 @@ margin-right: 10px;
 		padding-top: 20px;
 	}
 
-	#search-content > section > article,
-	#dashboard-content > section > article,
-	#programme-content > section > article,
-	#channel-content > section > article,
-	#nowandnext-content > section > article {
-		padding: 5px 10px;
-		margin-bottom: 10px;
-	}
-
 	#programme-content h2 i,
 	#channel-content h2 i {
 		left: 28px;
@@ -1041,65 +1079,15 @@ margin-right: 10px;
 
 }
 
-/*
-.channel-event-list represents a list of programmes for a single channel
 
-<ul class="channel-event-list">
-	<li class="programme">
-		<a href="/programme/0000000" class="event-link">
-			<div class="time">09:45 - 10:30</div>
-			<div class="title">My Little Pony - Friendship is Magic</div>
-			<div class="desc">Follow the adventures of Twilight Sparkle and her friends.</div>
-		</a>
-	<li>
-</ul>
-
-
-.channel-event-list {
-	padding:0;
-	margin:0;
-}
-
-	.channel-event-list .programme {
-		display:block;
-		list-style-type:none;
-	}
-	.channel-event-list .programme-link {
-		display:block;
-		padding:5px 0;
-		color:inherit;
-	}
-	.channel-event-list .programme-link:hover,
-	.channel-event-list .programme-link:active {
-		background-color:#f0f0f0;
-	}
-
-	.channel-event-list .time {
-		color:#666;
-		font-size:12px;
-		padding-top:5px;
-		float:left;
-	}
-	.channel-event-list .title {
-		margin:0 0 5px 80px;
-		font-size:16px;
-		font-weight:bold;
-	}
-	.channel-event-list .desc {
-		margin:0 0 0 80px;
-		line-height:1.231;
-		max-height:2.45em;
-		overflow:hidden;
-	}
-*/
 /**
 **	End dashboard & programme & channel view
 **/
 
 
-/**
+/**********************************************************************
 **	THE GRID
-**/
+**********************************************************************/
 
 /* Avoid text selection in the grid */
 #grid-container * {
@@ -1194,7 +1182,7 @@ margin-right: 10px;
 
 #time-bar-list li span {
 	position:relative;
-	background:url('/assets/images/spike-down.png') no-repeat 50% 100%;
+	background:url('../images/spike-down.png') no-repeat 50% 100%;
 	display:block;
 	left:-50%;
 	top: 3px;
@@ -1466,7 +1454,7 @@ margin-right: 10px;
 #channels-bar .shade {
 	position: absolute;
 	/* Fake box-shadow. CSS box-shadow can decrease scrolling performance on old iOS and Android browsers. */ 
-	background: transparent url('/assets/images/bg-gradient-shadow-right.png') repeat-y 100% 0;
+	background: transparent url('../images/bg-gradient-shadow-right.png') repeat-y 100% 0;
 	width: 100%;
 	height: 100%;
 	right: -6px;
@@ -1479,7 +1467,7 @@ margin-right: 10px;
 	top: 10px;
 	right: 0px;
 	position: absolute;
-	background: url('/assets/images/bg-gradient-shadow-right.png') 0 0 repeat-y;
+	background: url('../images/bg-gradient-shadow-right.png') 0 0 repeat-y;
 }
 
 #channels-bar-list {
@@ -1613,7 +1601,7 @@ margin-right: 10px;
 }
 
 .grid-event:active {
-	background: #fff url('/assets/images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
+	background: #fff url('../images/bg-gradient-shadow-bottom.png') 0 0 repeat-x;
 }
 
 .grid-event.tiny {
@@ -1648,21 +1636,93 @@ margin-right: 10px;
 
 	opacity: .9;
 
-	background:url('/assets/images/bg-timer-ticker.png') repeat-y 0 0;
+	background:url('../images/bg-timer-ticker.png') repeat-y 0 0;
 }
 
-/**
+/**********************************************************************
 **	End THE GRID
-**/
+**********************************************************************/
 
 
-/**
+/**********************************************************************
 **	EVENT LISTS
-**/
 
-/* GENERIC FOR ALL EVENT-LISTS */
-[class*=event-list] > li {
-	position: relative;
+The two forms of an event list are as follows:
+
+<!-- Each list item is a separate link. Example: channel events list (each item links to programme page). -->
+<div class="event-list-container">
+	<ul class="event-list [type-of-event-list]">
+		<li>
+			<a href="#">
+				[event content]
+			</a>
+		</li>
+	</ul>
+</div>
+
+<!-- The entire list is a single link. Example: now and next (list links to channel page). -->
+<div class="event-list-container">
+	<a href="#">
+		<ul class="event-list [type-of-event-list]">
+			<li>
+				[event content]
+			</li>
+		</ul>
+	</a>
+</div>
+
+[event content] can be declared in two ways:
+
+1) Simple
+
+<li class="event-list-item-simple">
+	<time class="event-starttime">16:35</time> My Little Pony
+</li>
+
+
+2) Complete
+
+<article class="event [now]">
+	<div class="event-time-box">
+		<time class="event-day">{{weekday name, e.g. "Monday"}}</time>
+		<time class="event-prettyDate">{{pretty date , e.g. "tomorrow"}}</time>
+		<time class="event-starttime">{{HH:MM, e.g. "16:40"}}</time>
+	</div>
+	<div class="event-header">
+		<div class="progressbar" style="width:{{percentage complete}}%"></div>
+		<div class="event-title">{{event title}}</div>
+	</div>
+	<aside class="event-channel" style="background-image:url(...)">{{on channel name}}</aside>
+</article>
+
+The [type-of-event-list] classname on the list modifies the rendering
+of events in the list.
+
+
+**********************************************************************/
+.event-list-container {
+	margin: 0;
+	padding: 0;
+	border-top: 1px #bbb solid;
+	background: #eee url('../images/bg-gradient-headers.png') 0 -5px repeat-x;
+}
+@media screen and (min-width:640px) {
+	.event-list-container {
+		border-radius: 3px;
+		border-bottom: 2px #bbb solid;
+		padding: 5px 10px;
+		margin-bottom: 10px;
+	}
+}
+
+
+
+
+/* Links inside an event container are styled as a block,
+with a gradient background, but only for small screens */
+.event-list-container a {
+	display: block;
+	padding: 5px 0;
 	background: rgb(255,255,255);
 	background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(241,241,241,1) 50%, rgba(225,225,225,1) 51%, rgba(246,246,246,1) 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(50%,rgba(241,241,241,1)), color-stop(51%,rgba(225,225,225,1)), color-stop(100%,rgba(246,246,246,1)));
@@ -1673,14 +1733,63 @@ margin-right: 10px;
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f6f6f6',GradientType=0 );
 }
 
-/* active effect */
-[class*=event-list] > li.active {
-	background-position: 0 -1px;
-	box-shadow: inset 2px 1px 5px 1px #666;
+@media screen and (min-width:640px) {
+	/* Wide screens lose the gradient */
+	.event-list-container a {
+		background: transparent;
+		border: none;
+		padding: 0;
+		margin: 0;
+	}
 }
 
-/* chevron */
-[class*=event-list] .event:after {
+/**
+Simple event list item rendering:
+
+<li class="event-list-item-simple">
+	<time class="event-starttime">16:35</time> My Little Pony
+</li>
+*/
+.event-list-item-simple {
+	font-weight:bold;
+	color:#555;
+	margin:10px;
+	padding-left:60px;
+
+	/* Text on a single line, truncated by ellipsis */
+	overflow:hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+	.event-list-item-simple .event-starttime {
+		font-weight:normal;
+		margin-right:0.5em;
+	}
+
+
+/**
+* Events are blocks. An optional "now" classname indicates
+that the event is happening now:
+
+<article class="event [now]">
+	...
+</article>
+*/
+.event-list .event {
+	position: relative;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	color: #555;
+ 	margin: 10px;
+ 	height: 20px;
+ 	padding-left:9px;
+	-webkit-box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	box-sizing:border-box;
+}
+/* Show a chevron at the right of the event block for small screens */
+.event-list .event:after {
 	font-family: "FontAwesome";
 	position: absolute;
 	display: block;
@@ -1691,89 +1800,129 @@ margin-right: 10px;
 	right: 0;
 	top: 0;
 }
-
-/* shift the position of the chevron */
-[class*=event-list] .event.now:after {
+/* now-events are taller than normal events */
+.event-list .event.now {
+	color: #333;
+	height: 43px;
+}
+/* For now-events (which are taller), push the chevron farther down */
+.event-list .event.now:after {
 	top: 11px;
 }
-
-/* make the links inside the list a block */
-[class*=event-list] a {
-	display: block;
-	padding: 5px 0;
-}
-
-/* active effect */
-[class*=event-list] a:active {
-	padding: 4px 0 6px 0;
-}
-
 @media screen and (min-width:640px) {
-
-	[class*=event-list] > li {
-		background: transparent;
-		border: none;
-		padding: 0;
-		margin: 0;
-	}
-
-	[class*=event-list] > li:active {
-		background: transparent;
-		border: none;
-		padding: 0;
-		margin: 0;
-		box-shadow: none;
-	}
-
-	[class*=event-list] a {
-		display: block;
-		padding: 0;
-		color: #00E;
-	}
-
-	[class*=event-list] a:active {
-		padding: 0;
-	}
-	/* remove the chevron */
-	[class*=event-list] .event:after {
+	/* remove the chevron on wide screens */
+	.event-list .event:after {
 		content: '';
 	}
 }
-
-/* EVENT ROW */
-/* relative container */
-.channel-row {
-	display: block;
-	position: relative;
+/* Search event lists have more left padding */
+.search-event-list .event {
+	padding-left: 60px;
+}
+/* Now-and-next event lists have more left padding */
+.nowandnext-event-list .event {
+	padding-left: 60px;
+}
+/* For now-and-next event lists, only the now-events have a chevron. */
+.nowandnext-event-list .event:not(.now):after {
+	display: none;
 }
 
-/* generic event */
-.event {
-	position: relative;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	overflow: hidden;
-	color: #555;
- 	margin: 10px;
- 	height: 20px;
-	-webkit-box-sizing:border-box;
-	-moz-box-sizing:border-box;
-	box-sizing:border-box;
-}
 
-.event .event-time-box,
-.event .event-header,
-.event .event-channel {
+/**
+The event-time-box is a block containing time details
+for an event. Its rendering depends on context.
+
+<article class="event [now]">
+	<div class="event-time-box">
+		<time class="event-day">{{weekday name, e.g. "Monday"}}</time>
+		<time class="event-prettyDate">{{pretty date , e.g. "tomorrow"}}</time>
+		<time class="event-starttime">{{HH:MM, e.g. "16:40"}}</time>
+	</div>
+	...
+</article>
+
+*/
+.event .event-time-box {
 	position: relative;
 	display: inline-block;
 }
-
-.event-channel {
-	background-repeat: no-repeat;
-	background-position: -300% -300%;
+/* Timebox for now-events are positioned absolutely, and stretch from left to right edge */
+.event.now .event-time-box {
+	display: block;
+	position: absolute;
+	right: 0;
+	left: 0;
+	height:43px;
+	line-height:43px;
 }
 
-.event-header {
+	/* The only time the event-day block should be shown is for
+	non-now events in programme-event-list and search-event-list */
+	.event .event-day {
+		display:none;
+	}
+	.programme-event-list .event:not(.now) .event-day,
+	.search-event-list .event .event-day {
+		display: inline-block;
+		margin-right: 5px;
+	}
+
+	/* The prettyDate block is only shown for now-events on wide screens */
+	.event .event-prettyDate {
+		display:none;
+	}
+	@media screen and (min-width:640px) {
+		.now .event-prettyDate {
+			display: block;
+			position: absolute;
+			right: 15px;
+			left: auto;
+			font-size: .8em;
+			z-index: 1;
+		}
+	}
+
+	/* The event-starttime block is always shown, except in now-events in now-and-next lists.
+	In normal events, the starttime is shown inline. In now-events, it is positioned absolutely. */
+	.now .event-starttime {
+		position: absolute;
+		display: block;
+		top: 0.8em;
+		z-index: 1;
+		text-indent: 10px;
+		line-height: 1.6em;
+	}
+	.nowandnext-event-list .now .event-starttime {
+		display:none;
+	}
+	/* In search-event lists and programme-event-lists, push the (absolutely positioned) 
+	starttime to the right, because we have the channel logo on the left.*/
+	.search-event-list .now .event-starttime,
+	.programme-event-list .now .event-starttime {
+		left: 50px;	
+	}
+
+
+/**
+The event-header element is a block containing the title of an event.
+For now-events, the header also contains a progress bar background to 
+show how much of the event has already passed. 
+
+<article class="event [now]">
+	...
+	<div class="event-header">
+		<div class="progressbar" style="width:{{percentage complete}}%"></div>
+		<div class="event-title">{{event title}}</div>
+	</div>
+	...
+</article>
+
+*/
+
+.event .event-header {
+	position: relative;
+	display: inline-block;
 	height: 100%;
 	border-radius: 3px;
 	-webkit-box-sizing:border-box;
@@ -1781,89 +1930,22 @@ margin-right: 10px;
 	box-sizing:border-box;
 }
 
-.event-title {
-	position: relative;
-	margin: 0;
-	width: 100%;
-	padding: .1em;
-	font-size: 1em;
-	text-indent: .1em;
-	font-weight: bold;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-.event-day,
-.event-prettyDate,
-.event .progressbar,
-
-.now .event-day,
-.now .event-channel,
-
-.channel-event-list .event-day, 
-.channel-event-list .event-channel,
-
-.search-event-list .event-day,
-.search-event-list .now .event-channel,
-.search-event-list .event-category,
-.search-event-list .event-header,
-
-.nowandnext-event-list .event-day,
-.nowandnext-event-list .event-channel,
-.nowandnext-event-list .event-category,
-.nowandnext-event-list .now .event-starttime,
-
-.programme-event-list .now .event-day,
-.programme-event-list .event-header { 
+/* search-event lists and programme-event-lists show events grouped by programme.
+The first item in the list (.event.now) shows the programme title, but subsequent
+events only show the time and channel to minimize visual clutter. */ 
+.search-event-list .event:not(.now) .event-header,
+.programme-event-list .event:not(.now) .event-header { 
 	display: none; 
 }
 
-
-/* NOW EVENT QUIRKS */
-
-.now {
-	color: #333;
-	height: 43px;
-}
-
-.now .event-time-box,
-.now .event-starttime,
-.now .event-header,
-.now .event-channel,
-.now .progressbar {
-	position: absolute;
-}
-
-.now .event-time-box {
-	display: block;
-	right: 0;
-	left: 0;
-}
-
-.now .event-starttime {
-	display: block;
-	top: 10px;
-	z-index: 1;
-	text-indent: 10px;
-	line-height: 1.6em;
-}
-
-.now .event-prettyDate {
-	position: absolute;
-	left: auto;
-	top: 15px;
-	font-size: .8em;
-	z-index: 1;
-}
-
+/* now-events get a border with rounded corners and a background. Text is larger. */
 .now .event-header {
-	left: 0;
+	position: absolute;
+	left: 50px; /* make space left for the channel logo */ 
 	right: 30px;
 	font-size: 1.2em;
 	overflow: hidden;
 	border: 1px solid #aaa;
-	box-shadow: inset 0px 0px 2px 1px #eee;
 	background: rgb(255,255,255);
 	background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(241,241,241,1) 50%, rgba(225,225,225,1) 51%, rgba(246,246,246,1) 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(50%,rgba(241,241,241,1)), color-stop(51%,rgba(225,225,225,1)), color-stop(100%,rgba(246,246,246,1)));
@@ -1872,147 +1954,121 @@ margin-right: 10px;
 	background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(241,241,241,1) 50%,rgba(225,225,225,1) 51%,rgba(246,246,246,1) 100%);
 	background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(241,241,241,1) 50%,rgba(225,225,225,1) 51%,rgba(246,246,246,1) 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f6f6f6',GradientType=0 );
-
 }
-
-.now .event-title {
-	height: 100%;
-	line-height: 2.2;
-	text-indent: 50px;
-	text-shadow: 0px -1px 0px rgba(000,000,000,0.2), 0px 1px 0px rgba(255,255,255,1);
-}
-
-.now .progressbar {
-	display: block;
-	top: 0;
-	left: 0;
-	width: 0%;
-	height: 100%;
-	opacity: .5;
-	box-shadow: 2px 0px 4px 0px #528000;
-	background: #bfd255;
-	background: -moz-linear-gradient(top,  #bfd255 0%, #8eb92a 50%, #72aa00 51%, #9ecb2d 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#bfd255), color-stop(50%,#8eb92a), color-stop(51%,#72aa00), color-stop(100%,#9ecb2d));
-	background: -webkit-linear-gradient(top,  #bfd255 0%,#8eb92a 50%,#72aa00 51%,#9ecb2d 100%);
-	background: -o-linear-gradient(top,  #bfd255 0%,#8eb92a 50%,#72aa00 51%,#9ecb2d 100%);
-	background: -ms-linear-gradient(top,  #bfd255 0%,#8eb92a 50%,#72aa00 51%,#9ecb2d 100%);
-	background: linear-gradient(to bottom,  #bfd255 0%,#8eb92a 50%,#72aa00 51%,#9ecb2d 100%);
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#bfd255', endColorstr='#9ecb2d',GradientType=0 );
-}
-
-/*	channel logo display */
-.now .event-channel {
-	right: none;
-	left: -5px;
-	width: 43px;
-	height: 43px;
-	text-indent: -400%;
-	overflow: hidden;
-	background-repeat: no-repeat;
-	background-position: 50% 50%;
-}
-
-a:active .now .progressbar {
-	opacity: 1;
-}
-
 @media screen and (min-width:640px) {
 	.now .event-header {
 		right: 0;
 	}
-
 }
 
-/*	QUIRKS for Channel, Programme,
-	Search and Now And Next lists */
-
-/* small indent for small events */
-.channel-event-list .event,
-.programme-event-list .event {
-	padding-left: 9px;
+/* 	channel-event-lists appear on channel detail pages, so the channel is known.
+No need to display the channel logo, so we can pull the event-header mor to the left. */
+.channel-event-list .now .event-header {
+	left: 0;
 }
 
-/* highlight the channel name */
-.programme-event-list .event-channel {
-	font-weight: bold;
-}
-
-/* show the event title */
-.programme-event-list .now .event-header {
-	display: block;
-}
-
-/* 	now and next doesn't need
-	space to show startime */
-.nowandnext-event-list .event-title {
-	text-indent: 0.5em;
-}
-
-/*	Small events doesn't have chevron
-	hidde it by change foreground color
-	this assets are typography */
-.nowandnext-event-list .event:after {
-	color: transparent;
-}
-
-/*	big events does have chevron */
-.nowandnext-event-list .now:after {
-	color: #333;
-}
-
-/* 	normal events are indented 
-	to keep the alignment of
-	the first letter */
-.search-event-list .event,
-.nowandnext-event-list .event {
-	padding-left: 60px;
-}
-
-/* 	need to make space for the
-	channel logo */
-.search-event-list .now .event-header,
-.nowandnext-event-list .now .event-header,
-.programme-event-list .now .event-header {
-	display: block;
-	left: 50px;
-}
-
-/* logo visible for */
-.search-event-list .now .event-channel,
-.nowandnext-event-list .now .event-channel,
-.programme-event-list .now .event-channel {
-	display: block;
-}
-
-/* search event lists quirkrs */
-.search-event-list .event-channel,
-.programme-event-list .event-channel {
-	margin-left: 5px;
-	font-weight: bold;
-}
-
-
-.programme-event-list .event-day {
-	display: inline-block;
-	margin-right: 5px;
-}
-
-/* 	need to shift the startime
-	because the logo is on the left 
-	and is not pushing the flow */
-.search-event-list .now .event-starttime,
-.programme-event-list .now .event-starttime {
-	left: 50px;	
-}
-
-@media screen and (min-width:640px) {
-
-	.now .event-prettyDate {
-		display: block;
-		right: 15px;
+	/* The event-title is the name of the programme. One line only, with ellipsis. */
+	.event .event-title {
+		position: relative;
+		margin: 0;
+		width: 100%;
+		padding: .1em;
+		font-size: 1em;
+		text-indent: .1em;
+		font-weight: bold;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	/* Larger font for now-events; */
+	.now .event-title {
+		height: 41px; /* vertical centering */
+		line-height: 41px;
+		padding-top:0;
+		text-indent: 50px;
+		text-shadow: 0 1px 0 rgba(255,255,255,1);
 	}
 
-}
+	/* 	now-and-next lists don't show startime, so adjust the text indent */
+	.nowandnext-event-list .event-title {
+		text-indent: 0.5em;
+	}
+
+	/* The .event-channel is an <aside> element with as its content the channel name.
+	Sometimes we display this channel name; other times we set a background image
+	on the element and use this to display the channel logo next to a now-event. */
+
+	/* Normal events only show the channel name, never the logo */
+	.event:not(.now) .event-channel {
+		font-weight: bold;
+		position: relative;
+		display: inline-block;
+		margin-left: 5px;
+		background-repeat: no-repeat;
+		background-position: -300% -300%;
+	}
+	/* Don't show the channel name in channel-event-lists and nowandnext-event-lists */
+	.channel-event-list .event:not(.now) .event-channel,
+	.nowandnext-event-list .event:not(.now) .event-channel { 
+		display: none; 
+	}
+
+	/* now-events show the channel logo */
+	.event.now .event-channel {
+		position: absolute;
+		right: 0;
+		left: -5px;
+		width: 43px;
+		height: 43px;
+		text-indent: -400%;
+		overflow: hidden;
+		background-repeat: no-repeat;
+		background-position: 50% 50%;
+	}
+	/* Don't show the channel logo on channel-event-lists */
+	.channel-event-list .now .event-channel { 
+		display: none; 
+	}
+
+
+	/* The .progressbar is a background behind the .event-title text on now-events*/
+	.event:not(.now) .progressbar {
+		display: none; 
+	}
+	.event.now .progressbar {
+		position: absolute;
+		display: block;
+		top: 0;
+		left: 0;
+		width: 0;
+		height: 100%;
+		opacity: .5;
+		background: #bfd255;
+		background: -moz-linear-gradient(top,  #bfd255 0%, #8eb92a 50%, #72aa00 51%, #9ecb2d 100%);
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#bfd255), color-stop(50%,#8eb92a), color-stop(51%,#72aa00), color-stop(100%,#9ecb2d));
+		background: -webkit-linear-gradient(top,  #bfd255 0%,#8eb92a 50%,#72aa00 51%,#9ecb2d 100%);
+		background: -o-linear-gradient(top,  #bfd255 0%,#8eb92a 50%,#72aa00 51%,#9ecb2d 100%);
+		background: -ms-linear-gradient(top,  #bfd255 0%,#8eb92a 50%,#72aa00 51%,#9ecb2d 100%);
+		background: linear-gradient(to bottom,  #bfd255 0%,#8eb92a 50%,#72aa00 51%,#9ecb2d 100%);
+		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#bfd255', endColorstr='#9ecb2d',GradientType=0 );
+	}
+	a:active .now .progressbar {
+		opacity: 1;
+	}
+	@media screen and (min-width:640px) {
+		.event.now .progressbar {
+			right: 0;
+			box-shadow: 2px 0 4px 0 #528000; /* Save box-shadow for larger screens */
+		}
+	}
+
+
+
+
+
+/**********************************************************************
+**	End EVENT LISTS
+**********************************************************************/
 
 /* ==============
    Search View
@@ -2127,4 +2183,54 @@ ul {
 #channels input,
 #datetimes input {
 	margin-right: 10px;
+}
+
+/** 
+* Utility classes
+*/
+
+.hidden {
+	display:none;
+}
+
+/**
+*	Overlay
+*/
+
+#overlay {
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	padding: 20px;
+	position: absolute;
+	position: fixed;
+	background-color: rgba(255,255,255,.8);
+	opacity: 0;
+	display: none;
+
+	-webkit-transition: opacity .3s ease-in-out;
+    -moz-transition: opacity .3s ease-in-out;
+    -o-transition: opacity .3s ease-in-out;
+    transition: opacity .3s ease-in-out;
+}
+
+#overlay.active {
+	display: block;
+	opacity: 1;
+}
+
+#overlay-close {
+	position: fixed;
+	position: absolute;
+	right: 40px;
+	top: 40px;
+}
+
+#overlay-content {
+	padding: 10px;
+	position: relative;
+	background-color: #fff;
+	border-radius:10px;
+	border:2px solid #669;
 }

@@ -1,17 +1,20 @@
 /*
 * RouterModule
 * ------
-* Using HTML5 pushState API with a little help of History.js (http://balupton.github.com/history.js/demo/)
+* Using HTML5 pushState API with a little help of History.js: 
+* http://balupton.github.com/history.js/demo/
 */
 
 define([
 
 	'config/app',
+	'models/app',
 	'modules/app',
+	'modules/event',
 	'utils/dom',
-	'/js/lib/history/1.7.1-r2/bundled/html4+html5/native.history.js'
+	'lib/history/1.7.1-r2/bundled/html4+html5/native.history'
 
-], function RouterModuleScope(a, App, dom) {
+], function RouterModuleScope(a, AppModel, App, Event, dom) {
 
 	var name = 'router',
 
@@ -23,25 +26,23 @@ define([
 
 	// shorcuts
 
+		// Localize global History Object
 		History = window.History,
 
-		shift = Array.prototype.shift;
+		shift = Array.prototype.shift,
 
-	/**
-	*	Add the grid just for HTML5 devices
-	*/
-	function addGridButton() {
-		$('.nav').append('<a href="/grid" class="grid"><i class="icon-th"></i><b class="label">TV Gids</b></a>');
-	}
+		slice = Array.prototype.slice;
 
 	/**
 	*	Handle State Changes
 	*/
 	function handleStateChange() {
 
-		var State = History.getState(); // Note: We are using History.getState() instead of event.state
+		// Creates the State Object
+		var State = History.getState(), // Note: We are using History.getState() instead of event.state
+			path = History.getShortUrl(State.url);
 
-		var path = History.getShortUrl(State.url);
+		console.log('<ROUTER> handleStateChange', State, path);
 		// Remove the initial '/' from the path
 		if (path.slice(0,1)==='/') {
 			path = path.slice(1);
@@ -59,19 +60,28 @@ define([
 		State.parts = path.split(/[\/\?\&=\#]/gi);
 
 		// The controller to be loaded is the first element in the parts array
-		State.controller = (State.parts) ? shift.apply(State.parts) : '';
+		// Return dashboards if is empty
+		State.controller = (State.parts) ? shift.apply(State.parts) : 'dashboard';
 
-		App.emit(a.NAVIGATE, State);
+		// Normal flow
+		Event.emit(a.NAVIGATE, State);
 	}
 
 	/**
 	*	Activate anchors
 	*/
 	function activeAnchors(State) {
-		var anchor = $('.' + State.name);
+		// get the selected anchor
+		var anchor = dom.doc.querySelectorAll('.' + State.name);
+		// if the selected anchor exist
 		if (anchor[0]) {
-			$('.nav a').removeClass('active');
-			anchor.addClass('active');
+			// deselect all the anchors
+			slice.call(dom.doc.querySelectorAll('.nav a'), 0)
+				.forEach(function(e) { 
+					e.className = e.className.replace('active',''); 
+				});
+			// make the selected anchor active
+			anchor[0].className = anchor[0].className += ' active';
 		}
 	}
 
@@ -81,15 +91,16 @@ define([
 	*	and use our own Router to navigate
 	*/
 	function handleAnchors(event) {
+
 		// save the click target
-		var element = anchor = event.target;
-		var dataset;
+		var element = anchor = event.target,
 
 		// Find actions on clicked elements, this
 		// actions are declared on the data-action
 		// attribute, its value defines the action
 		// to be trigger.
-		dataset = dom.getDataset(element);
+			dataset = dom.getDataset(element);
+
 		while (!dataset.action) {
 			// break if the #main is reached
 			if (element === this) { break; }
@@ -100,8 +111,15 @@ define([
 
 		// found a data-action attribute?
 		if (dataset.action) {
-			// trigger the action
-			App.emit(a.ACTION, dataset.action, element);
+			//trigger the action, send event object
+			Event.emit(a.ACTION, dataset.action, event);
+		}
+
+		// an action can prevent default
+		// from its own handler context
+		// in that case, stop processing
+		if (event.defaultPrevented) {
+			return;
 		}
 
 		// Keep bubbling up through DOM until you find an anchor,
@@ -121,9 +139,10 @@ define([
 			// grab its data-*, title, and href attr
 			// and pass everithing to the router, he will pushState and whatever
 			dataset = dom.getDataset(anchor);
+			// pushState to history
 			navigate(dataset, anchor.title, anchor.href);
 			// let know everyone that we are navigating
-			App.emit(a.ACTION, a.NAVIGATE);
+			Event.emit(a.ACTION, a.NAVIGATE);
 		}
 
 		// else, trigger an void action event it is
@@ -131,7 +150,7 @@ define([
 		// or act when the users click nothing
 		if (!dataset.action && !anchor.href) {
 			// trigger void action
-			App.emit(a.ACTION, a.VOID);
+			Event.emit(a.ACTION, a.VOID);
 		}
 
 		// let the event continue
@@ -141,21 +160,18 @@ define([
 /* public */
 
 	function initialize() {
+
 		// Bind to StateChange Event
 		History.Adapter.bind(window, STATECHANGE, handleStateChange);
+
 		// Active links
-		App.on(a.VIEW_INITIALIZING, activeAnchors);
+		Event.on(a.VIEW_INITIALIZING, activeAnchors);
 		// Listen to every click on #main,
 		// to override its default behavior
 		// and use our own Router to navigate
-		a._main.addEventListener('click', handleAnchors, false);
+		dom.main.addEventListener('click', handleAnchors, false);
 
-		// First load
 		handleStateChange();
-
-		if (App.allowGrid()) {
-			addGridButton();
-		}
 
 		return this;
 	}
@@ -164,15 +180,21 @@ define([
 		// Unbind to StateChange Event
 		History.Adapter.unbind(window, STATECHANGE, handleStateChange);
 		// stop activating links
-		App.off(a.VIEW_INITIALIZING, activeAnchors);
+		Event.off(a.VIEW_INITIALIZING, activeAnchors);
 
-		a._main.removeEventListener('click', handleAnchors, false);
+		dom.main.removeEventListener('click', handleAnchors, false);
 
+		return this;
+	}
+
+	function redirect(name) {
+		navigate({}, name, '/' + name);
 		return this;
 	}
 
 	function navigate(data, title, url) {
 		History.pushState(data, title, url);
+		console.log('<ROUTER> navigate', data, title, url);
 		return this;
 	}
 
@@ -187,7 +209,9 @@ define([
 	return {
 		name		: name,
 		initialize	: initialize,
-		navigate	: navigate
+		navigate	: navigate,
+		back		: History.back,
+		go 			: History.go
 	};
 
 });

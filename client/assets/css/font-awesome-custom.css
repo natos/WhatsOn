@@ -1,0 +1,99 @@
+/*  Font Awesome
+    the iconic font designed for use with Twitter Bootstrap
+    -------------------------------------------------------
+    The full suite of pictographic icons, examples, and documentation
+    can be found at: http://fortawesome.github.com/Font-Awesome/
+
+    License
+    -------------------------------------------------------
+    The Font Awesome webfont, CSS, and LESS files are licensed under CC BY 3.0:
+    http://creativecommons.org/licenses/by/3.0/ A mention of
+    'Font Awesome - http://fortawesome.github.com/Font-Awesome' in human-readable
+    source code is considered acceptable attribution (most common on the web).
+    If human readable source code is not available to the end user, a mention in
+    an 'About' or 'Credits' screen is considered acceptable (most common in desktop
+    or mobile software).
+
+    Contact
+    -------------------------------------------------------
+    Email: dave@davegandy.com
+    Twitter: http://twitter.com/fortaweso_me
+    Work: http://lemonwi.se co-founder
+
+    */
+@font-face {
+  font-family: "FontAwesome";
+  src: url('../font/fontawesome-custom/fontawesome-custom.eot');
+  src: url('../font/fontawesome-custom/fontawesome-custom.eot?#iefix') format('eot'), url('../font/fontawesome-custom/fontawesome-custom.woff') format('woff'), url('../font/fontawesome-custom/fontawesome-custom.ttf') format('truetype'), url('../font/fontawesome-custom/fontawesome-custom.svg#FontAwesome') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/*  Font Awesome styles
+    ------------------------------------------------------- */
+[class^="icon-"]:before, [class*=" icon-"]:before {
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+  text-decoration: inherit;
+}
+a [class^="icon-"], a [class*=" icon-"] {
+  display: inline-block;
+  text-decoration: inherit;
+}
+/* makes the font 33% larger relative to the icon container */
+.icon-large:before {
+  vertical-align: top;
+  font-size: 1.3333333333333333em;
+}
+.btn [class^="icon-"], .btn [class*=" icon-"] {
+  /* keeps button heights with and without icons the same */
+
+  line-height: .9em;
+}
+li [class^="icon-"], li [class*=" icon-"] {
+  display: inline-block;
+  width: 1.25em;
+  text-align: center;
+}
+li .icon-large[class^="icon-"], li .icon-large[class*=" icon-"] {
+  /* 1.5 increased font size for icon-large * 1.25 width */
+
+  width: 1.875em;
+}
+li[class^="icon-"], li[class*=" icon-"] {
+  margin-left: 0;
+  list-style-type: none;
+}
+li[class^="icon-"]:before, li[class*=" icon-"]:before {
+  text-indent: -2em;
+  text-align: center;
+}
+li[class^="icon-"].icon-large:before, li[class*=" icon-"].icon-large:before {
+  text-indent: -1.3333333333333333em;
+}
+/*  Font Awesome uses the Unicode Private Use Area (PUA) to ensure screen
+    readers do not read off random characters that represent icons */
+.icon-bookmark:before             { content: "\f02e"; }
+.icon-calendar:before             { content: "\f073"; }
+.icon-certificate:before          { content: "\f0a3"; }
+.icon-chevron-right:before        { content: "\f054"; }
+.icon-cog:before                  { content: "\f013"; }
+.icon-facebook-sign:before        { content: "\f082"; }
+.icon-heart:before                { content: "\f004"; }
+.icon-home:before                 { content: "\f015"; }
+.icon-info-sign:before            { content: "\f05a"; }
+.icon-pause:before                { content: "\f04c"; }
+.icon-play:before                 { content: "\f04b"; }
+.icon-remove-sign:before          { content: "\f057"; }
+.icon-reorder:before              { content: "\f0c9"; }
+.icon-search:before               { content: "\f002"; }
+.icon-share:before                { content: "\f045"; }
+.icon-signout:before              { content: "\f08b"; }
+.icon-star:before                 { content: "\f005"; }
+.icon-star-empty:before           { content: "\f006"; }
+.icon-th:before                   { content: "\f00a"; }
+.icon-thumbs-up:before            { content: "\f087"; }
+.icon-time:before                 { content: "\f017"; }
+.icon-user:before                 { content: "\f007"; }

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html class="no-js no-mustard">
+    <head>
+    <title id="pageTitle">UPC Social</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" names="apple-mobile-web-app-status-bar-style">
+    <meta content="UPC Social" property="og:title">
+    <meta content="app" property="og:type">
+    <meta content="http://upcsocial.herokuapp.com/" property="og:url">
+    <meta content="http://upcsocial.herokuapp.com/assets/images/upclogo.jpg" property="og:image">
+    <meta content="UPC Social" property="og:site_name">
+    <meta content="290742221014129" property="fb:app_id">
+    <link href="assets/css/all.css" rel="stylesheet">
+</head>
+    <body class="fixed-top">
+        <div id="fb-root"></div>
+        <div id="main">
+            <div id="navigation">
+                <div id="navigation-background"></div>
+                <div id="navigation-content"><div class="upc-logo" id="upc-logo"></div>
+                    <div class="menu-item" data-action="TOGGLE-MENU" title="">
+                        <i class="icon-reorder"></i>
+                        <b class="label" id="menu-label-menu"></b></div>
+                </div>
+            </div>
+            <nav id="main-nav" class="nav">
+                <a href="/settings" class="settings" title="">
+                    <i class="icon-cog"></i>
+                    <b class="label" id="menu-label-settings"></b></a>
+                <div class="menu-item login" data-action="LOGIN" title="">
+                    <i class="icon-user"></i>
+                    <b class="label" id="menu-label-login"></b></div>
+                <a href="/dashboard" class="dashboard" title="">
+                    <i class="icon-home"></i>
+                    <b class="label" id="menu-label-home"></b></a>
+                <a href="/nowandnext" class="nowandnext" title="">
+                    <i class="icon-time"></i>
+                    <b class="label" id="menu-label-nownext"></b></a>
+                <a href="/grid" class="grid" title="">
+                	<i class="icon-th"></i>
+                	<b class="label" id="menu-label-tvguide"></b></a>
+                <a href="/search" class="search" title="">
+                    <i class="icon-search"></i>
+                    <b class="label" id="menu-label-search"></b></a>
+            </nav>
+            <nav id="sub-nav" class="nav hide">
+                <div class="back menu-item" data-action="NAVIGATE-BACK" title="Back">
+                    <i class="icon-circle-arrow-left"></i>
+                    <b class="label" id="menu-label-back"></b></a>
+                <div class="close menu-item" data-action="CLOSE" title="Close">
+                    <i class="icon-remove-sign"></i>
+                    <b class="label" id="menu-label-close"></b></a>
+            </nav>
+            <div id="user-control">
+                <div class="menu-item settings" data-action="SETTINGS" title="">
+                    <i class="icon-cog"></i>
+                    <b class="label" id="menu-label-user-settings"></b></div>
+                <div class="menu-item logout" data-action="LOGOUT" title="">
+                    <i class="icon-signout"></i>
+                    <b class="label" id="menu-label-user-logout"></b></div>
+            </div>
+            <div id="content"></div>
+        </div>
+        <div class="background" id="transition"><div class="loading"></div></div>
+        <script data-main="js/main" src="js/lib/require/2.1.0/require.min.js"></script>
+        <script>
+            (function (d, s, id) {
+                var js,
+                    fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s);
+                js.id = id;
+                js.src = "//connect.facebook.net/en_US/all.js";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+        </script>
+    </body>
+</html>

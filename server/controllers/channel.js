@@ -35,7 +35,8 @@ function(ChannelService, Metadata, DateUtils, Requestn, PrettyDate, Channels) {
 
 		// Routing
 
-		app.server.get('/channel/:id', this.render);
+		// app.server.get('/channel/:id', this.render);
+		app.server.get('/channel/:id', this.renderEmpty);
 
 		app.server.get('/channels.json', this.renderChannels);
 
@@ -55,6 +56,18 @@ function(ChannelService, Metadata, DateUtils, Requestn, PrettyDate, Channels) {
 		dateUtils = new DateUtils();
 
 	/** @public */
+
+	ChannelController.prototype.renderEmpty = function(req, res) {
+		var template = req.xhr ? 'contents/empty-content.jade' : 'layouts/empty-layout.jade';
+
+		res.render(template, {
+			metadata	: metadata.get(),
+			config		: _app.config,
+			supports	: req.supports,
+			xhr			: req.xhr
+		});
+	};
+
 
 	/** Render a channel page */
 	ChannelController.prototype.render = function(req, res) {

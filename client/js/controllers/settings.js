@@ -10,22 +10,35 @@
 define([
 
 	'config/app',
+	'models/app',
 	'modules/app',
+	'modules/event',
+	'views/settings',
 	'lib/flaco/controller',
-	'views/settings'
+	'lib/cookie/cookie'
 
-], function SettingsController(c, App, Controller, SettingsView) {
+], function SettingsController(a, AppModel, App, Event, SettingsView, Controller, cookie) {
 
 	var name = 'settings';
 
 /* private */
 
+	/* Handle data changes */
+	
+	Event.on(a.SELECTED_COUNTRY, function(country) {
+		// set the selected country
+		// on the AppModel
+		AppModel.set(a.SELECTED_COUNTRY, country);
+		// save selection on a cookie
+		// for future reference
+		cookie.set(a.SELECTED_COUNTRY, country);
+	});
+
+
 /* public */
 
-/* abstract */ 
-
 	function initialize() {
-	
+
 		return this;
 	
 	}
@@ -38,11 +51,11 @@ define([
 
 /* export */
 
-	return {
+	return new Controller({
 		name		: name,
 		initialize	: initialize,
 		finalize	: finalize,
 		view		: SettingsView
-	};
+	});
 
 });

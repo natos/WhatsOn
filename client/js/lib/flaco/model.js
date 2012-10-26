@@ -8,7 +8,7 @@ define([], function GenericModelScope() {
 
 /* private */
 
-	var EVENT_EMITTER_URI = 'modules/app';
+	var EVENT_EMITTER_URI = 'modules/event';
 
 /* public */
 

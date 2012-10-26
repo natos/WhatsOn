@@ -6,9 +6,10 @@
 define([
 
 	'config/app',
-	'modules/app'
+	'modules/event',
+	'utils/dom'
 
-], function GenericViewScope(a, App) {
+], function GenericViewScope(a, Event, dom) {
 
 /* private */
 
@@ -26,120 +27,12 @@ define([
 	// shorcuts
 		slice = Array.prototype.slice;
 
-	/**
-	*	Generic inner templatign
-	*/
-
-	// returns template name for a given view
-	function templateName(view) {
-		var parts = getParts(view).replace(/\//g,'-');
-			parts = parts === "-" ? '' : parts;
-		return view.name + parts + '-template';
-	}
-
-	function templateId(view) {	return '#' + templateName(view); }
-
-	function getParts(view) { return (view.State && view.State.parts ? '/' + view.State.parts.join('/') : '' );	}
-
-	// returns if the template DOM element exists
-	function templateExists(view) { return $( templateId(view) )[0]; }
-
-	// returns if the content DOM element exists
-	function contentExists(view) { return $('#' + view.name + '-content')[0]; }
-
-	// fetch template from server and save it to the DOM
-	function fetchTemplate(view) {
-		// fetch from url
-		var from_url = '/' + view.name + getParts(view);
-		// fetch content from server
-		$.get(from_url, function saveNewTemplate(content) {
-			saveTemplate(view, content);
-			// set the template view
-			setTemplate(view);
-		});
-	}
-
-	// renders the template
-	function setTemplate(view) {
-		// write the template in the DOM
-		a._content.innerHTML = $( templateId(view) ).text();
-		// re write metadata content for this view
-		var metamap = {}, original, metadata, property, content;
-		// map original meta tags
-		var original = $('head').find('meta');
-			original.forEach(function(o) {
-				property = $(o).attr('property');
-				content = $(o).attr('content');
-				if (property && content) { 
-					metamap[property] = { 
-						property: property, 
-						content: content, 
-						element: o }; 
-				}
-			});
-		// compare and replace with new ones
-		var $metadata = $('#content').find('meta');
-			$metadata.forEach(function(meta) {
-				property = $(meta).attr('property');
-				content = $(meta).attr('content');
-				if (metamap[property] && metamap[property].content !== content) {
-					metamap[property].element['content'] = content;
-				}
-			});
-
-		// render view :)
-		view.render();
-	}
-
-	function saveTemplate(view, content) {
-		var content = content || $('#content').html();
-		// create template container and append it to the DOM
-		var $template = templateExists(view) ? $( templateId(view) ) : $(SCRIPT_TAG).attr('id', templateName(view)).appendTo('#templates');
-			// save it in the DOM container
-			$template.text( content );
-	}
-
-	/* Main template functions */
-
-	// loads template, if not exists, it will fetch the template from server
-	function loadTemplate(view) {
-
-		// avoid load templates for
-		// content already rendered
-		if (contentExists(view)) {
-			view.render();
-			return;
-		}
-
-		// if the template existe, use it
-		if (templateExists(view)) {	
-			setTemplate(view); 
-		} else {
-			console.log('template doesn\'t exist, fetch template');
-			// otherwise, fetch it 
-			fetchTemplate(view); 
-		}
-	}
-
-	// well, nothing for now
-	function unloadTemplate(view) {
-		// ? not sure what to do here...
-		// ? because the loadTemplate function
-		// ? already steps on previews templates
-		saveTemplate(view);
-	}
-
-	/**
-	*	Generic inner template handling
-	*/
-	// load template data,
-	// when any view finish initialization
-	App.on(a.VIEW_INITIALIZED, loadTemplate);
-	// unload template,
-	// when any view finalized
-	App.on(a.VIEW_FINALIZED, unloadTemplate);
-
 /* public */
+
+	// Once a view is initialized
+	// start rendering
+	Event.on(a.VIEW_INITIALIZED, function(view){ view.render(); });
+
 
 	function ViewConstructor(o) {
 
@@ -212,15 +105,28 @@ define([
 				// save the current State for future reference
 				if (member === INITIALIZE) { View.State = args[0]; }
 				// emit 'first' event
-				if (present) { App.emit(present, View, args); }
-				// apply the method
-				if (method) { method.apply(View, args); }
-				// call the same method for all components views
-				// using 'call' here because uses an argument list
-				// instead of an array of arguments
-				forEachComponent.call(View, member, args);
+				if (present) { Event.emit(present, View, args); }
+				// invert execution order when FINALIZE
+				if (member === FINALIZE) {
+					// call the same method for all components views
+					// using 'call' here because uses an argument list
+					// instead of an array of arguments
+					forEachComponent.call(View, member, args);
+					// apply the method
+					if (method) { method.apply(View, args); }
+					// self empty view container
+					dom.empty(dom.content);
+				} else {
+					// for INITIALIZE and RENDER use default execution order
+					// apply the method
+					if (method) { method.apply(View, args); }
+					// call the same method for all components views
+					// using 'call' here because uses an argument list
+					// instead of an array of arguments
+					forEachComponent.call(View, member, args);
+				}
 				// emit 'last' event
-				if(past) { App.emit(past, View, args); }
+				if (past) { Event.emit(past, View, args); }
 				// return the View object
 				return this;
 			}

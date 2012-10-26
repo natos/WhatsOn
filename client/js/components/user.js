@@ -9,9 +9,11 @@ define([
 	'config/app',
 	'config/user',
 	'modules/app',
-	'models/user'
+	'modules/event',
+	'models/user',
+	'utils/dom'
 
-], function UserControl(a, u, App, UserModel) {
+], function UserControl(a, u, App, Event, UserModel, dom) {
 
 /* private */
 
@@ -21,9 +23,9 @@ define([
 
 // DOM access
 
-	loginButton = a._doc.querySelectorAll('.menu-item.login'),
+	loginButton = dom.doc.querySelectorAll('.menu-item.login'),
 
-	userControl = a._doc.getElementById('user-control'),
+	userControl = dom.doc.getElementById('user-control'),
 
 // pulldown
 	pulldown = {
@@ -47,10 +49,10 @@ define([
 	function initialize() {
 
 		// Handle when the user model change
-		App.on(u.MODEL_CHANGED, manageModelChanges);
+		Event.on(u.MODEL_CHANGED, manageModelChanges);
 
 		// Listen to actions
-		App.on(a.ACTION, manageActions);
+		Event.on(a.ACTION, manageActions);
 
 		return this;
 
@@ -70,12 +72,12 @@ define([
 		switch (event.status) {
 
 			case u.CONNECTED:
-				a._doc.querySelectorAll('.menu-item.login')[0].innerHTML = '<img class="picture" src="https://graph.facebook.com/' + event.authResponse.userID + '/picture" />';
+				dom.doc.querySelectorAll('.menu-item.login')[0].innerHTML = '<img class="picture" src="https://graph.facebook.com/' + event.authResponse.userID + '/picture" />';
 				break;
 
 			case u.NOT_AUTHORIZED:
 			case u.UNKNOWN:
-				a._doc.querySelectorAll('.menu-item.login')[0].innerHTML = '<i class="icon-user"></i><b class="label">Login</b>';
+				dom.doc.querySelectorAll('.menu-item.login')[0].innerHTML = '<i class="icon-user"></i><b class="label">Login</b>';
 				break;
 		}
 
@@ -95,7 +97,7 @@ define([
 
 			case u.NOT_AUTHORIZED:
 			case u.UNKNOWN:
-				App.emit(u.LOG_IN);
+				Event.emit(u.LOG_IN);
 				break;
 
 		}
@@ -106,7 +108,7 @@ define([
 		switch (CURRENT_STATUS) {
 
 			case u.CONNECTED:
-				App.emit(u.LOG_OUT);
+				Event.emit(u.LOG_OUT);
 
 			case u.NOT_AUTHORIZED:
 			case u.UNKNOWN:

@@ -1,45 +1,44 @@
 require.config({
-/* ... */
+	// setting base URL
+	baseUrl: '/js',
+	paths : {
+        //create alias to plugins (not needed if plugins are on the baseUrl)
+        text: 'lib/require-plugins/text',
+        //async: 'lib/requirejs-plugins/async',
+        //depend: 'lib/requirejs-plugins/depend',
+        //font: 'lib/requirejs-plugins/font',
+        //goog: 'lib/requirejs-plugins/goog',
+        //image: 'lib/requirejs-plugins/image',
+        json: 'lib/require-plugins/json',
+        //noext: 'lib/requirejs-plugins/noext',
+        //mdown: 'lib/requirejs-plugins/mdown',
+        //propertyParser : 'lib/requirejs-plugins/propertyParser',
+        //markdownConverter : 'lib/Markdown.Converter'
+    }
 });
 
+require([
 
-// Cutting the mustard: detect whether the user gets the rich client experience.
-// The actual detection is done *as early as possible* using inline script in the
-// <head> of the page. We do this to set a 'mustard' classname on the document element
-// (like Modernizr).
-// TODO: load zepto for mustard and jquery for mayo?
-if (console && console.log) { console.log('mustard = ' + window.mustard); }
+	'modules/app'
 
-if (window.mustard) {
-	// Boot the rich client
+],
+function(App) {
 
-	require([
+	/* safe console */
+	if (!window.console || !window.console.log) {
+		window.console = {
+			assert: function(){},
+			log: function(){},
+			warn: function(){},
+			error: function(){},
+			debug: function(){},
+			dir: function(){},
+			info: function(){}
+		};
+	}
 
-		'modules/app',
-		'/js/utils/requestAnimationFrame.js' // requestAnimationFrame pollyfill
+	/* global signature */
+	window.upc = App.initialize();
+	window.app = App;
 
-	],
-	function(App) {
-
-		/* safe console */
-		if (!window.console || !window.console.log) {
-			window.console = {
-				assert : function(){},
-				log : function(){},
-				warn : function(){},
-				error : function(){},
-				debug : function(){},
-				dir : function(){},
-				info : function(){}
-			};
-		}
-
-		/* global signature */
-		window.upc = App.initialize();
-window.app = App;
-
-	});
-
-}
-
-// No mustard, no rich client. Classic HTML + CSS + simple JS.
+});

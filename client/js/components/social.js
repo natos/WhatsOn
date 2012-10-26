@@ -8,10 +8,11 @@ define([
 	'config/app',
 	'config/user',
 	'modules/app',
+	'modules/event',
 	'models/user',
 	'utils/dom'
 
-], function SocialComponentScope(a, u, App, UserModel, dom) {
+], function SocialComponentScope(a, u, App, Event, UserModel, dom) {
 
 	var name = 'social',
 
@@ -36,14 +37,31 @@ define([
 	_social,
 
 	_favorite,
+	
+	_layout,
 
-	_content = document.getElementById('content'),
+	_favoriteButton = createButton({ label: 'Favorite', klass: 'favorite', icon: 'icon-star-empty' }),
+	
+	_shareButton = createButton({ label: 'Share', klass: 'share', icon: 'icon-share' });
 
-	// Template
+	/* dom helpers */
 
-	_template = dom.create('div');
-	_template.id = name;
-	_template.innerHTML = document.getElementById(name + '-template').innerHTML;
+	function createButton(options) {
+
+		var button, label, icon;
+
+			icon = dom.element('i', { klass: options.icon });
+
+			label = dom.element('b');
+			label.appendChild(dom.text(options.label));
+
+			button = dom.element('button', { klass: options.klass });
+			button.appendChild(icon);
+			button.appendChild(label);
+
+		return button;
+
+	}
 
 	/* State handler */
 	function handleModelChanges(changes) {
@@ -66,33 +84,24 @@ define([
 	}
 
 	function thisIsAFavorite(favorite) {
-		var i = 0, t = _favorite.length;
-		for (i; i < t; i += 1) {
-			_favorite[i].className = 'favorite disable';
-			_favorite[i].setAttribute('disable', 'disable');
-			_favorite[i].setAttribute('data-favorite-id', favorite.id);
-			_favorite[i].getElementsByTagName('i')[0].className = 'icon-star';
-		}
+		_favoriteButton.klassName = 'favorite disable';
+		_favoriteButton.setAttribute('disable', 'disable');
+		_favoriteButton.setAttribute('data-favorite-id', favorite.id);
+		_favoriteButton.getElementsByTagName('i')[0].klassName = 'icon-star';
 	}
 
-	function thisIsNotLonguerAFavorite() {
-		console.log('didn\'t found a favorite');
-		var i = 0, t = _favorite.length;
-		for (i; i < t; i += 1) {
-			_favorite[i].className = 'favorite';
-			_favorite[i].removeAttribute('disable');
-			_favorite[i].removeAttribute('data-favorite-id');
-			_favorite[i].getElementsByTagName('i')[0].className = 'icon-star-empty';
-		}
-		//$('.favorite', '#content').removeAttr('disable').removeClass('disable').removeAttr('data-favorite-id');
-		//$('.favorite i', '#content').attr('class','icon-star-empty');
+	function thisIsNotLonguerAFavorite() {		
+		_favoriteButton.klassName = 'favorite';
+		_favoriteButton.removeAttribute('disable');
+		_favoriteButton.removeAttribute('data-favorite-id');
+		_favoriteButton.getElementsByTagName('i')[0].klassName = 'icon-star-empty';
 	}
 
 	/* Action Handler, for User Interaction */
 	function userActionHandler(event) {
 
 		if (!url) { 
-			console.log('Social component', 'No URL defined, can\'t work like that!');
+			console.log('Social component', 'No URL defined, I can\'t work like that!');
 			return; 
 		}
 
@@ -111,29 +120,29 @@ define([
 
 	/* Handle different actions */
 
-		switch (button.className) {
+		switch (button.klassName) {
 
 			case 'like':
-				App.emit(u.ADD_LIKE, url);
+				Event.emit(u.ADD_LIKE, url);
 				break;
 
 			case 'like disable':
-				App.emit(u.REMOVE_LIKE, url);
+				Event.emit(u.REMOVE_LIKE, url);
 				break;
 
 			case 'favorite':
-				App.emit(u.ADD_FAVORITE, type, url);
+				Event.emit(u.ADD_FAVORITE, type, url);
 				thisIsAFavorite(id); // Update UI, don't wait for the response
 				break;
 
 			case 'favorite disable':
 				favoriteId = button.getAttribute('data-favorite-id');
-				App.emit(u.REMOVE_FAVORITE, favoriteId);
+				Event.emit(u.REMOVE_FAVORITE, favoriteId);
 				thisIsNotLonguerAFavorite(); // Update UI, don't wait for the response
 				break;
 
 			case 'share':
-				App.emit(u.SHARE, { method: 'feed', link: url });
+				Event.emit(u.SHARE, { method: 'feed', link: url });
 				break;
 		}
 
@@ -145,7 +154,7 @@ define([
 
 	function initialize(State) {
 		// subscribe to get favorites
-		App.on(u.MODEL_CHANGED, handleModelChanges);
+		Event.on(u.MODEL_CHANGED, handleModelChanges);
 		// save basic data for this favorite
 		id = State.parts[0];
 		// hardcoded here to emulate producction urls for facebook
@@ -158,25 +167,31 @@ define([
 
 	function render(model) {
 
-		// get the component
-		_social = document.getElementById('social');
-		// check if necessary render template
-		if (!_social) { _content.getElementsByTagName('header')[0].appendChild(_template); }
-		// grab favorite buttons
-		_favorite = _content.querySelectorAll('.favorite');
+		console.log('>>> Render')
+
+		// create the container
+		_layout = dom.element('div', { id: 'social' });
 		// listent for user behavior
-		_content.addEventListener('click', userActionHandler, false);
+		_layout.addEventListener('click', userActionHandler, false);
+		_layout.appendChild(_favoriteButton);
+		_layout.appendChild(_shareButton);
+
+		console.log(dom.doc.getElementById('programme-content'))
+		dom.content.appendChild(_layout);
+
 		// force checks
 		handleModelChanges(UserModel);
+
 	}
 
 	function finalize() {
-		// remove the buttons
-		_social = document.getElementById('social');
-		_social.parentNode.removeChild(_social);
-		_content.removeEventListener('click', userActionHandler, false);
 		// remove model handler
-		App.off(u.MODEL_CHANGED, handleModelChanges);
+		Event.off(u.MODEL_CHANGED, handleModelChanges);
+		// remove behavior event
+		_layout.removeEventListener('click', userActionHandler, false);
+		_layout.removeChild(_favoriteButton);
+		_layout.removeChild(_shareButton);
+		_layout.parentNode.removeChild(_layout);
 	}
 
 /* export */

@@ -19,11 +19,11 @@ if (xhr)
 	section
 		if data
 			each date in data.dates
-				article
+				article.event-list-container
 					h2.date-title
 						i.icon-time
 						#{date.dateText}
-					ul.channel-event-list
+					ul.event-list.channel-event-list
 						each event, i in date.events
 							li
 								a(href="/programme/#{event.programme.id}")

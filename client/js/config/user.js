@@ -60,17 +60,7 @@ define([], function UserConfigContext() {
 
 		FAVORITE_PROGRAMMES: 'favorite_programmes',
 
-		FAVORITE_CHANNELS: 'favorite_channels',
-
-		/* DOM Access */
-
-		$window: $(window),
-	
-		$body: $(document.body),
-
-		$loginButton: $('.login'),
-	
-		$userControl: $('#user-control')
+		FAVORITE_CHANNELS: 'favorite_channels'
 
 	};
 
