@@ -113,6 +113,7 @@ define([
 	* Clear an element's contents. Like jQuery.empty().
 	*/
 	function empty(el) {
+		if (!el) { return; }
 		while (el.hasChildNodes()) {
 		    el.removeChild(el.firstChild);
 		}
