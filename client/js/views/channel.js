@@ -16,7 +16,11 @@ define([
 
 ], function ChannelViewScope(channelConfig, View, Mustache, Event, Social, ChannelModel) {
 
-	var name = 'channel';
+	var name = 'channel',
+
+		components = {
+			//social: Social
+		};
 
 /* private */
 
@@ -85,11 +89,6 @@ define([
 	};
 
 /* public */
-
-	// var components = { social: Social };
-	var components = { };
-
-/* abstract */
 
 	function initialize(State) {
 

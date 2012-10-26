@@ -14,14 +14,17 @@ define([
 
 ], function DashboardView(App, View, Carousel, Favorites, dom) {
 
-	var name = "dashboard";
+	var name = "dashboard",
+
+		components = {
+			carousel: Carousel,
+			favorites: Favorites
+		};
 
 /* private */
 
 
 /* public */
-
-	var content = dom.element('div', { id: name + '-content' });
 
 	function initialize() {
 
@@ -31,15 +34,11 @@ define([
 
 	function render() {
 
-		dom.content.appendChild(content);
-
 		return this;
 
 	}
 
 	function finalize() {
-
-		dom.content.removeChild(content);
 
 		return this;
 
@@ -53,10 +52,7 @@ define([
 		finalize: finalize,
 		initialize: initialize,
 		content: content,
-		components: {
-			carousel: Carousel,
-			favorites: Favorites
-		}
+		components: components
 	});
 
 });

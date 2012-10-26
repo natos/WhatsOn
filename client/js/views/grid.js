@@ -29,14 +29,19 @@ define([
 	'components/timebar',
 	'components/channelbar',
 	'components/highlight',
-	'components/overlay',
 	'utils/convert',
 	'utils/dom',
 	'utils/language'
 
-], function GridViewScope(a, g, c, App, Event, ChannelModel, View, TimeBar, ChannelBar, Highlight, Overlay, convert, dom, Language) {
+], function GridViewScope(a, g, c, App, Event, ChannelModel, View, TimeBar, ChannelBar, Highlight, convert, dom, Language) {
 
 	var name = "grid",
+
+		components = {
+			channelbar	: ChannelBar,
+			timebar		: TimeBar,
+			highlight	: Highlight
+		},
 
 /* private */
 
@@ -219,15 +224,6 @@ define([
 		if (action === 'TOGGLE-EDIT-MODE') {
 			toggleTimeControls();
 		}
-
-		if (action === 'OVERLAY') {
-			// Prevent the link to behave
-			event.preventDefault();
-
-			Event.emit(g.FETCH_EVENT, event.target.getAttribute('href'));
-
-			Overlay.show();
-		}
 	}
 
 /* public */
@@ -329,7 +325,6 @@ define([
 		_gridcontent.appendChild(_gridcontainer);
 		
 		dom.content.appendChild(_gridcontent);
-		_gridcontent.style.display = '';
 
 		// initialize ticker
 		timer.start().tick();
@@ -339,9 +334,9 @@ define([
 
 	function finalize() {
 
-		_gridcontent.style.display = 'none';
-
 		removeStyles();
+
+		dom.content.removeChild(_gridcontent);
 
 		window.removeEventListener('resize', handleResizeAndScroll);
 		
@@ -377,12 +372,7 @@ define([
 		render				: render,
 		getSelectedChannels	: getSelectedChannels,
 		getSelectedTime		: getSelectedTime,
-		components			: {
-			channelbar	: ChannelBar,
-			timebar		: TimeBar,
-			highlight	: Highlight,
-			overlay 	: Overlay
-		}
+		components			: components
 	});
 
 });

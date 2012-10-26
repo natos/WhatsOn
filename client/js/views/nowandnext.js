@@ -20,7 +20,11 @@ define([
 
 ], function NowAndNextViewContext(appConfig, channelConfig, nowAndNextConfig, Event, View, ChannelModel, nowAndNextModel, convert, dom, Language, overlay) {
 
-	var name = 'nowandnext';
+	var name = 'nowandnext',
+
+		components = {
+			overlay 	: overlay
+		};
 
 /* private */
 
@@ -207,7 +211,8 @@ define([
 	var hidePageStructure = function() {
 		var nowAndNextContent = document.getElementById('nowandnext-content');
 		if (nowAndNextContent) {
-			nowAndNextContent.style.display = 'none';
+			//nowAndNextContent.style.display = 'none';
+			nowAndNextContent.parentNode.removeChild(nowAndNextContent);
 		}
 	};
 
@@ -283,9 +288,7 @@ define([
 		initialize	: initialize,
 		finalize	: finalize,
 		render		: render,
-		components			: {
-			overlay 	: overlay
-		}
+		components	: components
 	});
 
 });
