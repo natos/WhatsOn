@@ -15,13 +15,13 @@ define([
 
 ], function ChannelViewScope(a, View, app, Event, dom, Language) {
 
-	var name = 'menu';
+	var name = 'menu',
 
 /* private */
 
-	var lang;
-
-	var _menu = dom.doc.getElementsByTagName('nav')[0];
+		lang,
+		main_nav = dom.doc.getElementById('main-nav'),
+		sub_nav = dom.doc.getElementById('sub-nav');
 
 	function handleActions(action, dataset) {
 		switch (action) {
@@ -39,6 +39,7 @@ define([
 	}
 
 	function localize() {
+
 		var setParentNodeTitle = function(el, translationValue) {
 			if (el.parentNode) {
 				el.parentNode.title = translationValue;
@@ -54,6 +55,8 @@ define([
 			{ids:['menu-label-login'], key:'login', action: setParentNodeTitle},
 			{ids:['menu-label-user-logout'], key:'logout', action: setParentNodeTitle},
 			{ids:['menu-label-menu'], key:'menu', action: setParentNodeTitle},
+			{ids:['menu-label-back'], key:'black', action: setParentNodeTitle},
+			{ids:['menu-label-close'], key:'close', action: setParentNodeTitle},
 			{ids:['upc-logo', 'pageTitle'], key:'appname'}
 		];
 
@@ -62,12 +65,58 @@ define([
 
 /* public */
 
+	// Fancy minimize
+	function minimize() {
+		// Hide main nav
+		main_nav.className = 'nav hide';
+		// Add sub nav to the DOM
+		dom.main.insertBefore(sub_nav, dom.content);
+		// Wait 500 ms
+		setTimeout(function() { 
+			// Show sub nav
+			sub_nav.className = 'nav';
+			// remove main nav from DOM
+			if (main_nav.parentNode)
+				main_nav.parentNode.removeChild(main_nav);
+		}, 500);
+	}
+
+	// Fancy maximize
+	function maximize() {
+		// Hide sub nav
+		sub_nav.className = 'nav hide';
+		// Add main nav to DOM
+		dom.main.insertBefore(main_nav, dom.content);
+		// Wait 500 ms
+		setTimeout(function() { 
+			// Show the main nav
+			main_nav.className = 'nav';
+			// Remove sub nav from DOM
+			if (sub_nav.parentNode)
+				sub_nav.parentNode.removeChild(sub_nav);
+		 }, 500);
+	}
+
+	function open() {
+		dom.main.className = 'open';
+		main_nav.className = 'nav active';
+	}
+
+	function close() {
+		dom.main.className = '';
+		main_nav.className = 'nav';
+	}
+
 	function initialize(State) {
 
 		lang = new Language(app.selectedLanguageCode);
 
+		dom.main.removeChild(sub_nav);
+
 		// Listen for action
 		Event.on(a.ACTION, handleActions);
+
+		Event.on(a.CONTROLLER_INITIALIZING, close);
 
 		return this;
 
@@ -85,18 +134,10 @@ define([
 
 		Event.off(a.ACTION, handleActions);
 
+		Event.off(a.CONTROLLER_INITIALIZING, close);
+
 		return this;
 
-	}
-
-	function open() {
-		dom.main.className = 'open';
-		_menu.className = 'nav active';
-	}
-
-	function close() {
-		dom.main.className = '';
-		_menu.className = 'nav';
 	}
 
 /* export */
@@ -107,7 +148,9 @@ define([
 		finalize	: finalize,
 		close 		: close,
 		open 		: open,
-		render		: render
+		render		: render,
+		minimize	: minimize,
+		maximize	: maximize
 	});
 
 });

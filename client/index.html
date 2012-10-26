@@ -23,7 +23,7 @@
                         <b class="label" id="menu-label-menu"></b></div>
                 </div>
             </div>
-            <nav class="nav">
+            <nav id="main-nav" class="nav">
                 <a href="/settings" class="settings" title="">
                     <i class="icon-cog"></i>
                     <b class="label" id="menu-label-settings"></b></a>
@@ -42,6 +42,14 @@
                 <a href="/search" class="search" title="">
                     <i class="icon-search"></i>
                     <b class="label" id="menu-label-search"></b></a>
+            </nav>
+            <nav id="sub-nav" class="nav hide">
+                <div class="back menu-item" data-action="NAVIGATE-BACK" title="Back">
+                    <i class="icon-circle-arrow-left"></i>
+                    <b class="label" id="menu-label-back"></b></a>
+                <div class="close menu-item" data-action="CLOSE" title="Close">
+                    <i class="icon-remove-sign"></i>
+                    <b class="label" id="menu-label-close"></b></a>
             </nav>
             <div id="user-control">
                 <div class="menu-item settings" data-action="SETTINGS" title="">
