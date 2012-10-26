@@ -1,4 +1,6 @@
 require.config({
+	// setting base URL
+	baseUrl: '/js',
 	paths : {
         //create alias to plugins (not needed if plugins are on the baseUrl)
         text: 'lib/require-plugins/text',
