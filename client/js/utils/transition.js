@@ -19,7 +19,20 @@ define([
 	/*
 	*	Transition
 	*/
+
+
+	/* private */
+	function removeTransition() {
+		if (transitionElement && transitionElement.parentNode) {
+			transitionElement.parentNode.removeChild(transitionElement);
+		}
+	}
+
+	/* public */
+
 	function start() {
+		
+		console.log('<TRANSITION>', 'start');
 
 		transitionElement = document.getElementById('transition');
 		if (!transitionElement) {
@@ -32,14 +45,13 @@ define([
 	}
 
 	function end() {
+		
+		console.log('<TRANSITION>', 'stop');
+
 		transitionElement = document.getElementById('transition');
 		if (transitionElement) {
 			transitionElement.className = 'background hide';
-			setTimeout(function removeTransition() {
-				if (transitionElement && transitionElement.parentNode) {
-					transitionElement.parentNode.removeChild(transitionElement);
-				}
-			}, 500);
+			setTimeout(removeTransition, 500);
 		}
 	}
 
