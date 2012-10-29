@@ -17,33 +17,33 @@ define([
 
 ], function UserModuleScope(u, c, App, Event, UserModel, ChannelModel, UserComponent) {
 
-	var name = 'user';
+	var name = 'user',
 
 	// shortcuts
-	var slice = Array.prototype.slice;
+	slice = Array.prototype.slice,
 
 /* private */
 
 	// constants
-	var FACEBOOK_STATUS		= 'facebook-status';
-	var AUTH_STATUS_CHANGE	= 'auth.statusChange';
-	var OPEN_GRAPH_PREFIX	= '/me/upcsocial:';
+	FACEBOOK_STATUS		= 'facebook-status',
+	AUTH_STATUS_CHANGE	= 'auth.statusChange',
+	OPEN_GRAPH_PREFIX	= '/me/upcsocial:',
 
 	// og calls
-	var LIKES_CALL			= '/me/likes';
-	var FAVORITES_CALL		= OPEN_GRAPH_PREFIX + 'favorite';
-	var RECORDINGS_CALL		= OPEN_GRAPH_PREFIX + 'record';
+	LIKES_CALL			= '/me/likes',
+	FAVORITES_CALL		= OPEN_GRAPH_PREFIX + 'favorite',
+	RECORDINGS_CALL		= OPEN_GRAPH_PREFIX + 'record',
 
 	// labels
-	var LIKES				= 'likes';
-	var FAVORITES			= 'favorites';
-	var RECORDINGS			= 'recordings';
-	var FAVORITE_PROGRAMMES = 'favorite-programmes';
-	var FAVORITE_CHANNELS	= 'favorite-channels';
+	LIKES				= 'likes',
+	FAVORITES			= 'favorites',
+	RECORDINGS			= 'recordings',
+	FAVORITE_PROGRAMMES = 'favorite-programmes',
+	FAVORITE_CHANNELS	= 'favorite-channels',
 
 	// Patterns for parsing our OG urls
-	var OG_REGEX_PATTERN_PROGRAMME = /^http\:\/\/upcsocial\.herokuapp\.com\/programme\/(\d*)$/;
-	var OG_REGEX_PATTERN_CHANNEL = /^http\:\/\/upcsocial\.herokuapp\.com\/channel\/([a-zA-Z0-9]*)$/;
+	OG_REGEX_PATTERN_PROGRAMME = /^http\:\/\/upcsocial\.herokuapp\.com\/programme\/(\d*)$/,
+	OG_REGEX_PATTERN_CHANNEL = /^http\:\/\/upcsocial\.herokuapp\.com\/channel\/([a-zA-Z0-9]*)$/;
 
 	// every time the facebook login status
 	// is changed, this handler will save the
@@ -311,6 +311,11 @@ define([
 
 		var _favorite = {};
 			_favorite[type] = url;
+
+		// TODO: Check if Favorite already exist!!!
+		// if (favorite_already_exist) {
+		// 		return;
+		// }
 
 		// post the new favorite show to open graph
 		FB.api('/me/upcsocial:favorite', 'post', _favorite, function handleAddFavoriteResponse(response) {
