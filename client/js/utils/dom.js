@@ -123,6 +123,14 @@ define([
 		}
 	}
 
+	/**
+	* Removes a Node from the dom.
+	*/
+	function remove(node) {
+		if (!node||node.parentNode) { return; }
+		node.parentNode.removeChild(node);
+	}
+
 /* export */
 
 	return {
@@ -134,7 +142,8 @@ define([
 		element 	: element,
 		text		: text,
 		getDataset	: getDataset,
-		empty		: empty
+		empty		: empty,
+		remove 		: remove,
 	};
 
 });
