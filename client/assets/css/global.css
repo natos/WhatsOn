@@ -1099,6 +1099,32 @@ footer {
 }
 
 /* ==============
+   Highlight
+   ============== */
+
+#highlight {
+	position: fixed;
+	top: 16px;
+	right: 10px;
+	z-index: 100;
+}
+
+@media screen and (min-width: 640px) {
+
+	#highlight {
+		right: 130px;
+	}	
+}
+
+@media (min-width: 980px) {
+
+	#highlight {
+		right: 220px;
+	}	
+
+}
+
+/* ==============
    Time Bar
    ============== */
 

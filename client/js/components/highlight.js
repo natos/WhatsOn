@@ -18,7 +18,7 @@ define([
 
 	_raw = false,
 	_categories = {},
-	_form,
+	_layout,
 	_select;
 
 	function selectChangeHandler(event) {
@@ -65,8 +65,8 @@ define([
 
 	function createSelector() {
 
-			_select = dom.create('select');
-			_select.addEventListener('change', selectChangeHandler);
+		_select = dom.create('select');
+		_select.addEventListener('change', selectChangeHandler);
 
 		// add the first option (not-selectable)
 		_categories['highlight'] = 'highlight';
@@ -89,8 +89,11 @@ define([
 			_select.appendChild(option);
 		}
 
-		render();
+		_layout = dom.element('div', { id: 'highlight' });
+		console.log(_layout)
+		_layout.appendChild(_select);
 
+		render();
 	}
 
 
@@ -132,14 +135,12 @@ define([
 
 	function render() {
 
-		if (!_select) {
+		if (!_layout) {
 			return this;
 		}
 
-		form = document.getElementsByTagName('form')[0];
-
-		if (form) {
-			form.appendChild(_select);
+		if (_layout) {
+			dom.main.appendChild(_layout);
 		}
 
 		return this;
@@ -151,6 +152,9 @@ define([
 		// or remember the selection...
 		// 'remove or not to remove...'
 		//removeStyles();
+
+		dom.empty(_layout);
+		dom.remove(_layout);
 
 		return this;
 
