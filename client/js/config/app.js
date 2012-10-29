@@ -19,9 +19,9 @@ define([], function AppConfigContext() {
 
 		NAMESPACE: 'upsocial',
 
-		// API_PREFIX: 'http://api.lgi.com/alpha',
+		//API_PREFIX: 'http://api.lgi.com/alpha',
 		
-		API_PREFIX: 'http://62.179.107.149/cgi-bin/WebObjects/ScheduleAPI-trunk-ivy.woa/1/q',
+		 API_PREFIX: 'http://62.179.107.149/cgi-bin/WebObjects/ScheduleAPI-trunk-ivy.woa/1/q',
 
 		FEED_PROXY_BASE_PATH: 'http://localhost:3001',
 		// FEED_PROXY_BASE_PATH: 'http://enigmatic-hamlet-2742.herokuapp.com',
@@ -30,7 +30,7 @@ define([], function AppConfigContext() {
 
 		CONTROLLERS: ['settings','dashboard','grid','nowandnext','search','programme','channel'/*,'not-found'*/],
 
-		DEFAULT_COUNTRY: 'Nederland',
+		DEFAULT_COUNTRY: 'Ireland',
 
 		DEFAULT_LANGUAJE: 'en',
 

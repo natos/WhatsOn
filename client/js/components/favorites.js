@@ -68,12 +68,6 @@ define([
 			if (_invitation) {
 				removeInvitation();
 			}
-			
-			//_favoriteProgrammes = layout({ id: FAVORITE_PROGRAMMES, class: 'loading', title: 'You favourite shows now', icon: 'icon-star' });
-			//_favoriteChannels = layout({ id: FAVORITE_CHANNELS, class: 'loading', title: 'You favourite channels now', icon: 'icon-star' });
-
-			//dom.content.appendChild(_favoriteProgrammes);
-			//dom.content.appendChild(_favoriteChannels);
 		}
 
 
