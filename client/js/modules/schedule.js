@@ -111,7 +111,7 @@ define([
 
 	function ready() {
 		if (!is_ready) {
-			if (AppModel[a.CATEGORIES_CACHE] && AppModel[a.GENRES_CACHE]) {
+			if (ChannelModel[c.SELECTED_GROUP] && AppModel[a.CATEGORIES_CACHE] && AppModel[a.GENRES_CACHE]) {
 				is_ready = !is_ready;
 				Event.emit(a.READY);
 			}
@@ -138,7 +138,7 @@ define([
 			cache[label].nextBatchLink = null;
 			delete cache[label].nextBatchLink;
 
-			console.log('<SCHEDULE>','Saving', label, 'on Model.');
+			console.log('<SCHEDULE>', 'Saving', label, 'on Model.');
 
 			AppModel.set(label, cache[label]);
 
@@ -267,6 +267,8 @@ define([
 		// Set default selected group
 		// ATTENTION: Read user preferences here
 		ChannelModel.set(c.SELECTED_GROUP, c.DEFAULT_GROUP);
+
+		ready(); //?
 
 		// return raw data
 		return data;
