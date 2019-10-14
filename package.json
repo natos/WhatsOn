@@ -20,7 +20,7 @@
 		"express": "3.0.0rc4",
 		"request": "2.11.x",
 		"i18n": "0.3.x",
-		"useragent": "1.1.x",
+		"useragent": "2.3.x",
 		"prettydate": "0.0.1",
 
 		"grunt-contrib": "0.2.x"
