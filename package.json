@@ -18,7 +18,7 @@
 	"dependencies": {
 		"requirejs": "2.1.x",
 		"express": "3.0.0rc4",
-		"request": "2.11.x",
+		"request": "2.88.x",
 		"i18n": "0.3.x",
 		"useragent": "1.1.x",
 		"prettydate": "0.0.1",
